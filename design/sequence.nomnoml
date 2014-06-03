@@ -1,0 +1,40 @@
+#lifeline: alice, <<actor>>
+#lifeline: bob, <<UI>>
+
+alice ->  bob     : Auth 		# start bob task
+bob   =>  log     : log attempt	# message without explicit response
+bob   ->  charlie : delivery	# start charlie task
+bob   ->  server  : store		# start server task
+bob   <-  server				# end server task
+bob   !>  webservice			# send asyncronous msg to server (no task)
+bob   => bob					# loopback message
+bob   <-  charlie				# end charlie task
+
+alt [condition 1]
+bob   => bob					# loopback message
+else
+
+end
+
+
+
+
+
+#diagram: sequence
+[]->[client]
+[client]->[server]
+[client]<-[server]
+[client].>[server]
+          [server]=>[database] : <<create>>
+          [server]->[database] : getData
+          [server]<.[database] : data
+          [server]=X[database] : <<delete>>
+[client]<.[server]
+[server]
+[]<.[client]
+
+alt
+
+else
+
+end

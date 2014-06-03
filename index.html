@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="A tool for drawing sassy UML diagrams based on syntax. Provides instant feedback and has a highly customizable styling.">
+<title>nomnoml</title>
+<link rel="stylesheet" href="lib/boilerplate.css">
+<link rel="stylesheet" href="lib/normalize.css">
+<link rel="stylesheet" href="nomnoml.css">
+<link rel="shortcut icon" href="favicon.png">
+</head>
+<body>
+	<div class="wrap">
+
+		<canvas id="canvas"></canvas>
+		<textarea id="textarea" spellcheck="false"></textarea>
+		<textarea id="linenumbers" disabled></textarea>
+
+		<div id="reference" class="sidebar">
+			<div class="content">
+				<h2>Association types</h2>
+				<b>association</b> -<br>
+				<b>association</b> -&gt;<br>
+				<b>association</b> &lt;-&gt;<br>
+				<b>dependency</b> --&gt;<br>
+				<b>dependency</b> &lt;--&gt;<br>
+				<b>generalization</b> -:&gt;<br>
+				<b>generalization</b> &lt;:-<br>
+				<b>implementation</b> --:&gt;<br>
+				<b>implementation</b> &lt;:--<br>
+				<b>composition</b> +-<br>
+				<b>composition</b> +-&gt;<br>
+				<b>aggregation</b> o-<br>
+				<b>aggregation</b> o-&gt;<br>
+				<b>note</b> --<br>
+
+				<h2>Classifier types</h2>
+				[name]<br>
+				[&lt;abstract&gt; name]<br>
+				[&lt;instance&gt; name]<br>
+				[&lt;note&gt; name]<br>
+				[&lt;package&gt; name]<br>
+				[&lt;frame&gt; name]<br>
+				[&lt;database&gt; name]<br>
+				[&lt;start&gt; name]<br>
+				[&lt;end&gt; name]<br>
+				[&lt;state&gt; name]<br>
+				[&lt;choice&gt; name]<br>
+				[&lt;input&gt; name]<br>
+				[&lt;sender&gt; name]<br>
+				[&lt;receiver&gt; name]<br>
+
+				<h2>Directives</h2>
+				#arrowSize: 1<br>
+				#bendSize: 0.3<br>
+				#direction: down | right<br>
+				#gutter: 5<br>
+				#edgeMargin: 0<br>
+				#edges: hard | rounded<br>
+				#fill: #eee8d5; #fdf6e3<br>
+				#fillArrows: false<br>
+				#font: Calibri<br>
+				#fontSize: 12<br>
+				#leading: 1.25<br>
+				#lineWidth: 3<br>
+				#padding: 8<br>
+				#spacing: 40<br>
+				#stroke: #33322E<br>
+				#zoom: 1<br>
+			</div>
+
+			<div class="logo-background"></div>
+		</div>
+
+		<div id="about" class="sidebar">
+			<div class="content">
+				<p>Hello, this is nomnoml, a tool for drawing UML diagrams based on a simple syntax.
+				<p>Try and edit the code on the left and watch the diagram change. Any changes are saved to the browser's <i>localStorage</i>, so your diagram should be here the next time, (but no guarantees).</p>
+				<p>Created by <a href="mailto:daniel.kallin@gmail.com">Daniel Kallin</a> and hosted on <a href="https://github.com/skanaar/nomnoml" target="_blank">GitHub</a> for your perusal.</p>
+				<p>Nomnoml was made possible by the cool projects 
+				<a target="_blank" href="http://zaach.github.io/jison/">jison</a>, 
+				<a target="_blank" href="https://github.com/cpettitt/dagre">dagre</a>,
+				<a target="_blank" href="http://underscorejs.org">underscore</a>,
+				<a target="_blank" href="http://typicons.com/">typicons</a> ,
+				<a target="_blank" href="http://zeptojs.com/">zepto</a> and
+				<a target="_blank" href="http://ethanschoonover.com/solarized">solarized</a>.
+				</p>
+				
+				<hr>
+
+				<h2>Examples</h2>
+
+				<a target="_BLANK" href="http://www.nomnoml.com/#view/[<frame>Decorator%20pattern|%0A%20%20[<abstract>Component||+%20operation()]%0A%20%20[Client]%20depends%20-->%20[Component]%0A%20%20[Decorator|-%20next:%20Component]%0A%20%20[Decorator]%20decorates%20--%20[ConcreteComponent]%0A%20%20[Component]%20<:-%20[Decorator]%0A%20%20[Component]%20<:-%20[ConcreteComponent]%0A]">Decorator pattern</a><br>
+				<a target="_BLANK" href="http://www.nomnoml.com/#view/[<frame>Strategy%20pattern|%0A%20%20[client]%20o-%20[<abstract>Strategy|+%20operation()]%0A%20%20[Strategy]%20<:--%20[StrategyA]%0A%20%20[Strategy]%20<:--%20[StrategyB]%0A]">Strategy pattern</a><br>
+				<a target="_BLANK" href="http://www.nomnoml.com/#view/[<package>UML%20Representation|%0A%20%20[Compartment|lines:%20string*;nodes:%20Classifier*;relations:%20Relations*]%0A%20%20[Classifier|type:%20string;name:%20string;compartments:%20Compartment*;width:%20int;height:%20int;x:%20int;y:%20int]%0A%20%20[Relation|startLabel:%20string;endLabel:%20string;type:%20string;startShape:%20string;endShape:%20string;path:%20Point*]%0A%20%20[Compartment]+->[Classifier]%0A%20%20[Classifier]+->[Compartment]%0A%20%20[Compartment]+->[Relation]%0A]%0A[parser]-->[UML%20Representation]%0A[layouter||layout(ast:%20Compartment)]%0A[renderer||render(d:%20Compartment)]%0A[parser||parse(source:%20String):%20Classifier]+->[Jison]%0A[layouter]-->[UML%20Representation]%0A[layouter]+->[dagre]%0A[renderer]-->[UML%20Representation]%0A[renderer]o->[<instance>:Canvas]%0A[measurer]<:--[renderer]%0A[layouter]->[measurer]">nomnoml architecture</a>
+				
+				<hr>
+
+				<h2>Usage</h2>
+
+				<label>Car has an Engine</label>
+				[Car]-&gt;[Engine]
+				
+				<label>Car owns an arbitrary number of blemished</label>
+				[Car] +-&gt; 0..* [RustPatches]
+
+				<label>Car knows its Manufacturer</label>
+				[Car]o-&gt;[Manufacturer]
+
+				<label>Car depends on Fuel</label>
+				[Car]--&gt;[Fuel]
+
+				<label>Pickup inherits from Car</label>
+				[Pickup]-:&gt;[Car]
+
+				<label>Car implements interface IVehicle</label>
+				[Car]--:&gt;[IVehicle]
+
+				<label>Paul and Ron have a named association</label>
+				[Paul] friend - [Ron]
+
+				<label>They both depend on each other</label>
+				[Chicken]&lt;-&gt;[Egg]
+
+				<label>Car has some attributes</label>
+				[Car|maxSpeed: Float;color: Color|]
+
+				<label>Engine has an operation</label>
+				[Engine||start()]
+
+				<label>Engine has internal parts</label>
+				[Engine|<br>
+				&nbsp;&nbsp;[Cylinder]->1[Piston]<br>
+				&nbsp;&nbsp;[Cylinder]->2[Valve]<br>
+				]<br>
+
+				<label>Engine is an abstract class</label>
+				[&lt;abstract&gt;Engine||start()]
+
+				<label>Car is in the package 'vehicles'</label>
+				[&lt;package&gt;vehicles|[Car]]
+
+				<label>Car has an attached note</label>
+				[Car]--[&lt;note&gt;only driven;twice a month]
+
+				<label>Set font</label>
+				#font: Times
+
+				<label>Layout the diagram really tight</label>
+				#fontSize: 8<br>
+				#spacing: 12<br>
+				#padding: 3
+
+			</div>
+			<div class="logo-background"></div>
+		</div>
+
+		<div id="linemarker"></div>
+
+		<div class="tools">
+			<a class="logo" href="javascript:void(0)" onclick="nomnoml.toggleSidebar('about')" title="About nomnoml">nomnoml &nbsp;</a>
+			<a href="javascript:void(0)" onclick="nomnoml.toggleSidebar('about')" title="About nomnoml">
+				<img src="img/info-large.png">
+			</a>
+			<a href="javascript:void(0)" onclick="nomnoml.toggleSidebar('reference')" title="Language reference">
+				<img src="img/book.png">
+			</a>
+			<a id="savebutton" href="javascript:void(0)" download="uml.png" title="Download snapshot of this diagram">
+				<img src="img/camera.png">
+			</a>
+			<a id="linkbutton" href="javascript:void(0)" target="_blank" title="Shareable link to this diagram">
+				<img src="img/link.png">
+			</a>
+			<a href="javascript:nomnoml.discardCurrentGraph()" title="Discard this diagram">
+				<img src="img/trash.png">
+			</a>
+			<span id="tooltip"></span>
+			<span id="storage-status">View mode, changes are not saved</span>
+		</div>
+	</div>
+
+	<script type="text/vnd.nomnoml.class" id="defaultGraph">[Pirate|eyeCount: Int|raid();pillage()|
+  [beard]--[parrot]
+  [beard]-:>[foul mouth]
+]
+
+[<abstract>Marauder]<:--[Pirate]
+[Pirate]- 0..7[mischief]
+[jollyness]->[Pirate]
+[jollyness]->[rum]
+[jollyness]->[singing]
+[Pirate]-> *[rum|tastiness: Int|swig()]
+[Pirate]->[singing]
+[singing]<->[rum]
+
+[<start>st]->[<state>plunder]
+[plunder]->[<choice>more loot]
+[more loot]->[st]
+[more loot] no ->[<end>e]</script>
+
+	<script src="lib/zepto.min.js"></script>
+	<script src="lib/underscore.js"></script>
+	<script src="lib/underscore.skanaar.js"></script>
+	<script src="lib/dagre.min.js"></script>
+	<script src="lib/skanaar.canvas.js"></script>
+	<script src="lib/vector.js"></script>
+	<script src="nomnoml.jison.js"></script>
+	<script src="nomnoml.parser.js"></script>
+	<script src="nomnoml.layouter.js"></script>
+	<script src="nomnoml.renderer.js"></script>
+	<script src="nomnoml.app.js"></script>
+
+	<script>
+		var tooltip = $('#tooltip')[0]
+		$('.tools > a').each(function (i, link){
+			link.onmouseover = function (){ tooltip.innerText = $(link).attr('title') }
+			link.onmouseout = function (){ tooltip.innerText = '' }
+		})
+	</script>
+
+	<script>
+		(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+		(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+		m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+		})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+		ga('create', 'UA-50041909-1', 'nomnoml.com');
+		ga('send', 'pageview');
+
+	</script>
+</body>
+</html>
