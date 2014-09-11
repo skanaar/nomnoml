@@ -192,12 +192,16 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 		g.ctx.fillText(r.startLabel, start.x+padding, start.y+padding+config.fontSize)
 		g.ctx.fillText(r.endLabel, end.x+padding, end.y-padding)
 
-		if (_.hasSubstring(r.assoc, '--')){
-			var dash = Math.max(4, 2*config.lineWidth)
-			g.ctx.setLineDash([dash, dash])
+		if (g.ctx.setLineDash){
+			if (_.hasSubstring(r.assoc, '--')){
+				var dash = Math.max(4, 2*config.lineWidth)
+				g.ctx.setLineDash([dash, dash])
+			}
+			strokePath(path)
+			g.ctx.setLineDash([])
 		}
-		strokePath(path)
-		g.ctx.setLineDash([])
+		else
+			strokePath(path)
 
 		function drawArrowEnd(id, path, end){
 			if (id === '>' || id === '<')
