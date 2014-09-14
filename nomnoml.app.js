@@ -7,6 +7,7 @@ $(function (){
 	var viewport = $(window)
 	var lineNumbers = $('#linenumbers')
 	var lineMarker = $('#linemarker')
+	var jqTextarea = $('#textarea')
 	var textarea = document.getElementById('textarea')
 	var imgLink = document.getElementById('savebutton')
 	var linkLink = document.getElementById('linkbutton')
@@ -94,13 +95,15 @@ $(function (){
 		}
 	}
 
-	function fitCanvasSize(rect, scale){
+	function fitCanvasSize(rect, scale, superSampling){
 		var w = rect.width * scale
 		var h = rect.height * scale
-		jqCanvas.attr({width: w, height: h})
+		jqCanvas.attr({width: superSampling*w, height: superSampling*h})
 		jqCanvas.css({
 			top: 300 * (1 - h/viewport.height()),
-			left: 150 + (viewport.width() - w)/2
+			left: 150 + (viewport.width() - w)/2,
+			width: w,
+			height: h
 		})
 	}
 
@@ -110,7 +113,7 @@ $(function (){
 		graphics.ctx.font = style+config.fontSize+'pt '+config.font+', Helvetica, sans-serif'
 	}
 
-	function parseAndRender(){
+	function parseAndRender(superSampling){
 		var ast = nomnoml.parse(textarea.value)
 		var config = getConfig(ast.directives)
 	    var measurer = {
@@ -119,20 +122,24 @@ $(function (){
 	        textHeight: function (s){ return config.leading * config.fontSize }
 	    }
 		var layout = nomnoml.layout(measurer, config, ast)
-		fitCanvasSize(layout, config.zoom)
+		fitCanvasSize(layout, config.zoom, superSampling)
+		config.zoom *= superSampling
 		nomnoml.render(graphics, config, layout, setFont)
 	}
 
 	function sourceChanged(){
 		try {
+			var superSampling = window.devicePixelRatio || 1;
 			lineMarker.css('top', -30)
 			lineNumbers.css({background:'#eee8d5', color:'#D4CEBD'})
-			parseAndRender()
+			parseAndRender(superSampling)
 			storage.save(textarea.value)
 		} catch (e){
 			var matches = e.message.match('line ([0-9]*)')
-			if (matches)
-				 lineMarker.css('top', 12 + 18*matches[1])
+			if (matches){
+				var lineHeight = parseInt(jqTextarea.css('line-height'), 10)
+				lineMarker.css('top', 8 + lineHeight*matches[1])
+			}
 			else {
 				lineNumbers.css({background:'rgba(220,50,47,0.4)', color:'#657b83'})
 				throw e

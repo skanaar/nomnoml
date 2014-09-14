@@ -15,14 +15,14 @@ hr {
 	min-height: 100%;
 }
 #linemarker {
-	background: rgba(220,50,47,0.75);
+	background: rgba(220,50,47,0.5);
 	position: absolute;
 	left: 0;
 	width: 33px;
-	height: 18px
+	height: 22px
 }
 textarea {
-	line-height: 18px;
+	line-height: 22px;
 	font-size: 16px;
 }
 #textarea {
@@ -33,7 +33,7 @@ textarea {
 	background: rgba(0,0,0,0);
 	box-sizing: border-box;
 	border: 0;
-	font-family: Consolas, Monaco, monospace;
+	font-family: Consolas, Menlo, monospace;
 	color: #657b83;
 	padding: 30px 0 0 40px;
 }
@@ -47,7 +47,7 @@ textarea {
 	color: #D4CEBD;
 	border: 0;
 	box-sizing: border-box;
-	font-family: Consolas, Monaco, monospace;
+	font-family: Consolas, Menlo, monospace;
 	padding: 30px 5px 0 0;
 	overflow-x: hidden;
 	overflow-y: hidden;
