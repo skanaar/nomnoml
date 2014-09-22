@@ -19,6 +19,7 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 				y += Math.round(config.fontSize * 0.1)+0.5
 				g.ctx.lineWidth = Math.round(config.fontSize/10)
 				g.path([{x:x-w/2, y:y}, {x:x+w/2, y:y}]).stroke()
+				g.ctx.lineWidth = config.lineWidth
 			}
 		})
 		g.ctx.translate(config.gutter, config.gutter)
@@ -44,6 +45,7 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 				case 'CHOICE': return { center: true }
 				case 'SENDER': return {}
 				case 'RECEIVER': return {}
+				case 'HIDDEN': return { empty: true }
 			}
 		}
 		return {}
@@ -119,6 +121,7 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 				{x: x+node.width+padding, y: y+node.height},
 				{x: x, y: y+node.height}
 			]).fill().stroke()
+		} else if (node.type === 'HIDDEN') {
 		} else if (node.type === 'DATABASE') {
 			var cx = x+node.width/2
 			var cy = y-padding/2
@@ -169,9 +172,8 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 			g.ctx.lineTo(_.last(p).x, _.last(p).y)
 	        g.ctx.stroke()
 		}
-		else {
+		else 
 			g.path(p).stroke()
-		}
 	}
 
 	var empty = false, filled = true, diamond = true
@@ -192,16 +194,16 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 		g.ctx.fillText(r.startLabel, start.x+padding, start.y+padding+config.fontSize)
 		g.ctx.fillText(r.endLabel, end.x+padding, end.y-padding)
 
-		if (g.ctx.setLineDash){
-			if (_.hasSubstring(r.assoc, '--')){
+		if (r.assoc != '-/-'){
+			if (g.ctx.setLineDash && _.hasSubstring(r.assoc, '--')){
 				var dash = Math.max(4, 2*config.lineWidth)
 				g.ctx.setLineDash([dash, dash])
+				strokePath(path)
+				g.ctx.setLineDash([])
 			}
-			strokePath(path)
-			g.ctx.setLineDash([])
+			else
+				strokePath(path)
 		}
-		else
-			strokePath(path)
 
 		function drawArrowEnd(id, path, end){
 			if (id === '>' || id === '<')
@@ -220,13 +222,14 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 	}
 
 	function rectIntersection(p1, p2, rect){
+		if(rect.width == 0 && rect.height == 0) return p2
 		var v = diff(p1, p2)
 		for(var t=1; t>=0; t-= 0.01){
 			var p = mult(v, t)
 			if(Math.abs(p.x) <= rect.width/2+config.edgeMargin && Math.abs(p.y) <= rect.height/2+config.edgeMargin)
 				return add(p2, p)
 		}
-		return p1
+		return p2
 	}
 
 	function drawArrow(path, isOpen, arrowPoint, diamond){
@@ -249,7 +252,7 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 	}
 
 	function snapToPixels(){
-		if (config.lineWidth % 2 > 0)
+		if (config.lineWidth % 2 == 1)
 			g.ctx.translate(0.5, 0.5)
 	}
 

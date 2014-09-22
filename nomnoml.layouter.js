@@ -74,6 +74,10 @@ nomnoml.layout = function (measurer, config, ast){
 		_.each(clas.compartments, layoutCompartment)
 		clas.width = _.max(_.pluck(clas.compartments, 'width'))
 		clas.height = _.sum(clas.compartments, 'height')
+		if (clas.type == 'HIDDEN'){
+			clas.width = 0
+			clas.height = 0
+		}
 		clas.x = clas.width/2
 		clas.y = clas.height/2
 		_.each(clas.compartments, function(co){ co.width = clas.width })
