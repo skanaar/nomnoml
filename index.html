@@ -217,8 +217,8 @@
 	<script>
 		var tooltip = $('#tooltip')[0]
 		$('.tools > a').each(function (i, link){
-			link.onmouseover = function (){ tooltip.innerText = $(link).attr('title') }
-			link.onmouseout = function (){ tooltip.innerText = '' }
+			link.onmouseover = function (){ tooltip.textContent  = $(link).attr('title') }
+			link.onmouseout = function (){ tooltip.textContent  = '' }
 		})
 	</script>
 

@@ -73,6 +73,9 @@ a:hover {
 	right: 20px;
 	font-family: Calibri, Helvetica, sans-serif;
 	font-weight: bold;
+	background: #fdf6e3;
+	border-radius: 5px;
+	padding: 0 5px;
 }
 .tools img {
 	width: 24px;
@@ -87,12 +90,14 @@ a:hover {
 	font-size: 175%;
 }
 .tools>#tooltip {
-	color: #000;
-	opacity: 0.5;
+	color: #807C72;
 	position: fixed;
 	top: 7px;
-	right: 25px;
-	text-align: right
+	right: 20px;
+	text-align: right;
+	background: #fdf6e3;
+	border-radius: 2px;
+	padding: 0 5px;
 }
 .tools>#storage-status {
 	color: #000;
@@ -112,9 +117,9 @@ a:hover {
 	top: 0px;
 	right:0;
 	bottom: 0;
-	width: 320px;
-	background-color: #eee8d5;
-	border-left: 6px solid #fdf6e3;
+	width: 325px;
+	background-color: #fdf6e3;
+	box-shadow: -3px 0 6px rgba(0, 0, 0, 0.28);
 }
 .sidebar.visible {
 	display: block;
@@ -126,7 +131,7 @@ a:hover {
 	right: 20px;
 	width: 300px;
 	height: 70px;
-	background: rgba(238, 232, 213, 0.75)
+	background: #fdf6e3
 }
 .content {
 	display: block;
