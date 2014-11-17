@@ -29,26 +29,24 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 	}
 
 	function textStyle(node, line){
-		if (line === 0){
-			switch (node.type){
-				case 'CLASS': return { bold: true, center: true }
-				case 'INSTANCE': return { center: true, underline: true }
-				case 'FRAME': return { center: false, frameHeader: true }
-				case 'ABSTRACT': return { italic: true, center: true}
-				case 'STATE': return { center: true}
-				case 'DATABASE': return { bold: true, center: true}
-				case 'NOTE': return {}
-				case 'START': return { empty: true }
-				case 'END': return { empty: true }
-				case 'STATE': return { center: true }
-				case 'INPUT': return { center: true }
-				case 'CHOICE': return { center: true }
-				case 'SENDER': return {}
-				case 'RECEIVER': return {}
-				case 'HIDDEN': return { empty: true }
-			}
-		}
-		return {}
+		if (line > 0) return {}
+		return {
+			CLASS: { bold: true, center: true },
+			INSTANCE: { center: true, underline: true },
+			FRAME: { center: false, frameHeader: true },
+			ABSTRACT: { italic: true, center: true},
+			STATE: { center: true},
+			DATABASE: { bold: true, center: true},
+			NOTE: {},
+			START: { empty: true },
+			END: { empty: true },
+			STATE: { center: true },
+			INPUT: { center: true },
+			CHOICE: { center: true },
+			SENDER: {},
+			RECEIVER: {},
+			HIDDEN: { empty: true },
+		}[node.type] || {}
 	}
 
 	function renderNode(node, level){
@@ -125,11 +123,15 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 		} else if (node.type === 'DATABASE') {
 			var cx = x+node.width/2
 			var cy = y-padding/2
+			var pi = 3.1416
 			g.ctx.fillRect(x, y, node.width, node.height)
 			g.path([{x: x, y: cy}, {x: x, y: cy+node.height}]).stroke()
-			g.path([{x: x+node.width, y: cy}, {x: x+node.width, y: cy+node.height}]).stroke()
+			g.path([
+				{x: x+node.width, y: cy}, 
+				{x: x+node.width, y: cy+node.height}]).stroke()
 			g.ellipse({x: cx, y: cy}, node.width, padding*1.5).fill().stroke()
-			g.ellipse({x: cx, y: cy+node.height}, node.width, padding*1.5, 0, 3.1416).fill().stroke()
+			g.ellipse({x: cx, y: cy+node.height}, node.width, padding*1.5, 0, pi)
+				.fill().stroke()
 		} else {
 			g.ctx.fillRect(x, y, node.width, node.height)
 			g.ctx.strokeRect(x, y, node.width, node.height)
@@ -146,7 +148,7 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 			if (i+1 == node.compartments.length) return
 			yDivider += part.height
 			if (node.type === 'FRAME' && i === 0){
-				var w = g.ctx.measureText(node.name).width + part.height/2 + padding
+				var w = g.ctx.measureText(node.name).width+part.height/2+padding
 				g.path([
 					{x:x, y:yDivider},
 					{x:x+w-part.height/2, y:yDivider},
@@ -185,14 +187,15 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 		var start = rectIntersection(r.path[1], _.first(r.path), startNode)
 		var end = rectIntersection(r.path[r.path.length-2], _.last(r.path), endNode)
 
-		var path = [start]
-		for(var i=1; i<r.path.length-1; i++) path.push(r.path[i])
-		path.push(end)
+		var path = _.flatten([start, _.tail(_.initial(r.path)), end])
+		var fontSize = config.fontSize
 
 		g.ctx.fillStyle = config.stroke
 		setFont(config, 'normal')
-		g.ctx.fillText(r.startLabel, start.x+padding, start.y+padding+config.fontSize)
-		g.ctx.fillText(r.endLabel, end.x+padding, end.y-padding)
+		var textW = g.ctx.measureText(r.endLabel).width
+		var labelX = config.direction == 'LR' ? -padding-textW : padding
+		g.ctx.fillText(r.startLabel, start.x+padding, start.y+padding+fontSize)
+		g.ctx.fillText(r.endLabel, end.x+labelX, end.y-padding)
 
 		if (r.assoc != '-/-'){
 			if (g.ctx.setLineDash && _.hasSubstring(r.assoc, '--')){
@@ -226,7 +229,8 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 		var v = diff(p1, p2)
 		for(var t=1; t>=0; t-= 0.01){
 			var p = mult(v, t)
-			if(Math.abs(p.x) <= rect.width/2+config.edgeMargin && Math.abs(p.y) <= rect.height/2+config.edgeMargin)
+			if(Math.abs(p.x) <= rect.width/2+config.edgeMargin &&
+				Math.abs(p.y) <= rect.height/2+config.edgeMargin)
 				return add(p2, p)
 		}
 		return p2
