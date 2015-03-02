@@ -1,0 +1,11 @@
+{
+    "asi": true,
+    "browser": true,
+    "strict": false,
+    "globals": {
+        "confirm": false,
+        "$": false,
+        "_": false,
+        "skanaar": true
+    }
+}

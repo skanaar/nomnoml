@@ -137,7 +137,7 @@ $(function (){
 		} catch (e){
 			var matches = e.message.match('line ([0-9]*)')
 			if (matches){
-				var lineHeight = parseInt(jqTextarea.css('line-height'), 10)
+				var lineHeight = parseFloat(jqTextarea.css('line-height'))
 				lineMarker.css('top', 8 + lineHeight*matches[1])
 			}
 			else {

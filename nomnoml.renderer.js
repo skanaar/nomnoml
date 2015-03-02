@@ -12,7 +12,7 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 		_.each(compartment.lines, function (text, i){
 			g.ctx.textAlign = style.center ? 'center' : 'left'
 			var x = style.center ? compartment.width/2 - padding : 0
-			var y = (0.5+(i+.5)*config.leading)*config.fontSize
+			var y = (0.5+(i+0.5)*config.leading)*config.fontSize
 			g.ctx.fillText(text, x, y)
 			if (style.underline){
 				var w = g.ctx.measureText(text).width
@@ -40,7 +40,6 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 			NOTE: {},
 			START: { empty: true },
 			END: { empty: true },
-			STATE: { center: true },
 			INPUT: { center: true },
 			CHOICE: { center: true },
 			SENDER: {},
@@ -94,8 +93,7 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 			]).fill().stroke()
 		} else if (node.type === 'PACKAGE') {
 			var headHeight = node.compartments[0].height
-			g.ctx.fillRect(x, y+headHeight, node.width, node.height-headHeight)
-			g.ctx.strokeRect(x, y+headHeight, node.width, node.height-headHeight)
+			g.rect(x, y+headHeight, node.width, node.height-headHeight).fill().stroke()
 			var w = g.ctx.measureText(node.name).width + 2*padding
 			g.circuit([
 				{x:x, y:y+headHeight},
@@ -124,7 +122,7 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 			var cx = x+node.width/2
 			var cy = y-padding/2
 			var pi = 3.1416
-			g.ctx.fillRect(x, y, node.width, node.height)
+			g.rect(x, y, node.width, node.height).fill()
 			g.path([{x: x, y: cy}, {x: x, y: cy+node.height}]).stroke()
 			g.path([
 				{x: x+node.width, y: cy}, 
@@ -133,8 +131,7 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 			g.ellipse({x: cx, y: cy+node.height}, node.width, padding*1.5, 0, pi)
 				.fill().stroke()
 		} else {
-			g.ctx.fillRect(x, y, node.width, node.height)
-			g.ctx.strokeRect(x, y, node.width, node.height)
+			g.rect(x, y, node.width, node.height).fill().stroke()
 		}
 		var yDivider = y
 		_.each(node.compartments, function (part, i){

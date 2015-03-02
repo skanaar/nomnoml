@@ -87,9 +87,10 @@ a:hover {
 }
 .tools>.logo {
 	color: #000;
-	font-size: 175%;
+	font-size: 150%;
 }
 .tools>#tooltip {
+	font-size: 90%;
 	color: #807C72;
 	position: fixed;
 	top: 7px;
