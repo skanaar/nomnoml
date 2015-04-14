@@ -20,13 +20,14 @@ var nomnoml = nomnoml || {};
 			padding: (+d.padding) || 8,
 			spacing: (+d.spacing) || 40,
 			stroke: d.stroke || '#33322E',
+			title: d.title || 'nomnoml',
 			zoom: +d.zoom || 1
 		};
 	}
 
-	function fitCanvasSize(rect, scale, superSampling) {
-		var w = rect.width * scale;
-		var h = rect.height * scale;
+	function fitCanvasSize(rect, zoom, superSampling) {
+		var w = rect.width * zoom;
+		var h = rect.height * zoom;
 		// Try to avoid zepto dependency
 		//jqCanvas.attr({ width: superSampling * w, height: superSampling * h });
 		canvas.width = w * superSampling;
@@ -47,7 +48,7 @@ var nomnoml = nomnoml || {};
 		graphics.ctx.font = style + config.fontSize + 'pt ' + config.font + ', Helvetica, sans-serif';
 	}
 
-	function parseAndRender(code, graphics, superSampling) {
+	function parseAndRender(code, graphics, superSampling, scale) {
 		var ast = nomnoml.parse(code);
 		var config = getConfig(ast.directives);
 		var measurer = {
@@ -56,13 +57,15 @@ var nomnoml = nomnoml || {};
 			textHeight: function (s) { return config.leading * config.fontSize }
 		};
 		var layout = nomnoml.layout(measurer, config, ast);
-		fitCanvasSize(layout, config.zoom, superSampling);
+		fitCanvasSize(layout, config.zoom * scale, superSampling);
 		config.zoom *= superSampling;
+		config.zoom *= scale;
 		nomnoml.render(graphics, config, layout, measurer.setFont);
+		return { config: config, superSampling: superSampling };
 	}
 
-	nomnoml.draw = function (canvas, nomnomlcode) {
+	nomnoml.draw = function (canvas, nomnomlcode, scale) {
 		var skanaarCanvas = skanaar.Canvas(canvas, {});
-		parseAndRender(nomnomlcode, skanaarCanvas, window.devicePixelRatio || 1);
+		return parseAndRender(nomnomlcode, skanaarCanvas, window.devicePixelRatio || 1, scale || 1);
 	};
 })();
