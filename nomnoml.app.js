@@ -19,6 +19,7 @@ $(function (){
 	var zoomLevel = 0
 	var offset = {x:0, y:0}
 	var mouseDownPoint = false
+	var vm = nomnoml.vectorMath
 
 	window.addEventListener('hashchange', reloadStorage);
 	window.addEventListener('resize', _.throttle(sourceChanged, 750, {leading: true}))
@@ -38,12 +39,12 @@ $(function (){
 
 	function mouseDown(e){
 		$(canvasPanner).css({width: '100%'})
-		mouseDownPoint = diff({ x: e.pageX, y: e.pageY }, offset)
+		mouseDownPoint = vm.diff({ x: e.pageX, y: e.pageY }, offset)
 	}
 
 	function mouseMove(e){
 		if (mouseDownPoint){
-			offset = diff({ x: e.pageX, y: e.pageY }, mouseDownPoint)
+			offset = vm.diff({ x: e.pageX, y: e.pageY }, mouseDownPoint)
 			sourceChanged()
 		}
 	}

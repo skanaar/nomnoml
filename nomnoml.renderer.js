@@ -4,6 +4,7 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 
 	var padding = config.padding
 	var g = graphics
+	var vm = nomnoml.vectorMath
 
 	function renderCompartment(compartment, style, level){
 		g.ctx.save()
@@ -144,7 +145,7 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 			g.rect(x, y, node.width, node.height).fill()
 			g.path([{x: x, y: cy}, {x: x, y: cy+node.height}]).stroke()
 			g.path([
-				{x: x+node.width, y: cy}, 
+				{x: x+node.width, y: cy},
 				{x: x+node.width, y: cy+node.height}]).stroke()
 			g.ellipse({x: cx, y: cy}, node.width, padding*1.5).fill().stroke()
 			g.ellipse({x: cx, y: cy+node.height}, node.width, padding*1.5, 0, pi)
@@ -182,15 +183,15 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 	        g.ctx.beginPath()
 	        g.ctx.moveTo(p[0].x, p[0].y)
 			for (var i = 1; i < p.length-1; i++){
-				var vec = diff(p[i], p[i-1])
-				var bendStart = add(p[i-1], mult(normalize(vec), mag(vec)-radius))
+				var vec = vm.diff(p[i], p[i-1])
+				var bendStart = vm.add(p[i-1], vm.mult(vm.normalize(vec), vm.mag(vec)-radius))
 				g.ctx.lineTo(bendStart.x, bendStart.y)
 				g.ctx.arcTo(p[i].x, p[i].y, p[i+1].x, p[i+1].y, radius)
 			}
 			g.ctx.lineTo(_.last(p).x, _.last(p).y)
 	        g.ctx.stroke()
 		}
-		else 
+		else
 			g.path(p).stroke()
 	}
 
@@ -242,29 +243,29 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 
 	function rectIntersection(p1, p2, rect){
 		if(rect.width == 0 && rect.height == 0) return p2
-		var v = diff(p1, p2)
+		var v = vm.diff(p1, p2)
 		for(var t=1; t>=0; t-= 0.01){
-			var p = mult(v, t)
+			var p = vm.mult(v, t)
 			if(Math.abs(p.x) <= rect.width/2+config.edgeMargin &&
 				Math.abs(p.y) <= rect.height/2+config.edgeMargin)
-				return add(p2, p)
+				return vm.add(p2, p)
 		}
 		return p2
 	}
 
 	function drawArrow(path, isOpen, arrowPoint, diamond){
 		var size = (config.spacing - 2*config.edgeMargin) * config.arrowSize / 30
-		var v = diff(path[path.length-2], _.last(path))
-		var nv = normalize(v)
-		function getArrowBase(s){ return add(arrowPoint, mult(nv, s*size)) }
+		var v = vm.diff(path[path.length-2], _.last(path))
+		var nv = vm.normalize(v)
+		function getArrowBase(s){ return vm.add(arrowPoint, vm.mult(nv, s*size)) }
 		var arrowBase = getArrowBase(diamond ? 7 : 10)
-		var t = rot(nv)
+		var t = vm.rot(nv)
 		var arrowButt = (diamond) ? getArrowBase(14)
 				: (isOpen && !config.fillArrows) ? getArrowBase(5) : arrowBase
 		var arrow = [
-			add(arrowBase, mult(t, 4*size)),
+			vm.add(arrowBase, vm.mult(t, 4*size)),
 			arrowButt,
-			add(arrowBase, mult(t, -4*size)),
+			vm.add(arrowBase, vm.mult(t, -4*size)),
 			arrowPoint
 		]
 		g.ctx.fillStyle = isOpen ? config.stroke : config.fill[0]
