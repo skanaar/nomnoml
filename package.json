@@ -1,0 +1,30 @@
+{
+  "name": "nomnoml",
+  "version": "0.0.0",
+  "description": "Generates UML diagrams from text.",
+  "main": "none.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "gulp": "^3.8.11",
+    "gulp-concat": "^2.5.2"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/skanaar/nomnoml.git"
+  },
+  "keywords": [
+    "uml"
+  ],
+  "author": "Daniel Kallin <daniel.kallin@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/skanaar/nomnoml/issues"
+  },
+  "homepage": "https://github.com/skanaar/nomnoml"
+}
