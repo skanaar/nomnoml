@@ -9,7 +9,9 @@
   "dependencies": {},
   "devDependencies": {
     "gulp": "^3.8.11",
-    "gulp-concat": "^2.5.2"
+    "gulp-concat": "^2.5.2",
+    "gulp-footer": "^1.0.5",
+    "gulp-header": "^1.2.2"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
