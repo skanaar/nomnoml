@@ -215,7 +215,7 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 		g.ctx.fillText(r.endLabel, end.x+labelX, end.y-padding)
 
 		if (r.assoc != '-/-'){
-			if (g.ctx.setLineDash && _.hasSubstring(r.assoc, '--')){
+			if (g.ctx.setLineDash && _skanaar.hasSubstring(r.assoc, '--')){
 				var dash = Math.max(4, 2*config.lineWidth)
 				g.ctx.setLineDash([dash, dash])
 				strokePath(path)

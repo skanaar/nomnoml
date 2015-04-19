@@ -73,7 +73,7 @@ nomnoml.layout = function (measurer, config, ast){
 	function layoutClassifier(clas){
 		_.each(clas.compartments, layoutCompartment)
 		clas.width = _.max(_.pluck(clas.compartments, 'width'))
-		clas.height = _.sum(clas.compartments, 'height')
+		clas.height = _skanaar.sum(clas.compartments, 'height')
 		if (clas.type == 'HIDDEN'){
 			clas.width = 0
 			clas.height = 0
