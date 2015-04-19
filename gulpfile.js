@@ -2,7 +2,7 @@ var gulp = require('gulp');
 var concat = require('gulp-concat');
 
 var nomnomlFiles = [
-    'lib/underscore.skanaar.js',
+    'lib/_skanaar.js',
     'lib/skanaar.canvas.js',
     'nomnoml.vectorMath.js',
     'nomnoml.jison.js',
