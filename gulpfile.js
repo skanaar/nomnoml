@@ -13,18 +13,24 @@ var nomnomlFiles = [
     'nomnoml.renderer.js',
     'nomnoml.js'
 ];
+var hdr = [
+    '(function (nomnomlFactory) {',
+    '\tif (typeof define === "function" && define.amd) define([\'underscore\', \'dagre\'], nomnomlFactory);',
+    //'\telse if (typeof module === "object" && module.exports) module.exports = nomnomlFactory(_, dagre);', // future support for CommonJS perhaps
+    '\telse this.nomnoml = nomnomlFactory(_, dagre);',
+    '})(function (_, dagre) {',
+    ''
+].join('\n');
 var ftr = [
     '',
-    '\tif (typeof define === "function" && define.amd) define(nomnoml);',
-    '\telse if (typeof module === "object" && module.exports) module.exports = nomnoml;',
-    '\tthis.nomnoml = nomnoml;',
-    '})();'
+    '\treturn nomnoml;',
+    '});'
 ].join('\n');
 
 gulp.task('default', function () {
     gulp.src(nomnomlFiles)
         .pipe(concat('nomnoml.js'))
-        .pipe(header('(function () {\n'))
+        .pipe(header(hdr))
         .pipe(footer(ftr))
         .pipe(gulp.dest('dist/'));
 });
