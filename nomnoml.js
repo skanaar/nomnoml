@@ -25,7 +25,7 @@ var nomnoml = nomnoml || {};
 		};
 	}
 
-	function fitCanvasSize(rect, zoom, superSampling) {
+	function fitCanvasSize(canvas, rect, zoom, superSampling) {
 		var w = rect.width * zoom;
 		var h = rect.height * zoom;
 		// Try to avoid zepto dependency
@@ -48,7 +48,7 @@ var nomnoml = nomnoml || {};
 		graphics.ctx.font = style + config.fontSize + 'pt ' + config.font + ', Helvetica, sans-serif';
 	}
 
-	function parseAndRender(code, graphics, superSampling, scale) {
+	function parseAndRender(code, graphics, canvas, superSampling, scale) {
 		var ast = nomnoml.parse(code);
 		var config = getConfig(ast.directives);
 		var measurer = {
@@ -57,7 +57,7 @@ var nomnoml = nomnoml || {};
 			textHeight: function (s) { return config.leading * config.fontSize }
 		};
 		var layout = nomnoml.layout(measurer, config, ast);
-		fitCanvasSize(layout, config.zoom * scale, superSampling);
+		fitCanvasSize(canvas, layout, config.zoom * scale, superSampling);
 		config.zoom *= superSampling;
 		config.zoom *= scale;
 		nomnoml.render(graphics, config, layout, measurer.setFont);
@@ -66,6 +66,6 @@ var nomnoml = nomnoml || {};
 
 	nomnoml.draw = function (canvas, nomnomlcode, scale) {
 		var skanaarCanvas = skanaar.Canvas(canvas, {});
-		return parseAndRender(nomnomlcode, skanaarCanvas, window.devicePixelRatio || 1, scale || 1);
+		return parseAndRender(nomnomlcode, skanaarCanvas, canvas, window.devicePixelRatio || 1, scale || 1);
 	};
 })();
