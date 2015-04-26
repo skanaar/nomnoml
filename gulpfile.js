@@ -15,7 +15,7 @@ var nomnomlFiles = [
 ];
 var hdr = [
     '(function (nomnomlFactory) {',
-    '\tif (typeof define === "function" && define.amd) define([\'underscore\', \'dagre\'], nomnomlFactory);',
+    '\tif (typeof define === "function" && define.amd) define([\'lodash\', \'dagre\'], nomnomlFactory);',
     //'\telse if (typeof module === "object" && module.exports) module.exports = nomnomlFactory(_, dagre);', // future support for CommonJS perhaps
     '\telse this.nomnoml = nomnomlFactory(_, dagre);',
     '})(function (_, dagre) {',

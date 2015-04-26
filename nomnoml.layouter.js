@@ -17,12 +17,14 @@ nomnoml.Compartment = function (lines, nodes, relations){
 
 nomnoml.layout = function (measurer, config, ast){
 	function runDagre(input){
-		return dagre.layout()
-					.rankSep(config.spacing)
-					.nodeSep(config.spacing)
-					.edgeSep(config.spacing)
-					.rankDir(config.direction)
-					.run(input)
+		input.setGraph({
+			ranksep: config.spacing,
+			nodesep: config.spacing,
+			edgesep: config.spacing,
+			rankdir: config.direction
+		})
+		dagre.layout(input)
+		return input
 	}
 	function measureLines(lines, fontWeight){
 		if (!lines.length)
@@ -43,25 +45,29 @@ nomnoml.layout = function (measurer, config, ast){
 
 		_.each(c.nodes, layoutClassifier)
 
-		var g = new dagre.Digraph()
+		var g = new dagre.graphlib.Graph({ directed: true, multigraph: true })
+		//g.setGraph({})
+		//g.setDefaultEdgeLabel(function () { return {} })
 		_.each(c.nodes, function (e){
-			g.addNode(e.name, { width: e.width, height: e.height })
+			g.setNode(e.name, { width: e.width, height: e.height })
 		})
 		_.each(c.relations, function (r){
-			g.addEdge(r.id, r.start, r.end)
+			g.setEdge(r.start, r.end, {}, r.id)
 		})
 		var dLayout = runDagre(g)
 
 		var rels = _.indexBy(c.relations, 'id')
 		var nodes = _.indexBy(c.nodes, 'name')
 		function toPoint(o){ return {x:o.x, y:o.y} }
-		dLayout.eachNode(function(u, value) {
-			nodes[u].x = value.x
-			nodes[u].y = value.y
+		_.each(dLayout.nodes(), function(n) {
+			var node = dLayout.node(n)
+			nodes[n].x = node.x
+			nodes[n].y = node.y
 		})
-		dLayout.eachEdge(function(e, u, v, value) {
-			var start = nodes[u], end = nodes[v]
-			rels[e].path = _.map(_.flatten([start, value.points, end]), toPoint)
+		_.each(dLayout.edges(), function(e) {
+			var edge = dLayout.edge(e)
+			var start = nodes[e.v], end = nodes[e.w]
+			rels[e.name].path = _.map(_.flatten([start, edge.points, end]), toPoint)
 		})
 		var graph = dLayout.graph()
 		var graphHeight = graph.height ? graph.height + 2*config.gutter : 0

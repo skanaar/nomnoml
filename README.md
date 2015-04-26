@@ -9,7 +9,7 @@ Created by <a href="mailto:daniel.kallin@gmail.com">Daniel Kallin</a>.</p>
 
 - [jison](http://zaach.github.io/jison/)
 - [dagre](https://github.com/cpettitt/dagre)
-- [underscore](http://underscorejs.org)
+- [lodash](http://lodash.com)
 - [typicons](http://typicons.com/)
 - [zepto](http://zeptojs.com/)
 - [solarized](http://ethanschoonover.com/solarized)
