@@ -201,10 +201,10 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 		var startNode = _.findWhere(compartment.nodes, {name:r.start})
 		var endNode = _.findWhere(compartment.nodes, {name:r.end})
 
-		var start = rectIntersection(r.path[1], _.first(r.path), startNode)
-		var end = rectIntersection(r.path[r.path.length-2], _.last(r.path), endNode)
+		var start = r.path[1]
+		var end = r.path[r.path.length - 2]
 
-		var path = _.flatten([start, _.tail(_.initial(r.path)), end])
+		var path = _.tail(_.initial(r.path))
 		var fontSize = config.fontSize
 
 		g.ctx.fillStyle = config.stroke
@@ -239,18 +239,6 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 		var tokens = r.assoc.split('-')
 		drawArrowEnd(_.last(tokens), path, end)
 		drawArrowEnd(_.first(tokens), path.reverse(), start)
-	}
-
-	function rectIntersection(p1, p2, rect){
-		if(rect.width == 0 && rect.height == 0) return p2
-		var v = vm.diff(p1, p2)
-		for(var t=1; t>=0; t-= 0.01){
-			var p = vm.mult(v, t)
-			if(Math.abs(p.x) <= rect.width/2+config.edgeMargin &&
-				Math.abs(p.y) <= rect.height/2+config.edgeMargin)
-				return vm.add(p2, p)
-		}
-		return p2
 	}
 
 	function drawArrow(path, isOpen, arrowPoint, diamond){
