@@ -67,7 +67,7 @@ nomnoml.layout = function (measurer, config, ast){
 		_.each(dLayout.edges(), function(e) {
 			var edge = dLayout.edge(e)
 			var start = nodes[e.v], end = nodes[e.w]
-			rels[e.name].path = _.map(_.flatten([start, edge.points, end]), toPoint)
+			rels[e.name].path = _.map(edge.points, toPoint)
 		})
 		var graph = dLayout.graph()
 		var graphHeight = graph.height ? graph.height + 2*config.gutter : 0

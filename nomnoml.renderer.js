@@ -201,10 +201,10 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 		var startNode = _.findWhere(compartment.nodes, {name:r.start})
 		var endNode = _.findWhere(compartment.nodes, {name:r.end})
 
-		var start = r.path[1]
-		var end = r.path[r.path.length - 2]
+		var start = _.first(r.path)
+		var end = _.last(r.path)
 
-		var path = _.tail(_.initial(r.path))
+		var path = r.path
 		var fontSize = config.fontSize
 
 		g.ctx.fillStyle = config.stroke
