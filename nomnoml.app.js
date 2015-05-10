@@ -14,7 +14,7 @@ $(function (){
 	var canvasElement = document.getElementById('canvas')
 	var defaultSource = document.getElementById('defaultGraph').innerHTML
 	var graphics = skanaar.Canvas(canvasElement, {})
-	
+
 	window.addEventListener('resize', _.throttle(sourceChanged, 750, {leading: true}))
 	textarea.addEventListener('input', _.debounce(sourceChanged, 300))
 	textarea.value = storage.read()
@@ -41,9 +41,17 @@ $(function (){
 		}
 	}
 
+	// Adapted from http://meyerweb.com/eric/tools/dencoder/
+	function urlEncode(unencoded) {
+		return encodeURIComponent(unencoded).replace(/'/g,"%27").replace(/"/g,"%22")
+	}
+	function urlDecode(encoded) {
+		return decodeURIComponent(encoded.replace(/\+/g,  " "))
+	}
+
 	function setShareableLink(str){
 		var base = 'http://www.nomnoml.com/#view/'
-		linkLink.href = base + str.split('\n').join('%0A').split(' ').join('%20')
+		linkLink.href = base + urlEncode(str)
 	}
 
 	function isViewMode(locationHash){
@@ -52,7 +60,7 @@ $(function (){
 	function buildStorage(locationHash){
 		if (locationHash.substring(0,6) === '#view/')
 			return {
-				read: function (){ return decodeURIComponent(locationHash.substring(6)) },
+				read: function (){ return urlDecode(locationHash.substring(6)) },
 				save: function (source){ setShareableLink(textarea.value) },
 				isReadonly: true
 			}
