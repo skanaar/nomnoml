@@ -94,9 +94,9 @@
 
 				<h2>Examples</h2>
 
-				<a target="_BLANK" href="http://www.nomnoml.com/#view/[<frame>Decorator%20pattern|%0A%20%20[<abstract>Component||+%20operation()]%0A%20%20[Client]%20depends%20-->%20[Component]%0A%20%20[Decorator|-%20next:%20Component]%0A%20%20[Decorator]%20decorates%20--%20[ConcreteComponent]%0A%20%20[Component]%20<:-%20[Decorator]%0A%20%20[Component]%20<:-%20[ConcreteComponent]%0A]">Decorator pattern</a><br>
-				<a target="_BLANK" href="http://www.nomnoml.com/#view/[<frame>Strategy%20pattern|%0A%20%20[client]%20o-%20[<abstract>Strategy|+%20operation()]%0A%20%20[Strategy]%20<:--%20[StrategyA]%0A%20%20[Strategy]%20<:--%20[StrategyB]%0A]">Strategy pattern</a><br>
-				<a target="_BLANK" href="http://www.nomnoml.com/#view/[<package>UML%20Representation|%0A%20%20[Compartment|lines:%20string*;nodes:%20Classifier*;relations:%20Relations*]%0A%20%20[Classifier|type:%20string;name:%20string;compartments:%20Compartment*;width:%20int;height:%20int;x:%20int;y:%20int]%0A%20%20[Relation|startLabel:%20string;endLabel:%20string;type:%20string;startShape:%20string;endShape:%20string;path:%20Point*]%0A%20%20[Compartment]+->[Classifier]%0A%20%20[Classifier]+->[Compartment]%0A%20%20[Compartment]+->[Relation]%0A]%0A[parser]-->[UML%20Representation]%0A[layouter||layout(ast:%20Compartment)]%0A[renderer||render(d:%20Compartment)]%0A[parser||parse(source:%20String):%20Classifier]+->[Jison]%0A[layouter]-->[UML%20Representation]%0A[layouter]+->[dagre]%0A[renderer]-->[UML%20Representation]%0A[renderer]o->[<instance>:Canvas]%0A[measurer]<:--[renderer]%0A[layouter]->[measurer]">nomnoml architecture</a>
+				<a target="_BLANK" href="#view/[<frame>Decorator%20pattern|%0A%20%20[<abstract>Component||+%20operation()]%0A%20%20[Client]%20depends%20-->%20[Component]%0A%20%20[Decorator|-%20next:%20Component]%0A%20%20[Decorator]%20decorates%20--%20[ConcreteComponent]%0A%20%20[Component]%20<:-%20[Decorator]%0A%20%20[Component]%20<:-%20[ConcreteComponent]%0A]">Decorator pattern</a><br>
+				<a target="_BLANK" href="#view/[<frame>Strategy%20pattern|%0A%20%20[client]%20o-%20[<abstract>Strategy|+%20operation()]%0A%20%20[Strategy]%20<:--%20[StrategyA]%0A%20%20[Strategy]%20<:--%20[StrategyB]%0A]">Strategy pattern</a><br>
+				<a target="_BLANK" href="#view/[<package>UML%20Representation|%0A%20%20[Compartment|lines:%20string*;nodes:%20Classifier*;relations:%20Relations*]%0A%20%20[Classifier|type:%20string;name:%20string;compartments:%20Compartment*;width:%20int;height:%20int;x:%20int;y:%20int]%0A%20%20[Relation|startLabel:%20string;endLabel:%20string;type:%20string;startShape:%20string;endShape:%20string;path:%20Point*]%0A%20%20[Compartment]+->[Classifier]%0A%20%20[Classifier]+->[Compartment]%0A%20%20[Compartment]+->[Relation]%0A]%0A[parser]-->[UML%20Representation]%0A[layouter||layout(ast:%20Compartment)]%0A[renderer||render(d:%20Compartment)]%0A[parser||parse(source:%20String):%20Classifier]+->[Jison]%0A[layouter]-->[UML%20Representation]%0A[layouter]+->[dagre]%0A[renderer]-->[UML%20Representation]%0A[renderer]o->[<instance>:Canvas]%0A[measurer]<:--[renderer]%0A[layouter]->[measurer]">nomnoml architecture</a>
 				
 				<hr>
 
@@ -179,7 +179,11 @@
 				<img src="img/trash.png">
 			</a>
 			<span id="tooltip"></span>
-			<span id="storage-status">View mode, changes are not saved</span>
+			<span id="storage-status">
+				View mode, changes are not saved.
+				<a href="javascript:nomnoml.saveViewModeToStorage()">save</a>
+				<a href="javascript:nomnoml.exitViewMode()">close</a>
+			</span>
 		</div>
 	</div>
 

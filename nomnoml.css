@@ -100,7 +100,7 @@ a:hover {
 	border-radius: 2px;
 	padding: 0 5px;
 }
-.tools>#storage-status {
+.tools > #storage-status {
 	color: #000;
 	opacity: 0.5;
 	font-style: italic;
@@ -109,7 +109,14 @@ a:hover {
 	right: 0;
 	display: block;
 	width: 100%;
-	text-align: center
+	text-align: center;
+}
+.tools > #storage-status a {
+	border: 2px solid #333;
+	padding: 0 5px;
+	border-radius: 4px;
+	font-style: normal;
+	opacity: 1;
 }
 
 .sidebar {

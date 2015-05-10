@@ -2,12 +2,13 @@ var nomnoml = nomnoml || {}
 
 $(function (){
 
-	var storage = buildStorage(location.hash)
+	var storage = null
 	var jqCanvas = $('#canvas')
 	var viewport = $(window)
 	var lineNumbers = $('#linenumbers')
 	var lineMarker = $('#linemarker')
 	var jqTextarea = $('#textarea')
+	var storageStatusElement = $('#storage-status')
 	var textarea = document.getElementById('textarea')
 	var imgLink = document.getElementById('savebutton')
 	var linkLink = document.getElementById('linkbutton')
@@ -15,16 +16,13 @@ $(function (){
 	var defaultSource = document.getElementById('defaultGraph').innerHTML
 	var graphics = skanaar.Canvas(canvasElement, {})
 
+	window.addEventListener('hashchange', reloadStorage);
 	window.addEventListener('resize', _.throttle(sourceChanged, 750, {leading: true}))
 	textarea.addEventListener('input', _.debounce(sourceChanged, 300))
-	textarea.value = storage.read()
-
-	if (storage.isReadonly) $('#storage-status').show()
-	else $('#storage-status').hide()
-
-	lineNumbers.val(_.times(60, _.identity).join('\n'))
 	initImageDownloadLink(imgLink, canvasElement)
-	sourceChanged()
+	lineNumbers.val(_.times(60, _.identity).join('\n'))
+
+	reloadStorage()
 
 	nomnoml.toggleSidebar = function (id){
 		var sidebars = ['reference', 'about']
@@ -41,6 +39,17 @@ $(function (){
 		}
 	}
 
+	nomnoml.saveViewModeToStorage = function (){
+		if (confirm('Do you want to overwrite the diagram in localStorage with the currently viewed diagram?')){
+			storage.moveToLocalStorage()
+			window.location = './'
+		}
+	}
+
+	nomnoml.exitViewMode = function (){
+		window.location = './'
+	}
+
 	// Adapted from http://meyerweb.com/eric/tools/dencoder/
 	function urlEncode(unencoded) {
 		return encodeURIComponent(unencoded).replace(/'/g,"%27").replace(/"/g,"%22")
@@ -54,22 +63,22 @@ $(function (){
 		linkLink.href = base + urlEncode(str)
 	}
 
-	function isViewMode(locationHash){
-	}
-
 	function buildStorage(locationHash){
+		var key = 'nomnoml.lastSource'
 		if (locationHash.substring(0,6) === '#view/')
 			return {
 				read: function (){ return urlDecode(locationHash.substring(6)) },
 				save: function (source){ setShareableLink(textarea.value) },
+				moveToLocalStorage: function (){ localStorage[key] = this.read() },
 				isReadonly: true
 			}
 		return {
-			read: function (){ return localStorage['nomnoml.lastSource'] || defaultSource },
+			read: function (){ return localStorage[key] || defaultSource },
 			save: function (source){
 				setShareableLink(textarea.value)
-				localStorage['nomnoml.lastSource'] = source
+				localStorage[key] = source
 			},
+			moveToLocalStorage: function (){},
 			isReadonly: false
 		}
 	}
@@ -133,6 +142,14 @@ $(function (){
 		fitCanvasSize(layout, config.zoom, superSampling)
 		config.zoom *= superSampling
 		nomnoml.render(graphics, config, layout, setFont)
+	}
+
+	function reloadStorage(){
+		storage = buildStorage(location.hash)
+		textarea.value = storage.read()
+		sourceChanged()
+		if (storage.isReadonly) storageStatusElement.show()
+		else storageStatusElement.hide()
 	}
 
 	function sourceChanged(){
