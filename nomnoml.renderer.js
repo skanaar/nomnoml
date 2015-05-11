@@ -38,6 +38,8 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 			STATE: { center: true},
 			DATABASE: { bold: true, center: true},
 			NOTE: {},
+			ACTOR: {},
+			USECASE: { center: true },
 			START: { empty: true },
 			END: { empty: true },
 			INPUT: { center: true },
@@ -51,6 +53,7 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 	function renderNode(node, level){
 		var x = Math.round(node.x-node.width/2)
 		var y = Math.round(node.y-node.height/2)
+		var xCenter = x + node.width/2
 		var shade = config.fill[level] || _.last(config.fill)
 		g.ctx.fillStyle = shade
 		if (node.type === 'NOTE'){
@@ -67,13 +70,29 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 				{x: x+node.width-padding, y: y+padding},
 				{x: x+node.width, y: y+padding}
 			]).stroke()
+		} else if (node.type === 'ACTOR') {
+			var a = padding/2
+			var yp = y + a/2
+			var center = {x: xCenter, y: yp-a}
+			g.circle(center, a).fill().stroke()
+			g.path([ {x: xCenter,   y: yp},
+				     {x: xCenter,   y: yp+2*a} ]).stroke()
+			g.path([ {x: xCenter-a, y: yp+a},
+				     {x: xCenter+a, y: yp+a} ]).stroke()
+			g.path([ {x: xCenter-a, y: yp+a+padding},
+				     {x: xCenter  , y: yp+padding},
+				     {x: xCenter+a, y: yp+a+padding} ]).stroke()
+		} else if (node.type === 'USECASE') {
+			var r = Math.min(padding*2*config.leading, node.height/2)
+			var center = {x: xCenter, y: y+node.height/2}
+			g.ellipse(center, node.width, node.height).fill().stroke()
 		} else if (node.type === 'START') {
 			g.ctx.fillStyle = config.stroke
-			g.circle(x+node.width/2, y+node.height/2, node.height/2.5).fill()
+			g.circle(xCenter, y+node.height/2, node.height/2.5).fill()
 		} else if (node.type === 'END') {
-			g.circle(x+node.width/2, y+node.height/2, node.height/3).fill().stroke()
+			g.circle(xCenter, y+node.height/2, node.height/3).fill().stroke()
 			g.ctx.fillStyle = config.stroke
-			g.circle(x+node.width/2, y+node.height/2, node.height/3-padding/2).fill()
+			g.circle(xCenter, y+node.height/2, node.height/3-padding/2).fill()
 		} else if (node.type === 'STATE') {
 			var r = Math.min(padding*2*config.leading, node.height/2)
 			g.roundRect(x, y, node.width, node.height, r).fill().stroke()
@@ -119,7 +138,7 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 			]).fill().stroke()
 		} else if (node.type === 'HIDDEN') {
 		} else if (node.type === 'DATABASE') {
-			var cx = x+node.width/2
+			var cx = xCenter
 			var cy = y-padding/2
 			var pi = 3.1416
 			g.rect(x, y, node.width, node.height).fill()
@@ -133,7 +152,7 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 		} else {
 			g.rect(x, y, node.width, node.height).fill().stroke()
 		}
-		var yDivider = y
+		var yDivider = (node.type === 'ACTOR' ? y + padding*3/4 : y)
 		_.each(node.compartments, function (part, i){
 			var s = textStyle(node, i)
 			if (s.empty) return

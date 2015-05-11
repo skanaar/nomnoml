@@ -52,6 +52,8 @@
 				[&lt;input&gt; name]<br>
 				[&lt;sender&gt; name]<br>
 				[&lt;receiver&gt; name]<br>
+				[&lt;actor&gt; name]<br>
+				[&lt;usecase&gt; name]<br>
 				[&lt;hidden&gt; name]<br>
 
 				<h2>Directives</h2>
@@ -204,7 +206,9 @@
 [<start>st]->[<state>plunder]
 [plunder]->[<choice>more loot]
 [more loot]->[st]
-[more loot] no ->[<end>e]</script>
+[more loot] no ->[<end>e]
+
+[<actor>Sailor] - [<usecase>shiver me;timbers]</script>
 
 	<script src="lib/zepto.min.js"></script>
 	<script src="lib/underscore.js"></script>
