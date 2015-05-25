@@ -84,4 +84,5 @@ This is how the Decorator pattern looks like in nomnoml syntax:
     #padding: 8
     #spacing: 40
     #stroke: #33322E
+    #title: filename
     #zoom: 1
