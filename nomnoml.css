@@ -36,6 +36,7 @@ textarea {
 	font-family: Consolas, Menlo, monospace;
 	color: #657b83;
 	padding: 30px 0 0 40px;
+	resize: none;
 }
 #linenumbers {
 	outline: none;
@@ -51,7 +52,7 @@ textarea {
 	padding: 30px 5px 0 0;
 	overflow-x: hidden;
 	overflow-y: hidden;
-	resize: none; 
+	resize: none;
 }
 #canvas {
 	position: absolute;
