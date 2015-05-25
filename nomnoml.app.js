@@ -13,23 +13,57 @@ $(function (){
 	var imgLink = document.getElementById('savebutton')
 	var linkLink = document.getElementById('linkbutton')
 	var canvasElement = document.getElementById('canvas')
+	var canvasPanner = document.getElementById('canvas-panner')
 	var defaultSource = document.getElementById('defaultGraph').innerHTML
 	var graphics = skanaar.Canvas(canvasElement, {})
+	var zoomLevel = 0
+	var offset = {x:0, y:0}
+	var mouseDownPoint = false
 
 	window.addEventListener('hashchange', reloadStorage);
 	window.addEventListener('resize', _.throttle(sourceChanged, 750, {leading: true}))
 	textarea.addEventListener('input', _.debounce(sourceChanged, 300))
+	canvasPanner.addEventListener('mouseenter', _.bind(jqTextarea.toggleClass, jqTextarea, 'hidden', true))
+	canvasPanner.addEventListener('mouseleave', _.bind(jqTextarea.toggleClass, jqTextarea, 'hidden', false))
+	canvasPanner.addEventListener('mousedown', mouseDown)
+	window.addEventListener('mousemove', _.throttle(mouseMove,50))
+	canvasPanner.addEventListener('mouseup', mouseUp)
+	canvasPanner.addEventListener('mouseleave', mouseUp)
+	canvasPanner.addEventListener('wheel', _.throttle(magnify, 50))
 	initImageDownloadLink(imgLink, canvasElement)
 	lineNumbers.val(_.times(60, _.identity).join('\n'))
+	initToolbarTooltips()
 
 	reloadStorage()
+
+	function mouseDown(e){
+		$(canvasPanner).css({width: '100%'})
+		mouseDownPoint = diff({ x: e.pageX, y: e.pageY }, offset)
+	}
+
+	function mouseMove(e){
+		if (mouseDownPoint){
+			offset = diff({ x: e.pageX, y: e.pageY }, mouseDownPoint)
+			sourceChanged()
+		}
+	}
+
+	function mouseUp(e){
+		mouseDownPoint = false
+		$(canvasPanner).css({width: '33%'})
+	}
+
+	function magnify(e){
+		zoomLevel = Math.min(10, zoomLevel - (e.deltaY < 0 ? -1 : 1))
+		sourceChanged()
+	}
 
 	nomnoml.toggleSidebar = function (id){
 		var sidebars = ['reference', 'about']
 		_.chain(sidebars).without(id).each(function (key){
-			document.getElementById(key).classList.remove('visible')
+			$(document.getElementById(key)).toggleClass('visible', false)
 		})
-		document.getElementById(id).classList.toggle('visible')
+		$(document.getElementById(id)).toggleClass('visible')
 	}
 
 	nomnoml.discardCurrentGraph = function (){
@@ -91,6 +125,14 @@ $(function (){
 		}
 	}
 
+	function initToolbarTooltips(){
+		var tooltip = $('#tooltip')[0]
+		$('.tools > a').each(function (i, link){
+			link.onmouseover = function (){ tooltip.textContent  = $(link).attr('title') }
+			link.onmouseout = function (){ tooltip.textContent  = '' }
+		})
+	}
+
 	function getConfig(d){
 		return {
 			arrowSize: +d.arrowSize || 1,
@@ -108,17 +150,18 @@ $(function (){
 			padding: (+d.padding) || 8,
 			spacing: (+d.spacing) || 40,
 			stroke: d.stroke || '#33322E',
+			title: d.title || 'nomnoml',
 			zoom: +d.zoom || 1
 		}
 	}
 
-	function fitCanvasSize(rect, scale, superSampling){
-		var w = rect.width * scale
-		var h = rect.height * scale
+	function fitCanvasSize(rect, zoom, superSampling, offset){
+		var w = rect.width * zoom
+		var h = rect.height * zoom
 		jqCanvas.attr({width: superSampling*w, height: superSampling*h})
 		jqCanvas.css({
-			top: 300 * (1 - h/viewport.height()),
-			left: 150 + (viewport.width() - w)/2,
+			top: 300 * (1 - h/viewport.height()) + offset.y,
+			left: 150 + (viewport.width() - w)/2 + offset.x,
 			width: w,
 			height: h
 		})
@@ -130,17 +173,24 @@ $(function (){
 		graphics.ctx.font = style+config.fontSize+'pt '+config.font+', Helvetica, sans-serif'
 	}
 
+	function setFilename(filename){
+		imgLink.download = filename + '.png'
+	}
+
 	function parseAndRender(superSampling){
 		var ast = nomnoml.parse(textarea.value)
 		var config = getConfig(ast.directives)
+		setFilename(config.title)
+		var scale = Math.exp(zoomLevel/10)
 	    var measurer = {
 	    	setFont: setFont,
 	        textWidth: function (s){ return graphics.ctx.measureText(s).width },
 	        textHeight: function (s){ return config.leading * config.fontSize }
 	    }
 		var layout = nomnoml.layout(measurer, config, ast)
-		fitCanvasSize(layout, config.zoom, superSampling)
+		fitCanvasSize(layout, config.zoom * scale, superSampling, offset)
 		config.zoom *= superSampling
+		config.zoom *= scale
 		nomnoml.render(graphics, config, layout, setFont)
 	}
 

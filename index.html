@@ -17,6 +17,7 @@
 		<canvas id="canvas"></canvas>
 		<textarea id="textarea" spellcheck="false"></textarea>
 		<textarea id="linenumbers" disabled></textarea>
+		<div id="canvas-panner"></div>
 
 		<div id="reference" class="sidebar">
 			<div class="content">
@@ -72,6 +73,7 @@
 				#padding: 8<br>
 				#spacing: 40<br>
 				#stroke: #33322E<br>
+				#title: filename<br>
 				#zoom: 1<br>
 			</div>
 
@@ -90,6 +92,13 @@
 				<a target="_blank" href="http://typicons.com/">typicons</a> ,
 				<a target="_blank" href="http://zeptojs.com/">zepto</a> and
 				<a target="_blank" href="http://ethanschoonover.com/solarized">solarized</a>.
+				</p>
+				
+				<hr>
+
+				<h2>Interaction</h2>
+
+				<p>Hover over the right hand third of the window allow you to pans and zoom the canvas.
 				</p>
 				
 				<hr>
@@ -171,7 +180,7 @@
 			<a href="javascript:void(0)" onclick="nomnoml.toggleSidebar('reference')" title="Language reference">
 				<img src="img/book.png">
 			</a>
-			<a id="savebutton" href="javascript:void(0)" download="uml.png" title="Download snapshot of this diagram">
+			<a id="savebutton" href="javascript:void(0)" download="nomnoml.png" title="Download snapshot of this diagram">
 				<img src="img/camera.png">
 			</a>
 			<a id="linkbutton" href="javascript:void(0)" target="_blank" title="Shareable link to this diagram">
@@ -221,14 +230,6 @@
 	<script src="nomnoml.layouter.js"></script>
 	<script src="nomnoml.renderer.js"></script>
 	<script src="nomnoml.app.js"></script>
-
-	<script>
-		var tooltip = $('#tooltip')[0]
-		$('.tools > a').each(function (i, link){
-			link.onmouseover = function (){ tooltip.textContent  = $(link).attr('title') }
-			link.onmouseout = function (){ tooltip.textContent  = '' }
-		})
-	</script>
 
 	<script>
 		(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
