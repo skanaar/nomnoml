@@ -14,6 +14,11 @@ Created by <a href="mailto:daniel.kallin@gmail.com">Daniel Kallin</a>.</p>
 - [zepto](http://zeptojs.com/)
 - [solarized](http://ethanschoonover.com/solarized)
 
+
+###Interaction
+
+The canvas can be panned and zoomed by dragging and scrolling in the right hand third of the canvas. Downloaded image files will be given the filename in the `#title` directive.
+
 ###Example
 
 This is how the Decorator pattern looks like in nomnoml syntax:
