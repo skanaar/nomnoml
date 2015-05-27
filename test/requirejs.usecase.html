@@ -32,14 +32,7 @@
         require.config({
             baseUrl: '../bower_components',
             paths: {
-                dagre: 'dagre/dist/dagre.core',
-                graphlib: 'graphlib/dist/graphlib.core',
-                //underscore: 'lodash/lodash',
                 lodash: 'lodash/lodash'
-            },
-            shim: {
-                graphlib: ['lodash'],
-                dagre: ['graphlib', 'lodash']
             }
         });
         require(['../dist/nomnoml'], function (nomnoml) {

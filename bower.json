@@ -30,8 +30,7 @@
     "design/"
   ],
   "dependencies": {
-    "lodash": "~3.7.0",
-    "dagre": "~0.7.1"
+    "lodash": "~3.7.0"
   },
   "resolutions": {
     "lodash": "~3.7.0"
