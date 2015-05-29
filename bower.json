@@ -12,7 +12,7 @@
     "globals"
   ],
   "keywords": [
-    "uml"
+    "nomnoml uml"
   ],
   "license": "MIT",
   "ignore": [
@@ -22,6 +22,7 @@
     "*.js",
     "*.png",
     "*.json",
+    "*.html"
     "node_modules/",
     "bower_components/",
     "test/",
@@ -30,9 +31,6 @@
     "design/"
   ],
   "dependencies": {
-    "lodash": "~3.7.0"
-  },
-  "resolutions": {
     "lodash": "~3.7.0"
   },
   "devDependencies": {
