@@ -10,6 +10,12 @@ hr {
 	background: #fdf6e3;
 	height: 5px;
 }
+h1 {
+	font-size: 100%;
+	display: inline;
+	margin: 0;
+}
+
 .wrap {
 	position: relative;
 	min-height: 100%;
