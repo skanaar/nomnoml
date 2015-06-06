@@ -93,7 +93,7 @@ $(function (){
 	}
 
 	function setShareableLink(str){
-		var base = 'http://www.nomnoml.com/#view/'
+		var base = '#view/'
 		linkLink.href = base + urlEncode(str)
 	}
 
@@ -103,7 +103,7 @@ $(function (){
 			return {
 				read: function (){ return urlDecode(locationHash.substring(6)) },
 				save: function (source){ setShareableLink(textarea.value) },
-				moveToLocalStorage: function (){ localStorage[key] = this.read() },
+				moveToLocalStorage: function (){ localStorage[key] = textarea.value },
 				isReadonly: true
 			}
 		return {
