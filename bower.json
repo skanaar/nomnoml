@@ -27,7 +27,7 @@
     "*.js",
     "*.png",
     "*.json",
-    "*.html"
+    "*.html",
     "node_modules/",
     "bower_components/",
     "test/",
