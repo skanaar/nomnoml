@@ -3,9 +3,9 @@ nomnoml
 
 Hello, this is [nomnoml](http://www.nomnoml.com), a tool for drawing UML diagrams based on a simple syntax. It tries to keep its syntax visually as close as possible to the generated UML diagram without resorting to ASCII drawings.
 
-Created by <a href="mailto:daniel.kallin@gmail.com">Daniel Kallin</a>.</p>
+Created by [Daniel Kallin](https://github.com/skanaar). Contributions by [Alexander Moosbrugger](https://github.com/amoosbr) and [korroz](https://github.com/korroz).
 
-###Nomnoml was made possible by these cool projects
+### Nomnoml was made possible by these cool projects
 
 - [jison](http://zaach.github.io/jison/)
 - [dagre](https://github.com/cpettitt/dagre)
@@ -14,7 +14,7 @@ Created by <a href="mailto:daniel.kallin@gmail.com">Daniel Kallin</a>.</p>
 - [zepto](http://zeptojs.com/)
 - [solarized](http://ethanschoonover.com/solarized)
 
-##Library
+## Library
 
 The [nomnoml](http://www.nomnoml.com) standalone javascript library can be used to render diagrams on your own web page. The only dependency  is on [lodash](http://lodash.com). Install it using either *npm*, *Bower* or good old script inclusion.
 
@@ -39,15 +39,15 @@ And then in your html:
 </script>
 ```
 
-##Web application
+## Web application
 
 The [nomnoml](http://www.nomnoml.com) web application is a simple editor with a live preview. It is purely client side and changes are saved to the browser's _localStorage_, so your diagram should be here the next time, (but no guarantees).
 
-###Interaction
+### Interaction
 
 The canvas can be panned and zoomed by dragging and scrolling in the right hand third of the canvas. Downloaded image files will be given the filename in the `#title` directive.
 
-###Example
+### Example
 
 This is how the Decorator pattern looks like in nomnoml syntax:
 
@@ -60,7 +60,8 @@ This is how the Decorator pattern looks like in nomnoml syntax:
       [Component] <:- [ConcreteComponent]
     ]
 
-###Association types
+### Association types
+
     -    association
     ->   association
     <->  association
@@ -77,7 +78,8 @@ This is how the Decorator pattern looks like in nomnoml syntax:
     --   note
     -/-  hidden
 
-###Classifier types
+### Classifier types
+
     [name]
     [<abstract> name]
     [<instance> name]
@@ -96,7 +98,8 @@ This is how the Decorator pattern looks like in nomnoml syntax:
     [<usecase> name]
     [<hidden> name]
 
-###Directives
+### Directives
+
     #arrowSize: 1
     #bendSize: 0.3
     #direction: down | right
