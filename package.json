@@ -9,7 +9,7 @@
     "uml"
   ],
   "main": "dist/nomnoml.js",
-  "files": "dist/nomnoml.js",
+  "files": ["dist/nomnoml.js"],
   "dependencies": {
     "jison": "0.4.13",
     "lodash": "~3.7.0"
