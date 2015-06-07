@@ -27,6 +27,6 @@ function replace(source, token, replacement){
 }
 
 var wrapper = fs.readFileSync('bundleWrapper.js', { encoding: 'utf8' })
-var bundle = replace(wrapper, '/*{{body}}*/', ';\n' + concat(nomnomlFiles) + ';\n')
+var bundle = replace(wrapper, '/*{{body}}*/', concat(nomnomlFiles))
 
 fs.writeFileSync('dist/nomnoml.js', bundle)

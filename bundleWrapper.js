@@ -5,6 +5,6 @@
   	module.exports = factoryFn(require('lodash'));
   else this.nomnoml = factoryFn(_);
 })(function (_) {
-  /*{{body}}*/
+  /*{{body}}*/;
   return nomnoml;
 });
