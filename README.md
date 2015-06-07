@@ -1,7 +1,7 @@
 nomnoml
 =======
 
-Hello, this is [nomnoml](http://www.nomnoml.com), a tool for drawing UML diagrams based on a simple syntax. It tries to keep its syntax visually as close as possible to the generated UML diagram without resorting to ASCII drawings. It is purely client side and changes are saved to the browser's _localStorage_, so your diagram should be here the next time, (but no guarantees).
+Hello, this is [nomnoml][nomnoml], a tool for drawing UML diagrams based on a simple syntax. It tries to keep its syntax visually as close as possible to the generated UML diagram without resorting to ASCII drawings.
 
 Created by <a href="mailto:daniel.kallin@gmail.com">Daniel Kallin</a>.</p>
 
@@ -9,11 +9,40 @@ Created by <a href="mailto:daniel.kallin@gmail.com">Daniel Kallin</a>.</p>
 
 - [jison](http://zaach.github.io/jison/)
 - [dagre](https://github.com/cpettitt/dagre)
-- [underscore](http://underscorejs.org)
+- [lodash](http://lodash.com)
 - [typicons](http://typicons.com/)
 - [zepto](http://zeptojs.com/)
 - [solarized](http://ethanschoonover.com/solarized)
 
+##Library
+
+The [nomnoml][nomnoml] standalone javascript library can be used to render diagrams on your own web page. The only dependency currently is on [lodash](http://lodash.com). Easiest way to get started is by using [Bower](http://bower.io), like this:
+
+    bower install nomnoml
+
+> **Note:** Not yet registered with bower, use instead:
+>
+>   `bower install https://github.com/skanaar/nomnoml.git`
+
+And then in your html:
+
+```html
+<script id="noml" type="text/plain">
+    [nomnoml]is->[awesome]
+</script>
+<canvas id="target-canvas"></canvas>
+<script src="bower_components/lodash/lodash.js"></script>
+<script src="bower_components/nomnoml/dist/nomnoml.js"></script>
+<script>
+    var canvas = document.getElementById('target-canvas');
+    var noml = document.getElementById('noml').innerHTML;
+    nomnoml.draw(canvas, noml);
+</script>
+```
+
+##Web application
+
+The [nomnoml][nomnoml] web application is a simple editor with a live preview. It is purely client side and changes are saved to the browser's _localStorage_, so your diagram should be here the next time, (but no guarantees).
 
 ###Interaction
 
@@ -86,3 +115,9 @@ This is how the Decorator pattern looks like in nomnoml syntax:
     #stroke: #33322E
     #title: filename
     #zoom: 1
+
+## Contributing
+
+If you want to contribute to the project more info is available in [CONTRIBUTING.md](CONTRIBUTING.md).
+
+[nomnoml]: http://www.nomnoml.com

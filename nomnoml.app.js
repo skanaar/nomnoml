@@ -19,6 +19,7 @@ $(function (){
 	var zoomLevel = 0
 	var offset = {x:0, y:0}
 	var mouseDownPoint = false
+	var vm = nomnoml.vectorMath
 
 	window.addEventListener('hashchange', reloadStorage);
 	window.addEventListener('resize', _.throttle(sourceChanged, 750, {leading: true}))
@@ -38,12 +39,12 @@ $(function (){
 
 	function mouseDown(e){
 		$(canvasPanner).css({width: '100%'})
-		mouseDownPoint = diff({ x: e.pageX, y: e.pageY }, offset)
+		mouseDownPoint = vm.diff({ x: e.pageX, y: e.pageY }, offset)
 	}
 
 	function mouseMove(e){
 		if (mouseDownPoint){
-			offset = diff({ x: e.pageX, y: e.pageY }, mouseDownPoint)
+			offset = vm.diff({ x: e.pageX, y: e.pageY }, mouseDownPoint)
 			sourceChanged()
 		}
 	}
@@ -133,32 +134,9 @@ $(function (){
 		})
 	}
 
-	function getConfig(d){
-		return {
-			arrowSize: +d.arrowSize || 1,
-			bendSize: +d.bendSize || 0.3,
-			direction: {down: 'TB', right: 'LR'}[d.direction] || 'TB',
-			gutter: +d.gutter || 5,
-			edgeMargin: (+d.edgeMargin) || 0,
-			edges: {hard: 'hard', rounded: 'rounded'}[d.edges] || 'rounded',
-			fill: (d.fill || '#eee8d5;#fdf6e3;#eee8d5;#fdf6e3').split(';'),
-			fillArrows: d.fillArrows === 'true',
-			font: d.font || 'Calibri',
-			fontSize: (+d.fontSize) || 12,
-			leading: (+d.leading) || 1.25,
-			lineWidth: (+d.lineWidth) || 3,
-			padding: (+d.padding) || 8,
-			spacing: (+d.spacing) || 40,
-			stroke: d.stroke || '#33322E',
-			title: d.title || 'nomnoml',
-			zoom: +d.zoom || 1
-		}
-	}
-
-	function fitCanvasSize(rect, zoom, superSampling, offset){
+	function positionCanvas(rect, zoom, offset){
 		var w = rect.width * zoom
 		var h = rect.height * zoom
-		jqCanvas.attr({width: superSampling*w, height: superSampling*h})
 		jqCanvas.css({
 			top: 300 * (1 - h/viewport.height()) + offset.y,
 			left: 150 + (viewport.width() - w)/2 + offset.x,
@@ -167,31 +145,8 @@ $(function (){
 		})
 	}
 
-	function setFont(config, isBold, isItalic){
-		var style = (isBold === 'bold' ? 'bold ' : '')
-		if (isItalic) style = 'italic ' + style
-		graphics.ctx.font = style+config.fontSize+'pt '+config.font+', Helvetica, sans-serif'
-	}
-
 	function setFilename(filename){
 		imgLink.download = filename + '.png'
-	}
-
-	function parseAndRender(superSampling){
-		var ast = nomnoml.parse(textarea.value)
-		var config = getConfig(ast.directives)
-		setFilename(config.title)
-		var scale = Math.exp(zoomLevel/10)
-	    var measurer = {
-	    	setFont: setFont,
-	        textWidth: function (s){ return graphics.ctx.measureText(s).width },
-	        textHeight: function (s){ return config.leading * config.fontSize }
-	    }
-		var layout = nomnoml.layout(measurer, config, ast)
-		fitCanvasSize(layout, config.zoom * scale, superSampling, offset)
-		config.zoom *= superSampling
-		config.zoom *= scale
-		nomnoml.render(graphics, config, layout, setFont)
 	}
 
 	function reloadStorage(){
@@ -204,10 +159,12 @@ $(function (){
 
 	function sourceChanged(){
 		try {
-			var superSampling = window.devicePixelRatio || 1;
 			lineMarker.css('top', -30)
 			lineNumbers.css({background:'#eee8d5', color:'#D4CEBD'})
-			parseAndRender(superSampling)
+			var scale = Math.exp(zoomLevel/10)
+			var model = nomnoml.draw(canvasElement, textarea.value, scale)
+			positionCanvas(canvasElement, model.config.zoom / model.superSampling, offset)
+			setFilename(model.config.title)
 			storage.save(textarea.value)
 		} catch (e){
 			var matches = e.message.match('line ([0-9]*)')

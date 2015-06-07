@@ -85,22 +85,22 @@
 				<p>Hello, this is nomnoml, a tool for drawing UML diagrams based on a simple syntax.
 				<p>Try and edit the code on the left and watch the diagram change. Any changes are saved to the browser's <i>localStorage</i>, so your diagram should be here the next time, (but no guarantees).</p>
 				<p>Created by <a href="mailto:daniel.kallin@gmail.com">Daniel Kallin</a> and hosted on <a href="https://github.com/skanaar/nomnoml" target="_blank">GitHub</a> for your perusal.</p>
-				<p>Nomnoml was made possible by the cool projects 
-				<a target="_blank" href="http://zaach.github.io/jison/">jison</a>, 
+				<p>Nomnoml was made possible by the cool projects
+				<a target="_blank" href="http://zaach.github.io/jison/">jison</a>,
 				<a target="_blank" href="https://github.com/cpettitt/dagre">dagre</a>,
-				<a target="_blank" href="http://underscorejs.org">underscore</a>,
+				<a target="_blank" href="http://lodash.com">lodash</a>,
 				<a target="_blank" href="http://typicons.com/">typicons</a> ,
 				<a target="_blank" href="http://zeptojs.com/">zepto</a> and
 				<a target="_blank" href="http://ethanschoonover.com/solarized">solarized</a>.
 				</p>
-				
+
 				<hr>
 
 				<h2>Interaction</h2>
 
 				<p>The canvas can be panned and zoomed by dragging and scrolling in the right hand third of the canvas. Downloaded image files will be given the filename in the <tt>#title</tt> directive.
 				</p>
-				
+
 				<hr>
 
 				<h2>Examples</h2>
@@ -108,14 +108,14 @@
 				<a target="_BLANK" href="#view/[<frame>Decorator%20pattern|%0A%20%20[<abstract>Component||+%20operation()]%0A%20%20[Client]%20depends%20-->%20[Component]%0A%20%20[Decorator|-%20next:%20Component]%0A%20%20[Decorator]%20decorates%20--%20[ConcreteComponent]%0A%20%20[Component]%20<:-%20[Decorator]%0A%20%20[Component]%20<:-%20[ConcreteComponent]%0A]">Decorator pattern</a><br>
 				<a target="_BLANK" href="#view/[<frame>Strategy%20pattern|%0A%20%20[client]%20o-%20[<abstract>Strategy|+%20operation()]%0A%20%20[Strategy]%20<:--%20[StrategyA]%0A%20%20[Strategy]%20<:--%20[StrategyB]%0A]">Strategy pattern</a><br>
 				<a target="_BLANK" href="#view/[<package>UML%20Representation|%0A%20%20[Compartment|lines:%20string*;nodes:%20Classifier*;relations:%20Relations*]%0A%20%20[Classifier|type:%20string;name:%20string;compartments:%20Compartment*;width:%20int;height:%20int;x:%20int;y:%20int]%0A%20%20[Relation|startLabel:%20string;endLabel:%20string;type:%20string;startShape:%20string;endShape:%20string;path:%20Point*]%0A%20%20[Compartment]+->[Classifier]%0A%20%20[Classifier]+->[Compartment]%0A%20%20[Compartment]+->[Relation]%0A]%0A[parser]-->[UML%20Representation]%0A[layouter||layout(ast:%20Compartment)]%0A[renderer||render(d:%20Compartment)]%0A[parser||parse(source:%20String):%20Classifier]+->[Jison]%0A[layouter]-->[UML%20Representation]%0A[layouter]+->[dagre]%0A[renderer]-->[UML%20Representation]%0A[renderer]o->[<instance>:Canvas]%0A[measurer]<:--[renderer]%0A[layouter]->[measurer]">nomnoml architecture</a>
-				
+
 				<hr>
 
 				<h2>Usage</h2>
 
 				<label>Car has an Engine</label>
 				[Car]-&gt;[Engine]
-				
+
 				<label>Car owns an arbitrary number of blemished</label>
 				[Car] +-&gt; 0..* [RustPatches]
 
@@ -220,15 +220,16 @@
 [<actor>Sailor] - [<usecase>shiver me;timbers]</script>
 
 	<script src="lib/zepto.min.js"></script>
-	<script src="lib/underscore.js"></script>
-	<script src="lib/underscore.skanaar.js"></script>
-	<script src="lib/dagre.min.js"></script>
+	<script src="bower_components/lodash/lodash.js"></script>
+	<script src="lib/_skanaar.js"></script>
 	<script src="lib/skanaar.canvas.js"></script>
-	<script src="lib/vector.js"></script>
+	<script src="lib/dagre.min.js"></script>
+	<script src="nomnoml.vectorMath.js"></script>
 	<script src="nomnoml.jison.js"></script>
 	<script src="nomnoml.parser.js"></script>
 	<script src="nomnoml.layouter.js"></script>
 	<script src="nomnoml.renderer.js"></script>
+	<script src="nomnoml.js"></script>
 	<script src="nomnoml.app.js"></script>
 
 	<script>

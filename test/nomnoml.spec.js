@@ -64,8 +64,8 @@ describe('nomnoml', function() {
 
         it('should handle single association', function(){
             var jisonOutput = [{
-                assoc: '->', 
-                start: c('apa'), 
+                assoc: '->',
+                start: c('apa'),
                 end: c('banan'),
                 startLabel: '',
                 endLabel: ''
@@ -85,8 +85,8 @@ describe('nomnoml', function() {
             ],[
                 {
                     id: 0,
-                    assoc: '->', 
-                    start: 'apa', 
+                    assoc: '->',
+                    start: 'apa',
                     end: 'banan',
                     startLabel: '',
                     endLabel: ''
@@ -223,9 +223,10 @@ describe('nomnoml', function() {
             ])
             var layouted = nomnoml.layout(measurer, config, root).nodes[0]
             var rel = layouted.compartments[1].relations[0]
-            expect(rel.path).toEqual([{x:52,y:7}, {x:52,y:16.5}, {x:52,y:26}])
+            //expect(rel.path).toEqual([{x:52,y:7}, {x:52,y:16.5}, {x:52,y:26}])    // dagre 0.4.5
+            expect(rel.path).toEqual([{x:52,y:7}, {x:52,y:14}, {x:52,y:16.5}, {x:52,y:19}, {x:52,y:26}])    // dagre 0.7.1
         })
-        
+
     })
 
 })
