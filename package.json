@@ -1,32 +1,31 @@
 {
   "name": "nomnoml",
   "version": "0.0.0",
-  "description": "Generates UML diagrams from text.",
-  "main": "none.js",
+  "description": "The sassy UML renderer that generates diagrams from text",
+  "homepage": "http://www.nomnoml.com",
+  "author": "Daniel Kallin <daniel.kallin@gmail.com>",
+  "license": "MIT",
+  "keywords": [
+    "uml"
+  ],
+  "main": "dist/nomnoml.js",
+  "dependencies": {
+    "jison": "0.4.13",
+    "lodash": "~3.7.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "prepublish": "node build.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
   "directories": {
     "test": "test"
-  },
-  "dependencies": {},
-  "devDependencies": {
-    "gulp": "^3.8.11",
-    "gulp-concat": "^2.5.2",
-    "gulp-footer": "^1.0.5",
-    "gulp-header": "^1.2.2"
-  },
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/skanaar/nomnoml.git"
   },
-  "keywords": [
-    "uml"
-  ],
-  "author": "Daniel Kallin <daniel.kallin@gmail.com>",
-  "license": "MIT",
   "bugs": {
     "url": "https://github.com/skanaar/nomnoml/issues"
-  },
-  "homepage": "https://github.com/skanaar/nomnoml"
+  }
 }

@@ -12,18 +12,20 @@ skanaar.Canvas = function (canvas, callbacks){
 		}
 	}
 
-	canvas.addEventListener("mousedown", function (event){
-		if (callbacks.mousedown) callbacks.mousedown(mouseEventToPos(event))
-	})
+	if (callbacks) {
+		canvas.addEventListener('mousedown', function (event){
+			if (callbacks.mousedown) callbacks.mousedown(mouseEventToPos(event))
+		})
 
-	canvas.addEventListener("mouseup", function (event){
-		if (callbacks.mouseup) callbacks.mouseup(mouseEventToPos(event))
-	})
+		canvas.addEventListener('mouseup', function (event){
+			if (callbacks.mouseup) callbacks.mouseup(mouseEventToPos(event))
+		})
 
-	canvas.addEventListener("mousemove", function (event){
-		mousePos = mouseEventToPos(event)
-		if (callbacks.mousemove) callbacks.mousemove(mouseEventToPos(event))
-	})
+		canvas.addEventListener('mousemove', function (event){
+			mousePos = mouseEventToPos(event)
+			if (callbacks.mousemove) callbacks.mousemove(mouseEventToPos(event))
+		})
+	}
 
 	var chainable = {
 		stroke: function (){
@@ -140,4 +142,4 @@ skanaar.Canvas = function (canvas, callbacks){
 			return grad
 		}
 	}
-}; // semi-colon added because minfied dagre comes after when compiling nomnoml.js and starts with '(' which js interprets as executing this function.
+};

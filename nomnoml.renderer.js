@@ -4,7 +4,7 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 
 	var padding = config.padding
 	var g = graphics
-	var vm = nomnoml.vectorMath
+	var vm = skanaar.vector
 
 	function renderCompartment(compartment, style, level){
 		g.ctx.save()
@@ -74,8 +74,8 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 		} else if (node.type === 'ACTOR') {
 			var a = padding/2
 			var yp = y + a/2
-			var center = {x: xCenter, y: yp-a}
-			g.circle(center, a).fill().stroke()
+			var actorCenter = {x: xCenter, y: yp-a}
+			g.circle(actorCenter, a).fill().stroke()
 			g.path([ {x: xCenter,   y: yp},
 				     {x: xCenter,   y: yp+2*a} ]).stroke()
 			g.path([ {x: xCenter-a, y: yp+a},
@@ -84,7 +84,6 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 				     {x: xCenter  , y: yp+padding},
 				     {x: xCenter+a, y: yp+a+padding} ]).stroke()
 		} else if (node.type === 'USECASE') {
-			var r = Math.min(padding*2*config.leading, node.height/2)
 			var center = {x: xCenter, y: y+node.height/2}
 			g.ellipse(center, node.width, node.height).fill().stroke()
 		} else if (node.type === 'START') {
@@ -95,8 +94,8 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 			g.ctx.fillStyle = config.stroke
 			g.circle(xCenter, y+node.height/2, node.height/3-padding/2).fill()
 		} else if (node.type === 'STATE') {
-			var r = Math.min(padding*2*config.leading, node.height/2)
-			g.roundRect(x, y, node.width, node.height, r).fill().stroke()
+			var stateRadius = Math.min(padding*2*config.leading, node.height/2)
+			g.roundRect(x, y, node.width, node.height, stateRadius).fill().stroke()
 		} else if (node.type === 'INPUT') {
 			g.circuit([
 				{x:x+padding, y:y},
@@ -162,7 +161,7 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 			setFont(config, s.bold ? 'bold' : 'normal', s.italic)
 			renderCompartment(part, s, level+1)
 			g.ctx.restore()
-			if (i+1 == node.compartments.length) return
+			if (i+1 === node.compartments.length) return
 			yDivider += part.height
 			if (node.type === 'FRAME' && i === 0){
 				var w = g.ctx.measureText(node.name).width+part.height/2+padding
@@ -210,12 +209,12 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 		g.ctx.fillStyle = config.stroke
 		setFont(config, 'normal')
 		var textW = g.ctx.measureText(r.endLabel).width
-		var labelX = config.direction == 'LR' ? -padding-textW : padding
+		var labelX = config.direction === 'LR' ? -padding-textW : padding
 		g.ctx.fillText(r.startLabel, start.x+padding, start.y+padding+fontSize)
 		g.ctx.fillText(r.endLabel, end.x+labelX, end.y-padding)
 
-		if (r.assoc != '-/-'){
-			if (g.ctx.setLineDash && _skanaar.hasSubstring(r.assoc, '--')){
+		if (r.assoc !== '-/-'){
+			if (g.ctx.setLineDash && skanaar.hasSubstring(r.assoc, '--')){
 				var dash = Math.max(4, 2*config.lineWidth)
 				g.ctx.setLineDash([dash, dash])
 				strokePath(path)
@@ -242,7 +241,7 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 	}
 
 	function rectIntersection(p1, p2, rect){
-		if(rect.width == 0 && rect.height == 0) return p2
+		if(rect.width === 0 && rect.height === 0) return p2
 		var v = vm.diff(p1, p2)
 		for(var t=1; t>=0; t-= 0.01){
 			var p = vm.mult(v, t)
@@ -269,11 +268,11 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 			arrowPoint
 		]
 		g.ctx.fillStyle = isOpen ? config.stroke : config.fill[0]
-		var ctx = g.circuit(arrow).fill().stroke()
+		g.circuit(arrow).fill().stroke()
 	}
 
 	function snapToPixels(){
-		if (config.lineWidth % 2 == 1)
+		if (config.lineWidth % 2 === 1)
 			g.ctx.translate(0.5, 0.5)
 	}
 

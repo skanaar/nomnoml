@@ -1,20 +1,25 @@
 {
   "name": "nomnoml",
-  "main": "dist/nomnoml.js",
   "version": "0.0.0",
-  "homepage": "https://github.com/skanaar/nomnoml",
-  "authors": [
-    "Daniel Kallin <daniel.kallin@gmail.com>"
+  "description": "The sassy UML renderer that generates diagrams from text",
+  "homepage": "http://www.nomnoml.com",
+  "authors": [ "Daniel Kallin <daniel.kallin@gmail.com>" ],
+  "license": "MIT",
+  "keywords": [
+    "uml"
   ],
-  "description": "Generates UML diagrams from text.",
+  "main": "dist/nomnoml.js",
+  "dependencies": {
+    "lodash": "~3.7.0"
+  },
+  "devDependencies": {
+    "requirejs": "~2.1.17"
+  },
   "moduleType": [
     "amd",
+    "node",
     "globals"
   ],
-  "keywords": [
-    "nomnoml uml"
-  ],
-  "license": "MIT",
   "ignore": [
     "**/.*",
     "*.css",
@@ -29,11 +34,5 @@
     "img/",
     "lib/",
     "design/"
-  ],
-  "dependencies": {
-    "lodash": "~3.7.0"
-  },
-  "devDependencies": {
-    "requirejs": "~2.1.17"
-  }
+  ]
 }

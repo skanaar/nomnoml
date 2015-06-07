@@ -1,7 +1,7 @@
 nomnoml
 =======
 
-Hello, this is [nomnoml][nomnoml], a tool for drawing UML diagrams based on a simple syntax. It tries to keep its syntax visually as close as possible to the generated UML diagram without resorting to ASCII drawings.
+Hello, this is [nomnoml](http://www.nomnoml.com), a tool for drawing UML diagrams based on a simple syntax. It tries to keep its syntax visually as close as possible to the generated UML diagram without resorting to ASCII drawings.
 
 Created by <a href="mailto:daniel.kallin@gmail.com">Daniel Kallin</a>.</p>
 
@@ -16,33 +16,32 @@ Created by <a href="mailto:daniel.kallin@gmail.com">Daniel Kallin</a>.</p>
 
 ##Library
 
-The [nomnoml][nomnoml] standalone javascript library can be used to render diagrams on your own web page. The only dependency currently is on [lodash](http://lodash.com). Easiest way to get started is by using [Bower](http://bower.io), like this:
+The [nomnoml](http://www.nomnoml.com) standalone javascript library can be used to render diagrams on your own web page. The only dependency  is on [lodash](http://lodash.com). Install it using either *npm*, *Bower* or good old script inclusion.
 
-    bower install nomnoml
+    npm install nomnoml
 
-> **Note:** Not yet registered with bower, use instead:
->
->   `bower install https://github.com/skanaar/nomnoml.git`
+    bower install https://github.com/skanaar/nomnoml.git
+
+    <script src="lodash.js"></script>
+    <script src="nomnoml.js"></script>
 
 And then in your html:
 
 ```html
-<script id="noml" type="text/plain">
-    [nomnoml]is->[awesome]
-</script>
+<script src="my_component_dir/lodash/lodash.js"></script>
+<script src="my_component_dir/nomnoml/dist/nomnoml.js"></script>
+
 <canvas id="target-canvas"></canvas>
-<script src="bower_components/lodash/lodash.js"></script>
-<script src="bower_components/nomnoml/dist/nomnoml.js"></script>
 <script>
     var canvas = document.getElementById('target-canvas');
-    var noml = document.getElementById('noml').innerHTML;
-    nomnoml.draw(canvas, noml);
+    var source = '[nomnoml]is->[awesome]';
+    nomnoml.draw(canvas, source);
 </script>
 ```
 
 ##Web application
 
-The [nomnoml][nomnoml] web application is a simple editor with a live preview. It is purely client side and changes are saved to the browser's _localStorage_, so your diagram should be here the next time, (but no guarantees).
+The [nomnoml](http://www.nomnoml.com) web application is a simple editor with a live preview. It is purely client side and changes are saved to the browser's _localStorage_, so your diagram should be here the next time, (but no guarantees).
 
 ###Interaction
 
@@ -119,5 +118,3 @@ This is how the Decorator pattern looks like in nomnoml syntax:
 ## Contributing
 
 If you want to contribute to the project more info is available in [CONTRIBUTING.md](CONTRIBUTING.md).
-
-[nomnoml]: http://www.nomnoml.com

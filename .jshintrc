@@ -1,11 +1,26 @@
 {
-    "asi": true,
-    "browser": true,
-    "strict": false,
-    "globals": {
-        "confirm": false,
-        "$": false,
-        "_": false,
-        "skanaar": true
-    }
+  "globals": {
+    "confirm": false,
+    "$": false,
+    "_": false,
+    "skanaar": true,
+    "dagre": false,
+    "nomnomlCoreParser": false,
+    "require": false
+  },
+
+  "asi": true,
+  "bitwise": true,
+  "eqeqeq": true,
+  "freeze": true,
+  "globalstrict": true,
+  "latedef": "nofunc",
+  "laxcomma": true,
+  "maxlen": 100,
+  "maxparams": 5,
+  "quotmark": "single",
+  "shadow": false,
+  "strict": false,
+  "undef": true,
+  "unused": true
 }

@@ -15,17 +15,16 @@ $(function (){
 	var canvasElement = document.getElementById('canvas')
 	var canvasPanner = document.getElementById('canvas-panner')
 	var defaultSource = document.getElementById('defaultGraph').innerHTML
-	var graphics = skanaar.Canvas(canvasElement, {})
 	var zoomLevel = 0
 	var offset = {x:0, y:0}
 	var mouseDownPoint = false
-	var vm = nomnoml.vectorMath
+	var vm = skanaar.vector
 
 	window.addEventListener('hashchange', reloadStorage);
 	window.addEventListener('resize', _.throttle(sourceChanged, 750, {leading: true}))
 	textarea.addEventListener('input', _.debounce(sourceChanged, 300))
-	canvasPanner.addEventListener('mouseenter', _.bind(jqTextarea.toggleClass, jqTextarea, 'hidden', true))
-	canvasPanner.addEventListener('mouseleave', _.bind(jqTextarea.toggleClass, jqTextarea, 'hidden', false))
+	canvasPanner.addEventListener('mouseenter', classToggler(jqTextarea, 'hidden', true))
+	canvasPanner.addEventListener('mouseleave', classToggler(jqTextarea, 'hidden', false))
 	canvasPanner.addEventListener('mousedown', mouseDown)
 	window.addEventListener('mousemove', _.throttle(mouseMove,50))
 	canvasPanner.addEventListener('mouseup', mouseUp)
@@ -36,6 +35,10 @@ $(function (){
 	initToolbarTooltips()
 
 	reloadStorage()
+
+	function classToggler(jqElement, className, state){
+		return _.bind(jqElement.toggleClass, jqElement, className, state)
+	}
 
 	function mouseDown(e){
 		$(canvasPanner).css({width: '100%'})
@@ -49,7 +52,7 @@ $(function (){
 		}
 	}
 
-	function mouseUp(e){
+	function mouseUp(){
 		mouseDownPoint = false
 		$(canvasPanner).css({width: '33%'})
 	}
@@ -61,8 +64,8 @@ $(function (){
 
 	nomnoml.toggleSidebar = function (id){
 		var sidebars = ['reference', 'about']
-		_.chain(sidebars).without(id).each(function (key){
-			$(document.getElementById(key)).toggleClass('visible', false)
+		_.each(sidebars, function (key){
+			if (id !== key) $(document.getElementById(key)).toggleClass('visible', false)
 		})
 		$(document.getElementById(id)).toggleClass('visible')
 	}
@@ -75,7 +78,10 @@ $(function (){
 	}
 
 	nomnoml.saveViewModeToStorage = function (){
-		if (confirm('Do you want to overwrite the diagram in localStorage with the currently viewed diagram?')){
+		var question = 
+			'Do you want to overwrite the diagram in' +
+			'localStorage with the currently viewed diagram?'
+		if (confirm(question)){
 			storage.moveToLocalStorage()
 			window.location = './'
 		}
@@ -87,10 +93,11 @@ $(function (){
 
 	// Adapted from http://meyerweb.com/eric/tools/dencoder/
 	function urlEncode(unencoded) {
-		return encodeURIComponent(unencoded).replace(/'/g,"%27").replace(/"/g,"%22")
+		return encodeURIComponent(unencoded).replace(/'/g,'%27').replace(/"/g,'%22')
 	}
+
 	function urlDecode(encoded) {
-		return decodeURIComponent(encoded.replace(/\+/g,  " "))
+		return decodeURIComponent(encoded.replace(/\+/g, ' '))
 	}
 
 	function setShareableLink(str){
@@ -103,7 +110,7 @@ $(function (){
 		if (locationHash.substring(0,6) === '#view/')
 			return {
 				read: function (){ return urlDecode(locationHash.substring(6)) },
-				save: function (source){ setShareableLink(textarea.value) },
+				save: function (){ setShareableLink(textarea.value) },
 				moveToLocalStorage: function (){ localStorage[key] = textarea.value },
 				isReadonly: true
 			}

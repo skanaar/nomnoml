@@ -2,7 +2,7 @@ var nomnoml = nomnoml || {}
 
 nomnoml.parse = function (source){
 	function onlyCompilables(line){
-		var ok = line[0] != '#' && line.substring(0,2) != '//'
+		var ok = line[0] !== '#' && line.substring(0,2) !== '//'
 		return ok ? line : ''
 	}
 	var isDirective = function (line){ return line.text[0] === '#' }
@@ -25,8 +25,8 @@ nomnoml.parse = function (source){
 	return ast
 }
 
-nomnoml.intermediateParse = function (x){
-	return parser.parse(x)
+nomnoml.intermediateParse = function (source){
+	return nomnomlCoreParser.parse(source)
 }
 
 nomnoml.transformParseIntoSyntaxTree = function (entity){
