@@ -20,11 +20,22 @@ $(function (){
 	var mouseDownPoint = false
 	var vm = skanaar.vector
 
+	var editor = CodeMirror.fromTextArea(textarea, {
+		lineNumbers: !true,
+		mode: 'nomnoml',
+		matchBrackets: true,
+		theme: 'solarized light',
+		keyMap: 'sublime'
+	});
+
+	var editorElement = editor.getWrapperElement()
+
+
 	window.addEventListener('hashchange', reloadStorage);
 	window.addEventListener('resize', _.throttle(sourceChanged, 750, {leading: true}))
-	textarea.addEventListener('input', _.debounce(sourceChanged, 300))
-	canvasPanner.addEventListener('mouseenter', classToggler(jqTextarea, 'hidden', true))
-	canvasPanner.addEventListener('mouseleave', classToggler(jqTextarea, 'hidden', false))
+	editor.on('changes', _.debounce(sourceChanged, 300))
+	canvasPanner.addEventListener('mouseenter', classToggler(editorElement, 'hidden', true))
+	canvasPanner.addEventListener('mouseleave', classToggler(editorElement, 'hidden', false))
 	canvasPanner.addEventListener('mousedown', mouseDown)
 	window.addEventListener('mousemove', _.throttle(mouseMove,50))
 	canvasPanner.addEventListener('mouseup', mouseUp)
@@ -36,7 +47,8 @@ $(function (){
 
 	reloadStorage()
 
-	function classToggler(jqElement, className, state){
+	function classToggler(element, className, state){
+		var jqElement = $(element)
 		return _.bind(jqElement.toggleClass, jqElement, className, state)
 	}
 
@@ -72,7 +84,7 @@ $(function (){
 
 	nomnoml.discardCurrentGraph = function (){
 		if (confirm('Do you want to discard current diagram and load the default example?')){
-			textarea.value = defaultSource
+			currentText() = defaultSource
 			sourceChanged()
 		}
 	}
@@ -110,14 +122,14 @@ $(function (){
 		if (locationHash.substring(0,6) === '#view/')
 			return {
 				read: function (){ return urlDecode(locationHash.substring(6)) },
-				save: function (){ setShareableLink(textarea.value) },
-				moveToLocalStorage: function (){ localStorage[key] = textarea.value },
+				save: function (){ setShareableLink(currentText()) },
+				moveToLocalStorage: function (){ localStorage[key] = currentText() },
 				isReadonly: true
 			}
 		return {
 			read: function (){ return localStorage[key] || defaultSource },
 			save: function (source){
-				setShareableLink(textarea.value)
+				setShareableLink(currentText())
 				localStorage[key] = source
 			},
 			moveToLocalStorage: function (){},
@@ -158,10 +170,14 @@ $(function (){
 
 	function reloadStorage(){
 		storage = buildStorage(location.hash)
-		textarea.value = storage.read()
+		editor.setValue(storage.read())
 		sourceChanged()
 		if (storage.isReadonly) storageStatusElement.show()
 		else storageStatusElement.hide()
+	}
+
+	function currentText(){
+		return editor.getValue()
 	}
 
 	function sourceChanged(){
@@ -169,10 +185,10 @@ $(function (){
 			lineMarker.css('top', -30)
 			lineNumbers.css({background:'#eee8d5', color:'#D4CEBD'})
 			var scale = Math.exp(zoomLevel/10)
-			var model = nomnoml.draw(canvasElement, textarea.value, scale)
+			var model = nomnoml.draw(canvasElement, currentText(), scale)
 			positionCanvas(canvasElement, model.config.zoom / model.superSampling, offset)
 			setFilename(model.config.title)
-			storage.save(textarea.value)
+			storage.save(currentText())
 		} catch (e){
 			var matches = e.message.match('line ([0-9]*)')
 			if (matches){

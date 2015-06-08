@@ -6,7 +6,8 @@
     "skanaar": true,
     "dagre": false,
     "nomnomlCoreParser": false,
-    "require": false
+    "require": false,
+    "CodeMirror": false
   },
 
   "asi": true,

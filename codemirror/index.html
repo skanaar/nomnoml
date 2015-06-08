@@ -1,0 +1,91 @@
+<!doctype html>
+<html>
+<head>
+
+<title>CodeMirror</title>
+<meta charset="utf-8"/>
+
+<link rel=stylesheet href="lib/codemirror.css">
+<link rel=stylesheet href="theme/solarized.nomnoml.css">
+<script src="lib/codemirror.js"></script>
+<script src="keymap/sublime.js"></script>
+<script src="mode/nomnoml.js"></script>
+<script src="addon/edit/matchbrackets.js"></script>
+
+<style>
+  body, html { padding: 0; margin: 0; height: 100%; }
+  .CodeMirror {
+    height: 100%;
+    border: 0;
+    width: 100%;
+    font-size: 16px;
+    font-family: Consolas, Monaco, monospace;
+  }
+  .cm-s-solarized.CodeMirror {
+    -moz-box-shadow: none;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+  }
+
+  .CodeMirror .CodeMirror-linenumber.CodeMirror-gutter-elt{
+    color: rgb(212, 206, 189);
+  }
+  .CodeMirror pre { padding-left: 7px; line-height: 1.25; }
+
+  html, body {
+    height: 100%;
+    overflow-x: hidden;
+    overflow-y: hidden;
+    background: #fdf6e3;
+  }
+  hr {
+    border: 0;
+    background: #fdf6e3;
+    height: 5px;
+  }
+  .wrap {
+    height: 100%;
+  }
+</style>
+</head>
+
+<body>
+  <div class="wrap">
+<textarea id="demotext">
+#zoom: 2
+
+// some comment
+
+[Message|
+  date
+  message
+  sender
+  tags: string*
+]
+
+
+[<database>storage]->*[Entry|
+  prefix = "message"
+  infix = <username>
+  key = <serial number>
+]
+
+[Entry]+->1[Message]</textarea>
+  <script>
+    var editor = CodeMirror.fromTextArea(document.getElementById("demotext"), {
+      lineNumbers: true,
+      mode: "nomnoml",
+      matchBrackets: true,
+      theme: 'solarized light',
+      keyMap: 'sublime'
+    });
+
+    editor.on('changes', sourceChanged)
+
+    function sourceChanged() {
+      console.log('update')
+    }
+  </script>
+  </div>
+</body>
+</html>
