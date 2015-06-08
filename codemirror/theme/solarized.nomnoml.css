@@ -44,7 +44,7 @@ http://ethanschoonover.com/solarized/img/solarized-palette.png
   text-shadow: none;
 }
 
-.cm-s-solarized .cm-keyword { color: #93a1a1 }
+.cm-s-solarized .cm-keyword { color: #93a1a1; font-style: italic }
 .cm-s-solarized .cm-atom { color: #d33682; }
 .cm-s-solarized .cm-number { color: #d33682; }
 .cm-s-solarized .cm-def { color: #2aa198; }
