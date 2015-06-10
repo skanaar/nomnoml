@@ -47,7 +47,7 @@ h1 {
   height: 100%;
   border: 0;
   width: 100%;
-  padding: 22px 0 0 22px;
+  padding: 22px 0 0 0;
   line-height: 25px;
   font-size: 16px;
   font-family: Consolas, Monaco, monospace;
@@ -55,7 +55,7 @@ h1 {
   transition: opacity 0.3s;
 }
 
-.CodeMirror .CodeMirror-linenumber.CodeMirror-gutter-elt{
+.CodeMirror .CodeMirror-linenumber {
   color: #D4CEBD;
   padding-left: 12px
 }
@@ -71,25 +71,17 @@ h1 {
 	height: 100%;
 	background: rgba(0,0,0,0);
 	top: 0;
-	right: 0;
+	right: 20px;
 	bottom: 0;
 	cursor: move;
 }
 #linenumbers {
-	outline: none;
 	position: absolute;
-	text-align: right;
-	width: 33px;
+	top: 0;
+	left: 0;
+	width: 40px;
 	height: 100%;
 	background: #eee8d5;
-	color: #D4CEBD;
-	border: 0;
-	box-sizing: border-box;
-	font-family: Consolas, Menlo, monospace;
-	padding: 30px 5px 0 0;
-	overflow-x: hidden;
-	overflow-y: hidden;
-	resize: none;
 }
 #canvas {
 	position: absolute;

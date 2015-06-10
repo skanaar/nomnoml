@@ -135,7 +135,7 @@ http://ethanschoonover.com/solarized/img/solarized-palette.png
 /* Light */
 .cm-s-solarized.cm-s-light .CodeMirror-gutters {
   color: #D4CEBD;
-  background-color: #EEE8D5;
+  background-color: transparent;
   border-color: #EEE8D5;
 }
 

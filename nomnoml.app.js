@@ -21,7 +21,7 @@ $(function (){
 	var vm = skanaar.vector
 
 	var editor = CodeMirror.fromTextArea(textarea, {
-		lineNumbers: !true,
+		lineNumbers: true,
 		mode: 'nomnoml',
 		matchBrackets: true,
 		theme: 'solarized light',
@@ -42,7 +42,6 @@ $(function (){
 	canvasPanner.addEventListener('mouseleave', mouseUp)
 	canvasPanner.addEventListener('wheel', _.throttle(magnify, 50))
 	initImageDownloadLink(imgLink, canvasElement)
-	lineNumbers.val(_.times(60, _.identity).join('\n'))
 	initToolbarTooltips()
 
 	reloadStorage()
