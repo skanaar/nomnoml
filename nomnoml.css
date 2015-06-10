@@ -45,7 +45,7 @@ textarea {
 	resize: none;
 	transition: color 0.3s;
 }
-#textarea.hidden {
+.canvas-mode #textarea {
 	color: transparent;
 	transition: color 1s;
 }
@@ -98,7 +98,19 @@ a:hover {
 	font-weight: bold;
 	background: #fdf6e3;
 	border-radius: 5px;
-	padding: 0 5px;
+}
+.tools .canvas-tools {
+	display: block;
+	position: absolute;
+	top: 60px;
+	right: 0;
+	width: 24px;
+	opacity: 0;
+	transition: opacity 1s;
+}
+.canvas-mode .canvas-tools {
+	opacity: 1;
+	transition: opacity 0.3s;
 }
 .tools img {
 	width: 24px;

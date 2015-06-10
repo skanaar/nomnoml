@@ -192,9 +192,23 @@
 			<span id="tooltip"></span>
 			<span id="storage-status">
 				View mode, changes are not saved.
-				<a href="javascript:nomnoml.saveViewModeToStorage()">save</a>
-				<a href="javascript:nomnoml.exitViewMode()">close</a>
+				<a href="javascript:nomnoml.saveViewModeToStorage()"
+				   title="Save this diagram to localStorage">save</a>
+				<a href="javascript:nomnoml.exitViewMode()"
+				   title="Discard this diagram">close</a>
 			</span>
+
+			<div class="canvas-tools" id="canvas-tools">
+				<a href="javascript:nomnoml.magnifyViewport(2)" title="Zoom in">
+					<img src="img/plus.png">
+				</a>
+				<a href="javascript:nomnoml.resetViewport()" title="Reset zoom and panning">
+					<img src="img/equals.png">
+				</a>
+				<a href="javascript:nomnoml.magnifyViewport(-2)" title="Zoom out">
+					<img src="img/minus.png">
+				</a>
+			</div>
 		</div>
 	</div>
 

@@ -5,6 +5,7 @@ $(function (){
 	var storage = null
 	var jqCanvas = $('#canvas')
 	var viewport = $(window)
+	var jqBody = $('body')
 	var lineNumbers = $('#linenumbers')
 	var lineMarker = $('#linemarker')
 	var jqTextarea = $('#textarea')
@@ -14,6 +15,7 @@ $(function (){
 	var linkLink = document.getElementById('linkbutton')
 	var canvasElement = document.getElementById('canvas')
 	var canvasPanner = document.getElementById('canvas-panner')
+	var canvasTools = document.getElementById('canvas-tools')
 	var defaultSource = document.getElementById('defaultGraph').innerHTML
 	var zoomLevel = 0
 	var offset = {x:0, y:0}
@@ -23,8 +25,10 @@ $(function (){
 	window.addEventListener('hashchange', reloadStorage);
 	window.addEventListener('resize', _.throttle(sourceChanged, 750, {leading: true}))
 	textarea.addEventListener('input', _.debounce(sourceChanged, 300))
-	canvasPanner.addEventListener('mouseenter', classToggler(jqTextarea, 'hidden', true))
-	canvasPanner.addEventListener('mouseleave', classToggler(jqTextarea, 'hidden', false))
+	canvasPanner.addEventListener('mouseenter', classToggler(jqBody, 'canvas-mode', true))
+	canvasPanner.addEventListener('mouseleave', classToggler(jqBody, 'canvas-mode', false))
+	canvasTools.addEventListener('mouseenter', classToggler(jqBody, 'canvas-mode', true))
+	canvasTools.addEventListener('mouseleave', classToggler(jqBody, 'canvas-mode', false))
 	canvasPanner.addEventListener('mousedown', mouseDown)
 	window.addEventListener('mousemove', _.throttle(mouseMove,50))
 	canvasPanner.addEventListener('mouseup', mouseUp)
@@ -59,6 +63,17 @@ $(function (){
 
 	function magnify(e){
 		zoomLevel = Math.min(10, zoomLevel - (e.deltaY < 0 ? -1 : 1))
+		sourceChanged()
+	}
+
+	nomnoml.magnifyViewport = function (diff){
+		zoomLevel = Math.min(10, zoomLevel + diff)
+		sourceChanged()
+	}
+
+	nomnoml.resetViewport = function (){
+		zoomLevel = 1
+		offset = {x: 0, y: 0}
 		sourceChanged()
 	}
 
@@ -135,7 +150,7 @@ $(function (){
 
 	function initToolbarTooltips(){
 		var tooltip = $('#tooltip')[0]
-		$('.tools > a').each(function (i, link){
+		$('.tools a').each(function (i, link){
 			link.onmouseover = function (){ tooltip.textContent  = $(link).attr('title') }
 			link.onmouseout = function (){ tooltip.textContent  = '' }
 		})
@@ -168,9 +183,12 @@ $(function (){
 		try {
 			lineMarker.css('top', -30)
 			lineNumbers.css({background:'#eee8d5', color:'#D4CEBD'})
-			var scale = Math.exp(zoomLevel/10)
+
+			var superSampling = window.devicePixelRatio || 1
+			var scale = superSampling * Math.exp(zoomLevel/10)
+
 			var model = nomnoml.draw(canvasElement, textarea.value, scale)
-			positionCanvas(canvasElement, model.config.zoom / model.superSampling, offset)
+			positionCanvas(canvasElement, superSampling, offset)
 			setFilename(model.config.title)
 			storage.save(textarea.value)
 		} catch (e){
