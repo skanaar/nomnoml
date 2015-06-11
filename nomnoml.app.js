@@ -156,9 +156,9 @@ $(function (){
 		})
 	}
 
-	function positionCanvas(rect, zoom, offset){
-		var w = rect.width * zoom
-		var h = rect.height * zoom
+	function positionCanvas(rect, superSampling, offset){
+		var w = rect.width / superSampling
+		var h = rect.height / superSampling
 		jqCanvas.css({
 			top: 300 * (1 - h/viewport.height()) + offset.y,
 			left: 150 + (viewport.width() - w)/2 + offset.x,
