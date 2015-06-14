@@ -203,7 +203,7 @@ $(function (){
 			var superSampling = window.devicePixelRatio || 1
 			var scale = superSampling * Math.exp(zoomLevel/10)
 
-			var model = nomnoml.draw(canvasElement, textarea.value, scale)
+			var model = nomnoml.draw(canvasElement, currentText(), scale)
 			positionCanvas(canvasElement, superSampling, offset)
 			setFilename(model.config.title)
 			storage.save(currentText())
