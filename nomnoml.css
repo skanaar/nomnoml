@@ -61,7 +61,7 @@ h1 {
   color: #D4CEBD;
   padding-left: 12px
 }
-.CodeMirror.hidden {
+.canvas-mode .CodeMirror {
 	opacity: 0;
 	transition: opacity 1s;
 }
