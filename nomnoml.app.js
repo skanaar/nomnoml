@@ -5,6 +5,7 @@ $(function (){
 	var storage = null
 	var jqCanvas = $('#canvas')
 	var viewport = $(window)
+	var jqBody = $('body')
 	var lineNumbers = $('#linenumbers')
 	var lineMarker = $('#linemarker')
 	var storageStatusElement = $('#storage-status')
@@ -13,6 +14,7 @@ $(function (){
 	var linkLink = document.getElementById('linkbutton')
 	var canvasElement = document.getElementById('canvas')
 	var canvasPanner = document.getElementById('canvas-panner')
+	var canvasTools = document.getElementById('canvas-tools')
 	var defaultSource = document.getElementById('defaultGraph').innerHTML
 	var zoomLevel = 0
 	var offset = {x:0, y:0}
@@ -34,6 +36,8 @@ $(function (){
 	editor.on('changes', _.debounce(sourceChanged, 300))
 	canvasPanner.addEventListener('mouseenter', classToggler(editorElement, 'hidden', true))
 	canvasPanner.addEventListener('mouseleave', classToggler(editorElement, 'hidden', false))
+	canvasTools.addEventListener('mouseenter', classToggler(editorElement, 'hidden', true))
+	canvasTools.addEventListener('mouseleave', classToggler(editorElement, 'hidden', false))
 	canvasPanner.addEventListener('mousedown', mouseDown)
 	window.addEventListener('mousemove', _.throttle(mouseMove,50))
 	canvasPanner.addEventListener('mouseup', mouseUp)
@@ -68,6 +72,17 @@ $(function (){
 
 	function magnify(e){
 		zoomLevel = Math.min(10, zoomLevel - (e.deltaY < 0 ? -1 : 1))
+		sourceChanged()
+	}
+
+	nomnoml.magnifyViewport = function (diff){
+		zoomLevel = Math.min(10, zoomLevel + diff)
+		sourceChanged()
+	}
+
+	nomnoml.resetViewport = function (){
+		zoomLevel = 1
+		offset = {x: 0, y: 0}
 		sourceChanged()
 	}
 
@@ -144,15 +159,15 @@ $(function (){
 
 	function initToolbarTooltips(){
 		var tooltip = $('#tooltip')[0]
-		$('.tools > a').each(function (i, link){
+		$('.tools a').each(function (i, link){
 			link.onmouseover = function (){ tooltip.textContent  = $(link).attr('title') }
 			link.onmouseout = function (){ tooltip.textContent  = '' }
 		})
 	}
 
-	function positionCanvas(rect, zoom, offset){
-		var w = rect.width * zoom
-		var h = rect.height * zoom
+	function positionCanvas(rect, superSampling, offset){
+		var w = rect.width / superSampling
+		var h = rect.height / superSampling
 		jqCanvas.css({
 			top: 300 * (1 - h/viewport.height()) + offset.y,
 			left: 150 + (viewport.width() - w)/2 + offset.x,
@@ -185,9 +200,11 @@ $(function (){
 		try {
 			lineMarker.css('top', -30)
 			lineNumbers.toggleClass('error', false)
-			var scale = Math.exp(zoomLevel/10)
-			var model = nomnoml.draw(canvasElement, currentText(), scale)
-			positionCanvas(canvasElement, model.config.zoom / model.superSampling, offset)
+			var superSampling = window.devicePixelRatio || 1
+			var scale = superSampling * Math.exp(zoomLevel/10)
+
+			var model = nomnoml.draw(canvasElement, textarea.value, scale)
+			positionCanvas(canvasElement, superSampling, offset)
 			setFilename(model.config.title)
 			storage.save(currentText())
 		} catch (e){

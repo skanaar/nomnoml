@@ -61,11 +61,11 @@ h1 {
   color: #D4CEBD;
   padding-left: 12px
 }
-
 .CodeMirror.hidden {
 	opacity: 0;
 	transition: opacity 1s;
 }
+
 #canvas-panner {
 	position: absolute;
 	z-index: 2;
@@ -114,7 +114,19 @@ a:hover {
 	font-weight: bold;
 	background: #fdf6e3;
 	border-radius: 5px;
-	padding: 0 5px;
+}
+.tools .canvas-tools {
+	display: block;
+	position: absolute;
+	top: 60px;
+	right: 0;
+	width: 24px;
+	opacity: 0;
+	transition: opacity 1s;
+}
+.canvas-mode .canvas-tools {
+	opacity: 1;
+	transition: opacity 0.3s;
 }
 .tools img {
 	width: 24px;

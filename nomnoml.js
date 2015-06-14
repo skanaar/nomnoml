@@ -25,11 +25,9 @@ var nomnoml = nomnoml || {};
 		};
 	}
 
-	function fitCanvasSize(canvas, rect, zoom, superSampling) {
-		var w = rect.width * zoom;
-		var h = rect.height * zoom;
-		canvas.width = w * superSampling;
-		canvas.height = h * superSampling;
+	function fitCanvasSize(canvas, rect, zoom) {
+		canvas.width = rect.width * zoom;
+		canvas.height = rect.height * zoom;
 	}
 
 	function setFont(config, isBold, isItalic, graphics) {
@@ -40,7 +38,7 @@ var nomnoml = nomnoml || {};
 		graphics.ctx.font = font
 	}
 
-	function parseAndRender(code, graphics, canvas, superSampling, scale) {
+	function parseAndRender(code, graphics, canvas, scale) {
 		var ast = nomnoml.parse(code);
 		var config = getConfig(ast.directives);
 		var measurer = {
@@ -49,16 +47,14 @@ var nomnoml = nomnoml || {};
 			textHeight: function () { return config.leading * config.fontSize }
 		};
 		var layout = nomnoml.layout(measurer, config, ast);
-		fitCanvasSize(canvas, layout, config.zoom * scale, superSampling);
-		config.zoom *= superSampling;
+		fitCanvasSize(canvas, layout, config.zoom * scale);
 		config.zoom *= scale;
 		nomnoml.render(graphics, config, layout, measurer.setFont);
-		return { config: config, superSampling: superSampling };
+		return { config: config };
 	}
 
 	nomnoml.draw = function (canvas, code, scale) {
 		var skCanvas = skanaar.Canvas(canvas)
-		var superSampling = window.devicePixelRatio || 1
-		return parseAndRender(code, skCanvas, canvas, superSampling, scale || 1)
+		return parseAndRender(code, skCanvas, canvas, scale || 1)
 	};
 })();
