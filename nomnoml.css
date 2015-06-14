@@ -25,8 +25,9 @@ h1 {
 	background: rgba(220,50,47,0.5);
 	position: absolute;
 	left: 0;
-	width: 33px;
-	height: 22px
+	width: 40px;
+	height: 22px;
+	z-index: 4;
 }
 #textarea {
 	outline: none;
@@ -82,6 +83,11 @@ h1 {
 	width: 40px;
 	height: 100%;
 	background: #eee8d5;
+	color:#D4CEBD
+}
+#linenumbers.error {
+	background: rgba(220,50,47,0.2);
+	z-index: 4;
 }
 #canvas {
 	position: absolute;
@@ -133,13 +139,13 @@ a:hover {
 	padding: 0 5px;
 }
 .tools > #storage-status {
+	display: none;
 	color: #000;
 	opacity: 0.5;
 	font-style: italic;
 	position: fixed;
 	top: 7px;
 	right: 0;
-	display: block;
 	width: 100%;
 	text-align: center;
 }

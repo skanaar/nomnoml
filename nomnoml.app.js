@@ -7,7 +7,6 @@ $(function (){
 	var viewport = $(window)
 	var lineNumbers = $('#linenumbers')
 	var lineMarker = $('#linemarker')
-	var jqTextarea = $('#textarea')
 	var storageStatusElement = $('#storage-status')
 	var textarea = document.getElementById('textarea')
 	var imgLink = document.getElementById('savebutton')
@@ -29,7 +28,6 @@ $(function (){
 	});
 
 	var editorElement = editor.getWrapperElement()
-
 
 	window.addEventListener('hashchange', reloadStorage);
 	window.addEventListener('resize', _.throttle(sourceChanged, 750, {leading: true}))
@@ -83,7 +81,7 @@ $(function (){
 
 	nomnoml.discardCurrentGraph = function (){
 		if (confirm('Do you want to discard current diagram and load the default example?')){
-			currentText() = defaultSource
+			setCurrentText(defaultSource)
 			sourceChanged()
 		}
 	}
@@ -179,10 +177,14 @@ $(function (){
 		return editor.getValue()
 	}
 
+	function setCurrentText(value){
+		return editor.setValue(value)
+	}
+
 	function sourceChanged(){
 		try {
 			lineMarker.css('top', -30)
-			lineNumbers.css({background:'#eee8d5', color:'#D4CEBD'})
+			lineNumbers.toggleClass('error', false)
 			var scale = Math.exp(zoomLevel/10)
 			var model = nomnoml.draw(canvasElement, currentText(), scale)
 			positionCanvas(canvasElement, model.config.zoom / model.superSampling, offset)
@@ -190,12 +192,11 @@ $(function (){
 			storage.save(currentText())
 		} catch (e){
 			var matches = e.message.match('line ([0-9]*)')
+			lineNumbers.toggleClass('error', true)
 			if (matches){
-				var lineHeight = parseFloat(jqTextarea.css('line-height'))
-				lineMarker.css('top', 8 + lineHeight*matches[1])
-			}
-			else {
-				lineNumbers.css({background:'rgba(220,50,47,0.4)', color:'#657b83'})
+				var lineHeight = parseFloat($(editorElement).css('line-height'))
+				lineMarker.css('top', 3 + lineHeight*matches[1])
+			} else {
 				throw e
 			}
 		}
