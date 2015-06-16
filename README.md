@@ -12,6 +12,7 @@ Created by [Daniel Kallin](https://github.com/skanaar). Contributions by [Alexan
 - [lodash](http://lodash.com)
 - [typicons](http://typicons.com/)
 - [zepto](http://zeptojs.com/)
+- [codemirror](https://codemirror.net/)
 - [solarized](http://ethanschoonover.com/solarized)
 
 ## Library

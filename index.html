@@ -6,8 +6,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="A tool for drawing sassy UML diagrams based on syntax. Provides instant feedback and has a customizable styling.">
 <title>nomnoml</title>
-<link rel="stylesheet" href="lib/boilerplate.css">
-<link rel="stylesheet" href="lib/normalize.css">
 <link rel="stylesheet" href="codemirror/codemirror.css">
 <link rel="stylesheet" href="codemirror/solarized.nomnoml.css">
 <link rel="stylesheet" href="nomnoml.css">
@@ -92,7 +90,8 @@
 				<a target="_blank" href="https://github.com/cpettitt/dagre">dagre</a>,
 				<a target="_blank" href="http://lodash.com">lodash</a>,
 				<a target="_blank" href="http://typicons.com/">typicons</a> ,
-				<a target="_blank" href="http://zeptojs.com/">zepto</a> and
+				<a target="_blank" href="http://zeptojs.com/">zepto</a>, 
+				<a target="_blank" href="https://codemirror.net/">codemirror</a> and
 				<a target="_blank" href="http://ethanschoonover.com/solarized">solarized</a>.
 				</p>
 
@@ -100,7 +99,15 @@
 
 				<h2>Interaction</h2>
 
-				<p>The canvas can be panned and zoomed by dragging and scrolling in the right hand third of the canvas. Downloaded image files will be given the filename in the <tt>#title</tt> directive.
+				<p>The canvas can be panned and zoomed by dragging and scrolling in the right hand third of the canvas.
+				</p>
+
+				<img src="img/interaction-tutorial.png" alt="interaction tutorial">
+
+				<p>Downloaded image files will be given the filename in the <tt>#title</tt> directive.
+				</p>
+
+				<p>The editor supports a subset of <i>Sublime Text's</i> <a href="https://codemirror.net/demo/sublime.html" target="_blank">keymappings</a>.
 				</p>
 
 				<hr>
@@ -236,7 +243,7 @@
 [<actor>Sailor] - [<usecase>shiver me;timbers]</script>
 
 	<script src="lib/zepto.min.js"></script>
-	<script src="lib/lodash.js"></script>
+	<script src="lib/lodash.min.js"></script>
 	<script src="lib/dagre.min.js"></script>
 	<script src="skanaar.canvas.js"></script>
 	<script src="codemirror/codemirror-compressed.js"></script>
