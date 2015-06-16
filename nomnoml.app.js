@@ -103,7 +103,7 @@ $(function (){
 
 	nomnoml.saveViewModeToStorage = function (){
 		var question = 
-			'Do you want to overwrite the diagram in' +
+			'Do you want to overwrite the diagram in ' +
 			'localStorage with the currently viewed diagram?'
 		if (confirm(question)){
 			storage.moveToLocalStorage()
