@@ -1343,7 +1343,7 @@ var nomnoml = nomnoml || {};
 
 	nomnoml.draw = function (canvas, code, scale) {
 		var skCanvas = skanaar.Canvas(canvas)
-		var superSampling = window.devicePixelRatio || 1
+		var superSampling = typeof window !== 'undefined' && window.devicePixelRatio || 1
 		return parseAndRender(code, skCanvas, canvas, superSampling, scale || 1)
 	};
 })();

@@ -200,7 +200,7 @@ $(function (){
 		try {
 			lineMarker.css('top', -30)
 			lineNumbers.toggleClass('error', false)
-			var superSampling = window.devicePixelRatio || 1
+			var superSampling = typeof window !== 'undefined' && window.devicePixelRatio || 1
 			var scale = superSampling * Math.exp(zoomLevel/10)
 
 			var model = nomnoml.draw(canvasElement, currentText(), scale)
