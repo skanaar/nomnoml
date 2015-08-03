@@ -30,7 +30,10 @@
     <canvas id="target-canvas"></canvas>
     <script>
         require.config({
-            baseUrl: '../lib'
+            baseUrl: '../lib',
+            paths: {
+              lodash: '../lib/lodash.min'
+            }
         });
         require(['../dist/nomnoml'], function (nomnoml) {
             console.log(nomnoml);
