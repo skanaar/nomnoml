@@ -11,7 +11,7 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 		g.translate(padding, padding)
 		g.fillStyle(config.stroke)
 		_.each(compartment.lines, function (text, i){
-			g.textAlign = style.center ? 'center' : 'left'
+			g.textAlign(style.center ? 'center' : 'left')
 			var x = style.center ? compartment.width/2 - padding : 0
 			var y = (0.5+(i+0.5)*config.leading)*config.fontSize
 			g.fillText(text, x, y)

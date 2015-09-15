@@ -144,6 +144,7 @@ skanaar.Canvas = function (canvas, callbacks){
 		font:        function (f){ ctx.font = f },
 		fillStyle:   function (s){ ctx.fillStyle = s },
 		strokeStyle: function (s){ ctx.strokeStyle = s },
+		textAlign:   function (a){ ctx.textAlign = a },
 		
 		arcTo:       function (){ return ctx.arcTo.apply(      ctx, arguments) },
 		beginPath:   function (){ return ctx.beginPath.apply(  ctx, arguments) },
@@ -159,7 +160,6 @@ skanaar.Canvas = function (canvas, callbacks){
 		scale:       function (){ return ctx.scale.apply(      ctx, arguments) },
 		setLineDash: function (){ return ctx.setLineDash.apply(ctx, arguments) },
 		stroke:      function (){ return ctx.stroke.apply(     ctx, arguments) },
-		textAlign:   function (){ return ctx.textAlign.apply(  ctx, arguments) },
 		translate:   function (){ return ctx.translate.apply(  ctx, arguments) }
 	}
 };

@@ -20,7 +20,7 @@ skanaar.Svg = function (){
 	}
 
 	function State(dx, dy){
-		return { x: dx, y: dy, style: { stroke: '', fill: '' } }
+		return { x: dx, y: dy, style: { stroke: '', fill: '' }, textAlign: 'left' }
 	}
 
 	function trans(coord, axis){
@@ -34,6 +34,12 @@ skanaar.Svg = function (){
 			if (states[i].style[property])
 				return states[i].style[property]
 		return undefined
+	}
+	function lastTextAlign(){
+		for(var i=states.length-1; i>=0; i--)
+			if (states[i].textAlign)
+				return states[i].textAlign
+		return undefineds
 	}
 
 	function last(list){ return list[list.length-1] }
@@ -67,11 +73,11 @@ skanaar.Svg = function (){
 			elements.push(element)
 			return Element
 		},
-		ellipse: function (center, rx, ry, start, stop){
+		ellipse: function (center, rx, ry /*, start, stop*/){
 			return newElement('ellipse',
 				{ cx: tX(center.x), cy: tY(center.y), rx: rx, ry: ry })
 		},
-		arc: function (x, y, r, start, stop){
+		arc: function (x, y, r /*, start, stop*/){
 			return newElement('ellipse',
 				{ cx: tX(x), cy: tY(y), rx: r, ry: r })
 		},
@@ -100,7 +106,11 @@ skanaar.Svg = function (){
 		beginPath: function (){
 			return newElement('path', {d:''})
 		},
-		fillText: function (){},
+		fillText: function (text, x, y){
+			if (lastTextAlign() === 'center')
+				x -= this.measureText(text).width/2
+			return newElement('text', { x: tX(x), y: tY(y), content: text })
+		},
 		lineCap: function (){},
 		lineJoin: function (){},
 		lineTo: function (x, y){
@@ -108,7 +118,7 @@ skanaar.Svg = function (){
 		},
 		lineWidth: function (){},
 		measureText: function (s){
-			return { width: s.length * 12 }
+			return { width: s.length * 8 }
 		},
 		moveTo: function (x, y){
 			last(elements).attr.d += ('M' + tX(x) + ' ' + tY(y) + ' ')
@@ -124,7 +134,9 @@ skanaar.Svg = function (){
 		stroke: function (){
 			last(elements).stroke()
 		},
-		textAlign: function (){},
+		textAlign: function (a){
+			last(states).textAlign = a
+		},
 		translate: function (dx, dy){
 			last(states).x += dx
 			last(states).y += dy
@@ -132,9 +144,13 @@ skanaar.Svg = function (){
 		serialize: function (){
 			var innerSvg = elements.map(function (e){
 				var attr = Object.keys(e.attr).map(function (key){
+					if (key === 'content') return ''
 					return key + '="' + e.attr[key] + '"'
 				}).join(' ')
-				return '<'+e.name+' '+attr+'/>'
+				if (e.attr.content)
+					return '<'+e.name+' '+attr+'>' + e.attr.content + '</'+e.name+'>'
+				else
+					return '<'+e.name+' '+attr+'/>'
 			}).join('/n')
 			return '<svg version="1.1" '+
 			'baseProfile="full" '+
