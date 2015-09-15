@@ -7,26 +7,26 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 	var vm = skanaar.vector
 
 	function renderCompartment(compartment, style, level){
-		g.ctx.save()
-		g.ctx.translate(padding, padding)
-		g.ctx.fillStyle = config.stroke
+		g.save()
+		g.translate(padding, padding)
+		g.fillStyle(config.stroke)
 		_.each(compartment.lines, function (text, i){
-			g.ctx.textAlign = style.center ? 'center' : 'left'
+			g.textAlign = style.center ? 'center' : 'left'
 			var x = style.center ? compartment.width/2 - padding : 0
 			var y = (0.5+(i+0.5)*config.leading)*config.fontSize
-			g.ctx.fillText(text, x, y)
+			g.fillText(text, x, y)
 			if (style.underline){
-				var w = g.ctx.measureText(text).width
+				var w = g.measureText(text).width
 				y += Math.round(config.fontSize * 0.1)+0.5
-				g.ctx.lineWidth = Math.round(config.fontSize/10)
+				g.lineWidth = Math.round(config.fontSize/10)
 				g.path([{x:x-w/2, y:y}, {x:x+w/2, y:y}]).stroke()
-				g.ctx.lineWidth = config.lineWidth
+				g.lineWidth = config.lineWidth
 			}
 		})
-		g.ctx.translate(config.gutter, config.gutter)
+		g.translate(config.gutter, config.gutter)
 		_.each(compartment.relations, function (r){ renderRelation(r, compartment) })
 		_.each(compartment.nodes, function (n){ renderNode(n, level) })
-		g.ctx.restore()
+		g.restore()
 	}
 
 	function textStyle(node, line){
@@ -56,7 +56,7 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 		var y = Math.round(node.y-node.height/2)
 		var xCenter = x + node.width/2
 		var shade = config.fill[level] || _.last(config.fill)
-		g.ctx.fillStyle = shade
+		g.fillStyle(shade)
 		if (node.type === 'NOTE'){
 			g.circuit([
 				{x: x, y: y},
@@ -87,11 +87,11 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 			var center = {x: xCenter, y: y+node.height/2}
 			g.ellipse(center, node.width, node.height).fill().stroke()
 		} else if (node.type === 'START') {
-			g.ctx.fillStyle = config.stroke
+			g.fillStyle(config.stroke)
 			g.circle(xCenter, y+node.height/2, node.height/2.5).fill()
 		} else if (node.type === 'END') {
 			g.circle(xCenter, y+node.height/2, node.height/3).fill().stroke()
-			g.ctx.fillStyle = config.stroke
+			g.fillStyle(config.stroke)
 			g.circle(xCenter, y+node.height/2, node.height/3-padding/2).fill()
 		} else if (node.type === 'STATE') {
 			var stateRadius = Math.min(padding*2*config.leading, node.height/2)
@@ -113,7 +113,7 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 		} else if (node.type === 'PACKAGE') {
 			var headHeight = node.compartments[0].height
 			g.rect(x, y+headHeight, node.width, node.height-headHeight).fill().stroke()
-			var w = g.ctx.measureText(node.name).width + 2*padding
+			var w = g.measureText(node.name).width + 2*padding
 			g.circuit([
 				{x:x, y:y+headHeight},
 				{x:x, y:y},
@@ -156,15 +156,15 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 		_.each(node.compartments, function (part, i){
 			var s = textStyle(node, i)
 			if (s.empty) return
-			g.ctx.save()
-			g.ctx.translate(x, yDivider)
+			g.save()
+			g.translate(x, yDivider)
 			setFont(config, s.bold ? 'bold' : 'normal', s.italic)
 			renderCompartment(part, s, level+1)
-			g.ctx.restore()
+			g.restore()
 			if (i+1 === node.compartments.length) return
 			yDivider += part.height
 			if (node.type === 'FRAME' && i === 0){
-				var w = g.ctx.measureText(node.name).width+part.height/2+padding
+				var w = g.measureText(node.name).width+part.height/2+padding
 				g.path([
 					{x:x, y:yDivider},
 					{x:x+w-part.height/2, y:yDivider},
@@ -179,16 +179,16 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 	function strokePath(p){
 		if (config.edges === 'rounded'){
 			var radius = config.spacing * config.bendSize
-	        g.ctx.beginPath()
-	        g.ctx.moveTo(p[0].x, p[0].y)
+	        g.beginPath()
+	        g.moveTo(p[0].x, p[0].y)
 			for (var i = 1; i < p.length-1; i++){
 				var vec = vm.diff(p[i], p[i-1])
 				var bendStart = vm.add(p[i-1], vm.mult(vm.normalize(vec), vm.mag(vec)-radius))
-				g.ctx.lineTo(bendStart.x, bendStart.y)
-				g.ctx.arcTo(p[i].x, p[i].y, p[i+1].x, p[i+1].y, radius)
+				g.lineTo(bendStart.x, bendStart.y)
+				g.arcTo(p[i].x, p[i].y, p[i+1].x, p[i+1].y, radius)
 			}
-			g.ctx.lineTo(_.last(p).x, _.last(p).y)
-	        g.ctx.stroke()
+			g.lineTo(_.last(p).x, _.last(p).y)
+	        g.stroke()
 		}
 		else
 			g.path(p).stroke()
@@ -206,19 +206,19 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 		var path = _.flatten([start, _.tail(_.initial(r.path)), end])
 		var fontSize = config.fontSize
 
-		g.ctx.fillStyle = config.stroke
+		g.fillStyle(config.stroke)
 		setFont(config, 'normal')
-		var textW = g.ctx.measureText(r.endLabel).width
+		var textW = g.measureText(r.endLabel).width
 		var labelX = config.direction === 'LR' ? -padding-textW : padding
-		g.ctx.fillText(r.startLabel, start.x+padding, start.y+padding+fontSize)
-		g.ctx.fillText(r.endLabel, end.x+labelX, end.y-padding)
+		g.fillText(r.startLabel, start.x+padding, start.y+padding+fontSize)
+		g.fillText(r.endLabel, end.x+labelX, end.y-padding)
 
 		if (r.assoc !== '-/-'){
-			if (g.ctx.setLineDash && skanaar.hasSubstring(r.assoc, '--')){
+			if (g.setLineDash && skanaar.hasSubstring(r.assoc, '--')){
 				var dash = Math.max(4, 2*config.lineWidth)
-				g.ctx.setLineDash([dash, dash])
+				g.setLineDash([dash, dash])
 				strokePath(path)
-				g.ctx.setLineDash([])
+				g.setLineDash([])
 			}
 			else
 				strokePath(path)
@@ -267,24 +267,24 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 			vm.add(arrowBase, vm.mult(t, -4*size)),
 			arrowPoint
 		]
-		g.ctx.fillStyle = isOpen ? config.stroke : config.fill[0]
+		g.fillStyle(isOpen ? config.stroke : config.fill[0])
 		g.circuit(arrow).fill().stroke()
 	}
 
 	function snapToPixels(){
 		if (config.lineWidth % 2 === 1)
-			g.ctx.translate(0.5, 0.5)
+			g.translate(0.5, 0.5)
 	}
 
 	g.clear()
 	setFont(config, 'bold')
-	g.ctx.save()
-	g.ctx.lineWidth = config.lineWidth
-	g.ctx.lineJoin = 'round'
-	g.ctx.lineCap = 'round'
-	g.ctx.strokeStyle = config.stroke
-	g.ctx.scale(config.zoom, config.zoom)
+	g.save()
+	g.lineWidth = config.lineWidth
+	g.lineJoin = 'round'
+	g.lineCap = 'round'
+	g.strokeStyle(config.stroke)
+	g.scale(config.zoom, config.zoom)
 	snapToPixels()
 	renderCompartment(compartment, {}, 0)
-	g.ctx.restore()
+	g.restore()
 }
