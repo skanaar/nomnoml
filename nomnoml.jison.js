@@ -102,7 +102,7 @@ break;
 case 9:this.$ = $$[$0-1].concat([[]]);
 break;
 case 10:
-           var t = $$[$0-1].trim().match('^(.*?)([<:o+]*-/?-*[:o+>]*)(.*)$');
+           var t = $$[$0-1].trim().replace(/\\(\[|\]|\|)/g, '$'+'1').match('^(.*?)([<:o+]*-/?-*[:o+>]*)(.*)$');
            this.$ = {assoc:t[2], start:$$[$0-2], end:$$[$0], startLabel:t[1].trim(), endLabel:t[3].trim()};
   
 break;
