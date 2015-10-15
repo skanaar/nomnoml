@@ -1,13 +1,13 @@
 %lex
 %%
 
-\s*\|\s*                   return '|'
-[^\]\[|;\n]+               return 'IDENT'
-"["                        return '['
-\s*\]                      return ']'
-[ ]*(\;|\n)+[ ]*           return 'SEP'
-<<EOF>>                    return 'EOF'
-.                          return 'INVALID'
+\s*\|\s*                          return '|'
+(\\(\[|\]|\|)|[^\]\[|;\n])+       return 'IDENT'
+"["                               return '['
+\s*\]                             return ']'
+[ ]*(\;|\n)+[ ]*                  return 'SEP'
+<<EOF>>                           return 'EOF'
+.                                 return 'INVALID'
 
 /lex
 
@@ -19,7 +19,7 @@ root
     : compartment EOF      { return $1 };
 
 slot
-  : IDENT                  {$$ = $1.trim();}
+  : IDENT                  {$$ = $1.trim().replace(/\\(\[|\]|\|)/g, '$'+'1');}
   | class                  {$$ = $1;}
   | association            {$$ = $1;};
 

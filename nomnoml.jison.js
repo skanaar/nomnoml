@@ -85,7 +85,7 @@ var $0 = $$.length - 1;
 switch (yystate) {
 case 1: return $$[$0-1] 
 break;
-case 2:this.$ = $$[$0].trim();
+case 2:this.$ = $$[$0].trim().replace(/\\(\[|\]|\|)/g, '$'+'1');
 break;
 case 3:this.$ = $$[$0];
 break;
@@ -604,7 +604,7 @@ case 6:return 'INVALID'
 break;
 }
 },
-rules: [/^(?:\s*\|\s*)/,/^(?:[^\]\[|;\n]+)/,/^(?:\[)/,/^(?:\s*\])/,/^(?:[ ]*(;|\n)+[ ]*)/,/^(?:$)/,/^(?:.)/],
+rules: [/^(?:\s*\|\s*)/,/^(?:(\\(\[|\]|\|)|[^\]\[|;\n])+)/,/^(?:\[)/,/^(?:\s*\])/,/^(?:[ ]*(;|\n)+[ ]*)/,/^(?:$)/,/^(?:.)/],
 conditions: {"INITIAL":{"rules":[0,1,2,3,4,5,6],"inclusive":true}}
 };
 return lexer;

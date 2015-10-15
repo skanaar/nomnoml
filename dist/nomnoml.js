@@ -275,7 +275,7 @@ var $0 = $$.length - 1;
 switch (yystate) {
 case 1: return $$[$0-1] 
 break;
-case 2:this.$ = $$[$0].trim();
+case 2:this.$ = $$[$0].trim().replace(/\\(\[|\]|\|)/g, '$'+'1');
 break;
 case 3:this.$ = $$[$0];
 break;
@@ -794,7 +794,7 @@ case 6:return 'INVALID'
 break;
 }
 },
-rules: [/^(?:\s*\|\s*)/,/^(?:[^\]\[|;\n]+)/,/^(?:\[)/,/^(?:\s*\])/,/^(?:[ ]*(;|\n)+[ ]*)/,/^(?:$)/,/^(?:.)/],
+rules: [/^(?:\s*\|\s*)/,/^(?:(\\(\[|\]|\|)|[^\]\[|;\n])+)/,/^(?:\[)/,/^(?:\s*\])/,/^(?:[ ]*(;|\n)+[ ]*)/,/^(?:$)/,/^(?:.)/],
 conditions: {"INITIAL":{"rules":[0,1,2,3,4,5,6],"inclusive":true}}
 };
 return lexer;
@@ -1027,6 +1027,7 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 		if (line > 0) return {}
 		return {
 			CLASS: { bold: true, center: true },
+			LABEL: {},
 			INSTANCE: { center: true, underline: true },
 			FRAME: { center: false, frameHeader: true },
 			ABSTRACT: { italic: true, center: true},
@@ -1143,6 +1144,7 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 			g.ellipse({x: cx, y: cy}, node.width, padding*1.5).fill().stroke()
 			g.ellipse({x: cx, y: cy+node.height}, node.width, padding*1.5, 0, pi)
 				.fill().stroke()
+		} else if (node.type === 'LABEL') {
 		} else {
 			g.rect(x, y, node.width, node.height).fill().stroke()
 		}
