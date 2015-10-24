@@ -33,6 +33,7 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 		if (line > 0) return {}
 		return {
 			CLASS: { bold: true, center: true },
+			LABEL: {},
 			INSTANCE: { center: true, underline: true },
 			FRAME: { center: false, frameHeader: true },
 			ABSTRACT: { italic: true, center: true},
@@ -149,6 +150,7 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 			g.ellipse({x: cx, y: cy}, node.width, padding*1.5).fill().stroke()
 			g.ellipse({x: cx, y: cy+node.height}, node.width, padding*1.5, 0, pi)
 				.fill().stroke()
+		} else if (node.type === 'LABEL') {
 		} else {
 			g.rect(x, y, node.width, node.height).fill().stroke()
 		}

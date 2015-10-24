@@ -279,7 +279,7 @@ var $0 = $$.length - 1;
 switch (yystate) {
 case 1: return $$[$0-1] 
 break;
-case 2:this.$ = $$[$0].trim();
+case 2:this.$ = $$[$0].trim().replace(/\\(\[|\]|\|)/g, '$'+'1');
 break;
 case 3:this.$ = $$[$0];
 break;
@@ -296,7 +296,7 @@ break;
 case 9:this.$ = $$[$0-1].concat([[]]);
 break;
 case 10:
-           var t = $$[$0-1].trim().match('^(.*?)([<:o+]*-/?-*[:o+>]*)(.*)$');
+           var t = $$[$0-1].trim().replace(/\\(\[|\]|\|)/g, '$'+'1').match('^(.*?)([<:o+]*-/?-*[:o+>]*)(.*)$');
            this.$ = {assoc:t[2], start:$$[$0-2], end:$$[$0], startLabel:t[1].trim(), endLabel:t[3].trim()};
   
 break;
@@ -798,7 +798,7 @@ case 6:return 'INVALID'
 break;
 }
 },
-rules: [/^(?:\s*\|\s*)/,/^(?:[^\]\[|;\n]+)/,/^(?:\[)/,/^(?:\s*\])/,/^(?:[ ]*(;|\n)+[ ]*)/,/^(?:$)/,/^(?:.)/],
+rules: [/^(?:\s*\|\s*)/,/^(?:(\\(\[|\]|\|)|[^\]\[|;\n])+)/,/^(?:\[)/,/^(?:\s*\])/,/^(?:[ ]*(;|\n)+[ ]*)/,/^(?:$)/,/^(?:.)/],
 conditions: {"INITIAL":{"rules":[0,1,2,3,4,5,6],"inclusive":true}}
 };
 return lexer;
@@ -1031,6 +1031,7 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 		if (line > 0) return {}
 		return {
 			CLASS: { bold: true, center: true },
+			LABEL: {},
 			INSTANCE: { center: true, underline: true },
 			FRAME: { center: false, frameHeader: true },
 			ABSTRACT: { italic: true, center: true},
@@ -1147,6 +1148,7 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 			g.ellipse({x: cx, y: cy}, node.width, padding*1.5).fill().stroke()
 			g.ellipse({x: cx, y: cy+node.height}, node.width, padding*1.5, 0, pi)
 				.fill().stroke()
+		} else if (node.type === 'LABEL') {
 		} else {
 			g.rect(x, y, node.width, node.height).fill().stroke()
 		}
@@ -1314,11 +1316,9 @@ var nomnoml = nomnoml || {};
 		};
 	}
 
-	function fitCanvasSize(canvas, rect, zoom, superSampling) {
-		var w = rect.width * zoom;
-		var h = rect.height * zoom;
-		canvas.width = w * superSampling;
-		canvas.height = h * superSampling;
+	function fitCanvasSize(canvas, rect, zoom) {
+		canvas.width = rect.width * zoom;
+		canvas.height = rect.height * zoom;
 	}
 
 	function setFont(config, isBold, isItalic, graphics) {
@@ -1329,7 +1329,7 @@ var nomnoml = nomnoml || {};
 		graphics.ctx.font = font
 	}
 
-	function parseAndRender(code, graphics, canvas, superSampling, scale) {
+	function parseAndRender(code, graphics, canvas, scale) {
 		var ast = nomnoml.parse(code);
 		var config = getConfig(ast.directives);
 		var measurer = {
@@ -1338,17 +1338,15 @@ var nomnoml = nomnoml || {};
 			textHeight: function () { return config.leading * config.fontSize }
 		};
 		var layout = nomnoml.layout(measurer, config, ast);
-		fitCanvasSize(canvas, layout, config.zoom * scale, superSampling);
-		config.zoom *= superSampling;
+		fitCanvasSize(canvas, layout, config.zoom * scale);
 		config.zoom *= scale;
 		nomnoml.render(graphics, config, layout, measurer.setFont);
-		return { config: config, superSampling: superSampling };
+		return { config: config };
 	}
 
 	nomnoml.draw = function (canvas, code, scale) {
 		var skCanvas = skanaar.Canvas(canvas)
-		var superSampling = window.devicePixelRatio || 1
-		return parseAndRender(code, skCanvas, canvas, superSampling, scale || 1)
+		return parseAndRender(code, skCanvas, canvas, scale || 1)
 	};
 })();
 ;

@@ -55,6 +55,7 @@
 				[&lt;receiver&gt; name]<br>
 				[&lt;actor&gt; name]<br>
 				[&lt;usecase&gt; name]<br>
+				[&lt;label&gt; name]<br>
 				[&lt;hidden&gt; name]<br>
 
 				<h2>Directives</h2>
@@ -148,6 +149,9 @@
 
 				<label>Car has some attributes</label>
 				[Car|maxSpeed: Float;color: Color|]
+
+				<label>Car has several valves</label>
+				[Car| valves: Valve\[\] ]
 
 				<label>Engine has an operation</label>
 				[Engine||start()]

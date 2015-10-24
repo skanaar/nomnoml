@@ -85,7 +85,7 @@ var $0 = $$.length - 1;
 switch (yystate) {
 case 1: return $$[$0-1] 
 break;
-case 2:this.$ = $$[$0].trim();
+case 2:this.$ = $$[$0].trim().replace(/\\(\[|\]|\|)/g, '$'+'1');
 break;
 case 3:this.$ = $$[$0];
 break;
@@ -102,7 +102,7 @@ break;
 case 9:this.$ = $$[$0-1].concat([[]]);
 break;
 case 10:
-           var t = $$[$0-1].trim().match('^(.*?)([<:o+]*-/?-*[:o+>]*)(.*)$');
+           var t = $$[$0-1].trim().replace(/\\(\[|\]|\|)/g, '$'+'1').match('^(.*?)([<:o+]*-/?-*[:o+>]*)(.*)$');
            this.$ = {assoc:t[2], start:$$[$0-2], end:$$[$0], startLabel:t[1].trim(), endLabel:t[3].trim()};
   
 break;
@@ -604,7 +604,7 @@ case 6:return 'INVALID'
 break;
 }
 },
-rules: [/^(?:\s*\|\s*)/,/^(?:[^\]\[|;\n]+)/,/^(?:\[)/,/^(?:\s*\])/,/^(?:[ ]*(;|\n)+[ ]*)/,/^(?:$)/,/^(?:.)/],
+rules: [/^(?:\s*\|\s*)/,/^(?:(\\(\[|\]|\|)|[^\]\[|;\n])+)/,/^(?:\[)/,/^(?:\s*\])/,/^(?:[ ]*(;|\n)+[ ]*)/,/^(?:$)/,/^(?:.)/],
 conditions: {"INITIAL":{"rules":[0,1,2,3,4,5,6],"inclusive":true}}
 };
 return lexer;

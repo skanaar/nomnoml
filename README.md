@@ -97,6 +97,7 @@ This is how the Decorator pattern looks like in nomnoml syntax:
     [<receiver> name]
     [<actor> name]
     [<usecase> name]
+    [<label> name]
     [<hidden> name]
 
 ### Directives
