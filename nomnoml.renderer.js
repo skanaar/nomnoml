@@ -242,16 +242,25 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 		drawArrowEnd(_.first(tokens), path.reverse(), start)
 	}
 
-	function rectIntersection(p1, p2, rect){
-		if(rect.width === 0 && rect.height === 0) return p2
-		var v = vm.diff(p1, p2)
-		for(var t=1; t>=0; t-= 0.01){
-			var p = vm.mult(v, t)
-			if(Math.abs(p.x) <= rect.width/2+config.edgeMargin &&
-				Math.abs(p.y) <= rect.height/2+config.edgeMargin)
-				return vm.add(p2, p)
+	function rectIntersection(p1, p2, rect) {
+		var intersection;
+
+		if (rect.width || rect.height) {
+			var xBound = rect.width/2 + config.edgeMargin,
+			    yBound = rect.height/2 + config.edgeMargin,
+			    delta = vm.diff(p1, p2),
+			    t;
+
+			if (delta.x && delta.y) {
+				t = Math.min(Math.abs(xBound/delta.x), Math.abs(yBound/delta.y));
+			} else {
+				t = Math.abs(delta.x ? xBound/delta.x : yBound/delta.y);
+			}
+			intersection = vm.add(p2, vm.mult(delta, t));
+		} else {
+			intersection = p2;
 		}
-		return p2
+		return intersection;
 	}
 
 	function drawArrow(path, isOpen, arrowPoint, diamond){
