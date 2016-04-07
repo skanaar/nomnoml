@@ -181,13 +181,13 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 	function strokePath(p){
 		if (config.edges === 'rounded'){
 			var radius = config.spacing * config.bendSize
-	        g.ctx.beginPath()
-	        g.ctx.moveTo(p[0].x, p[0].y)
+				g.ctx.beginPath()
+				g.ctx.moveTo(p[0].x, p[0].y)
 			for (var i = 1; i < p.length-1; i++){
 				g.ctx.arcTo(p[i].x, p[i].y, p[i+1].x, p[i+1].y, radius)
 			}
 			g.ctx.lineTo(_.last(p).x, _.last(p).y)
-	        g.ctx.stroke()
+				g.ctx.stroke()
 		}
 		else
 			g.path(p).stroke()
@@ -240,24 +240,19 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 	}
 
 	function rectIntersection(p1, p2, rect) {
-		var intersection;
-
 		if (rect.width || rect.height) {
-			var xBound = rect.width/2 + config.edgeMargin,
-			    yBound = rect.height/2 + config.edgeMargin,
-			    delta = vm.diff(p1, p2),
-			    t;
-
+			var xBound = rect.width/2 + config.edgeMargin;
+			var yBound = rect.height/2 + config.edgeMargin;
+			var delta = vm.diff(p1, p2);
+			var t;
 			if (delta.x && delta.y) {
 				t = Math.min(Math.abs(xBound/delta.x), Math.abs(yBound/delta.y));
 			} else {
 				t = Math.abs(delta.x ? xBound/delta.x : yBound/delta.y);
 			}
-			intersection = vm.add(p2, vm.mult(delta, t));
-		} else {
-			intersection = p2;
+			return vm.add(p2, vm.mult(delta, t));
 		}
-		return intersection;
+		return p2;
 	}
 
 	function drawArrow(path, isOpen, arrowPoint, diamond){
