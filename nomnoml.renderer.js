@@ -184,9 +184,6 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 	        g.ctx.beginPath()
 	        g.ctx.moveTo(p[0].x, p[0].y)
 			for (var i = 1; i < p.length-1; i++){
-				var vec = vm.diff(p[i], p[i-1])
-				var bendStart = vm.add(p[i-1], vm.mult(vm.normalize(vec), vm.mag(vec)-radius))
-				g.ctx.lineTo(bendStart.x, bendStart.y)
 				g.ctx.arcTo(p[i].x, p[i].y, p[i+1].x, p[i+1].y, radius)
 			}
 			g.ctx.lineTo(_.last(p).x, _.last(p).y)
