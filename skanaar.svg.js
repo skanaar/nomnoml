@@ -103,7 +103,9 @@ skanaar.Svg = function (globalStyle){
 		fillStyle: function (fill){
 			last(states).fill = fill
 		},
-		arcTo: function (){},
+		arcTo: function (x1, y1, x2, y2){
+			last(elements).attr.d += ('L'+tX(x1)+' '+tY(y1)+' L'+tX(x2)+' '+tY(y2)+' ')
+		},
 		beginPath: function (){
 			return newElement('path', {d:''})
 		},
