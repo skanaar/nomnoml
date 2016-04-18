@@ -5,10 +5,10 @@ var nomnomlParser = new jison.Parser(fs.readFileSync('nomnoml.jison', { encoding
 fs.writeFileSync('nomnoml.jison.js', nomnomlParser.generate({moduleName: 'nomnomlCoreParser'}));
 
 var nomnomlFiles = [
-    'lib/dagre.min.js',
     'skanaar.canvas.js',
     'skanaar.util.js',
     'skanaar.vector.js',
+    'skanaar.svg.js',
     'nomnoml.jison.js',
     'nomnoml.parser.js',
     'nomnoml.layouter.js',

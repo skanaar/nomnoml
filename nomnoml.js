@@ -54,9 +54,8 @@ var nomnoml = nomnoml || {};
 	}
 
 	nomnoml.draw = function (canvas, code, scale) {
-		nomnoml.renderSvg(code)
-		var skCanvas = skanaar.Canvas(canvas)
-		return parseAndRender(code, skCanvas, canvas, scale || 1)
+		document.getElementById('svg-host').innerHTML = nomnoml.renderSvg(code);
+		return parseAndRender(code, skanaar.Canvas(canvas), canvas, scale || 1)
 	};
 
 	nomnoml.renderSvg = function (code) {
@@ -78,8 +77,6 @@ var nomnoml = nomnoml || {};
 		};
 		var layout = nomnoml.layout(measurer, config, ast)
 		nomnoml.render(skCanvas, config, layout, measurer.setFont)
-		var svg = skCanvas.serialize()
-		document.getElementById('svg-host').innerHTML = svg;
-		return { config: config };
+		return skCanvas.serialize()
 	};
 })();
