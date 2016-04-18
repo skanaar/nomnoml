@@ -34,6 +34,7 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 		if (line > 0) return {}
 		return {
 			CLASS: { bold: true, center: true },
+			LABEL: {},
 			INSTANCE: { center: true, underline: true },
 			FRAME: { center: false, frameHeader: true },
 			ABSTRACT: { italic: true, center: true},
@@ -150,6 +151,7 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 			g.ellipse({x: cx, y: cy}, node.width, padding*1.5).fillAndStroke()
 			g.ellipse({x: cx, y: cy+node.height}, node.width, padding*1.5, 0, pi)
 				.fillAndStroke()
+		} else if (node.type === 'LABEL') {
 		} else {
 			g.rect(x, y, node.width, node.height).fillAndStroke()
 		}
@@ -180,16 +182,14 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 	function strokePath(p){
 		if (config.edges === 'rounded'){
 			var radius = config.spacing * config.bendSize
-	        g.beginPath()
-	        g.moveTo(p[0].x, p[0].y)
+			g.beginPath()
+			g.moveTo(p[0].x, p[0].y)
+
 			for (var i = 1; i < p.length-1; i++){
-				var vec = vm.diff(p[i], p[i-1])
-				var bendStart = vm.add(p[i-1], vm.mult(vm.normalize(vec), vm.mag(vec)-radius))
-				g.lineTo(bendStart.x, bendStart.y)
 				g.arcTo(p[i].x, p[i].y, p[i+1].x, p[i+1].y, radius)
 			}
 			g.lineTo(_.last(p).x, _.last(p).y)
-	        g.stroke()
+				g.stroke()
 		}
 		else
 			g.path(p).stroke()
@@ -241,16 +241,20 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 		drawArrowEnd(_.first(tokens), path.reverse(), start)
 	}
 
-	function rectIntersection(p1, p2, rect){
-		if(rect.width === 0 && rect.height === 0) return p2
-		var v = vm.diff(p1, p2)
-		for(var t=1; t>=0; t-= 0.01){
-			var p = vm.mult(v, t)
-			if(Math.abs(p.x) <= rect.width/2+config.edgeMargin &&
-				Math.abs(p.y) <= rect.height/2+config.edgeMargin)
-				return vm.add(p2, p)
+	function rectIntersection(p1, p2, rect) {
+		if (rect.width || rect.height) {
+			var xBound = rect.width/2 + config.edgeMargin;
+			var yBound = rect.height/2 + config.edgeMargin;
+			var delta = vm.diff(p1, p2);
+			var t;
+			if (delta.x && delta.y) {
+				t = Math.min(Math.abs(xBound/delta.x), Math.abs(yBound/delta.y));
+			} else {
+				t = Math.abs(delta.x ? xBound/delta.x : yBound/delta.y);
+			}
+			return vm.add(p2, vm.mult(delta, t));
 		}
-		return p2
+		return p2;
 	}
 
 	function drawArrow(path, isOpen, arrowPoint, diamond){
