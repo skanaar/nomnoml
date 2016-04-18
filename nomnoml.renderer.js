@@ -14,11 +14,12 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 			g.textAlign(style.center ? 'center' : 'left')
 			var x = style.center ? compartment.width/2 - padding : 0
 			var y = (0.5+(i+0.5)*config.leading)*config.fontSize
-			g.fillText(text, x, y)
+			if (text){
+				g.fillText(text, x, y)
+			}
 			if (style.underline){
 				var w = g.measureText(text).width
 				y += Math.round(config.fontSize * 0.1)+0.5
-				g.lineWidth = Math.round(config.fontSize/10)
 				g.path([{x:x-w/2, y:y}, {x:x+w/2, y:y}]).stroke()
 				g.lineWidth = config.lineWidth
 			}
@@ -65,7 +66,7 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 				{x: x+node.width, y: y+node.height},
 				{x: x, y: y+node.height},
 				{x: x, y: y}
-			]).fill().stroke()
+			]).fillAndStroke()
 			g.path([
 				{x: x+node.width-padding, y: y},
 				{x: x+node.width-padding, y: y+padding},
@@ -75,7 +76,7 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 			var a = padding/2
 			var yp = y + a/2
 			var actorCenter = {x: xCenter, y: yp-a}
-			g.circle(actorCenter, a).fill().stroke()
+			g.circle(actorCenter, a).fillAndStroke()
 			g.path([ {x: xCenter,   y: yp},
 				     {x: xCenter,   y: yp+2*a} ]).stroke()
 			g.path([ {x: xCenter-a, y: yp+a},
@@ -85,41 +86,41 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 				     {x: xCenter+a, y: yp+a+padding} ]).stroke()
 		} else if (node.type === 'USECASE') {
 			var center = {x: xCenter, y: y+node.height/2}
-			g.ellipse(center, node.width, node.height).fill().stroke()
+			g.ellipse(center, node.width, node.height).fillAndStroke()
 		} else if (node.type === 'START') {
 			g.fillStyle(config.stroke)
 			g.circle(xCenter, y+node.height/2, node.height/2.5).fill()
 		} else if (node.type === 'END') {
-			g.circle(xCenter, y+node.height/2, node.height/3).fill().stroke()
+			g.circle(xCenter, y+node.height/2, node.height/3).fillAndStroke()
 			g.fillStyle(config.stroke)
 			g.circle(xCenter, y+node.height/2, node.height/3-padding/2).fill()
 		} else if (node.type === 'STATE') {
 			var stateRadius = Math.min(padding*2*config.leading, node.height/2)
-			g.roundRect(x, y, node.width, node.height, stateRadius).fill().stroke()
+			g.roundRect(x, y, node.width, node.height, stateRadius).fillAndStroke()
 		} else if (node.type === 'INPUT') {
 			g.circuit([
 				{x:x+padding, y:y},
 				{x:x+node.width, y:y},
 				{x:x+node.width-padding, y:y+node.height},
 				{x:x, y:y+node.height}
-			]).fill().stroke()
+			]).fillAndStroke()
 		} else if (node.type === 'CHOICE') {
 			g.circuit([
 				{x:node.x, y:y - padding},
 				{x:x+node.width + padding, y:node.y},
 				{x:node.x, y:y+node.height + padding},
 				{x:x - padding, y:node.y}
-			]).fill().stroke()
+			]).fillAndStroke()
 		} else if (node.type === 'PACKAGE') {
 			var headHeight = node.compartments[0].height
-			g.rect(x, y+headHeight, node.width, node.height-headHeight).fill().stroke()
+			g.rect(x, y+headHeight, node.width, node.height-headHeight).fillAndStroke()
 			var w = g.measureText(node.name).width + 2*padding
 			g.circuit([
 				{x:x, y:y+headHeight},
 				{x:x, y:y},
 				{x:x+w, y:y},
 				{x:x+w, y:y+headHeight}
-		    ]).fill().stroke()
+		    ]).fillAndStroke()
 		} else if (node.type === 'SENDER') {
 			g.circuit([
 				{x: x, y: y},
@@ -127,7 +128,7 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 				{x: x+node.width+padding, y: y+node.height/2},
 				{x: x+node.width-padding, y: y+node.height},
 				{x: x, y: y+node.height}
-			]).fill().stroke()
+			]).fillAndStroke()
 		} else if (node.type === 'RECEIVER') {
 			g.circuit([
 				{x: x, y: y},
@@ -135,7 +136,7 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 				{x: x+node.width-padding, y: y+node.height/2},
 				{x: x+node.width+padding, y: y+node.height},
 				{x: x, y: y+node.height}
-			]).fill().stroke()
+			]).fillAndStroke()
 		} else if (node.type === 'HIDDEN') {
 		} else if (node.type === 'DATABASE') {
 			var cx = xCenter
@@ -146,11 +147,11 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 			g.path([
 				{x: x+node.width, y: cy},
 				{x: x+node.width, y: cy+node.height}]).stroke()
-			g.ellipse({x: cx, y: cy}, node.width, padding*1.5).fill().stroke()
+			g.ellipse({x: cx, y: cy}, node.width, padding*1.5).fillAndStroke()
 			g.ellipse({x: cx, y: cy+node.height}, node.width, padding*1.5, 0, pi)
-				.fill().stroke()
+				.fillAndStroke()
 		} else {
-			g.rect(x, y, node.width, node.height).fill().stroke()
+			g.rect(x, y, node.width, node.height).fillAndStroke()
 		}
 		var yDivider = (node.type === 'ACTOR' ? y + padding*3/4 : y)
 		_.each(node.compartments, function (part, i){
@@ -210,8 +211,8 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 		setFont(config, 'normal')
 		var textW = g.measureText(r.endLabel).width
 		var labelX = config.direction === 'LR' ? -padding-textW : padding
-		g.fillText(r.startLabel, start.x+padding, start.y+padding+fontSize)
-		g.fillText(r.endLabel, end.x+labelX, end.y-padding)
+		if (r.startLabel) g.fillText(r.startLabel, start.x+padding, start.y+padding+fontSize)
+		if (r.endLabel)   g.fillText(r.endLabel, end.x+labelX, end.y-padding)
 
 		if (r.assoc !== '-/-'){
 			if (g.setLineDash && skanaar.hasSubstring(r.assoc, '--')){
@@ -268,7 +269,7 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 			arrowPoint
 		]
 		g.fillStyle(isOpen ? config.stroke : config.fill[0])
-		g.circuit(arrow).fill().stroke()
+		g.circuit(arrow).fillAndStroke()
 	}
 
 	function snapToPixels(){
@@ -279,9 +280,9 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 	g.clear()
 	setFont(config, 'bold')
 	g.save()
-	g.lineWidth = config.lineWidth
-	g.lineJoin = 'round'
-	g.lineCap = 'round'
+	g.lineWidth(config.lineWidth)
+	g.lineJoin('round')
+	g.lineCap('round')
 	g.strokeStyle(config.stroke)
 	g.scale(config.zoom, config.zoom)
 	snapToPixels()

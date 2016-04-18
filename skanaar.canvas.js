@@ -35,6 +35,11 @@ skanaar.Canvas = function (canvas, callbacks){
 		fill: function (){
 			ctx.fill()
 			return chainable
+		},
+		fillAndStroke: function (){
+			ctx.fill()
+			ctx.stroke()
+			return chainable
 		}
 	}
 
@@ -145,14 +150,15 @@ skanaar.Canvas = function (canvas, callbacks){
 		fillStyle:   function (s){ ctx.fillStyle = s },
 		strokeStyle: function (s){ ctx.strokeStyle = s },
 		textAlign:   function (a){ ctx.textAlign = a },
+
+		lineCap: function (cap){ ctx.lineCap = cap },
+		lineJoin: function (join){ ctx.lineJoin = join },
+		lineWidth: function (w){ ctx.lineWidth = w },
 		
 		arcTo:       function (){ return ctx.arcTo.apply(      ctx, arguments) },
 		beginPath:   function (){ return ctx.beginPath.apply(  ctx, arguments) },
 		fillText:    function (){ return ctx.fillText.apply(   ctx, arguments) },
-		lineCap:     function (){ return ctx.lineCap.apply(    ctx, arguments) },
-		lineJoin:    function (){ return ctx.lineJoin.apply(   ctx, arguments) },
 		lineTo:      function (){ return ctx.lineTo.apply(     ctx, arguments) },
-		lineWidth:   function (){ return ctx.lineWidth.apply(  ctx, arguments) },
 		measureText: function (){ return ctx.measureText.apply(ctx, arguments) },
 		moveTo:      function (){ return ctx.moveTo.apply(     ctx, arguments) },
 		restore:     function (){ return ctx.restore.apply(    ctx, arguments) },

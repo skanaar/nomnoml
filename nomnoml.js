@@ -54,21 +54,32 @@ var nomnoml = nomnoml || {};
 	}
 
 	nomnoml.draw = function (canvas, code, scale) {
+		nomnoml.renderSvg(code)
 		var skCanvas = skanaar.Canvas(canvas)
 		return parseAndRender(code, skCanvas, canvas, scale || 1)
 	};
 
-	nomnoml.svg = function (code) {
-		var skCanvas = skanaar.Svg()
-		var ast = nomnoml.parse(code);
-		var config = getConfig(ast.directives);
+	nomnoml.renderSvg = function (code) {
+		var ast = nomnoml.parse(code)
+		var config = getConfig(ast.directives)
+		var skCanvas = skanaar.Svg('')
+		function setFont(config, isBold, isItalic) {
+			var style = (isBold === 'bold' ? 'bold' : '')
+			if (isItalic) style = 'italic' + style
+			var defFont = 'Helvetica, sans-serif'
+			var template = 'font-weight:#; font-size:#pt; font-family:\'#\', #'
+			var font = skanaar.format(template, style, config.fontSize, config.font, defFont)
+			skCanvas.font(font)
+		}
 		var measurer = {
 			setFont: function (a, b, c) { setFont(a, b, c, skCanvas); },
 			textWidth: function (s) { return skCanvas.measureText(s).width },
 			textHeight: function () { return config.leading * config.fontSize }
 		};
-		var layout = nomnoml.layout(measurer, config, ast);
-		nomnoml.render(skCanvas, config, layout, measurer.setFont);
-		return skCanvas.serialize()
+		var layout = nomnoml.layout(measurer, config, ast)
+		nomnoml.render(skCanvas, config, layout, measurer.setFont)
+		var svg = skCanvas.serialize()
+		document.getElementById('svg-host').innerHTML = svg;
+		return { config: config };
 	};
 })();

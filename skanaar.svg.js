@@ -1,45 +1,45 @@
 var skanaar = skanaar || {}
-skanaar.Svg = function (){
-	var states = [State(0, 0)]
+skanaar.Svg = function (globalStyle){
+	var initialState = { x: 0, y: 0, stroke: 'none', fill: 'none', textAlign: 'left' }
+	var states = [initialState]
 	var elements = []
 
-	function Element(name, attr) {
-		attr.style = ''
+	function Element(name, attr, content) {
+		attr.style = attr.style || ''
 		return {
 			name: name,
 			attr: attr,
+			content: content || undefined,
 			stroke: function (){
-				this.attr.style += 'stroke:' + lastDefined('stroke') + ';';
+				this.attr.style += 'stroke:'+lastDefined('stroke')+';fill:none;';
 				return this
 			},
 			fill: function (){
-				this.attr.style += 'fill:' + lastDefined('fill') + ';';
+				this.attr.style += 'stroke:none; fill:'+lastDefined('fill')+';';
+				return this
+			},
+			fillAndStroke: function (){
+				this.attr.style += 'stroke:'+lastDefined('stroke')+';fill:'+lastDefined('fill')+';';
 				return this
 			}
 		}
 	}
 
 	function State(dx, dy){
-		return { x: dx, y: dy, style: { stroke: '', fill: '' }, textAlign: 'left' }
+		return { x: dx, y: dy, stroke: null, fill: null, textAlign: null }
 	}
 
 	function trans(coord, axis){
 		states.forEach(function (t){ coord += t[axis] })
 		return coord
 	}
-	function tX(coord){ return trans(coord, 'x') }
-	function tY(coord){ return trans(coord, 'y') }
+	function tX(coord){ return Math.round(10*trans(coord, 'x'))/10 }
+	function tY(coord){ return Math.round(10*trans(coord, 'y'))/10 }
 	function lastDefined(property){
 		for(var i=states.length-1; i>=0; i--)
-			if (states[i].style[property])
-				return states[i].style[property]
+			if (states[i][property])
+				return states[i][property]
 		return undefined
-	}
-	function lastTextAlign(){
-		for(var i=states.length-1; i>=0; i--)
-			if (states[i].textAlign)
-				return states[i].textAlign
-		return undefineds
 	}
 
 	function last(list){ return list[list.length-1] }
@@ -47,15 +47,14 @@ skanaar.Svg = function (){
 	function tracePath(path, offset, s){
 		s = s === undefined ? 1 : s
 		offset = offset || {x:0, y:0}
-		var points = []
-		points.push('M' + tX(offset.x + s*path[0].x) + ' ' + tY(offset.y + s*path[0].y))
-		for(var i=1, len=path.length; i<len; i++)
-			points.push('L' + tX(offset.x + s*path[i].x) + ' ' + tY(offset.y + s*path[i].y))
-		return newElement('path', { d: points.join(' ') })
+		var d = path.map(function (e, i){
+			return (i ? 'L' : 'M') + tX(offset.x + s*e.x) + ' ' + tY(offset.y + s*e.y)
+		}).join(' ')
+		return newElement('path', { d: d })
 	}
 
-	function newElement(type, attr) {
-		var element = Element(type, attr)
+	function newElement(type, attr, content) {
+		var element = Element(type, attr, content)
 		elements.push(element)
 		return element
 	}
@@ -67,15 +66,15 @@ skanaar.Svg = function (){
 		clear: function (){},
 		circle: function (x, y, r){
 			var attr = (arguments.length === 2) ? 
-					{cx: x.x, cy: x.y, r: y} :
-					{cx: x, cy: y, r: r}
+					{r: y, cx: tX(x.x), cy: tY(x.y)} :
+					{r: r, cx: tX(x),   cy: tY(y)}
 			var element = Element('circle', attr)
 			elements.push(element)
-			return Element
+			return element
 		},
-		ellipse: function (center, rx, ry /*, start, stop*/){
+		ellipse: function (center, w, h /*, start, stop*/){
 			return newElement('ellipse',
-				{ cx: tX(center.x), cy: tY(center.y), rx: rx, ry: ry })
+				{ cx: tX(center.x), cy: tY(center.y), rx: w/2, ry: h/2 })
 		},
 		arc: function (x, y, r /*, start, stop*/){
 			return newElement('ellipse',
@@ -83,7 +82,7 @@ skanaar.Svg = function (){
 		},
 		roundRect: function (x, y, w, h, r){
 			return newElement('rect',
-				{ x: tX(x), y: tY(y), rx: r, ry: r, height: h, width: h })
+				{ x: tX(x), y: tY(y), rx: r, ry: r, height: h, width: w })
 		},
 		rect: function (x, y, w, h){
 			return newElement('rect',
@@ -95,30 +94,32 @@ skanaar.Svg = function (){
 			element.attr.d += ' Z'
 			return element
 		},
-		font: function (){},
+		font: function (font){
+			last(states).font = font;
+		},
 		strokeStyle: function (stroke){
-			last(states).style.stroke = stroke
+			last(states).stroke = stroke
 		},
 		fillStyle: function (fill){
-			last(states).style.fill = fill
+			last(states).fill = fill
 		},
 		arcTo: function (){},
 		beginPath: function (){
 			return newElement('path', {d:''})
 		},
 		fillText: function (text, x, y){
-			if (lastTextAlign() === 'center')
+			if (lastDefined('textAlign') === 'center')
 				x -= this.measureText(text).width/2
-			return newElement('text', { x: tX(x), y: tY(y), content: text })
+			return newElement('text', { x: tX(x), y: tY(y) }, text)
 		},
-		lineCap: function (){},
-		lineJoin: function (){},
+		lineCap: function (cap){ globalStyle += ';stroke-linecap:'+cap },
+		lineJoin: function (join){ globalStyle += ';stroke-linejoin:'+join },
 		lineTo: function (x, y){
 			last(elements).attr.d += ('L' + tX(x) + ' ' + tY(y) + ' ')
 		},
-		lineWidth: function (){},
+		lineWidth: function (w){ globalStyle += ';stroke-width:'+w},
 		measureText: function (s){
-			return { width: s.length * 8 }
+			return { width: s.length * 8.5 }
 		},
 		moveTo: function (x, y){
 			last(elements).attr.d += ('M' + tX(x) + ' ' + tY(y) + ' ')
@@ -142,23 +143,25 @@ skanaar.Svg = function (){
 			last(states).y += dy
 		},
 		serialize: function (){
-			var innerSvg = elements.map(function (e){
-				var attr = Object.keys(e.attr).map(function (key){
-					if (key === 'content') return ''
-					return key + '="' + e.attr[key] + '"'
-				}).join(' ')
-				if (e.attr.content)
-					return '<'+e.name+' '+attr+'>' + e.attr.content + '</'+e.name+'>'
-				else
-					return '<'+e.name+' '+attr+'/>'
-			}).join('/n')
-			return '<svg version="1.1" '+
-			'baseProfile="full" '+
-			'xmlns="http://www.w3.org/2000/svg" '+
-			'xmlns:xlink="http://www.w3.org/1999/xlink" '+
-			'xmlns:ev="http://www.w3.org/2001/xml-events">'+
-			innerSvg+
-			'</svg>'
+			function toAttr(obj){
+				function toKeyValue(key){ return key + '="' + obj[key] + '"' }
+				return Object.keys(obj).map(toKeyValue).join(' ')
+			}
+			function toHtml(e){
+				return '<'+e.name+' '+toAttr(e.attr)+'>'+(e.content || '')+'</'+e.name+'>'
+			}
+			var attrs = {
+				version: '1.1',
+				baseProfile: 'full',
+				width: '100%',
+				height: '100%',
+				xmlns: 'http://www.w3.org/2000/svg',
+				'xmlns:xlink': 'http://www.w3.org/1999/xlink', 
+				'xmlns:ev': 'http://www.w3.org/2001/xml-events',
+				style: lastDefined('font') + ';' + globalStyle
+			}
+			var innerSvg = elements.map(toHtml).join('\n')
+			return toHtml(Element('svg', attrs, innerSvg))
 		}
 	}
 };
