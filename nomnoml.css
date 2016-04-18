@@ -99,14 +99,6 @@ img {
 	position: absolute;
 	cursor: move
 }
-#svg-host {
-	position: absolute;
-	left: 40%;
-	right: 0;
-	top: 0;
-	bottom: 0;
-	background: white;
-}
 a, a:active {
 	color: #000;
 	opacity: 0.5;

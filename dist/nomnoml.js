@@ -1538,7 +1538,6 @@ var nomnoml = nomnoml || {};
 	}
 
 	nomnoml.draw = function (canvas, code, scale) {
-		document.getElementById('svg-host').innerHTML = nomnoml.renderSvg(code);
 		return parseAndRender(code, skanaar.Canvas(canvas), canvas, scale || 1)
 	};
 

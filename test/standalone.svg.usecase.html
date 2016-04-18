@@ -4,9 +4,20 @@
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <title>test nomnoml</title>
   <link rel="shortcut icon" type="image/png" href="favicon.png">
+  <script src="../lib/zepto.min.js"></script>
   <script src="../lib/lodash.min.js"></script>
   <script src="../lib/dagre.min.js"></script>
-  <script src="../dist/nomnoml.js"></script>
+  <script src="../skanaar.util.js"></script>
+  <script src="../skanaar.svg.js"></script>
+  <script src="../skanaar.vector.js"></script>
+  <script src="../nomnoml.jison.js"></script>
+  <script src="../nomnoml.parser.js"></script>
+  <script src="../nomnoml.layouter.js"></script>
+  <script src="../nomnoml.renderer.js"></script>
+  <script src="../nomnoml.js"></script>
+  <style>
+    html, body, #svg-host { height: 100%; }
+  </style>
 </head>
 <body>
     <script id="noml" type="text/plain">
@@ -29,11 +40,11 @@
         [more loot]->[st]
         [more loot] no ->[<end>e]
     </script>
-    <canvas id="target-canvas"></canvas>
+    <div id="svg-host"></div>
     <script>
-        var canvas = document.getElementById('target-canvas');
+        var target = document.getElementById('svg-host');
         var noml = document.getElementById('noml').innerHTML;
-        nomnoml.draw(canvas, noml);
+        target.innerHTML = nomnoml.renderSvg(noml);
     </script>
 </body>
 </html>
