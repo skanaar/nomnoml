@@ -1,10 +1,10 @@
 (function (factoryFn) {
   if (typeof define === 'function' && define.amd)
-  	define(['lodash'], factoryFn);
+  	define(['lodash', 'dagre'], factoryFn);
   else if (typeof module === 'object' && module.exports)
-  	module.exports = factoryFn(require('lodash'));
-  else this.nomnoml = factoryFn(_);
-})(function (_) {
+  	module.exports = factoryFn(require('lodash'), require('dagre'));
+  else this.nomnoml = factoryFn(_, dagre);
+})(function (_, dagre) {
   /*{{body}}*/;
   return nomnoml;
 });

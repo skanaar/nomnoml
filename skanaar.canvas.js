@@ -35,6 +35,11 @@ skanaar.Canvas = function (canvas, callbacks){
 		fill: function (){
 			ctx.fill()
 			return chainable
+		},
+		fillAndStroke: function (){
+			ctx.fill()
+			ctx.stroke()
+			return chainable
 		}
 	}
 
@@ -140,6 +145,27 @@ skanaar.Canvas = function (canvas, callbacks){
 				if (colors.hasOwnProperty(key))
 					grad.addColorStop(key, colors[key])
 			return grad
-		}
+		},
+		font:        function (f){ ctx.font = f },
+		fillStyle:   function (s){ ctx.fillStyle = s },
+		strokeStyle: function (s){ ctx.strokeStyle = s },
+		textAlign:   function (a){ ctx.textAlign = a },
+
+		lineCap: function (cap){ ctx.lineCap = cap },
+		lineJoin: function (join){ ctx.lineJoin = join },
+		lineWidth: function (w){ ctx.lineWidth = w },
+		
+		arcTo:       function (){ return ctx.arcTo.apply(      ctx, arguments) },
+		beginPath:   function (){ return ctx.beginPath.apply(  ctx, arguments) },
+		fillText:    function (){ return ctx.fillText.apply(   ctx, arguments) },
+		lineTo:      function (){ return ctx.lineTo.apply(     ctx, arguments) },
+		measureText: function (){ return ctx.measureText.apply(ctx, arguments) },
+		moveTo:      function (){ return ctx.moveTo.apply(     ctx, arguments) },
+		restore:     function (){ return ctx.restore.apply(    ctx, arguments) },
+		save:        function (){ return ctx.save.apply(       ctx, arguments) },
+		scale:       function (){ return ctx.scale.apply(      ctx, arguments) },
+		setLineDash: function (){ return ctx.setLineDash.apply(ctx, arguments) },
+		stroke:      function (){ return ctx.stroke.apply(     ctx, arguments) },
+		translate:   function (){ return ctx.translate.apply(  ctx, arguments) }
 	}
 };

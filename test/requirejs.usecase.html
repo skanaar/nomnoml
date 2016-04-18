@@ -32,11 +32,11 @@
         require.config({
             baseUrl: '../lib',
             paths: {
-              lodash: '../lib/lodash.min'
+              lodash: '../lib/lodash.min',
+              dagre: '../lib/dagre.min'
             }
         });
         require(['../dist/nomnoml'], function (nomnoml) {
-            console.log(nomnoml);
             var canvas = document.getElementById('target-canvas');
             var noml = document.getElementById('noml').innerHTML;
             nomnoml.draw(canvas, noml);

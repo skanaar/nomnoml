@@ -1,3 +1,5 @@
 nomnoml.sublime-project
 nomnoml.sublime-workspace
 node_modules/
+
+output.*
