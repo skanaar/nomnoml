@@ -127,6 +127,43 @@ This is how the Decorator pattern looks like in nomnoml syntax:
     #title: filename
     #zoom: 1
 
+### Custom classifier styles
+
+A directive that starts with "." define a classifier style.
+
+    #.box: fill=#88ff88
+    #.blob: fill=pink visual=ellipse italic bold dashed
+    [<box> GreenBox]
+    [<blob> HideousBlob]
+
+Available visuals are
+
+    visual=actor
+    visual=class
+    visual=database
+    visual=ellipse
+    visual=end
+    visual=frame
+    visual=hidden
+    visual=input
+    visual=none
+    visual=note
+    visual=package
+    visual=receiver
+    visual=rhomb
+    visual=roundrect
+    visual=sender
+    visual=start
+
+Available modifiers are
+
+    center
+    bold
+    underline
+    italic
+    dashed
+    empty
+
 ## Contributing
 
 If you want to contribute to the project more info is available in [CONTRIBUTING.md](CONTRIBUTING.md).

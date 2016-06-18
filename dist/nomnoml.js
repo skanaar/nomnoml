@@ -1194,60 +1194,83 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 	var g = graphics
 	var vm = skanaar.vector
 
-	function renderCompartment(compartment, style, level){
-		g.save()
-		g.translate(padding, padding)
-		g.fillStyle(config.stroke)
-		_.each(compartment.lines, function (text, i){
-			g.textAlign(style.center ? 'center' : 'left')
-			var x = style.center ? compartment.width/2 - padding : 0
-			var y = (0.5+(i+0.5)*config.leading)*config.fontSize
-			if (text){
-				g.fillText(text, x, y)
-			}
-			if (style.underline){
-				var w = g.measureText(text).width
-				y += Math.round(config.fontSize * 0.1)+0.5
-				g.path([{x:x-w/2, y:y}, {x:x+w/2, y:y}]).stroke()
-				g.lineWidth = config.lineWidth
-			}
-		})
-		g.translate(config.gutter, config.gutter)
-		_.each(compartment.relations, function (r){ renderRelation(r, compartment) })
-		_.each(compartment.nodes, function (n){ renderNode(n, level) })
-		g.restore()
+	var X = true;
+
+	var styles = {
+		ABSTRACT: { center: X, bold: 0, underline: 0, italic: X, dashed: 0, empty: 0, visual: 'class' },
+		ACTOR:    { center: X, bold: 0, underline: 0, italic: 0, dashed: 0, empty: 0, visual: 'actor' },
+		CHOICE:   { center: X, bold: 0, underline: 0, italic: 0, dashed: 0, empty: 0, visual: 'rhomb' },
+		CLASS:    { center: X, bold: X, underline: 0, italic: 0, dashed: 0, empty: 0, visual: 'class' },
+		DATABASE: { center: X, bold: X, underline: 0, italic: 0, dashed: 0, empty: 0, visual: 'database' },
+		END:      { center: X, bold: 0, underline: 0, italic: 0, dashed: 0, empty: X, visual: 'end' },
+		FRAME:    { center: 0, bold: 0, underline: 0, italic: 0, dashed: 0, empty: 0, visual: 'frame' },
+		HIDDEN:   { center: X, bold: 0, underline: 0, italic: 0, dashed: 0, empty: X, visual: 'hidden' },
+		INPUT:    { center: X, bold: 0, underline: 0, italic: 0, dashed: 0, empty: 0, visual: 'input' },
+		INSTANCE: { center: X, bold: 0, underline: X, italic: 0, dashed: 0, empty: 0, visual: 'class' },
+		LABEL:    { center: 0, bold: 0, underline: 0, italic: 0, dashed: 0, empty: 0, visual: 'none' },
+		NOTE:     { center: 0, bold: 0, underline: 0, italic: 0, dashed: 0, empty: 0, visual: 'note' },
+		PACKAGE:  { center: 0, bold: 0, underline: 0, italic: 0, dashed: 0, empty: 0, visual: 'package' },
+		RECEIVER: { center: 0, bold: 0, underline: 0, italic: 0, dashed: 0, empty: 0, visual: 'receiver' },
+		REFERENCE:{ center: X, bold: 0, underline: 0, italic: 0, dashed: X, empty: 0, visual: 'class' },
+		SENDER:   { center: 0, bold: 0, underline: 0, italic: 0, dashed: 0, empty: 0, visual: 'sender' },
+		START:    { center: X, bold: 0, underline: 0, italic: 0, dashed: 0, empty: X, visual: 'start' },
+		STATE:    { center: X, bold: 0, underline: 0, italic: 0, dashed: 0, empty: 0, visual: 'roundrect' },
+		USECASE:  { center: X, bold: 0, underline: 0, italic: 0, dashed: 0, empty: 0, visual: 'ellipse' },
 	}
 
-	function textStyle(node, line){
-		if (line > 0) return {}
-		return {
-			CLASS: { bold: true, center: true },
-			LABEL: {},
-			INSTANCE: { center: true, underline: true },
-			FRAME: { center: false, frameHeader: true },
-			ABSTRACT: { italic: true, center: true},
-			STATE: { center: true},
-			DATABASE: { bold: true, center: true},
-			NOTE: {},
-			ACTOR: {},
-			USECASE: { center: true },
-			START: { empty: true },
-			END: { empty: true },
-			INPUT: { center: true },
-			CHOICE: { center: true },
-			SENDER: {},
-			RECEIVER: {},
-			HIDDEN: { empty: true },
-		}[node.type] || {}
-	}
+	_.extend(styles, config.styles)
 
-	function renderNode(node, level){
-		var x = Math.round(node.x-node.width/2)
-		var y = Math.round(node.y-node.height/2)
-		var xCenter = x + node.width/2
-		var shade = config.fill[level] || _.last(config.fill)
-		g.fillStyle(shade)
-		if (node.type === 'NOTE'){
+	var visualizers = {
+		actor : function (node, x, y, padding, config, g) {
+			var a = padding/2
+			var yp = y + a/2
+			var actorCenter = {x: node.x, y: yp-a}
+			g.circle(actorCenter, a).fillAndStroke()
+			g.path([ {x: node.x,	 y: yp}, {x: node.x,	 y: yp+2*a} ]).stroke()
+			g.path([ {x: node.x-a, y: yp+a}, {x: node.x+a, y: yp+a} ]).stroke()
+			g.path([ {x: node.x-a, y: yp+a+padding},
+							 {x: node.x	, y: yp+padding},
+							 {x: node.x+a, y: yp+a+padding} ]).stroke()
+		},
+		class : function (node, x, y, padding, config, g) {
+			g.rect(x, y, node.width, node.height).fillAndStroke()
+		},
+		database : function (node, x, y, padding, config, g) {
+			var cy = y-padding/2
+			var pi = 3.1416
+			g.rect(x, y, node.width, node.height).fill()
+			g.path([{x: x, y: cy}, {x: x, y: cy+node.height}]).stroke()
+			g.path([
+				{x: x+node.width, y: cy},
+				{x: x+node.width, y: cy+node.height}]).stroke()
+			g.ellipse({x: node.x, y: cy}, node.width, padding*1.5).fillAndStroke()
+			g.ellipse({x: node.x, y: cy+node.height}, node.width, padding*1.5, 0, pi)
+			.fillAndStroke()
+		},
+		ellipse : function (node, x, y, padding, config, g) {
+			g.ellipse({x: node.x, y: node.y}, node.width, node.height).fillAndStroke()
+		},
+		end : function (node, x, y, padding, config, g) {
+			g.circle(node.x, y+node.height/2, node.height/3).fillAndStroke()
+			g.fillStyle(config.stroke)
+			g.circle(node.x, y+node.height/2, node.height/3-padding/2).fill()
+		},
+		frame : function (node, x, y, padding, config, g) {
+			g.rect(x, y, node.width, node.height).fillAndStroke()
+		},
+		hidden : function (node, x, y, padding, config, g) {
+		},
+		input : function (node, x, y, padding, config, g) {
+			g.circuit([
+				{x:x+padding, y:y},
+				{x:x+node.width, y:y},
+				{x:x+node.width-padding, y:y+node.height},
+				{x:x, y:y+node.height}
+			]).fillAndStroke()
+		},
+		none : function (node, x, y, padding, config, g) {
+		},
+		note : function (node, x, y, padding, config, g) {
 			g.circuit([
 				{x: x, y: y},
 				{x: x+node.width-padding, y: y},
@@ -1261,46 +1284,8 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 				{x: x+node.width-padding, y: y+padding},
 				{x: x+node.width, y: y+padding}
 			]).stroke()
-		} else if (node.type === 'ACTOR') {
-			var a = padding/2
-			var yp = y + a/2
-			var actorCenter = {x: xCenter, y: yp-a}
-			g.circle(actorCenter, a).fillAndStroke()
-			g.path([ {x: xCenter,   y: yp},
-				     {x: xCenter,   y: yp+2*a} ]).stroke()
-			g.path([ {x: xCenter-a, y: yp+a},
-				     {x: xCenter+a, y: yp+a} ]).stroke()
-			g.path([ {x: xCenter-a, y: yp+a+padding},
-				     {x: xCenter  , y: yp+padding},
-				     {x: xCenter+a, y: yp+a+padding} ]).stroke()
-		} else if (node.type === 'USECASE') {
-			var center = {x: xCenter, y: y+node.height/2}
-			g.ellipse(center, node.width, node.height).fillAndStroke()
-		} else if (node.type === 'START') {
-			g.fillStyle(config.stroke)
-			g.circle(xCenter, y+node.height/2, node.height/2.5).fill()
-		} else if (node.type === 'END') {
-			g.circle(xCenter, y+node.height/2, node.height/3).fillAndStroke()
-			g.fillStyle(config.stroke)
-			g.circle(xCenter, y+node.height/2, node.height/3-padding/2).fill()
-		} else if (node.type === 'STATE') {
-			var stateRadius = Math.min(padding*2*config.leading, node.height/2)
-			g.roundRect(x, y, node.width, node.height, stateRadius).fillAndStroke()
-		} else if (node.type === 'INPUT') {
-			g.circuit([
-				{x:x+padding, y:y},
-				{x:x+node.width, y:y},
-				{x:x+node.width-padding, y:y+node.height},
-				{x:x, y:y+node.height}
-			]).fillAndStroke()
-		} else if (node.type === 'CHOICE') {
-			g.circuit([
-				{x:node.x, y:y - padding},
-				{x:x+node.width + padding, y:node.y},
-				{x:node.x, y:y+node.height + padding},
-				{x:x - padding, y:node.y}
-			]).fillAndStroke()
-		} else if (node.type === 'PACKAGE') {
+		},
+		package : function (node, x, y, padding, config, g) {
 			var headHeight = node.compartments[0].height
 			g.rect(x, y+headHeight, node.width, node.height-headHeight).fillAndStroke()
 			var w = g.measureText(node.name).width + 2*padding
@@ -1309,16 +1294,9 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 				{x:x, y:y},
 				{x:x+w, y:y},
 				{x:x+w, y:y+headHeight}
-		    ]).fillAndStroke()
-		} else if (node.type === 'SENDER') {
-			g.circuit([
-				{x: x, y: y},
-				{x: x+node.width-padding, y: y},
-				{x: x+node.width+padding, y: y+node.height/2},
-				{x: x+node.width-padding, y: y+node.height},
-				{x: x, y: y+node.height}
 			]).fillAndStroke()
-		} else if (node.type === 'RECEIVER') {
+		},
+		receiver : function (node, x, y, padding, config, g) {
 			g.circuit([
 				{x: x, y: y},
 				{x: x+node.width+padding, y: y},
@@ -1326,26 +1304,75 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 				{x: x+node.width+padding, y: y+node.height},
 				{x: x, y: y+node.height}
 			]).fillAndStroke()
-		} else if (node.type === 'HIDDEN') {
-		} else if (node.type === 'DATABASE') {
-			var cx = xCenter
-			var cy = y-padding/2
-			var pi = 3.1416
-			g.rect(x, y, node.width, node.height).fill()
-			g.path([{x: x, y: cy}, {x: x, y: cy+node.height}]).stroke()
-			g.path([
-				{x: x+node.width, y: cy},
-				{x: x+node.width, y: cy+node.height}]).stroke()
-			g.ellipse({x: cx, y: cy}, node.width, padding*1.5).fillAndStroke()
-			g.ellipse({x: cx, y: cy+node.height}, node.width, padding*1.5, 0, pi)
-			.fillAndStroke()
-		} else if (node.type === 'LABEL') {
-		} else {
-			g.rect(x, y, node.width, node.height).fillAndStroke()
+		},
+		rhomb : function (node, x, y, padding, config, g) {
+			g.circuit([
+				{x:node.x, y:y - padding},
+				{x:x+node.width + padding, y:node.y},
+				{x:node.x, y:y+node.height + padding},
+				{x:x - padding, y:node.y}
+			]).fillAndStroke()
+		},
+		roundrect : function (node, x, y, padding, config, g) {
+			var r = Math.min(padding*2*config.leading, node.height/2)
+			g.roundRect(x, y, node.width, node.height, r).fillAndStroke()
+		},
+		sender : function (node, x, y, padding, config, g) {
+			g.circuit([
+				{x: x, y: y},
+				{x: x+node.width-padding, y: y},
+				{x: x+node.width+padding, y: y+node.height/2},
+				{x: x+node.width-padding, y: y+node.height},
+				{x: x, y: y+node.height}
+			]).fillAndStroke()
+		},
+		start : function (node, x, y, padding, config, g) {
+			g.fillStyle(config.stroke)
+			g.circle(node.x, y+node.height/2, node.height/2.5).fill()
+		},
+	}
+
+	function renderCompartment(compartment, style, level){
+		g.save()
+		g.translate(padding, padding)
+		g.fillStyle(config.stroke)
+		_.each(compartment.lines, function (text, i){
+			g.textAlign(style.center ? 'center' : 'left')
+			var x = style.center ? compartment.width/2 - padding : 0
+			var y = (0.5+(i+0.5)*config.leading)*config.fontSize
+			if (text){
+				g.fillText(text, x, y)
+			}
+			if (style.underline){
+				var w = g.measureText(text).width
+				y += Math.round(config.fontSize * 0.2)+0.5
+				g.path([{x:x-w/2, y:y}, {x:x+w/2, y:y}]).stroke()
+				g.lineWidth = config.lineWidth
+			}
+		})
+		g.translate(config.gutter, config.gutter)
+		_.each(compartment.relations, function (r){ renderRelation(r, compartment) })
+		_.each(compartment.nodes, function (n){ renderNode(n, level) })
+		g.restore()
+	}
+
+	function renderNode(node, level){
+		var x = Math.round(node.x-node.width/2)
+		var y = Math.round(node.y-node.height/2)
+		var style = styles[node.type] || styles.CLASS
+
+		g.fillStyle(style.fill || config.fill[level] || _.last(config.fill))
+		if (style.dashed){
+			var dash = Math.max(4, 2*config.lineWidth)
+			g.setLineDash([dash, dash])
 		}
-		var yDivider = (node.type === 'ACTOR' ? y + padding*3/4 : y)
+		var drawNode = visualizers[style.visual] || visualizers.class
+		drawNode(node, x, y, padding, config, g)
+		g.setLineDash([])
+
+		var yDivider = (style.visual === 'actor' ? y + padding*3/4 : y)
 		_.each(node.compartments, function (part, i){
-			var s = textStyle(node, i)
+			var s = i > 0 ? {} : style; // only style node title
 			if (s.empty) return
 			g.save()
 			g.translate(x, yDivider)
@@ -1354,14 +1381,14 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 			g.restore()
 			if (i+1 === node.compartments.length) return
 			yDivider += part.height
-			if (node.type === 'FRAME' && i === 0){
+			if (style.visual === 'frame' && i === 0){
 				var w = g.measureText(node.name).width+part.height/2+padding
 				g.path([
 					{x:x, y:yDivider},
 					{x:x+w-part.height/2, y:yDivider},
 					{x:x+w, y:yDivider-part.height/2},
 					{x:x+w, y:yDivider-part.height}
-			    ]).stroke()
+					]).stroke()
 			} else
 				g.path([{x:x, y:yDivider}, {x:x+node.width, y:yDivider}]).stroke()
 		})
@@ -1400,7 +1427,7 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 		var textW = g.measureText(r.endLabel).width
 		var labelX = config.direction === 'LR' ? -padding-textW : padding
 		if (r.startLabel) g.fillText(r.startLabel, start.x+padding, start.y+padding+fontSize)
-		if (r.endLabel)   g.fillText(r.endLabel, end.x+labelX, end.y-padding)
+		if (r.endLabel)	 g.fillText(r.endLabel, end.x+labelX, end.y-padding)
 
 		if (r.assoc !== '-/-'){
 			if (g.setLineDash && skanaar.hasSubstring(r.assoc, '--')){
@@ -1488,6 +1515,20 @@ var nomnoml = nomnoml || {};
 	'use strict';
 
 	function getConfig(d) {
+		var userStyles = {}
+		_.each(d, function (styleDef, key){
+			if (key[0] != '.') return
+			userStyles[key.substring(1).toUpperCase()] = {
+				center: _.contains(styleDef, 'center'),
+				bold: _.contains(styleDef, 'bold'),
+				underline: _.contains(styleDef, 'underline'),
+				italic: _.contains(styleDef, 'italic'),
+				dashed: _.contains(styleDef, 'dashed'),
+				empty: _.contains(styleDef, 'empty'),
+				fill: _.last(styleDef.match('fill=([^ ]*)')),
+				visual: _.last(styleDef.match('visual=([^ ]*)')) || 'box'
+			}
+		})
 		return {
 			arrowSize: +d.arrowSize || 1,
 			bendSize: +d.bendSize || 0.3,
@@ -1505,7 +1546,8 @@ var nomnoml = nomnoml || {};
 			spacing: (+d.spacing) || 40,
 			stroke: d.stroke || '#33322E',
 			title: d.title || 'nomnoml',
-			zoom: +d.zoom || 1
+			zoom: +d.zoom || 1,
+			styles: userStyles
 		};
 	}
 
@@ -1516,7 +1558,7 @@ var nomnoml = nomnoml || {};
 
 	function setFont(config, isBold, isItalic, graphics) {
 		var style = (isBold === 'bold' ? 'bold' : '')
-		if (isItalic) style = 'italic' + style
+		if (isItalic) style = 'italic ' + style
 		var defaultFont = 'Helvetica, sans-serif'
 		var font = skanaar.format('# #pt #, #', style, config.fontSize, config.font, defaultFont)
 		graphics.font(font)
@@ -1547,7 +1589,7 @@ var nomnoml = nomnoml || {};
 		var skCanvas = skanaar.Svg('')
 		function setFont(config, isBold, isItalic) {
 			var style = (isBold === 'bold' ? 'bold' : '')
-			if (isItalic) style = 'italic' + style
+			if (isItalic) style = 'italic ' + style
 			var defFont = 'Helvetica, sans-serif'
 			var template = 'font-weight:#; font-size:#pt; font-family:\'#\', #'
 			var font = skanaar.format(template, style, config.fontSize, config.font, defFont)

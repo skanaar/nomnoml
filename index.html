@@ -77,6 +77,42 @@
 				#stroke: #33322E<br>
 				#title: filename<br>
 				#zoom: 1<br>
+
+				<h2>Custom classifier styles</h2>
+				<label>A directive that starts with "." define a classifier style.</label>
+
+				#.box: fill=#8f8 dashed<br>
+				#.blob: visual=ellipse<br>
+				[&lt;box&gt; GreenBox]<br>
+				[&lt;blob&gt; HideousBlob]
+
+				<label>Available visuals are</label>
+
+				visual=actor<br>
+				visual=class<br>
+				visual=database<br>
+				visual=ellipse<br>
+				visual=end<br>
+				visual=frame<br>
+				visual=hidden<br>
+				visual=input<br>
+				visual=none<br>
+				visual=note<br>
+				visual=package<br>
+				visual=receiver<br>
+				visual=rhomb<br>
+				visual=roundrect<br>
+				visual=sender<br>
+				visual=start
+
+				<label>Available modifiers are</label>
+
+				center<br>
+				bold<br>
+				underline<br>
+				italic<br>
+				dashed<br>
+				empty
 			</div>
 
 			<div class="logo-background"></div>
@@ -180,6 +216,9 @@
 				#spacing: 12<br>
 				#padding: 3
 
+				<label>Create your own styles</label>
+				#.box: fill=#8f8 dashed<br>
+				[&lt;box&gt; GreenBox]
 			</div>
 			<div class="logo-background"></div>
 		</div>

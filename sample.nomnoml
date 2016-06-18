@@ -1,7 +1,9 @@
 #direction: right
+#.box: fill=pink italic bold visual=rhomb
+
 [<frame>frame|[some class]]
 [<package>package|[some class]]
-
+[<box>box]
 [class|items: Object\[\]] - [<hidden> hidden]
 [hidden] - [<label> label]
 [hidden] - [instance]
