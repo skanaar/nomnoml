@@ -40,6 +40,7 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 			ABSTRACT: { italic: true, center: true},
 			STATE: { center: true},
 			DATABASE: { bold: true, center: true},
+			REFERENCE: { dashed: true, center: true},
 			NOTE: {},
 			ACTOR: {},
 			USECASE: { center: true },
@@ -139,6 +140,11 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 				{x: x, y: y+node.height}
 			]).fillAndStroke()
 		} else if (node.type === 'HIDDEN') {
+		} else if (node.type === 'REFERENCE') {
+			var dash = Math.max(4, 2*config.lineWidth)
+			g.setLineDash([dash, dash])
+			g.rect(x, y, node.width, node.height).fillAndStroke()
+			g.setLineDash([])
 		} else if (node.type === 'DATABASE') {
 			var cx = xCenter
 			var cy = y-padding/2
