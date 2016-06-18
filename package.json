@@ -1,6 +1,6 @@
 {
   "name": "nomnoml",
-  "version": "0.0.4",
+  "version": "0.1.0",
   "description": "The sassy UML renderer that generates diagrams from text",
   "homepage": "http://www.nomnoml.com",
   "author": "Daniel Kallin <daniel.kallin@gmail.com>",
@@ -9,7 +9,7 @@
     "uml"
   ],
   "main": "dist/nomnoml.js",
-  "files": ["dist/nomnoml.js"],
+  "files": ["dist/nomnoml.js", "dist/nomnoml-cli.js"],
   "dependencies": {
     "lodash": "~3.7.0",
     "dagre": "0.4.x"
@@ -30,5 +30,8 @@
   },
   "bugs": {
     "url": "https://github.com/skanaar/nomnoml/issues"
+  },
+  "bin": {
+    "nomnoml": "dist/nomnoml-cli.js"
   }
 }
