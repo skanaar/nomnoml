@@ -20,12 +20,13 @@ Created by [Daniel Kallin](https://github.com/skanaar). Contributions by [Alexan
 The [nomnoml](http://www.nomnoml.com) standalone javascript library can be used to render diagrams on your own web page. The only dependencies are [lodash](http://lodash.com) and [dagre](https://github.com/cpettitt/dagre). Install it using either *npm* or good old script inclusion.
 
 NodeJS usage with SVG output:
+```bash
+npm install nomnoml --save
 
-    npm install nomnoml
-
-    var nomnoml = require('nomnoml');
-    var src = '[nomnoml] is -> [awesome]';
-    console.log(nomnoml.renderSvg(src));
+import nomnoml from 'nomnoml';
+const src = '[nomnoml] is -> [awesome]';
+console.log(nomnoml.renderSvg(src));
+```
 
 Html usage with a Canvas rendering target:
 
@@ -36,8 +37,8 @@ Html usage with a Canvas rendering target:
 
 <canvas id="target-canvas"></canvas>
 <script>
-    var canvas = document.getElementById('target-canvas');
-    var source = '[nomnoml] is -> [awesome]';
+    const canvas = document.getElementById('target-canvas');
+    const source = '[nomnoml] is -> [awesome]';
     nomnoml.draw(canvas, source);
 </script>
 ```
