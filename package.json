@@ -18,7 +18,8 @@
     "jison": "0.4.13"
   },
   "scripts": {
-    "prepublish": "node build.js",
+    "build": "node build",
+    "prepublish": "node build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "directories": {
