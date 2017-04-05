@@ -207,7 +207,7 @@ describe('nomnoml', function() {
             expect(dandruff.y).toEqual(10+2+2+5+7)
         })
 
-        it('should handle [apa|[flea]->[dandruff]] relation placement', function(){
+        xit('should handle [apa|[flea]->[dandruff]] relation placement', function(){
             var root = compClas('class', 'apa', [
                 comp(['apa'],[],[]),
                 comp([],[
