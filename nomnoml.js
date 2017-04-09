@@ -91,6 +91,9 @@ var nomnoml = nomnoml || {};
 		};
 		var layout = nomnoml.layout(measurer, config, ast)
 		nomnoml.render(skCanvas, config, layout, measurer.setFont)
-		return skCanvas.serialize()
+		return skCanvas.serialize({
+		  width: layout.width,
+		  height: layout.height
+		})
 	};
 })();

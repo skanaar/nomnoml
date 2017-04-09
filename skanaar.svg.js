@@ -65,7 +65,7 @@ skanaar.Svg = function (globalStyle){
 		background: function (/*r, g, b*/){},
 		clear: function (){},
 		circle: function (x, y, r){
-			var attr = (arguments.length === 2) ? 
+			var attr = (arguments.length === 2) ?
 					{r: y, cx: tX(x.x), cy: tY(x.y)} :
 					{r: r, cx: tX(x),   cy: tY(y)}
 			var element = Element('circle', attr)
@@ -144,26 +144,27 @@ skanaar.Svg = function (globalStyle){
 			last(states).x += dx
 			last(states).y += dy
 		},
-		serialize: function (){
-			function toAttr(obj){
-				function toKeyValue(key){ return key + '="' + obj[key] + '"' }
-				return Object.keys(obj).map(toKeyValue).join(' ')
-			}
-			function toHtml(e){
-				return '<'+e.name+' '+toAttr(e.attr)+'>'+(e.content || '')+'</'+e.name+'>'
-			}
-			var attrs = {
-				version: '1.1',
-				baseProfile: 'full',
-				width: '100%',
-				height: '100%',
-				xmlns: 'http://www.w3.org/2000/svg',
-				'xmlns:xlink': 'http://www.w3.org/1999/xlink', 
-				'xmlns:ev': 'http://www.w3.org/2001/xml-events',
-				style: lastDefined('font') + ';' + globalStyle
-			}
-			var innerSvg = elements.map(toHtml).join('\n')
-			return toHtml(Element('svg', attrs, innerSvg))
-		}
+    serialize: function (_attributes){
+      var attrs = attributes || {};
+      attrs.version = attrs.version || '1.1';
+      attrs.baseProfile = attrs.baseProfile || 'full';
+      attrs.width = attrs.width || '100%';
+      attrs.height = attrs.height || '100%';
+      attrs.xmlns = attrs.xmlns || 'http://www.w3.org/2000/svg';
+      attrs['xmlns:xlink'] = attrs['xmlns:xlink'] || 'http://www.w3.org/1999/xlink';
+      attrs['xmlns:ev']  = attrs['xmlns:ev'] || 'http://www.w3.org/2001/xml-events';
+      attrs.style = attrs.style || lastDefined('font') + ';' + globalStyle;
+
+      function toAttr(obj){
+        function toKeyValue(key){ return key + '="' + obj[key] + '"' }
+        return Object.keys(obj).map(toKeyValue).join(' ')
+      }
+      function toHtml(e){
+        return '<'+e.name+' '+toAttr(e.attr)+'>'+(e.content || '')+'</'+e.name+'>'
+
+      }
+      var innerSvg = elements.map(toHtml).join('\n')
+      return toHtml(Element('svg', attrs, innerSvg))
+    }
 	}
 };
