@@ -212,8 +212,6 @@ skanaar.vector = {
     rot: function (a){ return { x: a.y, y: -a.x } }
 };
 ;
-var lodash = require('lodash');
-
 var skanaar = skanaar || {}
 skanaar.Svg = function (globalStyle){
 	var initialState = { x: 0, y: 0, stroke: 'none', fill: 'none', textAlign: 'left' }
@@ -361,7 +359,7 @@ skanaar.Svg = function (globalStyle){
 			last(states).y += dy
 		},
     serialize: function (_attributes){
-      var attrs = attributes || {};
+      var attrs = _attributes || {};
       attrs.version = attrs.version || '1.1';
       attrs.baseProfile = attrs.baseProfile || 'full';
       attrs.width = attrs.width || '100%';

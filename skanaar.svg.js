@@ -145,7 +145,7 @@ skanaar.Svg = function (globalStyle){
 			last(states).y += dy
 		},
     serialize: function (_attributes){
-      var attrs = attributes || {};
+      var attrs = _attributes || {};
       attrs.version = attrs.version || '1.1';
       attrs.baseProfile = attrs.baseProfile || 'full';
       attrs.width = attrs.width || '100%';
