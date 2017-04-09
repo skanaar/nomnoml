@@ -6,18 +6,20 @@ var args = process.argv
 
 if (args[2] == '--help' || args.length == 2){
   console.log(`
-  Load source file and send rendered svg to stdout
+  Nomnoml command line utility for generating SVG diagrams.
 
-  nomnoml <source_file>
+  Load source file and send rendered svg to stdout:
 
-  Load source file and save rendered svg to <output_file>
+  > node nomnoml-cli.js <source_file>
+
+  Load source file and save rendered svg to <output_file>:
   
-  nomnoml <source_file> <output_file>
+  > node nomnoml-cli.js <source_file> <output_file>
 
   Third parameter overrides the import depth limit
-  that protects us from recursive imports
+  that protects us from recursive imports:
 
-  nomnoml <source_file> <output_file> <max_import_chain_length>`)
+  > node nomnoml-cli.js <source_file> <output_file> <max_import_chain_length>`)
   return
 }
 

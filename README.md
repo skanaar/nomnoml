@@ -46,6 +46,10 @@ Html usage with a Canvas rendering target:
 
 An experimental (and not fully featured) SVG rendering mode is available as the `nomnoml.renderSvg` function.
 
+## Command Line Interface
+
+`dist/nomnoml-cli.js` exposes the SVG renderer with a command line interface. This mode also supports the `#import: <filename>` directive which allow you to separate complex diagrams into multiple files.
+
 ## Web application
 
 The [nomnoml](http://www.nomnoml.com) web application is a simple editor with a live preview. It is purely client side and changes are saved to the browser's _localStorage_, so your diagram should be here the next time, (but no guarantees).
@@ -126,6 +130,10 @@ This is how the Decorator pattern looks like in nomnoml syntax:
     #stroke: #33322E
     #title: filename
     #zoom: 1
+
+Directives only available when using the command line interface
+
+    #import: my-common-styles.nomnoml
 
 ### Custom classifier styles
 

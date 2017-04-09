@@ -1,5 +1,5 @@
 #direction: right
-#.box: fill=pink italic bold visual=rhomb
+#import: sample-style.nomnoml
 
 [<frame>frame|[some class]]
 [<package>package|[some class]]
