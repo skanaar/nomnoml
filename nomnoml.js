@@ -15,7 +15,7 @@ var nomnoml = nomnoml || {};
 				dashed: _.contains(styleDef, 'dashed'),
 				empty: _.contains(styleDef, 'empty'),
 				fill: _.last(styleDef.match('fill=([^ ]*)')),
-				visual: _.last(styleDef.match('visual=([^ ]*)')) || 'box'
+				visual: _.last(styleDef.match('visual=([^ ]*)')) || 'class'
 			}
 		})
 		return {
@@ -36,7 +36,7 @@ var nomnoml = nomnoml || {};
 			stroke: d.stroke || '#33322E',
 			title: d.title || 'nomnoml',
 			zoom: +d.zoom || 1,
-			styles: userStyles
+			styles: _.extend({}, nomnoml.styles, userStyles)
 		};
 	}
 

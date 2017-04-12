@@ -11,6 +11,7 @@ var nomnomlFiles = [
     'skanaar.svg.js',
     'nomnoml.jison.js',
     'nomnoml.parser.js',
+    'nomnoml.visuals.js',
     'nomnoml.layouter.js',
     'nomnoml.renderer.js',
     'nomnoml.js'

@@ -71,13 +71,20 @@ nomnoml.layout = function (measurer, config, ast){
 		c.height = textSize.height + graphHeight + config.padding
 	}
 	function layoutClassifier(clas){
+		var style = config.styles[clas.type] || nomnoml.styles.CLASS
+		if (style.hull == 'icon'){
+			clas.width = config.fontSize * 2.5
+			clas.height = config.fontSize * 2.5
+			return
+		}
+		if (style.hull === 'empty'){
+			clas.width = 0
+			clas.height = 0
+			return
+		}
 		_.each(clas.compartments, layoutCompartment)
 		clas.width = _.max(_.pluck(clas.compartments, 'width'))
 		clas.height = skanaar.sum(clas.compartments, 'height')
-		if (clas.type === 'HIDDEN'){
-			clas.width = 0
-			clas.height = 0
-		}
 		clas.x = clas.width/2
 		clas.y = clas.height/2
 		_.each(clas.compartments, function(co){ co.width = clas.width })
