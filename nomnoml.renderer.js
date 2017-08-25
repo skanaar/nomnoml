@@ -100,8 +100,8 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 		setFont(config, 'normal')
 		var textW = g.measureText(r.endLabel).width
 		var labelX = config.direction === 'LR' ? -padding-textW : padding
-		if (r.startLabel) g.fillText(r.startLabel, start.x+padding, start.y+padding+fontSize)
-		if (r.endLabel)	 g.fillText(r.endLabel, end.x+labelX, end.y-padding)
+		if (r.startLabel) _.each(r.startLabel.split("`"), function(t, i){ g.fillText(t, start.x+padding, start.y+padding+fontSize*(i+1)) })
+		if (r.endLabel)	 _.each(r.endLabel.split("`"), function(t, i){ g.fillText(t, end.x+labelX, end.y-padding+fontSize*i) })
 
 		if (r.assoc !== '-/-'){
 			if (g.setLineDash && skanaar.hasSubstring(r.assoc, '--')){
