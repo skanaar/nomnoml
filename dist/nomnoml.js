@@ -462,8 +462,7 @@ yy: {},
 symbols_: {"error":2,"root":3,"compartment":4,"EOF":5,"slot":6,"IDENT":7,"class":8,"association":9,"SEP":10,"parts":11,"|":12,"[":13,"]":14,"$accept":0,"$end":1},
 terminals_: {2:"error",5:"EOF",7:"IDENT",10:"SEP",12:"|",13:"[",14:"]"},
 productions_: [0,[3,2],[6,1],[6,1],[6,1],[4,1],[4,3],[11,1],[11,3],[11,2],[9,3],[8,3]],
-performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */
-/**/) {
+performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */) {
 /* this == yyval */
 
 var $0 = $$.length - 1;
@@ -968,8 +967,7 @@ stateStackSize:function stateStackSize() {
         return this.conditionStack.length;
     },
 options: {},
-performAction: function anonymous(yy,yy_,$avoiding_name_collisions,YY_START
-/**/) {
+performAction: function anonymous(yy,yy_,$avoiding_name_collisions,YY_START) {
 
 var YYSTATE=YY_START;
 switch($avoiding_name_collisions) {
@@ -1318,12 +1316,15 @@ nomnoml.layout = function (measurer, config, ast){
 			clas.height = 0
 			return
 		}
+		var oldDir = config.direction;
+		config.direction = style.direction || config.direction;
 		_.each(clas.compartments, layoutCompartment)
 		clas.width = _.max(_.pluck(clas.compartments, 'width'))
 		clas.height = skanaar.sum(clas.compartments, 'height')
 		clas.x = clas.width/2
 		clas.y = clas.height/2
 		_.each(clas.compartments, function(co){ co.width = clas.width })
+		config.direction = oldDir;
 	}
 	layoutCompartment(ast)
 	return ast
@@ -1531,7 +1532,8 @@ var nomnoml = nomnoml || {};
 				dashed: _.contains(styleDef, 'dashed'),
 				empty: _.contains(styleDef, 'empty'),
 				fill: _.last(styleDef.match('fill=([^ ]*)')),
-				visual: _.last(styleDef.match('visual=([^ ]*)')) || 'class'
+				visual: _.last(styleDef.match('visual=([^ ]*)')) || 'class',
+				direction: { down: 'TB', right: 'LR' }[_.last(styleDef.match('direction=([^ ]*)'))] || 'TB'
 			}
 		})
 		return {
