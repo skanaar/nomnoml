@@ -106,6 +106,7 @@ This is how the Decorator pattern looks like in nomnoml syntax:
     [<input> name]
     [<sender> name]
     [<receiver> name]
+    [<transceiver> name]
     [<actor> name]
     [<usecase> name]
     [<label> name]
@@ -162,6 +163,7 @@ Available visuals are
     visual=roundrect
     visual=sender
     visual=start
+    visual=transceiver
 
 Available modifiers are
 
