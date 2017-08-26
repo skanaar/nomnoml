@@ -19,6 +19,7 @@ nomnoml.styles = {
   SENDER:   { center: 0, bold: 0, underline: 0, italic: 0, dashed: 0, empty: 0, hull: 'auto', visual: 'sender' },
   START:    { center: 1, bold: 0, underline: 0, italic: 0, dashed: 0, empty: 1, hull: 'icon', visual: 'start' },
   STATE:    { center: 1, bold: 0, underline: 0, italic: 0, dashed: 0, empty: 0, hull: 'auto', visual: 'roundrect' },
+  TRANSIVER:{ center: 0, bold: 0, underline: 0, italic: 0, dashed: 0, empty: 0, hull: 'auto', visual: 'transiver' },
   USECASE:  { center: 1, bold: 0, underline: 0, italic: 0, dashed: 0, empty: 0, hull: 'auto', visual: 'ellipse' },
 }
 
@@ -99,13 +100,13 @@ nomnoml.visualizers = {
     ]).fillAndStroke()
   },
   receiver : function (node, x, y, padding, config, g) {
-    g.circuit([
-      {x: x, y: y},
-      {x: x+node.width+padding, y: y},
-      {x: x+node.width-padding, y: y+node.height/2},
-      {x: x+node.width+padding, y: y+node.height},
-      {x: x, y: y+node.height}
-    ]).fillAndStroke()
+      g.circuit([
+        {x: x-padding, y: y},
+        {x: x+node.width, y: y},
+        {x: x+node.width, y: y+node.height},
+        {x: x-padding, y: y+node.height},
+        {x: x, y: y+node.height/2},
+      ]).fillAndStroke()
   },
   rhomb : function (node, x, y, padding, config, g) {
     g.circuit([
@@ -120,16 +121,26 @@ nomnoml.visualizers = {
     g.roundRect(x, y, node.width, node.height, r).fillAndStroke()
   },
   sender : function (node, x, y, padding, config, g) {
-    g.circuit([
-      {x: x, y: y},
-      {x: x+node.width-padding, y: y},
-      {x: x+node.width+padding, y: y+node.height/2},
-      {x: x+node.width-padding, y: y+node.height},
-      {x: x, y: y+node.height}
-    ]).fillAndStroke()
+      g.circuit([
+        {x: x, y: y},
+        {x: x+node.width-padding, y: y},
+        {x: x+node.width, y: y+node.height/2},
+        {x: x+node.width-padding, y: y+node.height},
+        {x: x, y: y+node.height}
+      ]).fillAndStroke()
   },
   start : function (node, x, y, padding, config, g) {
     g.fillStyle(config.stroke)
     g.circle(node.x, y+node.height/2, node.height/2.5).fill()
+  },
+  transiver : function (node, x, y, padding, config, g) {
+      g.circuit([
+        {x: x-padding, y: y},
+        {x: x+node.width, y: y},
+        {x: x+node.width+padding, y: y+node.height/2},
+        {x: x+node.width, y: y+node.height},
+        {x: x-padding, y: y+node.height},
+        {x: x, y: y+node.height/2}
+      ]).fillAndStroke()
   },
 }
