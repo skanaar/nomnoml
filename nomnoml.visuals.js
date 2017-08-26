@@ -19,7 +19,7 @@ nomnoml.styles = {
   SENDER:   { center: 0, bold: 0, underline: 0, italic: 0, dashed: 0, empty: 0, hull: 'auto', visual: 'sender' },
   START:    { center: 1, bold: 0, underline: 0, italic: 0, dashed: 0, empty: 1, hull: 'icon', visual: 'start' },
   STATE:    { center: 1, bold: 0, underline: 0, italic: 0, dashed: 0, empty: 0, hull: 'auto', visual: 'roundrect' },
-  TRANSIVER:{ center: 0, bold: 0, underline: 0, italic: 0, dashed: 0, empty: 0, hull: 'auto', visual: 'transiver' },
+  TRANSCEIVER:{ center: 0, bold: 0, underline: 0, italic: 0, dashed: 0, empty: 0, hull: 'auto', visual: 'transceiver' },
   USECASE:  { center: 1, bold: 0, underline: 0, italic: 0, dashed: 0, empty: 0, hull: 'auto', visual: 'ellipse' },
 }
 
@@ -133,7 +133,7 @@ nomnoml.visualizers = {
     g.fillStyle(config.stroke)
     g.circle(node.x, y+node.height/2, node.height/2.5).fill()
   },
-  transiver : function (node, x, y, padding, config, g) {
+  transceiver : function (node, x, y, padding, config, g) {
       g.circuit([
         {x: x-padding, y: y},
         {x: x+node.width, y: y},
