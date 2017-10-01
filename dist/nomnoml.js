@@ -1426,10 +1426,58 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 
 	var empty = false, filled = true, diamond = true
 
+    function renderLabel(text, refPoint, quadrant){
+		if (text) {
+			var fontSize = config.fontSize
+			var lines = text.split("`")
+			var area = {
+				width : _.max(_.map(lines, function(l){ return g.measureText(l).width })),
+				height : fontSize*lines.length
+			}
+			var origin = {
+				x: (quadrant === 1) || (quadrant === 4) ? refPoint.x + padding : refPoint.x - area.width - padding,
+				y: (quadrant === 3) || (quadrant === 4) ? refPoint.y + padding : refPoint.y - area.height - padding
+			}
+			_.each(lines, function(l, i){ g.fillText(l, origin.x, origin.y + fontSize*(i+1)) })
+		}
+	}
+
+	// find basic quadrant using relative position of endpoint and block rectangle
+	function findLabelQuadrant(point, rect, def) {
+		if (point.x < rect.x && point.y < rect.y-rect.height/2) return 1;
+		if (point.y > rect.y && point.x > rect.x+rect.width/2) return 1;
+		
+		if (point.x > rect.x && point.y < rect.y-rect.height/2) return 2;
+		if (point.y > rect.y && point.x < rect.x-rect.width/2) return 2;
+
+		if (point.x > rect.x && point.y > rect.y+rect.height/2) return 3;
+		if (point.y < rect.y && point.x < rect.x-rect.width/2) return 3;
+
+		if (point.x < rect.x && point.y > rect.y+rect.height/2) return 4;
+		if (point.y < rect.y && point.x > rect.x+rect.width/2) return 4;
+
+		return def;
+	}
+
+	// Flip basic label quadrant if needed, to avoid crossing a bent relationship line
+	function adjustLabelQuadrant(quadrant, point, opposite) {
+		if ((opposite.x == point.x) || (opposite.y == point.y)) return quadrant;
+		var flipHorizontally = [4, 3, 2, 1]
+		var flipVertically = [2, 1, 4, 3]
+		var oppositeQuadrant = (opposite.y < point.y) ?
+							((opposite.x < point.x) ? 2 : 1) :
+							((opposite.x < point.x) ? 3 : 4);
+		// if an opposite relation end is in the same quadrant as a label, we need to flip the label
+		if (oppositeQuadrant === quadrant) {
+			if (config.direction === "LR") return flipHorizontally[quadrant-1];
+			if (config.direction === "TD") return flipVertically[quadrant-1];
+		}
+		return quadrant; 	
+	}
+
 	function renderRelation(r, compartment){
 		var startNode = _.findWhere(compartment.nodes, {name:r.start})
 		var endNode = _.findWhere(compartment.nodes, {name:r.end})
-
 		var start = rectIntersection(r.path[1], _.first(r.path), startNode)
 		var end = rectIntersection(r.path[r.path.length-2], _.last(r.path), endNode)
 
@@ -1438,10 +1486,9 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 
 		g.fillStyle(config.stroke)
 		setFont(config, 'normal')
-		var textW = g.measureText(r.endLabel).width
-		var labelX = config.direction === 'LR' ? -padding-textW : padding
-		if (r.startLabel) g.fillText(r.startLabel, start.x+padding, start.y+padding+fontSize)
-		if (r.endLabel)	 g.fillText(r.endLabel, end.x+labelX, end.y-padding)
+
+		renderLabel(r.startLabel, start, adjustLabelQuadrant(findLabelQuadrant(start, startNode, 4), start, end))
+		renderLabel(r.endLabel, end, adjustLabelQuadrant(findLabelQuadrant(end, endNode, 2), end, start))
 
 		if (r.assoc !== '-/-'){
 			if (g.setLineDash && skanaar.hasSubstring(r.assoc, '--')){
