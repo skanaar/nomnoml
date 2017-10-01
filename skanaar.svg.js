@@ -121,7 +121,12 @@ skanaar.Svg = function (globalStyle){
 		},
 		lineWidth: function (w){ globalStyle += ';stroke-width:'+w},
 		measureText: function (s){
-			return { width: s.length * 8.5 }
+			return {
+				width: skanaar.sum(s, function (c){
+					if (c === 'M' || c === 'W') { return 14 }
+					return c.charCodeAt(0) < 200 ? 9.5 : 16
+				})
+			}
 		},
 		moveTo: function (x, y){
 			last(elements).attr.d += ('M' + tX(x) + ' ' + tY(y) + ' ')
