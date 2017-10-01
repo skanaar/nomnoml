@@ -82,12 +82,15 @@ nomnoml.layout = function (measurer, config, ast){
 			clas.height = 0
 			return
 		}
+		var oldDir = config.direction;
+		config.direction = style.direction || config.direction;
 		_.each(clas.compartments, layoutCompartment)
 		clas.width = _.max(_.pluck(clas.compartments, 'width'))
 		clas.height = skanaar.sum(clas.compartments, 'height')
 		clas.x = clas.width/2
 		clas.y = clas.height/2
 		_.each(clas.compartments, function(co){ co.width = clas.width })
+		config.direction = oldDir;
 	}
 	layoutCompartment(ast)
 	return ast

@@ -15,7 +15,8 @@ var nomnoml = nomnoml || {};
 				dashed: _.contains(styleDef, 'dashed'),
 				empty: _.contains(styleDef, 'empty'),
 				fill: _.last(styleDef.match('fill=([^ ]*)')),
-				visual: _.last(styleDef.match('visual=([^ ]*)')) || 'class'
+				visual: _.last(styleDef.match('visual=([^ ]*)')) || 'class',
+				direction: { down: 'TB', right: 'LR' }[_.last(styleDef.match('direction=([^ ]*)'))] || 'TB'
 			}
 		})
 		return {
