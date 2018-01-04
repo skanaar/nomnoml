@@ -18,7 +18,7 @@ nomnoml.styles = {
   REFERENCE:{ center: 1, bold: 0, underline: 0, italic: 0, dashed: 1, empty: 0, hull: 'auto', visual: 'class' },
   SENDER:   { center: 0, bold: 0, underline: 0, italic: 0, dashed: 0, empty: 0, hull: 'auto', visual: 'sender' },
   START:    { center: 1, bold: 0, underline: 0, italic: 0, dashed: 0, empty: 1, hull: 'icon', visual: 'start' },
-  STATE:    { center: 1, bold: 0, underline: 0, italic: 0, dashed: 0, empty: 0, hull: 'auto', visual: 'roundrect' },
+  STATE:    { center: 1, bold: 0, underline: 0, italic: 0, dashed: 0, empty: 0, hull: 'auto', visual: 'capsule' },
   TRANSCEIVER:{ center: 0, bold: 0, underline: 0, italic: 0, dashed: 0, empty: 0, hull: 'auto', visual: 'transceiver' },
   USECASE:  { center: 1, bold: 0, underline: 0, italic: 0, dashed: 0, empty: 0, hull: 'auto', visual: 'ellipse' },
 }
@@ -117,6 +117,10 @@ nomnoml.visualizers = {
     ]).fillAndStroke()
   },
   roundrect : function (node, x, y, padding, config, g) {
+    var r = Math.min(padding*2*config.leading, node.height/2)
+    g.roundRect(x, y, node.width, node.height, r).fillAndStroke()
+  },
+  capsule : function (node, x, y, padding, config, g) {
     var r = Math.min(padding*2*config.leading, node.height/2)
     g.roundRect(x, y, node.width, node.height, r).fillAndStroke()
   },

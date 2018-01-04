@@ -161,6 +161,7 @@ Available visuals are
     visual=receiver
     visual=rhomb
     visual=roundrect
+    visual=capsule
     visual=sender
     visual=start
     visual=transceiver
