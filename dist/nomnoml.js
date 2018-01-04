@@ -1590,9 +1590,9 @@ var nomnoml = nomnoml || {};
 	'use strict';
 
 	function getConfig(d) {
-		var userStyles = {}
+		var userStyles = {};
 		_.each(d, function (styleDef, key){
-			if (key[0] != '.') return
+			if (key[0] !== '.') return;
 			userStyles[key.substring(1).toUpperCase()] = {
 				center: _.contains(styleDef, 'center'),
 				bold: _.contains(styleDef, 'bold'),
@@ -1604,7 +1604,8 @@ var nomnoml = nomnoml || {};
 				visual: _.last(styleDef.match('visual=([^ ]*)')) || 'class',
 				direction: { down: 'TB', right: 'LR' }[_.last(styleDef.match('direction=([^ ]*)'))] || 'TB'
 			}
-		})
+		});
+
 		return {
 			arrowSize: +d.arrowSize || 1,
 			bendSize: +d.bendSize || 0.3,
@@ -1623,7 +1624,8 @@ var nomnoml = nomnoml || {};
 			stroke: d.stroke || '#33322E',
 			title: d.title || 'nomnoml',
 			zoom: +d.zoom || 1,
-			styles: _.extend({}, nomnoml.styles, userStyles)
+			styles: _.extend({}, nomnoml.styles, userStyles),
+			borderRadius: (+d.borderRadius) || 5
 		};
 	}
 
@@ -1633,11 +1635,11 @@ var nomnoml = nomnoml || {};
 	}
 
 	function setFont(config, isBold, isItalic, graphics) {
-		var style = (isBold === 'bold' ? 'bold' : '')
-		if (isItalic) style = 'italic ' + style
-		var defaultFont = 'Helvetica, sans-serif'
-		var font = skanaar.format('# #pt #, #', style, config.fontSize, config.font, defaultFont)
-		graphics.font(font)
+		var style = (isBold === 'bold' ? 'bold' : '');
+		if (isItalic) style = 'italic ' + style;
+		var defaultFont = 'Helvetica, sans-serif';
+		var font = skanaar.format('# #pt #, #', style, config.fontSize, config.font, defaultFont);
+		graphics.font(font);
 	}
 
 	function parseAndRender(code, graphics, canvas, scale) {
@@ -1660,24 +1662,25 @@ var nomnoml = nomnoml || {};
 	};
 
 	nomnoml.renderSvg = function (code) {
-		var ast = nomnoml.parse(code)
-		var config = getConfig(ast.directives)
-		var skCanvas = skanaar.Svg('')
+		var ast = nomnoml.parse(code);
+		var config = getConfig(ast.directives);
+		var skCanvas = skanaar.Svg('');
 		function setFont(config, isBold, isItalic) {
-			var style = (isBold === 'bold' ? 'bold' : '')
-			if (isItalic) style = 'italic ' + style
-			var defFont = 'Helvetica, sans-serif'
-			var template = 'font-weight:#; font-size:#pt; font-family:\'#\', #'
-			var font = skanaar.format(template, style, config.fontSize, config.font, defFont)
-			skCanvas.font(font)
+			var style = (isBold === 'bold' ? 'bold' : '');
+			if (isItalic) style = 'italic ' + style;
+			var defFont = 'Helvetica, sans-serif';
+			var template = 'font-weight:#; font-size:#pt; font-family:\'#\', #';
+			var font = skanaar.format(template, style, config.fontSize, config.font, defFont);
+			skCanvas.font(font);
 		}
 		var measurer = {
 			setFont: function (a, b, c) { setFont(a, b, c, skCanvas); },
 			textWidth: function (s) { return skCanvas.measureText(s).width },
 			textHeight: function () { return config.leading * config.fontSize }
 		};
-		var layout = nomnoml.layout(measurer, config, ast)
-		nomnoml.render(skCanvas, config, layout, measurer.setFont)
+		var layout = nomnoml.layout(measurer, config, ast);
+		nomnoml.render(skCanvas, config, layout, measurer.setFont);
+
 		return skCanvas.serialize({
 		  width: layout.width,
 		  height: layout.height
