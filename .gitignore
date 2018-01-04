@@ -1,6 +1,6 @@
 nomnoml.sublime-project
 nomnoml.sublime-workspace
 node_modules/
-
+.idea/
 output.*
 nomnoml-0.1.0.tgz
