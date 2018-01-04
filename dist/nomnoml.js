@@ -1223,8 +1223,7 @@ nomnoml.visualizers = {
     ]).fillAndStroke()
   },
   roundrect : function (node, x, y, padding, config, g) {
-    var r = Math.min(padding*2*config.leading, node.height/2)
-    g.roundRect(x, y, node.width, node.height, r).fillAndStroke()
+    g.roundRect(x, y, node.width, node.height, config.borderRadius).fillAndStroke()
   },
   capsule : function (node, x, y, padding, config, g) {
     var r = Math.min(padding*2*config.leading, node.height/2)
