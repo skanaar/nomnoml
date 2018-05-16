@@ -326,7 +326,7 @@ skanaar.Svg = function (globalStyle){
 		fillText: function (text, x, y){
 			if (lastDefined('textAlign') === 'center')
 				x -= this.measureText(text).width/2
-			return newElement('text', { x: tX(x), y: tY(y) }, text)
+			return newElement('text', { x: tX(x), y: tY(y) }, _.escape(text))
 		},
 		lineCap: function (cap){ globalStyle += ';stroke-linecap:'+cap },
 		lineJoin: function (join){ globalStyle += ';stroke-linejoin:'+join },
@@ -369,6 +369,9 @@ skanaar.Svg = function (globalStyle){
       attrs.baseProfile = attrs.baseProfile || 'full';
       attrs.width = attrs.width || '100%';
       attrs.height = attrs.height || '100%';
+      if(attrs.width !== '100%' && attrs.height != '100%') {
+        attrs.viewbox = '0 0 ' + attrs.width + ' ' + attrs.height;
+	  }
       attrs.xmlns = attrs.xmlns || 'http://www.w3.org/2000/svg';
       attrs['xmlns:xlink'] = attrs['xmlns:xlink'] || 'http://www.w3.org/1999/xlink';
       attrs['xmlns:ev']  = attrs['xmlns:ev'] || 'http://www.w3.org/2001/xml-events';
@@ -468,7 +471,7 @@ symbols_: {"error":2,"root":3,"compartment":4,"EOF":5,"slot":6,"IDENT":7,"class"
 terminals_: {2:"error",5:"EOF",7:"IDENT",10:"SEP",12:"|",13:"[",14:"]"},
 productions_: [0,[3,2],[6,1],[6,1],[6,1],[4,1],[4,3],[11,1],[11,3],[11,2],[9,3],[8,3]],
 performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */
-/**/) {
+/*``*/) {
 /* this == yyval */
 
 var $0 = $$.length - 1;
@@ -974,7 +977,7 @@ stateStackSize:function stateStackSize() {
     },
 options: {},
 performAction: function anonymous(yy,yy_,$avoiding_name_collisions,YY_START
-/**/) {
+/*``*/) {
 
 var YYSTATE=YY_START;
 switch($avoiding_name_collisions) {

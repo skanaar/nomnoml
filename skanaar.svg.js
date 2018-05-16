@@ -112,7 +112,7 @@ skanaar.Svg = function (globalStyle){
 		fillText: function (text, x, y){
 			if (lastDefined('textAlign') === 'center')
 				x -= this.measureText(text).width/2
-			return newElement('text', { x: tX(x), y: tY(y) }, text)
+			return newElement('text', { x: tX(x), y: tY(y) }, _.escape(text))
 		},
 		lineCap: function (cap){ globalStyle += ';stroke-linecap:'+cap },
 		lineJoin: function (join){ globalStyle += ';stroke-linejoin:'+join },
@@ -155,6 +155,9 @@ skanaar.Svg = function (globalStyle){
       attrs.baseProfile = attrs.baseProfile || 'full';
       attrs.width = attrs.width || '100%';
       attrs.height = attrs.height || '100%';
+      if(attrs.width !== '100%' && attrs.height != '100%') {
+        attrs.viewbox = '0 0 ' + attrs.width + ' ' + attrs.height;
+	  }
       attrs.xmlns = attrs.xmlns || 'http://www.w3.org/2000/svg';
       attrs['xmlns:xlink'] = attrs['xmlns:xlink'] || 'http://www.w3.org/1999/xlink';
       attrs['xmlns:ev']  = attrs['xmlns:ev'] || 'http://www.w3.org/2001/xml-events';
