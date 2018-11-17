@@ -55,7 +55,7 @@ suite.test('astBuilder should handle [apa|+field: int;#x:int|apply]', function()
     ])],[]))
 })
 
-suite.test('astBuilder should choose longest definition of classes defined twice', function(){
+suite.ignore.test('astBuilder should choose longest definition of classes defined twice', function(){
     var first = c('apa')
     var second = c('apa')
     second.parts.push(['+fleas'])

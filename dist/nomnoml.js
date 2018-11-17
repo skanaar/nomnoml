@@ -1,7 +1,5 @@
 (function (factoryFn) {
-  if (typeof define === 'function' && define.amd)
-  	define(['lodash', 'dagre'], factoryFn);
-  else if (typeof module === 'object' && module.exports)
+  if (typeof module === 'object' && module.exports)
   	module.exports = factoryFn(require('lodash'), require('dagre'));
   else this.nomnoml = factoryFn(_, dagre);
 })(function (_, dagre) {
@@ -158,9 +156,9 @@ skanaar.Canvas = function (canvas, callbacks){
 		strokeStyle: function (s){ ctx.strokeStyle = s },
 		textAlign:   function (a){ ctx.textAlign = a },
 
-		lineCap: function (cap){ ctx.lineCap = cap },
-		lineJoin: function (join){ ctx.lineJoin = join },
-		lineWidth: function (w){ ctx.lineWidth = w },
+		lineCap:     function (cap){ ctx.lineCap = cap },
+		lineJoin:    function (join){ ctx.lineJoin = join },
+		lineWidth:   function (w){ ctx.lineWidth = w },
 		
 		arcTo:       function (){ return ctx.arcTo.apply(      ctx, arguments) },
 		beginPath:   function (){ return ctx.beginPath.apply(  ctx, arguments) },
@@ -465,13 +463,13 @@ skanaar.Svg = function (globalStyle){
   }
 */
 var nomnomlCoreParser = (function(){
-var parser = {trace: function trace() { },
+var parser = {trace: function trace () { },
 yy: {},
 symbols_: {"error":2,"root":3,"compartment":4,"EOF":5,"slot":6,"IDENT":7,"class":8,"association":9,"SEP":10,"parts":11,"|":12,"[":13,"]":14,"$accept":0,"$end":1},
 terminals_: {2:"error",5:"EOF",7:"IDENT",10:"SEP",12:"|",13:"[",14:"]"},
 productions_: [0,[3,2],[6,1],[6,1],[6,1],[4,1],[4,3],[11,1],[11,3],[11,2],[9,3],[8,3]],
 performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */
-/*``*/) {
+) {
 /* this == yyval */
 
 var $0 = $$.length - 1;
@@ -515,7 +513,7 @@ break;
 },
 table: [{3:1,4:2,6:3,7:[1,4],8:5,9:6,13:[1,7]},{1:[3]},{5:[1,8],10:[1,9]},{5:[2,5],10:[2,5],12:[2,5],14:[2,5]},{5:[2,2],10:[2,2],12:[2,2],14:[2,2]},{5:[2,3],7:[1,10],10:[2,3],12:[2,3],14:[2,3]},{5:[2,4],10:[2,4],12:[2,4],14:[2,4]},{4:12,6:3,7:[1,4],8:5,9:6,11:11,13:[1,7]},{1:[2,1]},{6:13,7:[1,4],8:5,9:6,13:[1,7]},{8:14,13:[1,7]},{12:[1,16],14:[1,15]},{10:[1,9],12:[2,7],14:[2,7]},{5:[2,6],10:[2,6],12:[2,6],14:[2,6]},{5:[2,10],10:[2,10],12:[2,10],14:[2,10]},{5:[2,11],7:[2,11],10:[2,11],12:[2,11],14:[2,11]},{4:17,6:3,7:[1,4],8:5,9:6,12:[2,9],13:[1,7],14:[2,9]},{10:[1,9],12:[2,8],14:[2,8]}],
 defaultActions: {8:[2,1]},
-parseError: function parseError(str, hash) {
+parseError: function parseError (str, hash) {
     if (hash.recoverable) {
         this.trace(str);
     } else {
@@ -793,7 +791,7 @@ showPosition:function () {
     },
 
 // test the lexed token: return FALSE when not a match, otherwise return token
-test_match:function (match, indexed_rule) {
+test_match:function(match, indexed_rule) {
         var token,
             lines,
             backup;
@@ -923,7 +921,7 @@ next:function () {
     },
 
 // return next match that has a token
-lex:function lex() {
+lex:function lex () {
         var r = this.next();
         if (r) {
             return r;
@@ -933,12 +931,12 @@ lex:function lex() {
     },
 
 // activates a new lexer condition state (pushes the new lexer condition state onto the condition stack)
-begin:function begin(condition) {
+begin:function begin (condition) {
         this.conditionStack.push(condition);
     },
 
 // pop the previously active lexer condition state off the condition stack
-popState:function popState() {
+popState:function popState () {
         var n = this.conditionStack.length - 1;
         if (n > 0) {
             return this.conditionStack.pop();
@@ -948,7 +946,7 @@ popState:function popState() {
     },
 
 // produce the lexer rule set which is active for the currently active lexer condition state
-_currentRules:function _currentRules() {
+_currentRules:function _currentRules () {
         if (this.conditionStack.length && this.conditionStack[this.conditionStack.length - 1]) {
             return this.conditions[this.conditionStack[this.conditionStack.length - 1]].rules;
         } else {
@@ -957,7 +955,7 @@ _currentRules:function _currentRules() {
     },
 
 // return the currently active lexer condition state; when an index argument is provided it produces the N-th previous condition state, if available
-topState:function topState(n) {
+topState:function topState (n) {
         n = this.conditionStack.length - 1 - Math.abs(n || 0);
         if (n >= 0) {
             return this.conditionStack[n];
@@ -967,7 +965,7 @@ topState:function topState(n) {
     },
 
 // alias for begin(condition)
-pushState:function pushState(condition) {
+pushState:function pushState (condition) {
         this.begin(condition);
     },
 
@@ -977,7 +975,7 @@ stateStackSize:function stateStackSize() {
     },
 options: {},
 performAction: function anonymous(yy,yy_,$avoiding_name_collisions,YY_START
-/*``*/) {
+) {
 
 var YYSTATE=YY_START;
 switch($avoiding_name_collisions) {
@@ -1015,7 +1013,7 @@ if (typeof require !== 'undefined' && typeof exports !== 'undefined') {
 exports.parser = nomnomlCoreParser;
 exports.Parser = nomnomlCoreParser.Parser;
 exports.parse = function () { return nomnomlCoreParser.parse.apply(nomnomlCoreParser, arguments); };
-exports.main = function commonjsMain(args) {
+exports.main = function commonjsMain (args) {
     if (!args[1]) {
         console.log('Usage: '+args[0]+' FILE');
         process.exit(1);
@@ -1039,16 +1037,17 @@ nomnoml.parse = function (source){
 		return {text: s.trim(), index: i }
 	})
 	var pureDirectives = _.filter(lines, isDirective)
-	var directives = _.object(pureDirectives.map(function (line){
+	var directives = {}
+	_.each(pureDirectives.map(function (line){
 		try {
 			var tokens =  line.text.substring(1).split(':')
-			return [tokens[0].trim(), tokens[1].trim()]
+			directives[tokens[0].trim()] = tokens[1].trim()
 		}
 		catch (e) {
 			throw new Error('line ' + (line.index + 1))
 		}
 	}))
-	var pureDiagramCode = _.map(_.pluck(lines, 'text'), onlyCompilables).join('\n').trim()
+	var pureDiagramCode = _.map(_.map(lines, 'text'), onlyCompilables).join('\n').trim()
 	var ast = nomnoml.transformParseIntoSyntaxTree(nomnoml.intermediateParse(pureDiagramCode))
 	ast.directives = directives
 	return ast
@@ -1107,29 +1106,31 @@ nomnoml.transformParseIntoSyntaxTree = function (entity){
 
 	return transformItem(entity)
 };
+/* jshint maxlen:110 */
 var nomnoml = nomnoml || {}
 
 nomnoml.styles = {
-  ABSTRACT: { center: 1, bold: 0, underline: 0, italic: 1, dashed: 0, empty: 0, hull: 'auto', visual: 'class' },
-  ACTOR:    { center: 1, bold: 0, underline: 0, italic: 0, dashed: 0, empty: 0, hull: 'auto', visual: 'actor' },
-  CHOICE:   { center: 1, bold: 0, underline: 0, italic: 0, dashed: 0, empty: 0, hull: 'auto', visual: 'rhomb' },
-  CLASS:    { center: 1, bold: 1, underline: 0, italic: 0, dashed: 0, empty: 0, hull: 'auto', visual: 'class' },
-  DATABASE: { center: 1, bold: 1, underline: 0, italic: 0, dashed: 0, empty: 0, hull: 'auto', visual: 'database' },
-  END:      { center: 1, bold: 0, underline: 0, italic: 0, dashed: 0, empty: 1, hull: 'icon', visual: 'end' },
-  FRAME:    { center: 0, bold: 0, underline: 0, italic: 0, dashed: 0, empty: 0, hull: 'auto', visual: 'frame' },
-  HIDDEN:   { center: 1, bold: 0, underline: 0, italic: 0, dashed: 0, empty: 1, hull: 'empty', visual: 'hidden' },
-  INPUT:    { center: 1, bold: 0, underline: 0, italic: 0, dashed: 0, empty: 0, hull: 'auto', visual: 'input' },
-  INSTANCE: { center: 1, bold: 0, underline: 1, italic: 0, dashed: 0, empty: 0, hull: 'auto', visual: 'class' },
-  LABEL:    { center: 0, bold: 0, underline: 0, italic: 0, dashed: 0, empty: 0, hull: 'auto', visual: 'none' },
-  NOTE:     { center: 0, bold: 0, underline: 0, italic: 0, dashed: 0, empty: 0, hull: 'auto', visual: 'note' },
-  PACKAGE:  { center: 0, bold: 0, underline: 0, italic: 0, dashed: 0, empty: 0, hull: 'auto', visual: 'package' },
-  RECEIVER: { center: 0, bold: 0, underline: 0, italic: 0, dashed: 0, empty: 0, hull: 'auto', visual: 'receiver' },
-  REFERENCE:{ center: 1, bold: 0, underline: 0, italic: 0, dashed: 1, empty: 0, hull: 'auto', visual: 'class' },
-  SENDER:   { center: 0, bold: 0, underline: 0, italic: 0, dashed: 0, empty: 0, hull: 'auto', visual: 'sender' },
-  START:    { center: 1, bold: 0, underline: 0, italic: 0, dashed: 0, empty: 1, hull: 'icon', visual: 'start' },
-  STATE:    { center: 1, bold: 0, underline: 0, italic: 0, dashed: 0, empty: 0, hull: 'auto', visual: 'roundrect' },
-  TRANSCEIVER:{ center: 0, bold: 0, underline: 0, italic: 0, dashed: 0, empty: 0, hull: 'auto', visual: 'transceiver' },
-  USECASE:  { center: 1, bold: 0, underline: 0, italic: 0, dashed: 0, empty: 0, hull: 'auto', visual: 'ellipse' },
+  ABSTRACT: { center:1, bold:0, underline:0, italic:1, dashed:0, empty:0, hull:'auto', visual:'class' },
+  ACTOR:    { center:1, bold:0, underline:0, italic:0, dashed:0, empty:0, hull:'auto', visual:'actor' },
+  CHOICE:   { center:1, bold:0, underline:0, italic:0, dashed:0, empty:0, hull:'auto', visual:'rhomb' },
+  CLASS:    { center:1, bold:1, underline:0, italic:0, dashed:0, empty:0, hull:'auto', visual:'class' },
+  DATABASE: { center:1, bold:1, underline:0, italic:0, dashed:0, empty:0, hull:'auto', visual:'database' },
+  END:      { center:1, bold:0, underline:0, italic:0, dashed:0, empty:1, hull:'icon', visual:'end' },
+  FRAME:    { center:0, bold:0, underline:0, italic:0, dashed:0, empty:0, hull:'auto', visual:'frame' },
+  HIDDEN:   { center:1, bold:0, underline:0, italic:0, dashed:0, empty:1, hull:'empty', visual:'hidden' },
+  INPUT:    { center:1, bold:0, underline:0, italic:0, dashed:0, empty:0, hull:'auto', visual:'input' },
+  INSTANCE: { center:1, bold:0, underline:1, italic:0, dashed:0, empty:0, hull:'auto', visual:'class' },
+  LABEL:    { center:0, bold:0, underline:0, italic:0, dashed:0, empty:0, hull:'auto', visual:'none' },
+  NOTE:     { center:0, bold:0, underline:0, italic:0, dashed:0, empty:0, hull:'auto', visual:'note' },
+  PACKAGE:  { center:0, bold:0, underline:0, italic:0, dashed:0, empty:0, hull:'auto', visual:'package' },
+  RECEIVER: { center:0, bold:0, underline:0, italic:0, dashed:0, empty:0, hull:'auto', visual:'receiver' },
+  REFERENCE:{ center:1, bold:0, underline:0, italic:0, dashed:1, empty:0, hull:'auto', visual:'class' },
+  SENDER:   { center:0, bold:0, underline:0, italic:0, dashed:0, empty:0, hull:'auto', visual:'sender' },
+  START:    { center:1, bold:0, underline:0, italic:0, dashed:0, empty:1, hull:'icon', visual:'start' },
+  STATE:    { center:1, bold:0, underline:0, italic:0, dashed:0, empty:0, hull:'auto', visual:'roundrect' },
+  TRANSCEIVER:
+            { center:0, bold:0, underline:0, italic:0, dashed:0, empty:0, hull:'auto', visual:'transceiver' },
+  USECASE:  { center:1, bold:0, underline:0, italic:0, dashed:0, empty:0, hull:'auto', visual:'ellipse' },
 }
 
 nomnoml.visualizers = {
@@ -1252,7 +1253,8 @@ nomnoml.visualizers = {
         {x: x, y: y+node.height/2}
       ]).fillAndStroke()
   },
-};
+}
+;
 var nomnoml = nomnoml || {}
 
 nomnoml.Classifier = function (type, name, compartments){
@@ -1307,8 +1309,14 @@ nomnoml.layout = function (measurer, config, ast){
 		})
 		var dLayout = runDagre(g)
 
-		var rels = _.indexBy(c.relations, 'id')
-		var nodes = _.indexBy(c.nodes, 'name')
+		function indexBy(list, key) {
+			var obj = {}
+			_.each(list, function (e) { obj[e[key]] = e })
+			return obj
+		}
+
+		var rels = indexBy(c.relations, 'id')
+		var nodes = indexBy(c.nodes, 'name')
 		function toPoint(o){ return {x:o.x, y:o.y} }
 		dLayout.eachNode(function(u, value) {
 			nodes[u].x = value.x
@@ -1340,7 +1348,7 @@ nomnoml.layout = function (measurer, config, ast){
 		var oldDir = config.direction;
 		config.direction = style.direction || config.direction;
 		_.each(clas.compartments, layoutCompartment)
-		clas.width = _.max(_.pluck(clas.compartments, 'width'))
+		clas.width = _.max(_.map(clas.compartments, 'width'))
 		clas.height = skanaar.sum(clas.compartments, 'height')
 		clas.x = clas.width/2
 		clas.y = clas.height/2
@@ -1439,24 +1447,24 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 
 	var empty = false, filled = true, diamond = true
 
-    function renderLabel(text, refPoint, quadrant){
+    function renderLabel(text, pos, quadrant){
 		if (text) {
 			var fontSize = config.fontSize
-			var lines = text.split("`")
+			var lines = text.split('`')
 			var area = {
 				width : _.max(_.map(lines, function(l){ return g.measureText(l).width })),
 				height : fontSize*lines.length
 			}
 			var origin = {
-				x: (quadrant === 1) || (quadrant === 4) ? refPoint.x + padding : refPoint.x - area.width - padding,
-				y: (quadrant === 3) || (quadrant === 4) ? refPoint.y + padding : refPoint.y - area.height - padding
+				x: pos.x + ((quadrant==1 || quadrant==4) ? padding : -area.width - padding),
+				y: pos.y + ((quadrant==3 || quadrant==4) ? padding : -area.height - padding)
 			}
 			_.each(lines, function(l, i){ g.fillText(l, origin.x, origin.y + fontSize*(i+1)) })
 		}
 	}
 
 	// find basic quadrant using relative position of endpoint and block rectangle
-	function findLabelQuadrant(point, rect, def) {
+	function quadrant(point, rect, def) {
 		if (point.x < rect.x && point.y < rect.y-rect.height/2) return 1;
 		if (point.y > rect.y && point.x > rect.x+rect.width/2) return 1;
 		
@@ -1473,7 +1481,7 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 	}
 
 	// Flip basic label quadrant if needed, to avoid crossing a bent relationship line
-	function adjustLabelQuadrant(quadrant, point, opposite) {
+	function adjustQuadrant(quadrant, point, opposite) {
 		if ((opposite.x == point.x) || (opposite.y == point.y)) return quadrant;
 		var flipHorizontally = [4, 3, 2, 1]
 		var flipVertically = [2, 1, 4, 3]
@@ -1482,26 +1490,25 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 							((opposite.x < point.x) ? 3 : 4);
 		// if an opposite relation end is in the same quadrant as a label, we need to flip the label
 		if (oppositeQuadrant === quadrant) {
-			if (config.direction === "LR") return flipHorizontally[quadrant-1];
-			if (config.direction === "TD") return flipVertically[quadrant-1];
+			if (config.direction === 'LR') return flipHorizontally[quadrant-1];
+			if (config.direction === 'TD') return flipVertically[quadrant-1];
 		}
 		return quadrant; 	
 	}
 
 	function renderRelation(r, compartment){
-		var startNode = _.findWhere(compartment.nodes, {name:r.start})
-		var endNode = _.findWhere(compartment.nodes, {name:r.end})
+		var startNode = _.find(compartment.nodes, {name:r.start})
+		var endNode = _.find(compartment.nodes, {name:r.end})
 		var start = rectIntersection(r.path[1], _.first(r.path), startNode)
 		var end = rectIntersection(r.path[r.path.length-2], _.last(r.path), endNode)
 
 		var path = _.flatten([start, _.tail(_.initial(r.path)), end])
-		var fontSize = config.fontSize
-
+		
 		g.fillStyle(config.stroke)
 		setFont(config, 'normal')
 
-		renderLabel(r.startLabel, start, adjustLabelQuadrant(findLabelQuadrant(start, startNode, 4), start, end))
-		renderLabel(r.endLabel, end, adjustLabelQuadrant(findLabelQuadrant(end, endNode, 2), end, start))
+		renderLabel(r.startLabel, start, adjustQuadrant(quadrant(start, startNode, 4), start, end))
+		renderLabel(r.endLabel, end, adjustQuadrant(quadrant(end, endNode, 2), end, start))
 
 		if (r.assoc !== '-/-'){
 			if (g.setLineDash && skanaar.hasSubstring(r.assoc, '--')){
@@ -1588,21 +1595,28 @@ var nomnoml = nomnoml || {};
 (function () {
 	'use strict';
 
+	function parseCustomStyle(styleDef) {
+		function directionToDagre(word) {
+			return { down: 'TB', right: 'LR' }[word] || 'TB'
+		}
+		return {
+			center: _.contains(styleDef, 'center'),
+			bold: _.contains(styleDef, 'bold'),
+			underline: _.contains(styleDef, 'underline'),
+			italic: _.contains(styleDef, 'italic'),
+			dashed: _.contains(styleDef, 'dashed'),
+			empty: _.contains(styleDef, 'empty'),
+			fill: _.last(styleDef.match('fill=([^ ]*)')),
+			visual: _.last(styleDef.match('visual=([^ ]*)')) || 'class',
+			direction: directionToDagre(_.last(styleDef.match('direction=([^ ]*)')))
+		}
+	}
+
 	function getConfig(d) {
 		var userStyles = {}
 		_.each(d, function (styleDef, key){
 			if (key[0] != '.') return
-			userStyles[key.substring(1).toUpperCase()] = {
-				center: _.contains(styleDef, 'center'),
-				bold: _.contains(styleDef, 'bold'),
-				underline: _.contains(styleDef, 'underline'),
-				italic: _.contains(styleDef, 'italic'),
-				dashed: _.contains(styleDef, 'dashed'),
-				empty: _.contains(styleDef, 'empty'),
-				fill: _.last(styleDef.match('fill=([^ ]*)')),
-				visual: _.last(styleDef.match('visual=([^ ]*)')) || 'class',
-				direction: { down: 'TB', right: 'LR' }[_.last(styleDef.match('direction=([^ ]*)'))] || 'TB'
-			}
+			userStyles[key.substring(1).toUpperCase()] = parseCustomStyle(styleDef)
 		})
 		return {
 			arrowSize: +d.arrowSize || 1,

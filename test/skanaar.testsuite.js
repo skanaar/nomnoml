@@ -1,6 +1,8 @@
 var _ = require('lodash')
 
 function TestSuite(name) {
+    function log(text) { console.log(text) }
+    log.red = function (msg) { console.log('\x1b[31m%s\x1b[0m', msg) }
     var results = []
     return {
         test: function (name, test) {
@@ -33,7 +35,10 @@ function TestSuite(name) {
             }
             else {
                 var failures = results.filter(e => e.status == 'failure')
-                console.log(failures.map(e => e.name + '\n   ' + e.error).join('\n'))
+                failures.forEach(function (e){
+                    log.red(e.name)
+                    log('   ' + e.error)
+                })
                 if(failures.length)
                     throw new Error(failures.length + ' test failures')
             }

@@ -2,20 +2,20 @@ var fs = require('fs');
 var jison = require('jison');
 var jshint = require('jshint').JSHINT;
 
-var nomnomlParser = new jison.Parser(fs.readFileSync('nomnoml.jison', { encoding: 'utf8' }));
-fs.writeFileSync('nomnoml.jison.js', nomnomlParser.generate({moduleName: 'nomnomlCoreParser'}));
+var nomnomlParser = new jison.Parser(fs.readFileSync('src/nomnoml.jison', { encoding: 'utf8' }));
+fs.writeFileSync('src/jison-parser.js', nomnomlParser.generate({moduleName: 'nomnomlCoreParser'}));
 
 var nomnomlFiles = [
-    'skanaar.canvas.js',
-    'skanaar.util.js',
-    'skanaar.vector.js',
-    'skanaar.svg.js',
-    'nomnoml.jison.js',
-    'nomnoml.parser.js',
-    'nomnoml.visuals.js',
-    'nomnoml.layouter.js',
-    'nomnoml.renderer.js',
-    'nomnoml.js'
+    'src/skanaar.canvas.js',
+    'src/skanaar.util.js',
+    'src/skanaar.vector.js',
+    'src/skanaar.svg.js',
+    'src/jison-parser.js',
+    'src/parser.js',
+    'src/visuals.js',
+    'src/layouter.js',
+    'src/renderer.js',
+    'src/nomnoml.js'
 ];
 
 var jshintConfig = JSON.parse(fs.readFileSync('./.jshintrc', { encoding: 'utf8' }))
@@ -31,7 +31,7 @@ function lint(filename, source) {
 function concat(files){
     return files.map(function (filename){
         var source = fs.readFileSync(filename, { encoding: 'utf8' })
-        if (filename != 'nomnoml.jison.js') lint(filename, source)
+        if (!filename.includes('jison')) lint(filename, source)
         return source
     }).join(';\n')
 }
