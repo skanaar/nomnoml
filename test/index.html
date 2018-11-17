@@ -4,13 +4,23 @@
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <title>test nomnoml</title>
   <link rel="shortcut icon" type="image/png" href="favicon.png">
-  <link rel="stylesheet" type="text/css" href="lib/jasmine-2.0.0/jasmine.css">
-  <script src="lib/jasmine-2.0.0/jasmine.js"></script>
-  <script src="lib/jasmine-2.0.0/jasmine-html.js"></script>
-  <script src="lib/jasmine-2.0.0/boot.js"></script>
+  <style>
+    body { background-color: #eeeeee; padding: 0; margin: 10px; overflow-y: scroll; }
+    .success, .failure, .ignored { margin: 0px; padding: 3px 5px; color: #eee; }
+    #testreport { font-size: 11px; font-family: Monaco, "Lucida Console", monospace; }
+    .success { color: #5e7d00; }
+    .failure { color: #b03911; }
+    .ignored { color: #bababa; }
+    .success::before { content: '✓ '; }
+    .failure::before { content: '✗ '; }
+    .ignored::before { content: '- '; }
+    .details { margin: 1px 5px 5px 35px; color: #b03911; }
+  </style>
+</head>
 
-  <script src="../lib/zepto.min.js"></script>
-  <script src="../lib/lodash.min.js"></script>
+<body>
+  <div id=testreport></div>
+  <script src="../lib/underscore.min.js"></script>
   <script src="../lib/dagre.min.js"></script>
   <script src="../skanaar.util.js"></script>
   <script src="../skanaar.canvas.js"></script>
@@ -20,10 +30,17 @@
   <script src="../nomnoml.visuals.js"></script>
   <script src="../nomnoml.layouter.js"></script>
   <script src="../nomnoml.renderer.js"></script>
-  <script src="../nomnoml.app.js"></script>
+  <script>
+    function require(id) {
+      return {
+        'lodash': _,
+        './skanaar.testsuite.js': TestSuite,
+        '../dist/nomnoml.js': nomnoml
+      }[id]
+    }
+    var module = {}
+  </script>
+  <script src="skanaar.testsuite.js"></script>
   <script src="nomnoml.spec.js"></script>
-</head>
-
-<body>
 </body>
 </html>

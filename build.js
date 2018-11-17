@@ -44,3 +44,13 @@ var wrapper = fs.readFileSync('bundleWrapper.js', { encoding: 'utf8' })
 var bundle = replace(wrapper, '/*{{body}}*/', concat(nomnomlFiles))
 
 fs.writeFileSync('dist/nomnoml.js', bundle)
+
+require('./test/render-svg.js')
+
+try {
+    require('./test/nomnoml.spec.js')
+}
+catch(e) {
+    fs.unlinkSync('dist/nomnoml.js', bundle)
+    throw e
+}

@@ -22,9 +22,9 @@
     "jison": "0.4.13"
   },
   "scripts": {
-    "build": "node build",
-    "prepublish": "node build",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "node build.js",
+    "prepublish": "node build.js",
+    "test": "node test/nomnoml.spec.js"
   },
   "directories": {
     "test": "test"
