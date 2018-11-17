@@ -52,8 +52,14 @@ nomnoml.layout = function (measurer, config, ast){
 		})
 		var dLayout = runDagre(g)
 
-		var rels = _.indexBy(c.relations, 'id')
-		var nodes = _.indexBy(c.nodes, 'name')
+		function indexBy(list, key) {
+			var obj = {}
+			_.each(list, function (e) { obj[e[key]] = e })
+			return obj
+		}
+
+		var rels = indexBy(c.relations, 'id')
+		var nodes = indexBy(c.nodes, 'name')
 		function toPoint(o){ return {x:o.x, y:o.y} }
 		dLayout.eachNode(function(u, value) {
 			nodes[u].x = value.x
@@ -85,7 +91,7 @@ nomnoml.layout = function (measurer, config, ast){
 		var oldDir = config.direction;
 		config.direction = style.direction || config.direction;
 		_.each(clas.compartments, layoutCompartment)
-		clas.width = _.max(_.pluck(clas.compartments, 'width'))
+		clas.width = _.max(_.map(clas.compartments, 'width'))
 		clas.height = skanaar.sum(clas.compartments, 'height')
 		clas.x = clas.width/2
 		clas.y = clas.height/2

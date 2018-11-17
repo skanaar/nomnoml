@@ -136,8 +136,8 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 	}
 
 	function renderRelation(r, compartment){
-		var startNode = _.findWhere(compartment.nodes, {name:r.start})
-		var endNode = _.findWhere(compartment.nodes, {name:r.end})
+		var startNode = _.find(compartment.nodes, {name:r.start})
+		var endNode = _.find(compartment.nodes, {name:r.end})
 		var start = rectIntersection(r.path[1], _.first(r.path), startNode)
 		var end = rectIntersection(r.path[r.path.length-2], _.last(r.path), endNode)
 
