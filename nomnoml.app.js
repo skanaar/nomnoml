@@ -1,21 +1,21 @@
 var nomnoml = nomnoml || {}
 
-$(function (){
+;(function (){
 
 	var storage = null
-	var jqCanvas = $('#canvas')
-	var viewport = $(window)
-	var jqBody = $('body')
-	var lineNumbers = $('#linenumbers')
-	var lineMarker = $('#linemarker')
-	var storageStatusElement = $('#storage-status')
+	var viewport = window
+	var body = document.querySelector('body')
+	var tooltip = document.getElementById('tooltip')
+	var lineNumbers = document.getElementById('linenumbers')
+	var lineMarker = document.getElementById('linemarker')
+	var storageStatusElement = document.getElementById('storage-status')
 	var textarea = document.getElementById('textarea')
 	var imgLink = document.getElementById('savebutton')
 	var linkLink = document.getElementById('linkbutton')
 	var canvasElement = document.getElementById('canvas')
 	var canvasPanner = document.getElementById('canvas-panner')
 	var canvasTools = document.getElementById('canvas-tools')
-	var defaultSource = document.getElementById('defaultGraph').innerHTML
+	var defaultSource = (document.getElementById('defaultGraph') || {}).innerHTML || ''
 	var zoomLevel = 0
 	var offset = {x:0, y:0}
 	var mouseDownPoint = false
@@ -34,10 +34,10 @@ $(function (){
 	window.addEventListener('hashchange', reloadStorage);
 	window.addEventListener('resize', _.throttle(sourceChanged, 750, {leading: true}))
 	editor.on('changes', _.debounce(sourceChanged, 300))
-	canvasPanner.addEventListener('mouseenter', classToggler(jqBody, 'canvas-mode', true))
-	canvasPanner.addEventListener('mouseleave', classToggler(jqBody, 'canvas-mode', false))
-	canvasTools.addEventListener('mouseenter', classToggler(jqBody, 'canvas-mode', true))
-	canvasTools.addEventListener('mouseleave', classToggler(jqBody, 'canvas-mode', false))
+	canvasPanner.addEventListener('mouseenter', classToggler(body, 'canvas-mode', true))
+	canvasPanner.addEventListener('mouseleave', classToggler(body, 'canvas-mode', false))
+	canvasTools.addEventListener('mouseenter', classToggler(body, 'canvas-mode', true))
+	canvasTools.addEventListener('mouseleave', classToggler(body, 'canvas-mode', false))
 	canvasPanner.addEventListener('mousedown', mouseDown)
 	window.addEventListener('mousemove', _.throttle(mouseMove,50))
 	canvasPanner.addEventListener('mouseup', mouseUp)
@@ -49,12 +49,14 @@ $(function (){
 	reloadStorage()
 
 	function classToggler(element, className, state){
-		var jqElement = $(element)
-		return _.bind(jqElement.toggleClass, jqElement, className, state)
+		return function () {
+			if(state) element.classList.add(className)
+			else element.classList.remove(className)
+		}
 	}
 
 	function mouseDown(e){
-		$(canvasPanner).css({width: '100%'})
+		canvasPanner.style.width = '100%'
 		mouseDownPoint = vm.diff({ x: e.pageX, y: e.pageY }, offset)
 	}
 
@@ -67,7 +69,7 @@ $(function (){
 
 	function mouseUp(){
 		mouseDownPoint = false
-		$(canvasPanner).css({width: '33%'})
+		canvasPanner.style.width = '33%'
 	}
 
 	function magnify(e){
@@ -89,9 +91,9 @@ $(function (){
 	nomnoml.toggleSidebar = function (id){
 		var sidebars = ['reference', 'about']
 		_.each(sidebars, function (key){
-			if (id !== key) $(document.getElementById(key)).toggleClass('visible', false)
+			if (id !== key) document.getElementById(key).classList.remove('visible')
 		})
-		$(document.getElementById(id)).toggleClass('visible')
+		document.getElementById(id).classList.toggle('visible')
 	}
 
 	nomnoml.discardCurrentGraph = function (){
@@ -158,22 +160,19 @@ $(function (){
 	}
 
 	function initToolbarTooltips(){
-		var tooltip = $('#tooltip')[0]
-		$('.tools a').each(function (i, link){
-			link.onmouseover = function (){ tooltip.textContent  = $(link).attr('title') }
-			link.onmouseout = function (){ tooltip.textContent  = '' }
+		_.each(document.querySelectorAll('.tools a'), function (link){
+			link.onmouseover = function (){ tooltip.textContent = link.getAttribute('title') }
+			link.onmouseout = function (){ tooltip.textContent = '' }
 		})
 	}
 
 	function positionCanvas(rect, superSampling, offset){
 		var w = rect.width / superSampling
 		var h = rect.height / superSampling
-		jqCanvas.css({
-			top: 300 * (1 - h/viewport.height()) + offset.y,
-			left: 150 + (viewport.width() - w)/2 + offset.x,
-			width: w,
-			height: h
-		})
+		canvasElement.style.top = 300 * (1 - h/viewport.innerHeight) + offset.y + 'px'
+		canvasElement.style.left = 150 + (viewport.innerWidth - w)/2 + offset.x + 'px'
+		canvasElement.style.width = w + 'px'
+		canvasElement.style.height = h + 'px'
 	}
 
 	function setFilename(filename){
@@ -184,8 +183,8 @@ $(function (){
 		storage = buildStorage(location.hash)
 		editor.setValue(storage.read())
 		sourceChanged()
-		if (storage.isReadonly) storageStatusElement.show()
-		else storageStatusElement.hide()
+		if (storage.isReadonly) storageStatusElement.classList.add('visible')
+		else storageStatusElement.classList.remove('visible')
 	}
 
 	function currentText(){
@@ -198,8 +197,8 @@ $(function (){
 
 	function sourceChanged(){
 		try {
-			lineMarker.css('top', -30)
-			lineNumbers.toggleClass('error', false)
+			lineMarker.style.top = '-30px'
+			lineNumbers.classList.remove('error')
 			var superSampling = window.devicePixelRatio || 1
 			var scale = superSampling * Math.exp(zoomLevel/10)
 
@@ -209,13 +208,13 @@ $(function (){
 			storage.save(currentText())
 		} catch (e){
 			var matches = e.message.match('line ([0-9]*)')
-			lineNumbers.toggleClass('error', true)
+			lineNumbers.classList.add('error')
 			if (matches){
-				var lineHeight = parseFloat($(editorElement).css('line-height'))
-				lineMarker.css('top', 3 + lineHeight*matches[1])
+				var lineHeight = parseFloat(editorElement.style.lineHeight) || 12
+				lineMarker.style.top = 3 + lineHeight*matches[1] + 'px'
 			} else {
 				throw e
 			}
 		}
 	}
-})
+}());

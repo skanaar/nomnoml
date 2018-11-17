@@ -3,15 +3,13 @@ nomnoml
 
 Hello, this is [nomnoml](http://www.nomnoml.com), a tool for drawing UML diagrams based on a simple syntax. It tries to keep its syntax visually as close as possible to the generated UML diagram without resorting to ASCII drawings.
 
-Created by [Daniel Kallin](https://github.com/skanaar). Contributions by [Alexander Moosbrugger](https://github.com/amoosbr) and [korroz](https://github.com/korroz).
+Created by [Daniel Kallin](https://github.com/skanaar) and a cadre of [contributers](https://github.com/skanaar/nomnoml/graphs/contributors).
 
 ### Nomnoml was made possible by these cool projects
 
 - [jison](http://zaach.github.io/jison/)
 - [dagre](https://github.com/cpettitt/dagre)
-- [lodash](http://lodash.com)
 - [typicons](http://typicons.com/)
-- [zepto](http://zeptojs.com/)
 - [codemirror](https://codemirror.net/)
 - [solarized](http://ethanschoonover.com/solarized)
 

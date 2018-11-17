@@ -167,6 +167,9 @@ a:hover {
 	width: 100%;
 	text-align: center;
 }
+.tools > #storage-status.visible {
+	display: block;
+}
 .tools > #storage-status a {
 	border: 2px solid #333;
 	padding: 0 5px;
