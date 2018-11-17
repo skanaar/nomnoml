@@ -3,21 +3,28 @@ var nomnoml = nomnoml || {};
 (function () {
 	'use strict';
 
+	function parseCustomStyle(styleDef) {
+		function directionToDagre(word) {
+			return { down: 'TB', right: 'LR' }[word] || 'TB'
+		}
+		return {
+			center: _.contains(styleDef, 'center'),
+			bold: _.contains(styleDef, 'bold'),
+			underline: _.contains(styleDef, 'underline'),
+			italic: _.contains(styleDef, 'italic'),
+			dashed: _.contains(styleDef, 'dashed'),
+			empty: _.contains(styleDef, 'empty'),
+			fill: _.last(styleDef.match('fill=([^ ]*)')),
+			visual: _.last(styleDef.match('visual=([^ ]*)')) || 'class',
+			direction: directionToDagre(_.last(styleDef.match('direction=([^ ]*)')))
+		}
+	}
+
 	function getConfig(d) {
 		var userStyles = {}
 		_.each(d, function (styleDef, key){
 			if (key[0] != '.') return
-			userStyles[key.substring(1).toUpperCase()] = {
-				center: _.contains(styleDef, 'center'),
-				bold: _.contains(styleDef, 'bold'),
-				underline: _.contains(styleDef, 'underline'),
-				italic: _.contains(styleDef, 'italic'),
-				dashed: _.contains(styleDef, 'dashed'),
-				empty: _.contains(styleDef, 'empty'),
-				fill: _.last(styleDef.match('fill=([^ ]*)')),
-				visual: _.last(styleDef.match('visual=([^ ]*)')) || 'class',
-				direction: { down: 'TB', right: 'LR' }[_.last(styleDef.match('direction=([^ ]*)'))] || 'TB'
-			}
+			userStyles[key.substring(1).toUpperCase()] = parseCustomStyle(styleDef)
 		})
 		return {
 			arrowSize: +d.arrowSize || 1,

@@ -1,26 +1,28 @@
+/* jshint maxlen:110 */
 var nomnoml = nomnoml || {}
 
 nomnoml.styles = {
-  ABSTRACT: { center: 1, bold: 0, underline: 0, italic: 1, dashed: 0, empty: 0, hull: 'auto', visual: 'class' },
-  ACTOR:    { center: 1, bold: 0, underline: 0, italic: 0, dashed: 0, empty: 0, hull: 'auto', visual: 'actor' },
-  CHOICE:   { center: 1, bold: 0, underline: 0, italic: 0, dashed: 0, empty: 0, hull: 'auto', visual: 'rhomb' },
-  CLASS:    { center: 1, bold: 1, underline: 0, italic: 0, dashed: 0, empty: 0, hull: 'auto', visual: 'class' },
-  DATABASE: { center: 1, bold: 1, underline: 0, italic: 0, dashed: 0, empty: 0, hull: 'auto', visual: 'database' },
-  END:      { center: 1, bold: 0, underline: 0, italic: 0, dashed: 0, empty: 1, hull: 'icon', visual: 'end' },
-  FRAME:    { center: 0, bold: 0, underline: 0, italic: 0, dashed: 0, empty: 0, hull: 'auto', visual: 'frame' },
-  HIDDEN:   { center: 1, bold: 0, underline: 0, italic: 0, dashed: 0, empty: 1, hull: 'empty', visual: 'hidden' },
-  INPUT:    { center: 1, bold: 0, underline: 0, italic: 0, dashed: 0, empty: 0, hull: 'auto', visual: 'input' },
-  INSTANCE: { center: 1, bold: 0, underline: 1, italic: 0, dashed: 0, empty: 0, hull: 'auto', visual: 'class' },
-  LABEL:    { center: 0, bold: 0, underline: 0, italic: 0, dashed: 0, empty: 0, hull: 'auto', visual: 'none' },
-  NOTE:     { center: 0, bold: 0, underline: 0, italic: 0, dashed: 0, empty: 0, hull: 'auto', visual: 'note' },
-  PACKAGE:  { center: 0, bold: 0, underline: 0, italic: 0, dashed: 0, empty: 0, hull: 'auto', visual: 'package' },
-  RECEIVER: { center: 0, bold: 0, underline: 0, italic: 0, dashed: 0, empty: 0, hull: 'auto', visual: 'receiver' },
-  REFERENCE:{ center: 1, bold: 0, underline: 0, italic: 0, dashed: 1, empty: 0, hull: 'auto', visual: 'class' },
-  SENDER:   { center: 0, bold: 0, underline: 0, italic: 0, dashed: 0, empty: 0, hull: 'auto', visual: 'sender' },
-  START:    { center: 1, bold: 0, underline: 0, italic: 0, dashed: 0, empty: 1, hull: 'icon', visual: 'start' },
-  STATE:    { center: 1, bold: 0, underline: 0, italic: 0, dashed: 0, empty: 0, hull: 'auto', visual: 'roundrect' },
-  TRANSCEIVER:{ center: 0, bold: 0, underline: 0, italic: 0, dashed: 0, empty: 0, hull: 'auto', visual: 'transceiver' },
-  USECASE:  { center: 1, bold: 0, underline: 0, italic: 0, dashed: 0, empty: 0, hull: 'auto', visual: 'ellipse' },
+  ABSTRACT: { center:1, bold:0, underline:0, italic:1, dashed:0, empty:0, hull:'auto', visual:'class' },
+  ACTOR:    { center:1, bold:0, underline:0, italic:0, dashed:0, empty:0, hull:'auto', visual:'actor' },
+  CHOICE:   { center:1, bold:0, underline:0, italic:0, dashed:0, empty:0, hull:'auto', visual:'rhomb' },
+  CLASS:    { center:1, bold:1, underline:0, italic:0, dashed:0, empty:0, hull:'auto', visual:'class' },
+  DATABASE: { center:1, bold:1, underline:0, italic:0, dashed:0, empty:0, hull:'auto', visual:'database' },
+  END:      { center:1, bold:0, underline:0, italic:0, dashed:0, empty:1, hull:'icon', visual:'end' },
+  FRAME:    { center:0, bold:0, underline:0, italic:0, dashed:0, empty:0, hull:'auto', visual:'frame' },
+  HIDDEN:   { center:1, bold:0, underline:0, italic:0, dashed:0, empty:1, hull:'empty', visual:'hidden' },
+  INPUT:    { center:1, bold:0, underline:0, italic:0, dashed:0, empty:0, hull:'auto', visual:'input' },
+  INSTANCE: { center:1, bold:0, underline:1, italic:0, dashed:0, empty:0, hull:'auto', visual:'class' },
+  LABEL:    { center:0, bold:0, underline:0, italic:0, dashed:0, empty:0, hull:'auto', visual:'none' },
+  NOTE:     { center:0, bold:0, underline:0, italic:0, dashed:0, empty:0, hull:'auto', visual:'note' },
+  PACKAGE:  { center:0, bold:0, underline:0, italic:0, dashed:0, empty:0, hull:'auto', visual:'package' },
+  RECEIVER: { center:0, bold:0, underline:0, italic:0, dashed:0, empty:0, hull:'auto', visual:'receiver' },
+  REFERENCE:{ center:1, bold:0, underline:0, italic:0, dashed:1, empty:0, hull:'auto', visual:'class' },
+  SENDER:   { center:0, bold:0, underline:0, italic:0, dashed:0, empty:0, hull:'auto', visual:'sender' },
+  START:    { center:1, bold:0, underline:0, italic:0, dashed:0, empty:1, hull:'icon', visual:'start' },
+  STATE:    { center:1, bold:0, underline:0, italic:0, dashed:0, empty:0, hull:'auto', visual:'roundrect' },
+  TRANSCEIVER:
+            { center:0, bold:0, underline:0, italic:0, dashed:0, empty:0, hull:'auto', visual:'transceiver' },
+  USECASE:  { center:1, bold:0, underline:0, italic:0, dashed:0, empty:0, hull:'auto', visual:'ellipse' },
 }
 
 nomnoml.visualizers = {

@@ -151,9 +151,9 @@ skanaar.Canvas = function (canvas, callbacks){
 		strokeStyle: function (s){ ctx.strokeStyle = s },
 		textAlign:   function (a){ ctx.textAlign = a },
 
-		lineCap: function (cap){ ctx.lineCap = cap },
-		lineJoin: function (join){ ctx.lineJoin = join },
-		lineWidth: function (w){ ctx.lineWidth = w },
+		lineCap:     function (cap){ ctx.lineCap = cap },
+		lineJoin:    function (join){ ctx.lineJoin = join },
+		lineWidth:   function (w){ ctx.lineWidth = w },
 		
 		arcTo:       function (){ return ctx.arcTo.apply(      ctx, arguments) },
 		beginPath:   function (){ return ctx.beginPath.apply(  ctx, arguments) },

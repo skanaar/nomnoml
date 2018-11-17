@@ -72,13 +72,13 @@
   }
 */
 var nomnomlCoreParser = (function(){
-var parser = {trace: function trace() { },
+var parser = {trace: function trace () { },
 yy: {},
 symbols_: {"error":2,"root":3,"compartment":4,"EOF":5,"slot":6,"IDENT":7,"class":8,"association":9,"SEP":10,"parts":11,"|":12,"[":13,"]":14,"$accept":0,"$end":1},
 terminals_: {2:"error",5:"EOF",7:"IDENT",10:"SEP",12:"|",13:"[",14:"]"},
 productions_: [0,[3,2],[6,1],[6,1],[6,1],[4,1],[4,3],[11,1],[11,3],[11,2],[9,3],[8,3]],
 performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */
-/*``*/) {
+) {
 /* this == yyval */
 
 var $0 = $$.length - 1;
@@ -122,7 +122,7 @@ break;
 },
 table: [{3:1,4:2,6:3,7:[1,4],8:5,9:6,13:[1,7]},{1:[3]},{5:[1,8],10:[1,9]},{5:[2,5],10:[2,5],12:[2,5],14:[2,5]},{5:[2,2],10:[2,2],12:[2,2],14:[2,2]},{5:[2,3],7:[1,10],10:[2,3],12:[2,3],14:[2,3]},{5:[2,4],10:[2,4],12:[2,4],14:[2,4]},{4:12,6:3,7:[1,4],8:5,9:6,11:11,13:[1,7]},{1:[2,1]},{6:13,7:[1,4],8:5,9:6,13:[1,7]},{8:14,13:[1,7]},{12:[1,16],14:[1,15]},{10:[1,9],12:[2,7],14:[2,7]},{5:[2,6],10:[2,6],12:[2,6],14:[2,6]},{5:[2,10],10:[2,10],12:[2,10],14:[2,10]},{5:[2,11],7:[2,11],10:[2,11],12:[2,11],14:[2,11]},{4:17,6:3,7:[1,4],8:5,9:6,12:[2,9],13:[1,7],14:[2,9]},{10:[1,9],12:[2,8],14:[2,8]}],
 defaultActions: {8:[2,1]},
-parseError: function parseError(str, hash) {
+parseError: function parseError (str, hash) {
     if (hash.recoverable) {
         this.trace(str);
     } else {
@@ -400,7 +400,7 @@ showPosition:function () {
     },
 
 // test the lexed token: return FALSE when not a match, otherwise return token
-test_match:function (match, indexed_rule) {
+test_match:function(match, indexed_rule) {
         var token,
             lines,
             backup;
@@ -530,7 +530,7 @@ next:function () {
     },
 
 // return next match that has a token
-lex:function lex() {
+lex:function lex () {
         var r = this.next();
         if (r) {
             return r;
@@ -540,12 +540,12 @@ lex:function lex() {
     },
 
 // activates a new lexer condition state (pushes the new lexer condition state onto the condition stack)
-begin:function begin(condition) {
+begin:function begin (condition) {
         this.conditionStack.push(condition);
     },
 
 // pop the previously active lexer condition state off the condition stack
-popState:function popState() {
+popState:function popState () {
         var n = this.conditionStack.length - 1;
         if (n > 0) {
             return this.conditionStack.pop();
@@ -555,7 +555,7 @@ popState:function popState() {
     },
 
 // produce the lexer rule set which is active for the currently active lexer condition state
-_currentRules:function _currentRules() {
+_currentRules:function _currentRules () {
         if (this.conditionStack.length && this.conditionStack[this.conditionStack.length - 1]) {
             return this.conditions[this.conditionStack[this.conditionStack.length - 1]].rules;
         } else {
@@ -564,7 +564,7 @@ _currentRules:function _currentRules() {
     },
 
 // return the currently active lexer condition state; when an index argument is provided it produces the N-th previous condition state, if available
-topState:function topState(n) {
+topState:function topState (n) {
         n = this.conditionStack.length - 1 - Math.abs(n || 0);
         if (n >= 0) {
             return this.conditionStack[n];
@@ -574,7 +574,7 @@ topState:function topState(n) {
     },
 
 // alias for begin(condition)
-pushState:function pushState(condition) {
+pushState:function pushState (condition) {
         this.begin(condition);
     },
 
@@ -584,7 +584,7 @@ stateStackSize:function stateStackSize() {
     },
 options: {},
 performAction: function anonymous(yy,yy_,$avoiding_name_collisions,YY_START
-/*``*/) {
+) {
 
 var YYSTATE=YY_START;
 switch($avoiding_name_collisions) {
@@ -622,7 +622,7 @@ if (typeof require !== 'undefined' && typeof exports !== 'undefined') {
 exports.parser = nomnomlCoreParser;
 exports.Parser = nomnomlCoreParser.Parser;
 exports.parse = function () { return nomnomlCoreParser.parse.apply(nomnomlCoreParser, arguments); };
-exports.main = function commonjsMain(args) {
+exports.main = function commonjsMain (args) {
     if (!args[1]) {
         console.log('Usage: '+args[0]+' FILE');
         process.exit(1);

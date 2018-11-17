@@ -12,16 +12,16 @@
 
   "asi": true,
   "bitwise": true,
-  "eqeqeq": true,
+  "eqeqeq": false,
   "freeze": true,
   "globalstrict": true,
   "latedef": "nofunc",
   "laxcomma": true,
   "maxlen": 100,
-  "maxparams": 5,
+  "maxparams": 6,
   "quotmark": "single",
   "shadow": false,
   "strict": false,
   "undef": true,
-  "unused": true
+  "unused": "vars"
 }

@@ -1,5 +1,6 @@
 var fs = require('fs');
 var jison = require('jison');
+var jshint = require('jshint').JSHINT;
 
 var nomnomlParser = new jison.Parser(fs.readFileSync('nomnoml.jison', { encoding: 'utf8' }));
 fs.writeFileSync('nomnoml.jison.js', nomnomlParser.generate({moduleName: 'nomnomlCoreParser'}));
@@ -17,9 +18,21 @@ var nomnomlFiles = [
     'nomnoml.js'
 ];
 
+var jshintConfig = JSON.parse(fs.readFileSync('./.jshintrc', { encoding: 'utf8' }))
+
+function lint(filename, source) {
+    jshint(source, jshintConfig, jshintConfig.globals)
+    jshint.errors.forEach(e => console.log(e.id, filename+'#'+e.line, e.reason))
+    //jshint.errors.forEach(e => console.log(e))
+    if (jshint.errors.length)
+        throw new Error('linting rules broken')
+}
+
 function concat(files){
     return files.map(function (filename){
-        return fs.readFileSync(filename, { encoding: 'utf8' })
+        var source = fs.readFileSync(filename, { encoding: 'utf8' })
+        if (filename != 'nomnoml.jison.js') lint(filename, source)
+        return source
     }).join(';\n')
 }
 
