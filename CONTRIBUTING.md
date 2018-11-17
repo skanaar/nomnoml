@@ -14,4 +14,3 @@ Before committing and before making a pull request it is useful to make sure tha
  2. Check `index.html`.
  3. Check `test/index.html`.
  4. Check `test/standalone.usecase.html`.
- 5. Check `test/requirejs.usecase.html`.
