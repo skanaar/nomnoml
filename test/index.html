@@ -5,9 +5,10 @@
   <title>test nomnoml</title>
   <link rel="shortcut icon" type="image/png" href="favicon.png">
   <style>
-    body { background-color: #eeeeee; padding: 0; margin: 10px; overflow-y: scroll; }
+    body { background-color: #fdf6e3; padding: 0; margin: 10px; overflow-y: scroll; }
     .success, .failure, .ignored { margin: 0px; padding: 3px 5px; color: #eee; }
     #testreport { font-size: 11px; font-family: Monaco, "Lucida Console", monospace; }
+    h1 { color: #657b83; font-size: 20px; font-family: Monaco, "Lucida Console", monospace; }
     .success { color: #5e7d00; }
     .failure { color: #b03911; }
     .ignored { color: #bababa; }
@@ -19,17 +20,72 @@
 </head>
 
 <body>
+
   <div id=testreport></div>
+
+  <h1>Canvas test</h1>
+  <canvas id="canvas1"></canvas>
+
+  <h1>Label placement test</h1>
+  <canvas id="canvas2"></canvas>
+
+  <h1>Svg test</h1>
+  <div id="svg-host"></div>
+
+  <h1>Distribution bundle test</h1>
+  <iframe src="standalone.usecase.html"></iframe>
+
+  <script id="label_test_source" type="text/plain">
+      #zoom: 0.5
+      #direction: right
+      #padding: 0
+      #arrowSize: 0.2
+      #spacing: 120
+      #edgeMargin: 5
+      [Left] left`association <-> right`association [Central 1]
+      [Left] left`association <-> right`association [Central 2]
+      [Left] left`association <-> right`association [Central 3]
+      [Central 1] left`association <-> right`association [Right]
+      [Central 2] left`association <-> right`association [Right]
+      [Central 3] left`association <-> right`association [Right]
+      
+      [Central 1] self <-> [Central 1]     
+  </script>
+  <script id="sample_source" type="text/plain">
+      #zoom: 0.5
+      [Pirate|
+          [beard]--[parrot]
+          [beard]-:>[foul mouth]
+      ]
+      [<abstract>iii]<:--[Pirate]
+      [<abstract>mmm]<:--[Pirate]
+      [<abstract>MMM]<:--[Pirate]
+      [<abstract>ABC<T>]<:--[Pirate]
+      [<abstract>漢字漢字]<:--[Pirate]
+      [Pirate]- 0..7[mischief]
+      [<database>jollyness]->[Pirate]
+      [jollyness]->[rum]
+      [jollyness]->[Bucchaneer]
+      [Pirate]-> *[rum]
+      [Bucchaneer|eyeCount: Int|raid();pillage()]<->[rum]
+      [<start>st]->[<state>plunder]
+      [plunder]->[<choice>more loot]
+      [more loot]->[st]
+      [more loot] no ->[<end>e]
+  </script>
+
   <script src="../lib/underscore.min.js"></script>
   <script src="../lib/dagre.min.js"></script>
   <script src="../src/skanaar.util.js"></script>
   <script src="../src/skanaar.canvas.js"></script>
+  <script src="../src/skanaar.svg.js"></script>
   <script src="../src/skanaar.vector.js"></script>
   <script src="../src/jison-parser.js"></script>
   <script src="../src/parser.js"></script>
   <script src="../src/visuals.js"></script>
   <script src="../src/layouter.js"></script>
   <script src="../src/renderer.js"></script>
+  <script src="../src/nomnoml.js"></script>
   <script>
     function require(id) {
       return {
@@ -42,5 +98,21 @@
   </script>
   <script src="skanaar.testsuite.js"></script>
   <script src="nomnoml.spec.js"></script>
+  <script>
+      var canvas = document.getElementById('canvas1');
+      var noml = document.getElementById('sample_source').innerHTML;
+      nomnoml.draw(canvas, noml);
+  </script>
+  <script>
+      var canvas = document.getElementById('canvas2');
+      var noml = document.getElementById('label_test_source').innerHTML;
+      nomnoml.draw(canvas, noml);
+  </script>
+  <script>
+      var target = document.getElementById('svg-host');
+      var noml = document.getElementById('sample_source').innerHTML;
+      target.innerHTML = nomnoml.renderSvg(noml);
+  </script>
+
 </body>
 </html>
