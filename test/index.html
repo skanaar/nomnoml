@@ -99,19 +99,11 @@
   <script src="skanaar.testsuite.js"></script>
   <script src="nomnoml.spec.js"></script>
   <script>
-      var canvas = document.getElementById('canvas1');
-      var noml = document.getElementById('sample_source').innerHTML;
-      nomnoml.draw(canvas, noml);
-  </script>
-  <script>
-      var canvas = document.getElementById('canvas2');
-      var noml = document.getElementById('label_test_source').innerHTML;
-      nomnoml.draw(canvas, noml);
-  </script>
-  <script>
-      var target = document.getElementById('svg-host');
-      var noml = document.getElementById('sample_source').innerHTML;
-      target.innerHTML = nomnoml.renderSvg(noml);
+      function elem(id){ return document.getElementById(id) }
+      function script(id){ return document.getElementById(id).innerHTML }
+      nomnoml.draw(elem('canvas1'), script('sample_source'))
+      nomnoml.draw(elem('canvas2'), script('label_test_source'))
+      elem('svg-host').innerHTML = nomnoml.renderSvg(script('sample_source'))
   </script>
 
 </body>

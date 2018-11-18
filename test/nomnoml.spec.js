@@ -55,7 +55,7 @@ suite.test('astBuilder should handle [apa|+field: int;#x:int|apply]', function()
     ])],[]))
 })
 
-suite.ignore.test('astBuilder should choose longest definition of classes defined twice', function(){
+suite.test('astBuilder should choose longest definition of classes defined twice', function(){
     var first = c('apa')
     var second = c('apa')
     second.parts.push(['+fleas'])
@@ -207,7 +207,7 @@ suite.test('layouter should handle [apa|[flea]->[dandruff]] vertically stacked i
     assertEqual(dandruff.y, 10+2+2+5+7)
 })
 
-suite.ignore.test('layouter should handle [apa|[flea]->[dandruff]] relation placement', function(){
+suite.test('layouter should handle [apa|[flea]->[dandruff]] relation placement', function(){
     var root = compClas('class', 'apa', [
         comp(['apa'],[],[]),
         comp([],[
@@ -223,8 +223,12 @@ suite.ignore.test('layouter should handle [apa|[flea]->[dandruff]] relation plac
     ])
     var layouted = nomnoml.layout(measurer, config, root).nodes[0]
     var rel = layouted.compartments[1].relations[0]
-    assertEqual(rel.path, [{x:52,y:7}, {x:52,y:16.5}, {x:52,y:26}])    // dagre 0.4.5
-    assertEqual(rel.path, [{x:52,y:7}, {x:52,y:14}, {x:52,y:16.5}, {x:52,y:19}, {x:52,y:26}])    // dagre 0.7.1
+    
+    // dagre 0.4.5
+    assertEqual(rel.path, [{x:52,y:7}, {x:52,y:16.5}, {x:52,y:26}])
+    
+    // dagre 0.7.1
+    //assertEqual(rel.path, [{x:52,y:7}, {x:52,y:14}, {x:52,y:16.5}, {x:52,y:19}, {x:52,y:26}])
 })
 
 suite.report()

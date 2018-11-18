@@ -1,5 +1,7 @@
 var nomnoml = nomnoml || {}
 
+_.maxBy = _.maxBy || _.max // polyfill the differences between lodash and underscore
+
 nomnoml.parse = function (source){
 	function onlyCompilables(line){
 		var ok = line[0] !== '#' && line.substring(0,2) !== '//'
@@ -59,7 +61,7 @@ nomnoml.transformParseIntoSyntaxTree = function (entity){
 		})
 		var allClassifiers = _.map(rawClassifiers, transformItem)
 		var noDuplicates = _.map(_.groupBy(allClassifiers, 'name'), function (cList){
-			return _.max(cList, function (c){ return c.compartments.length })
+			return _.maxBy(cList, function (c){ return c.compartments.length })
 		})
 
 		return nomnoml.Compartment(lines, noDuplicates, relations)
