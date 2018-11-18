@@ -11,7 +11,7 @@ nomnoml.parse = function (source){
 	})
 	var pureDirectives = _.filter(lines, isDirective)
 	var directives = {}
-	_.each(pureDirectives.map(function (line){
+	_.each(pureDirectives, function (line){
 		try {
 			var tokens =  line.text.substring(1).split(':')
 			directives[tokens[0].trim()] = tokens[1].trim()
@@ -19,7 +19,7 @@ nomnoml.parse = function (source){
 		catch (e) {
 			throw new Error('line ' + (line.index + 1))
 		}
-	}))
+	})
 	var pureDiagramCode = _.map(_.map(lines, 'text'), onlyCompilables).join('\n').trim()
 	var ast = nomnoml.transformParseIntoSyntaxTree(nomnoml.intermediateParse(pureDiagramCode))
 	ast.directives = directives

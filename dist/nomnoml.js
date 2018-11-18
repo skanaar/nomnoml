@@ -1038,7 +1038,7 @@ nomnoml.parse = function (source){
 	})
 	var pureDirectives = _.filter(lines, isDirective)
 	var directives = {}
-	_.each(pureDirectives.map(function (line){
+	_.each(pureDirectives, function (line){
 		try {
 			var tokens =  line.text.substring(1).split(':')
 			directives[tokens[0].trim()] = tokens[1].trim()
@@ -1046,7 +1046,7 @@ nomnoml.parse = function (source){
 		catch (e) {
 			throw new Error('line ' + (line.index + 1))
 		}
-	}))
+	})
 	var pureDiagramCode = _.map(_.map(lines, 'text'), onlyCompilables).join('\n').trim()
 	var ast = nomnoml.transformParseIntoSyntaxTree(nomnoml.intermediateParse(pureDiagramCode))
 	ast.directives = directives
@@ -1600,12 +1600,12 @@ var nomnoml = nomnoml || {};
 			return { down: 'TB', right: 'LR' }[word] || 'TB'
 		}
 		return {
-			center: _.contains(styleDef, 'center'),
-			bold: _.contains(styleDef, 'bold'),
-			underline: _.contains(styleDef, 'underline'),
-			italic: _.contains(styleDef, 'italic'),
-			dashed: _.contains(styleDef, 'dashed'),
-			empty: _.contains(styleDef, 'empty'),
+			center: _.includes(styleDef, 'center'),
+			bold: _.includes(styleDef, 'bold'),
+			underline: _.includes(styleDef, 'underline'),
+			italic: _.includes(styleDef, 'italic'),
+			dashed: _.includes(styleDef, 'dashed'),
+			empty: _.includes(styleDef, 'empty'),
 			fill: _.last(styleDef.match('fill=([^ ]*)')),
 			visual: _.last(styleDef.match('visual=([^ ]*)')) || 'class',
 			direction: directionToDagre(_.last(styleDef.match('direction=([^ ]*)')))
