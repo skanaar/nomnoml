@@ -1,15 +1,6 @@
 var nomnoml = nomnoml || {}
 
 nomnoml.layout = function (measurer, config, ast){
-	function runDagre(input, style){
-		return dagre.layout()
-					.rankSep(config.spacing)
-					.nodeSep(config.spacing)
-					.edgeSep(config.spacing)
-					.rankDir(style.direction || config.direction)
-					.run(input)
-	}
-	
 	function measureLines(lines, fontWeight){
 		if (!lines.length)
 			return { width: 0, height: config.padding }
@@ -30,27 +21,41 @@ nomnoml.layout = function (measurer, config, ast){
 
 		_.each(c.nodes, layoutClassifier)
 
-		var g = new dagre.Digraph()
+		var g = new dagre.graphlib.Graph()
+		g.setGraph({
+			rankdir: style.direction || config.direction,
+			//align: //undefined [UL, UR, DL, DR]
+			nodesep: config.spacing, //50 
+			edgesep: config.spacing, //10 
+			ranksep: config.spacing, //50 
+			//marginx: //0 
+			//marginy: //0 
+			//acyclicer: //undefined [greedy] 
+			//ranker: //network-simplex [network-simplex, tight-tree or longest-path]
+		});
 		_.each(c.nodes, function (e){
-			g.addNode(e.name, { width: e.width, height: e.height })
+			g.setNode(e.name, { width: e.layoutWidth, height: e.layoutHeight })
 		})
 		_.each(c.relations, function (r){
-			g.addEdge(r.id, r.start, r.end)
+			g.setEdge(r.start, r.end, { id: r.id })
 		})
-		var dLayout = runDagre(g, style)
+		dagre.layout(g)
 
 		var rels = skanaar.indexBy(c.relations, 'id')
 		var nodes = skanaar.indexBy(c.nodes, 'name')
 		function toPoint(o){ return {x:o.x, y:o.y} }
-		dLayout.eachNode(function(u, value) {
-			nodes[u].x = value.x
-			nodes[u].y = value.y
+		_.each(g.nodes(), function(name) {
+			var node = g.node(name)
+			nodes[name].x = node.x
+			nodes[name].y = node.y
 		})
-		dLayout.eachEdge(function(e, u, v, value) {
-			var start = nodes[u], end = nodes[v]
-			rels[e].path = _.map(_.flatten([start, value.points, end]), toPoint)
+		_.each(g.edges(), function(edgeObj) {
+			var edge = g.edge(edgeObj)
+			var start = nodes[edgeObj.v]
+			var end = nodes[edgeObj.w]
+			rels[edge.id].path = _.map(_.flatten([start, edge.points, end]), toPoint)
 		})
-		var graph = dLayout.graph()
+		var graph = g.graph()
 		var graphHeight = graph.height ? graph.height + 2*config.gutter : 0
 		var graphWidth = graph.width ? graph.width + 2*config.gutter : 0
 
@@ -61,6 +66,8 @@ nomnoml.layout = function (measurer, config, ast){
 	function layoutClassifier(clas){
 		var layout = getLayouter(clas)
 		layout(clas)
+		clas.layoutWidth = clas.width + 2*config.edgeMargin
+		clas.layoutHeight = clas.height + 2*config.edgeMargin
 	}
 	
 	function getLayouter(clas) {
@@ -78,8 +85,8 @@ nomnoml.layout = function (measurer, config, ast){
 				_.each(clas.compartments, function(co,i){ layoutCompartment(co, i, style) })
 				clas.width = _.max(_.map(clas.compartments, 'width'))
 				clas.height = skanaar.sum(clas.compartments, 'height')
-				clas.x = clas.width/2
-				clas.y = clas.height/2
+				clas.x = clas.layoutWidth/2
+				clas.y = clas.layoutHeight/2
 				_.each(clas.compartments, function(co){ co.width = clas.width })
 			}
 		}

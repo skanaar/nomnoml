@@ -47,6 +47,8 @@ fs.writeFileSync('dist/nomnoml.js', bundle)
 
 require('./test/render-svg.js')
 
+fs.copyFile('node_modules/dagre/dist/dagre.min.js', 'lib/dagre.min.js', () => {});
+
 try {
     var library = require('./dist/nomnoml.js')
     var package = require('./package.json')
