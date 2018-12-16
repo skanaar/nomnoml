@@ -60,6 +60,7 @@ skanaar.Canvas = function (canvas, callbacks){
 	}
 
 	return {
+		isCanvas: true,
 		mousePos: function (){ return mousePos },
 		width: function (){ return canvas.width },
 		height: function (){ return canvas.height },

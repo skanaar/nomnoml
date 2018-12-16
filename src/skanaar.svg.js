@@ -60,6 +60,7 @@ skanaar.Svg = function (globalStyle){
 	}
 
 	return {
+		isCanvas: false,
 		width: function (){ return elements.width },
 		height: function (){ return elements.height },
 		background: function (/*r, g, b*/){},
@@ -138,7 +139,12 @@ skanaar.Svg = function (globalStyle){
 			states.push(State(0, 0))
 		},
 		scale: function (){},
-		setLineDash: function (){},
+		setLineDash: function (dashArray){
+			if (dashArray.length > 0) {
+				last(elements).attr.style = last(elements).attr.style +
+				    'stroke-dasharray:' + dashArray[0] + ' ' + dashArray[1] + ';'
+			}
+		},
 		stroke: function (){
 			last(elements).stroke()
 		},

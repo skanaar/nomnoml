@@ -34,14 +34,21 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 		var x = Math.round(node.x-node.width/2)
 		var y = Math.round(node.y-node.height/2)
 		var style = config.styles[node.type] || nomnoml.styles.CLASS
+		var dash
 
 		g.fillStyle(style.fill || config.fill[level] || _.last(config.fill))
 		if (style.dashed){
-			var dash = Math.max(4, 2*config.lineWidth)
-			g.setLineDash([dash, dash])
+			dash = Math.max(4, 2*config.lineWidth)
+			if (g.isCanvas) {
+				g.setLineDash([dash, dash])
+			}
 		}
 		var drawNode = nomnoml.visualizers[style.visual] || nomnoml.visualizers.class
 		drawNode(node, x, y, padding, config, g)
+		if (style.dashed && !g.isCanvas) {
+			// For SVGs, we must create the element before calling setLineDash().
+			g.setLineDash([dash, dash])
+		}
 		g.setLineDash([])
 
 		var yDivider = (style.visual === 'actor' ? y + padding*3/4 : y)
@@ -150,10 +157,16 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 		renderLabel(r.endLabel, end, adjustQuadrant(quadrant(end, endNode, 2), end, start))
 
 		if (r.assoc !== '-/-'){
-			if (g.setLineDash && skanaar.hasSubstring(r.assoc, '--')){
+			if (skanaar.hasSubstring(r.assoc, '--')){
 				var dash = Math.max(4, 2*config.lineWidth)
-				g.setLineDash([dash, dash])
-				strokePath(path)
+				if (g.isCanvas) {
+					g.setLineDash([dash, dash])
+					strokePath(path)
+				} else {
+					// For SVGs, we must create the element before calling setLineDash()
+					strokePath(path)
+					g.setLineDash([dash, dash])
+				}
 				g.setLineDash([])
 			}
 			else
