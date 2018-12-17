@@ -112,8 +112,16 @@ skanaar.Svg = function (globalStyle){
 		fillText: function (text, x, y){
 			if (lastDefined('textAlign') === 'center')
 				x -= this.measureText(text).width/2
-			return newElement('text', { x: tX(x), y: tY(y) }, _.escape(text))
-		},
+				var attr = { x: tX(x), y: tY(y), style: '' }
+				var font = lastDefined('font')
+				if (font.indexOf('bold') === -1) {
+					attr.style = 'font-weight:normal;'
+				}
+				if (font.indexOf('italic') > -1) {
+					attr.style += 'font-style:italic;'
+				}
+				return newElement('text', attr, _.escape(text))
+			},
 		lineCap: function (cap){ globalStyle += ';stroke-linecap:'+cap },
 		lineJoin: function (join){ globalStyle += ';stroke-linejoin:'+join },
 		lineTo: function (x, y){
