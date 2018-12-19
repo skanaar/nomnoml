@@ -150,7 +150,7 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 		renderLabel(r.endLabel, end, adjustQuadrant(quadrant(end, endNode, 2), end, start))
 
 		if (r.assoc !== '-/-'){
-			if (g.setLineDash && skanaar.hasSubstring(r.assoc, '--')){
+			if (skanaar.hasSubstring(r.assoc, '--')){
 				var dash = Math.max(4, 2*config.lineWidth)
 				g.setLineDash([dash, dash])
 				strokePath(path)

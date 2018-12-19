@@ -11,7 +11,8 @@ skanaar.Svg = function (globalStyle){
 			attr: attr,
 			content: content || undefined,
 			stroke: function (){
-				this.attr.style += 'stroke:'+lastDefined('stroke')+';fill:none;';
+				this.attr.style += 'stroke:'+lastDefined('stroke')+
+				  ';fill:none;stroke-dasharray:' + lastDefined('dashArray') + ';';
 				return this
 			},
 			fill: function (){
@@ -19,7 +20,8 @@ skanaar.Svg = function (globalStyle){
 				return this
 			},
 			fillAndStroke: function (){
-				this.attr.style += 'stroke:'+lastDefined('stroke')+';fill:'+lastDefined('fill')+';';
+				this.attr.style += 'stroke:'+lastDefined('stroke')+';fill:'+lastDefined('fill')+
+				  ';stroke-dasharray:' + lastDefined('dashArray') + ';';
 				return this
 			}
 		}
@@ -146,7 +148,9 @@ skanaar.Svg = function (globalStyle){
 			states.push(State(0, 0))
 		},
 		scale: function (){},
-		setLineDash: function (){},
+		setLineDash: function (d){
+			last(states).dashArray = (d.length === 0) ? 'none' : d[0] + ' ' + d[1]
+		},
 		stroke: function (){
 			last(elements).stroke()
 		},
