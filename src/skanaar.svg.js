@@ -1,8 +1,17 @@
 var skanaar = skanaar || {}
-skanaar.Svg = function (globalStyle){
-	var initialState = { x: 0, y: 0, stroke: 'none', fill: 'none', textAlign: 'left' }
+skanaar.Svg = function (globalStyle, canvas){
+	var initialState = {
+		x: 0,
+		y: 0,
+		stroke: 'none',
+		dashArray: 'none',
+		fill: 'none',
+		textAlign: 'left'
+	}
 	var states = [initialState]
 	var elements = []
+	canvas = canvas || 0   // optional parameter
+	var ctx = canvas ? canvas.getContext('2d') : null
 
 	function Element(name, attr, content) {
 		attr.style = attr.style || ''
@@ -131,6 +140,26 @@ skanaar.Svg = function (globalStyle){
 		},
 		lineWidth: function (w){ globalStyle += ';stroke-width:'+w},
 		measureText: function (s){
+			var canUseCanvas = false
+			var fontStr = ''
+			var primaryFont = ''
+			if (ctx) {
+				fontStr = lastDefined('font')
+				var family = fontStr.replace(/^.*family:/, '')
+				primaryFont = family.replace(/[, ].*$/, '')
+				canUseCanvas = /Arial|Helvetica|Times/.test(primaryFont)
+				if (/Arial Black/.test(primaryFont)) canUseCanvas = false
+			}
+			if (canUseCanvas) {
+				var font = (/\bitalic\b/.test(fontStr) ? 'italic' : 'normal') + ' normal '
+				font += /\bbold\b/.test(fontStr) ? 'bold ' : 'normal '
+				var fontSize = fontStr.replace(/^.*font-size:/, '')
+				font += fontSize.replace(/;.*$/, '') + ' '
+				font += primaryFont + ', '
+				font += /Arial|Helvetica/.test(primaryFont) ? 'sans-serif' : 'serif'
+				ctx.font = font
+				return ctx.measureText(s)
+			}
 			return {
 				width: skanaar.sum(s, function (c){
 					if (c === 'M' || c === 'W') { return 14 }
