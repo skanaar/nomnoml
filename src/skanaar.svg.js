@@ -1,8 +1,15 @@
 var skanaar = skanaar || {}
-skanaar.Svg = function (globalStyle){
+skanaar.Svg = function (globalStyle, canvas){
 	var initialState = { x: 0, y: 0, stroke: 'none', fill: 'none', textAlign: 'left' }
 	var states = [initialState]
 	var elements = []
+
+	// canvas is an optional parameter
+	canvas = canvas || 0
+	var ctx = canvas ? canvas.getContext('2d') : null
+	var canUseCanvas = false
+	var waitingForFirstFont = true
+	var docFont = ''
 
 	function Element(name, attr, content) {
 		attr.style = attr.style || ''
@@ -98,6 +105,28 @@ skanaar.Svg = function (globalStyle){
 		},
 		font: function (font){
 			last(states).font = font;
+
+			if (waitingForFirstFont) {
+				// This is our first chance to test if we can use a canvas to measure text width.
+				if (ctx) {
+					var primaryFont = font.replace(/^.*family:/, '').replace(/[, ].*$/, '')
+					primaryFont = primaryFont.replace(/'/g, '')
+					canUseCanvas = /^(Arial|Helvetica|Times|Times New Roman)$/.test(primaryFont)
+					if (canUseCanvas) {
+						var fontSize = font.replace(/^.*font-size:/, '').replace(/;.*$/, '') + ' '
+						if (primaryFont === 'Arial') {
+							docFont = fontSize + 'Arial, Helvetica, sans-serif'
+						} else if (primaryFont === 'Helvetica') {
+							docFont = fontSize + 'Helvetica, Arial, sans-serif'
+						} else if (primaryFont === 'Times New Roman') {
+							docFont = fontSize + '"Times New Roman", Times, serif'
+						} else if (primaryFont === 'Times') {
+							docFont = fontSize + 'Times, "Times New Roman", serif'
+						}
+					}
+				}
+				waitingForFirstFont = false
+			}
 		},
 		strokeStyle: function (stroke){
 			last(states).stroke = stroke
@@ -131,11 +160,19 @@ skanaar.Svg = function (globalStyle){
 		},
 		lineWidth: function (w){ globalStyle += ';stroke-width:'+w},
 		measureText: function (s){
-			return {
-				width: skanaar.sum(s, function (c){
-					if (c === 'M' || c === 'W') { return 14 }
-					return c.charCodeAt(0) < 200 ? 9.5 : 16
-				})
+			if (canUseCanvas) {
+				var fontStr = lastDefined('font')
+				var italicSpec = (/\bitalic\b/.test(fontStr) ? 'italic' : 'normal') + ' normal '
+				var boldSpec = /\bbold\b/.test(fontStr) ? 'bold ' : 'normal '
+				ctx.font = italicSpec + boldSpec + docFont
+				return ctx.measureText(s)
+			} else {
+				return {
+					width: skanaar.sum(s, function (c){
+						if (c === 'M' || c === 'W') { return 14 }
+						return c.charCodeAt(0) < 200 ? 9.5 : 16
+					})
+				}	
 			}
 		},
 		moveTo: function (x, y){

@@ -80,10 +80,11 @@ var nomnoml = nomnoml || {};
 		return parseAndRender(code, skanaar.Canvas(canvas), canvas, scale || 1)
 	};
 
-	nomnoml.renderSvg = function (code) {
+	nomnoml.renderSvg = function (code, docCanvas) {
+		docCanvas = docCanvas || 0   // optional parameter
 		var ast = nomnoml.parse(code)
 		var config = getConfig(ast.directives)
-		var skCanvas = skanaar.Svg('')
+		var skCanvas = skanaar.Svg('', docCanvas)
 		function setFont(config, isBold, isItalic) {
 			var style = (isBold === 'bold' ? 'bold' : '')
 			if (isItalic) style = 'italic ' + style
