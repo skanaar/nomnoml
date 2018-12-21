@@ -1,6 +1,13 @@
 var skanaar = skanaar || {}
 skanaar.Svg = function (globalStyle){
-	var initialState = { x: 0, y: 0, stroke: 'none', fill: 'none', textAlign: 'left' }
+	var initialState = {
+		x: 0,
+		y: 0,
+		stroke: 'none',
+		dashArray: 'none',
+		fill: 'none',
+		textAlign: 'left'
+	}
 	var states = [initialState]
 	var elements = []
 
