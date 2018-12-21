@@ -8,7 +8,7 @@ var nomnoml = nomnoml || {};
 			return { down: 'TB', right: 'LR' }[word] || 'TB'
 		}
 		return {
-			center: _.includes(styleDef, 'center'),
+			center: _.includes(styleDef, 'center') || 1, // default to match visual class
 			bold: _.includes(styleDef, 'bold'),
 			underline: _.includes(styleDef, 'underline'),
 			italic: _.includes(styleDef, 'italic'),
