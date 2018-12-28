@@ -1,6 +1,13 @@
 var skanaar = skanaar || {}
-skanaar.Svg = function (globalStyle, canvas){
-	var initialState = { x: 0, y: 0, stroke: 'none', fill: 'none', textAlign: 'left' }
+skanaar.Svg = function (globalStyle){
+	var initialState = {
+		x: 0,
+		y: 0,
+		stroke: 'none',
+		dashArray: 'none',
+		fill: 'none',
+		textAlign: 'left'
+	}
 	var states = [initialState]
 	var elements = []
 
@@ -81,9 +88,19 @@ skanaar.Svg = function (globalStyle, canvas){
 			elements.push(element)
 			return element
 		},
-		ellipse: function (center, w, h /*, start, stop*/){
-			return newElement('ellipse',
+		ellipse: function (center, w, h, start, stop){
+			if (stop) {
+				// This code does not render a general partial ellipse. It only
+				// renders the bottom half of an ellipse. Useful for database visuals.
+				var y = tY(center.y)
+				return newElement('path', { d:
+					'M' + tX(center.x - w/2) + ' ' + y +
+					'A' + w/2 + ' ' + h/2 + ' 0 1 0 ' + tX(center.x + w/2) + ' ' + y
+				})
+			} else {
+				return newElement('ellipse',
 				{ cx: tX(center.x), cy: tY(center.y), rx: w/2, ry: h/2 })
+			}
 		},
 		arc: function (x, y, r /*, start, stop*/){
 			return newElement('ellipse',
