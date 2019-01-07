@@ -1,5 +1,5 @@
 var skanaar = skanaar || {}
-skanaar.Svg = function (globalStyle){
+skanaar.Svg = function (globalStyle, canvas){
 	var initialState = {
 		x: 0,
 		y: 0,
