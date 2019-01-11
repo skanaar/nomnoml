@@ -53,6 +53,7 @@
   </script>
   <script id="sample_source" type="text/plain">
       #zoom: 0.5
+      #font: Arial
       #.hello: underline
       [Pirate|
           [beard]--[parrot]
@@ -105,7 +106,8 @@
       function script(id){ return document.getElementById(id).innerHTML }
       nomnoml.draw(elem('canvas1'), script('sample_source'))
       nomnoml.draw(elem('canvas2'), script('label_test_source'))
-      elem('svg-host').innerHTML = nomnoml.renderSvg(script('sample_source'))
+      elem('svg-host').innerHTML = nomnoml.renderSvg(script('sample_source'),
+          document.createElement('canvas'))
   </script>
 
 </body>
