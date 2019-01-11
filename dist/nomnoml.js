@@ -198,8 +198,7 @@ skanaar.hasSubstring = function hasSubstring(haystack, needle){
 skanaar.format = function format(template /* variadic params */){
     var parts = Array.prototype.slice.call(arguments, 1)
     return _.flatten(_.zip(template.split('#'), parts)).join('')
-}
-;
+};
 var skanaar = skanaar || {};
 skanaar.vector = {
     dist: function (a,b){ return skanaar.vector.mag(skanaar.vector.diff(a,b)) },
@@ -212,10 +211,24 @@ skanaar.vector = {
 };
 ;
 var skanaar = skanaar || {}
-skanaar.Svg = function (globalStyle){
-	var initialState = { x: 0, y: 0, stroke: 'none', fill: 'none', textAlign: 'left' }
+skanaar.Svg = function (globalStyle, canvas){
+	var initialState = {
+		x: 0,
+		y: 0,
+		stroke: 'none',
+		dashArray: 'none',
+		fill: 'none',
+		textAlign: 'left'
+	}
 	var states = [initialState]
 	var elements = []
+
+	// canvas is an optional parameter
+	canvas = canvas || 0
+	var ctx = canvas ? canvas.getContext('2d') : null
+	var canUseCanvas = false
+	var waitingForFirstFont = true
+	var docFont = ''
 
 	function Element(name, attr, content) {
 		attr.style = attr.style || ''
@@ -224,7 +237,8 @@ skanaar.Svg = function (globalStyle){
 			attr: attr,
 			content: content || undefined,
 			stroke: function (){
-				this.attr.style += 'stroke:'+lastDefined('stroke')+';fill:none;';
+				this.attr.style += 'stroke:'+lastDefined('stroke')+
+				  ';fill:none;stroke-dasharray:' + lastDefined('dashArray') + ';';
 				return this
 			},
 			fill: function (){
@@ -232,7 +246,8 @@ skanaar.Svg = function (globalStyle){
 				return this
 			},
 			fillAndStroke: function (){
-				this.attr.style += 'stroke:'+lastDefined('stroke')+';fill:'+lastDefined('fill')+';';
+				this.attr.style += 'stroke:'+lastDefined('stroke')+';fill:'+lastDefined('fill')+
+				  ';stroke-dasharray:' + lastDefined('dashArray') + ';';
 				return this
 			}
 		}
@@ -285,9 +300,19 @@ skanaar.Svg = function (globalStyle){
 			elements.push(element)
 			return element
 		},
-		ellipse: function (center, w, h /*, start, stop*/){
-			return newElement('ellipse',
+		ellipse: function (center, w, h, start, stop){
+			if (stop) {
+				// This code does not render a general partial ellipse. It only
+				// renders the bottom half of an ellipse. Useful for database visuals.
+				var y = tY(center.y)
+				return newElement('path', { d:
+					'M' + tX(center.x - w/2) + ' ' + y +
+					'A' + w/2 + ' ' + h/2 + ' 0 1 0 ' + tX(center.x + w/2) + ' ' + y
+				})
+			} else {
+				return newElement('ellipse',
 				{ cx: tX(center.x), cy: tY(center.y), rx: w/2, ry: h/2 })
+			}
 		},
 		arc: function (x, y, r /*, start, stop*/){
 			return newElement('ellipse',
@@ -309,6 +334,28 @@ skanaar.Svg = function (globalStyle){
 		},
 		font: function (font){
 			last(states).font = font;
+
+			if (waitingForFirstFont) {
+				// This is our first chance to test if we can use a canvas to measure text width.
+				if (ctx) {
+					var primaryFont = font.replace(/^.*family:/, '').replace(/[, ].*$/, '')
+					primaryFont = primaryFont.replace(/'/g, '')
+					canUseCanvas = /^(Arial|Helvetica|Times|Times New Roman)$/.test(primaryFont)
+					if (canUseCanvas) {
+						var fontSize = font.replace(/^.*font-size:/, '').replace(/;.*$/, '') + ' '
+						if (primaryFont === 'Arial') {
+							docFont = fontSize + 'Arial, Helvetica, sans-serif'
+						} else if (primaryFont === 'Helvetica') {
+							docFont = fontSize + 'Helvetica, Arial, sans-serif'
+						} else if (primaryFont === 'Times New Roman') {
+							docFont = fontSize + '"Times New Roman", Times, serif'
+						} else if (primaryFont === 'Times') {
+							docFont = fontSize + 'Times, "Times New Roman", serif'
+						}
+					}
+				}
+				waitingForFirstFont = false
+			}
 		},
 		strokeStyle: function (stroke){
 			last(states).stroke = stroke
@@ -325,7 +372,15 @@ skanaar.Svg = function (globalStyle){
 		fillText: function (text, x, y){
 			if (lastDefined('textAlign') === 'center')
 				x -= this.measureText(text).width/2
-			return newElement('text', { x: tX(x), y: tY(y) }, _.escape(text))
+			var attr = { x: tX(x), y: tY(y), style: '' }
+			var font = lastDefined('font')
+			if (font.indexOf('bold') === -1) {
+				attr.style = 'font-weight:normal;'
+			}
+			if (font.indexOf('italic') > -1) {
+				attr.style += 'font-style:italic;'
+			}
+			return newElement('text', attr, _.escape(text))
 		},
 		lineCap: function (cap){ globalStyle += ';stroke-linecap:'+cap },
 		lineJoin: function (join){ globalStyle += ';stroke-linejoin:'+join },
@@ -334,11 +389,19 @@ skanaar.Svg = function (globalStyle){
 		},
 		lineWidth: function (w){ globalStyle += ';stroke-width:'+w},
 		measureText: function (s){
-			return {
-				width: skanaar.sum(s, function (c){
-					if (c === 'M' || c === 'W') { return 14 }
-					return c.charCodeAt(0) < 200 ? 9.5 : 16
-				})
+			if (canUseCanvas) {
+				var fontStr = lastDefined('font')
+				var italicSpec = (/\bitalic\b/.test(fontStr) ? 'italic' : 'normal') + ' normal '
+				var boldSpec = /\bbold\b/.test(fontStr) ? 'bold ' : 'normal '
+				ctx.font = italicSpec + boldSpec + docFont
+				return ctx.measureText(s)
+			} else {
+				return {
+					width: skanaar.sum(s, function (c){
+						if (c === 'M' || c === 'W') { return 14 }
+						return c.charCodeAt(0) < 200 ? 9.5 : 16
+					})
+				}	
 			}
 		},
 		moveTo: function (x, y){
@@ -351,7 +414,9 @@ skanaar.Svg = function (globalStyle){
 			states.push(State(0, 0))
 		},
 		scale: function (){},
-		setLineDash: function (){},
+		setLineDash: function (d){
+			last(states).dashArray = (d.length === 0) ? 'none' : d[0] + ' ' + d[1]
+		},
 		stroke: function (){
 			last(elements).stroke()
 		},
@@ -1514,7 +1579,7 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 		renderLabel(r.endLabel, end, adjustQuadrant(quadrant(end, endNode, 2), end, start))
 
 		if (r.assoc !== '-/-'){
-			if (g.setLineDash && skanaar.hasSubstring(r.assoc, '--')){
+			if (skanaar.hasSubstring(r.assoc, '--')){
 				var dash = Math.max(4, 2*config.lineWidth)
 				g.setLineDash([dash, dash])
 				strokePath(path)
@@ -1603,12 +1668,12 @@ var nomnoml = nomnoml || {};
 			return { down: 'TB', right: 'LR' }[word] || 'TB'
 		}
 		return {
-			center: _.includes(styleDef, 'center'),
-			bold: _.includes(styleDef, 'bold'),
-			underline: _.includes(styleDef, 'underline'),
-			italic: _.includes(styleDef, 'italic'),
-			dashed: _.includes(styleDef, 'dashed'),
-			empty: _.includes(styleDef, 'empty'),
+			center: (styleDef.indexOf('center') > -1) || 1, // default to match visual class
+			bold: (styleDef.indexOf('bold') > -1),
+			underline: (styleDef.indexOf('underline') > -1),
+			italic: (styleDef.indexOf('italic') > -1),
+			dashed: (styleDef.indexOf('dashed') > -1),
+			empty: (styleDef.indexOf('empty') > -1),
 			fill: _.last(styleDef.match('fill=([^ ]*)')),
 			visual: _.last(styleDef.match('visual=([^ ]*)')) || 'class',
 			direction: directionToDagre(_.last(styleDef.match('direction=([^ ]*)')))
@@ -1675,10 +1740,11 @@ var nomnoml = nomnoml || {};
 		return parseAndRender(code, skanaar.Canvas(canvas), canvas, scale || 1)
 	};
 
-	nomnoml.renderSvg = function (code) {
+	nomnoml.renderSvg = function (code, docCanvas) {
+		docCanvas = docCanvas || 0   // optional parameter
 		var ast = nomnoml.parse(code)
 		var config = getConfig(ast.directives)
-		var skCanvas = skanaar.Svg('')
+		var skCanvas = skanaar.Svg('', docCanvas)
 		function setFont(config, isBold, isItalic) {
 			var style = (isBold === 'bold' ? 'bold' : '')
 			if (isItalic) style = 'italic ' + style
