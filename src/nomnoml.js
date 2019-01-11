@@ -8,12 +8,12 @@ var nomnoml = nomnoml || {};
 			return { down: 'TB', right: 'LR' }[word] || 'TB'
 		}
 		return {
-			center: _.includes(styleDef, 'center'),
-			bold: _.includes(styleDef, 'bold'),
-			underline: _.includes(styleDef, 'underline'),
-			italic: _.includes(styleDef, 'italic'),
-			dashed: _.includes(styleDef, 'dashed'),
-			empty: _.includes(styleDef, 'empty'),
+			center: (styleDef.indexOf('center') > -1) || 1, // default to match visual class
+			bold: (styleDef.indexOf('bold') > -1),
+			underline: (styleDef.indexOf('underline') > -1),
+			italic: (styleDef.indexOf('italic') > -1),
+			dashed: (styleDef.indexOf('dashed') > -1),
+			empty: (styleDef.indexOf('empty') > -1),
 			fill: _.last(styleDef.match('fill=([^ ]*)')),
 			visual: _.last(styleDef.match('visual=([^ ]*)')) || 'class',
 			direction: directionToDagre(_.last(styleDef.match('direction=([^ ]*)')))
