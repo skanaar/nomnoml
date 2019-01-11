@@ -1,4 +1,4 @@
-var nomnoml = nomnoml || {}
+var app = app || {}
 
 ;(function (){
 
@@ -10,7 +10,9 @@ var nomnoml = nomnoml || {}
 	var lineMarker = document.getElementById('linemarker')
 	var storageStatusElement = document.getElementById('storage-status')
 	var textarea = document.getElementById('textarea')
-	var imgLink = document.getElementById('savebutton')
+	var pngLink = document.getElementById('save-png-button')
+	var svgLink = document.getElementById('save-svg-button')
+	var srcLink = document.getElementById('save-source-button')
 	var linkLink = document.getElementById('linkbutton')
 	var canvasElement = document.getElementById('canvas')
 	var canvasPanner = document.getElementById('canvas-panner')
@@ -43,7 +45,9 @@ var nomnoml = nomnoml || {}
 	canvasPanner.addEventListener('mouseup', mouseUp)
 	canvasPanner.addEventListener('mouseleave', mouseUp)
 	canvasPanner.addEventListener('wheel', _.throttle(magnify, 50))
-	initImageDownloadLink(imgLink, canvasElement)
+	initPngDownloadLink(pngLink)
+	initSvgDownloadLink(svgLink)
+	initSrcDownloadLink(srcLink)
 	initToolbarTooltips()
 
 	reloadStorage()
@@ -77,18 +81,18 @@ var nomnoml = nomnoml || {}
 		sourceChanged()
 	}
 
-	nomnoml.magnifyViewport = function (diff){
+	app.magnifyViewport = function (diff){
 		zoomLevel = Math.min(10, zoomLevel + diff)
 		sourceChanged()
 	}
 
-	nomnoml.resetViewport = function (){
+	app.resetViewport = function (){
 		zoomLevel = 1
 		offset = {x: 0, y: 0}
 		sourceChanged()
 	}
 
-	nomnoml.toggleSidebar = function (id){
+	app.toggleSidebar = function (id){
 		var sidebars = ['reference', 'about']
 		_.each(sidebars, function (key){
 			if (id !== key) document.getElementById(key).classList.remove('visible')
@@ -96,14 +100,14 @@ var nomnoml = nomnoml || {}
 		document.getElementById(id).classList.toggle('visible')
 	}
 
-	nomnoml.discardCurrentGraph = function (){
+	app.discardCurrentGraph = function (){
 		if (confirm('Do you want to discard current diagram and load the default example?')){
 			setCurrentText(defaultSource)
 			sourceChanged()
 		}
 	}
 
-	nomnoml.saveViewModeToStorage = function (){
+	app.saveViewModeToStorage = function (){
 		var question = 
 			'Do you want to overwrite the diagram in ' +
 			'localStorage with the currently viewed diagram?'
@@ -113,7 +117,7 @@ var nomnoml = nomnoml || {}
 		}
 	}
 
-	nomnoml.exitViewMode = function (){
+	app.exitViewMode = function (){
 		window.location = './'
 	}
 
@@ -151,11 +155,27 @@ var nomnoml = nomnoml || {}
 		}
 	}
 
-	function initImageDownloadLink(link, canvasElement){
-		link.addEventListener('click', downloadImage, false);
-		function downloadImage(){
+	function initPngDownloadLink(link){
+		link.addEventListener('click', doDownload, false);
+		function doDownload(){
 			var url = canvasElement.toDataURL('image/png')
 			link.href = url;
+		}
+	}
+
+	function initSvgDownloadLink(link){
+		link.addEventListener('click', doDownload, false);
+		function doDownload(){
+			var svg = nomnoml.renderSvg(currentText(), canvasElement)
+			link.href = 'data:image/svg+xml,' + svg;
+		}
+	}
+
+	function initSrcDownloadLink(link){
+		link.addEventListener('click', doDownload, false);
+		function doDownload(){
+			var src = btoa(currentText())
+			link.href = 'data:text/txt;base64,' + src;
 		}
 	}
 
@@ -175,8 +195,10 @@ var nomnoml = nomnoml || {}
 		canvasElement.style.height = h + 'px'
 	}
 
-	function setFilename(filename){
-		imgLink.download = filename + '.png'
+	function setFilenames(filename){
+		pngLink.download = filename + '.png'
+		svgLink.download = filename + '.svg'
+		srcLink.download = filename + '.nomnoml'
 	}
 
 	function reloadStorage(){
@@ -204,7 +226,7 @@ var nomnoml = nomnoml || {}
 
 			var model = nomnoml.draw(canvasElement, currentText(), scale)
 			positionCanvas(canvasElement, superSampling, offset)
-			setFilename(model.config.title)
+			setFilenames(model.config.title)
 			storage.save(currentText())
 		} catch (e){
 			var matches = e.message.match('line ([0-9]*)')

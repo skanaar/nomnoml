@@ -17,7 +17,7 @@ h1 {
 	display: inline;
 	margin: 0;
 }
-img {
+img, svg {
     vertical-align: middle;
     border: 0;
 }
@@ -133,7 +133,7 @@ a:hover {
 	opacity: 1;
 	transition: opacity 0.3s;
 }
-.tools img {
+.tools img, .tools svg {
 	width: 24px;
 	height: 24px;
 	margin-bottom: 5px;
