@@ -136,14 +136,22 @@ Directives only available when using the command line interface
 
 ### Custom classifier styles
 
-A directive that starts with "." define a classifier style.
+A directive that starts with "." define a classifier style. The style is written as a space separated list of modifiers and key/value pairs.
 
-    #.box: fill=#88ff88
-    #.blob: fill=pink visual=ellipse italic bold dashed
+    #.box: fill=#8f8 dashed
+    #.blob: visual=ellipse
     [<box> GreenBox]
     [<blob> HideousBlob]
 
-Available visuals are
+Available key/value pairs are
+
+    fill=(any css color)
+
+    align=center
+    align=left
+
+    direction=right
+    direction=down
 
     visual=actor
     visual=class
@@ -165,7 +173,6 @@ Available visuals are
 
 Available modifiers are
 
-    center
     bold
     underline
     italic
