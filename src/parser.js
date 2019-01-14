@@ -27,19 +27,20 @@ nomnoml.parse = function (source){
 	ast.directives = directives
 	ast.config = getConfig(ast.directives)
 	return ast
-	
+
 	function directionToDagre(word) {
 		return { down: 'TB', right: 'LR' }[word] || 'TB'
 	}
 
 	function parseCustomStyle(styleDef) {
+		var contains = skanaar.hasSubstring
 		return {
-			center: (styleDef.indexOf('center') > -1) || 1, // default to match visual class
-			bold: (styleDef.indexOf('bold') > -1),
-			underline: (styleDef.indexOf('underline') > -1),
-			italic: (styleDef.indexOf('italic') > -1),
-			dashed: (styleDef.indexOf('dashed') > -1),
-			empty: (styleDef.indexOf('empty') > -1),
+			bold: contains(styleDef, 'bold'),
+			underline: contains(styleDef, 'underline'),
+			italic: contains(styleDef, 'italic'),
+			dashed: contains(styleDef, 'dashed'),
+			empty: contains(styleDef, 'empty'),
+			center: _.last(styleDef.match('align=([^ ]*)')) == 'left' ? false : true,
 			fill: _.last(styleDef.match('fill=([^ ]*)')),
 			visual: _.last(styleDef.match('visual=([^ ]*)')) || 'class',
 			direction: directionToDagre(_.last(styleDef.match('direction=([^ ]*)')))
