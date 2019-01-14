@@ -93,7 +93,7 @@ var app = app || {}
 	}
 
 	app.toggleSidebar = function (id){
-		var sidebars = ['reference', 'about']
+		var sidebars = ['about', 'reference', 'export']
 		_.each(sidebars, function (key){
 			if (id !== key) document.getElementById(key).classList.remove('visible')
 		})
