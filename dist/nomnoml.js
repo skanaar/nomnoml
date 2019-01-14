@@ -1118,7 +1118,55 @@ nomnoml.parse = function (source){
 	var pureDiagramCode = _.map(_.map(lines, 'text'), onlyCompilables).join('\n').trim()
 	var ast = nomnoml.transformParseIntoSyntaxTree(nomnoml.intermediateParse(pureDiagramCode))
 	ast.directives = directives
+	ast.config = getConfig(ast.directives)
 	return ast
+
+	function directionToDagre(word) {
+		return { down: 'TB', right: 'LR' }[word] || 'TB'
+	}
+
+	function parseCustomStyle(styleDef) {
+		var contains = skanaar.hasSubstring
+		return {
+			bold: contains(styleDef, 'bold'),
+			underline: contains(styleDef, 'underline'),
+			italic: contains(styleDef, 'italic'),
+			dashed: contains(styleDef, 'dashed'),
+			empty: contains(styleDef, 'empty'),
+			center: _.last(styleDef.match('align=([^ ]*)')) == 'left' ? false : true,
+			fill: _.last(styleDef.match('fill=([^ ]*)')),
+			visual: _.last(styleDef.match('visual=([^ ]*)')) || 'class',
+			direction: directionToDagre(_.last(styleDef.match('direction=([^ ]*)')))
+		}
+	}
+
+	function getConfig(d) {
+		var userStyles = {}
+		_.each(d, function (styleDef, key){
+			if (key[0] != '.') return
+			userStyles[key.substring(1).toUpperCase()] = parseCustomStyle(styleDef)
+		})
+		return {
+			arrowSize: +d.arrowSize || 1,
+			bendSize: +d.bendSize || 0.3,
+			direction: directionToDagre(d.direction),
+			gutter: +d.gutter || 5,
+			edgeMargin: (+d.edgeMargin) || 0,
+			edges: { hard: 'hard', rounded: 'rounded' }[d.edges] || 'rounded',
+			fill: (d.fill || '#eee8d5;#fdf6e3;#eee8d5;#fdf6e3').split(';'),
+			fillArrows: d.fillArrows === 'true',
+			font: d.font || 'Calibri',
+			fontSize: (+d.fontSize) || 12,
+			leading: (+d.leading) || 1.25,
+			lineWidth: (+d.lineWidth) || 3,
+			padding: (+d.padding) || 8,
+			spacing: (+d.spacing) || 40,
+			stroke: d.stroke || '#33322E',
+			title: d.title || 'nomnoml',
+			zoom: +d.zoom || 1,
+			styles: _.extend({}, nomnoml.styles, userStyles)
+		};
+	}
 }
 
 nomnoml.intermediateParse = function (source){
@@ -1173,32 +1221,33 @@ nomnoml.transformParseIntoSyntaxTree = function (entity){
 	}
 
 	return transformItem(entity)
-};
-/* jshint maxlen:110 */
+}
+;
+/* jshint maxlen:130 */
 var nomnoml = nomnoml || {}
 
 nomnoml.styles = {
-  ABSTRACT: { center:1, bold:0, underline:0, italic:1, dashed:0, empty:0, hull:'auto', visual:'class' },
-  ACTOR:    { center:1, bold:0, underline:0, italic:0, dashed:0, empty:0, hull:'auto', visual:'actor' },
-  CHOICE:   { center:1, bold:0, underline:0, italic:0, dashed:0, empty:0, hull:'auto', visual:'rhomb' },
-  CLASS:    { center:1, bold:1, underline:0, italic:0, dashed:0, empty:0, hull:'auto', visual:'class' },
-  DATABASE: { center:1, bold:1, underline:0, italic:0, dashed:0, empty:0, hull:'auto', visual:'database' },
-  END:      { center:1, bold:0, underline:0, italic:0, dashed:0, empty:1, hull:'icon', visual:'end' },
-  FRAME:    { center:0, bold:0, underline:0, italic:0, dashed:0, empty:0, hull:'auto', visual:'frame' },
-  HIDDEN:   { center:1, bold:0, underline:0, italic:0, dashed:0, empty:1, hull:'empty', visual:'hidden' },
-  INPUT:    { center:1, bold:0, underline:0, italic:0, dashed:0, empty:0, hull:'auto', visual:'input' },
-  INSTANCE: { center:1, bold:0, underline:1, italic:0, dashed:0, empty:0, hull:'auto', visual:'class' },
-  LABEL:    { center:0, bold:0, underline:0, italic:0, dashed:0, empty:0, hull:'auto', visual:'none' },
-  NOTE:     { center:0, bold:0, underline:0, italic:0, dashed:0, empty:0, hull:'auto', visual:'note' },
-  PACKAGE:  { center:0, bold:0, underline:0, italic:0, dashed:0, empty:0, hull:'auto', visual:'package' },
-  RECEIVER: { center:0, bold:0, underline:0, italic:0, dashed:0, empty:0, hull:'auto', visual:'receiver' },
-  REFERENCE:{ center:1, bold:0, underline:0, italic:0, dashed:1, empty:0, hull:'auto', visual:'class' },
-  SENDER:   { center:0, bold:0, underline:0, italic:0, dashed:0, empty:0, hull:'auto', visual:'sender' },
-  START:    { center:1, bold:0, underline:0, italic:0, dashed:0, empty:1, hull:'icon', visual:'start' },
-  STATE:    { center:1, bold:0, underline:0, italic:0, dashed:0, empty:0, hull:'auto', visual:'roundrect' },
+  ABSTRACT: { center:1, bold:0, direction:null, underline:0, italic:1, dashed:0, empty:0, hull:'auto', visual:'class' },
+  ACTOR:    { center:1, bold:0, direction:null, underline:0, italic:0, dashed:0, empty:0, hull:'auto', visual:'actor' },
+  CHOICE:   { center:1, bold:0, direction:null, underline:0, italic:0, dashed:0, empty:0, hull:'auto', visual:'rhomb' },
+  CLASS:    { center:1, bold:1, direction:null, underline:0, italic:0, dashed:0, empty:0, hull:'auto', visual:'class' },
+  DATABASE: { center:1, bold:1, direction:null, underline:0, italic:0, dashed:0, empty:0, hull:'auto', visual:'database' },
+  END:      { center:1, bold:0, direction:null, underline:0, italic:0, dashed:0, empty:1, hull:'icon', visual:'end' },
+  FRAME:    { center:0, bold:0, direction:null, underline:0, italic:0, dashed:0, empty:0, hull:'auto', visual:'frame' },
+  HIDDEN:   { center:1, bold:0, direction:null, underline:0, italic:0, dashed:0, empty:1, hull:'empty', visual:'hidden' },
+  INPUT:    { center:1, bold:0, direction:null, underline:0, italic:0, dashed:0, empty:0, hull:'auto', visual:'input' },
+  INSTANCE: { center:1, bold:0, direction:null, underline:1, italic:0, dashed:0, empty:0, hull:'auto', visual:'class' },
+  LABEL:    { center:0, bold:0, direction:null, underline:0, italic:0, dashed:0, empty:0, hull:'auto', visual:'none' },
+  NOTE:     { center:0, bold:0, direction:null, underline:0, italic:0, dashed:0, empty:0, hull:'auto', visual:'note' },
+  PACKAGE:  { center:0, bold:0, direction:null, underline:0, italic:0, dashed:0, empty:0, hull:'auto', visual:'package' },
+  RECEIVER: { center:0, bold:0, direction:null, underline:0, italic:0, dashed:0, empty:0, hull:'auto', visual:'receiver' },
+  REFERENCE:{ center:1, bold:0, direction:null, underline:0, italic:0, dashed:1, empty:0, hull:'auto', visual:'class' },
+  SENDER:   { center:0, bold:0, direction:null, underline:0, italic:0, dashed:0, empty:0, hull:'auto', visual:'sender' },
+  START:    { center:1, bold:0, direction:null, underline:0, italic:0, dashed:0, empty:1, hull:'icon', visual:'start' },
+  STATE:    { center:1, bold:0, direction:null, underline:0, italic:0, dashed:0, empty:0, hull:'auto', visual:'roundrect' },
   TRANSCEIVER:
-            { center:0, bold:0, underline:0, italic:0, dashed:0, empty:0, hull:'auto', visual:'transceiver' },
-  USECASE:  { center:1, bold:0, underline:0, italic:0, dashed:0, empty:0, hull:'auto', visual:'ellipse' },
+            { center:0, bold:0, direction:null, underline:0, italic:0, dashed:0, empty:0, hull:'auto', visual:'transceiver' },
+  USECASE:  { center:1, bold:0, direction:null, underline:0, italic:0, dashed:0, empty:0, hull:'auto', visual:'ellipse' },
 }
 
 nomnoml.visualizers = {
@@ -1341,12 +1390,12 @@ nomnoml.Compartment = function (lines, nodes, relations){
 }
 
 nomnoml.layout = function (measurer, config, ast){
-	function runDagre(input){
+	function runDagre(input, style){
 		return dagre.layout()
 					.rankSep(config.spacing)
 					.nodeSep(config.spacing)
 					.edgeSep(config.spacing)
-					.rankDir(config.direction)
+					.rankDir(style.direction || config.direction)
 					.run(input)
 	}
 	function measureLines(lines, fontWeight){
@@ -1358,7 +1407,7 @@ nomnoml.layout = function (measurer, config, ast){
 			height: Math.round(measurer.textHeight() * lines.length + 2*config.padding)
 		}
 	}
-	function layoutCompartment(c, compartmentIndex){
+	function layoutCompartment(c, compartmentIndex, style){
 		var textSize = measureLines(c.lines, compartmentIndex ? 'normal' : 'bold')
 		c.width = textSize.width
 		c.height = textSize.height
@@ -1375,7 +1424,7 @@ nomnoml.layout = function (measurer, config, ast){
 		_.each(c.relations, function (r){
 			g.addEdge(r.id, r.start, r.end)
 		})
-		var dLayout = runDagre(g)
+		var dLayout = runDagre(g, style)
 
 		function indexBy(list, key) {
 			var obj = {}
@@ -1402,28 +1451,31 @@ nomnoml.layout = function (measurer, config, ast){
 		c.height = textSize.height + graphHeight + config.padding
 	}
 	function layoutClassifier(clas){
-		var style = config.styles[clas.type] || nomnoml.styles.CLASS
-		if (style.hull == 'icon'){
-			clas.width = config.fontSize * 2.5
-			clas.height = config.fontSize * 2.5
-			return
-		}
-		if (style.hull === 'empty'){
-			clas.width = 0
-			clas.height = 0
-			return
-		}
-		var oldDir = config.direction;
-		config.direction = style.direction || config.direction;
-		_.each(clas.compartments, layoutCompartment)
-		clas.width = _.max(_.map(clas.compartments, 'width'))
-		clas.height = skanaar.sum(clas.compartments, 'height')
-		clas.x = clas.width/2
-		clas.y = clas.height/2
-		_.each(clas.compartments, function(co){ co.width = clas.width })
-		config.direction = oldDir;
+		var layout = getLayouter(clas)
+		layout(clas)
 	}
-	layoutCompartment(ast)
+	function getLayouter(clas) {
+		var style = config.styles[clas.type] || nomnoml.styles.CLASS
+		switch(style.hull) {
+			case 'icon': return function (clas){
+				clas.width = config.fontSize * 2.5
+				clas.height = config.fontSize * 2.5
+			}
+			case 'empty': return function (clas){
+				clas.width = 0
+				clas.height = 0
+			}
+			default: return function (clas){
+				_.each(clas.compartments, function(co,i){ layoutCompartment(co, i, style) })
+				clas.width = _.max(_.map(clas.compartments, 'width'))
+				clas.height = skanaar.sum(clas.compartments, 'height')
+				clas.x = clas.width/2
+				clas.y = clas.height/2
+				_.each(clas.compartments, function(co){ co.width = clas.width })
+			}
+		}
+	}
+	layoutCompartment(ast, 0, nomnoml.styles.CLASS)
 	return ast
 }
 ;
@@ -1663,51 +1715,6 @@ var nomnoml = nomnoml || {};
 (function () {
 	'use strict';
 
-	function parseCustomStyle(styleDef) {
-		function directionToDagre(word) {
-			return { down: 'TB', right: 'LR' }[word] || 'TB'
-		}
-		return {
-			center: (styleDef.indexOf('center') > -1) || 1, // default to match visual class
-			bold: (styleDef.indexOf('bold') > -1),
-			underline: (styleDef.indexOf('underline') > -1),
-			italic: (styleDef.indexOf('italic') > -1),
-			dashed: (styleDef.indexOf('dashed') > -1),
-			empty: (styleDef.indexOf('empty') > -1),
-			fill: _.last(styleDef.match('fill=([^ ]*)')),
-			visual: _.last(styleDef.match('visual=([^ ]*)')) || 'class',
-			direction: directionToDagre(_.last(styleDef.match('direction=([^ ]*)')))
-		}
-	}
-
-	function getConfig(d) {
-		var userStyles = {}
-		_.each(d, function (styleDef, key){
-			if (key[0] != '.') return
-			userStyles[key.substring(1).toUpperCase()] = parseCustomStyle(styleDef)
-		})
-		return {
-			arrowSize: +d.arrowSize || 1,
-			bendSize: +d.bendSize || 0.3,
-			direction: { down: 'TB', right: 'LR' }[d.direction] || 'TB',
-			gutter: +d.gutter || 5,
-			edgeMargin: (+d.edgeMargin) || 0,
-			edges: { hard: 'hard', rounded: 'rounded' }[d.edges] || 'rounded',
-			fill: (d.fill || '#eee8d5;#fdf6e3;#eee8d5;#fdf6e3').split(';'),
-			fillArrows: d.fillArrows === 'true',
-			font: d.font || 'Calibri',
-			fontSize: (+d.fontSize) || 12,
-			leading: (+d.leading) || 1.25,
-			lineWidth: (+d.lineWidth) || 3,
-			padding: (+d.padding) || 8,
-			spacing: (+d.spacing) || 40,
-			stroke: d.stroke || '#33322E',
-			title: d.title || 'nomnoml',
-			zoom: +d.zoom || 1,
-			styles: _.extend({}, nomnoml.styles, userStyles)
-		};
-	}
-
 	function fitCanvasSize(canvas, rect, zoom) {
 		canvas.width = rect.width * zoom;
 		canvas.height = rect.height * zoom;
@@ -1722,18 +1729,18 @@ var nomnoml = nomnoml || {};
 	}
 
 	function parseAndRender(code, graphics, canvas, scale) {
-		var ast = nomnoml.parse(code);
-		var config = getConfig(ast.directives);
+		var ast = nomnoml.parse(code)
+		var config = ast.config
 		var measurer = {
 			setFont: function (a, b, c) { setFont(a, b, c, graphics); },
 			textWidth: function (s) { return graphics.measureText(s).width },
 			textHeight: function () { return config.leading * config.fontSize }
 		};
-		var layout = nomnoml.layout(measurer, config, ast);
-		fitCanvasSize(canvas, layout, config.zoom * scale);
-		config.zoom *= scale;
-		nomnoml.render(graphics, config, layout, measurer.setFont);
-		return { config: config };
+		var layout = nomnoml.layout(measurer, config, ast)
+		fitCanvasSize(canvas, layout, config.zoom * scale)
+		config.zoom *= scale
+		nomnoml.render(graphics, config, layout, measurer.setFont)
+		return { config: config }
 	}
 
 	nomnoml.draw = function (canvas, code, scale) {
@@ -1743,7 +1750,7 @@ var nomnoml = nomnoml || {};
 	nomnoml.renderSvg = function (code, docCanvas) {
 		docCanvas = docCanvas || 0   // optional parameter
 		var ast = nomnoml.parse(code)
-		var config = getConfig(ast.directives)
+		var config = ast.config
 		var skCanvas = skanaar.Svg('', docCanvas)
 		function setFont(config, isBold, isItalic) {
 			var style = (isBold === 'bold' ? 'bold' : '')
