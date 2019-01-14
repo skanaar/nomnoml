@@ -5,17 +5,18 @@
   <title>test nomnoml</title>
   <link rel="shortcut icon" type="image/png" href="favicon.png">
   <style>
-    body { background-color: #fdf6e3; padding: 0; margin: 10px; overflow-y: scroll; }
-    .success, .failure, .ignored { margin: 0px; padding: 1px 5px; color: #eee; }
-    #testreport { font-size: 13px; font-family: Monaco, "Lucida Console", monospace; }
-    h1 { color: #657b83; font-size: 20px; font-family: Monaco, "Lucida Console", monospace; }
-    .success { color: #5e7d00; }
-    .failure { color: #b03911; }
-    .ignored { color: #bababa; }
-    .success::before { content: '✓ '; }
-    .failure::before { content: '✗ '; }
-    .ignored::before { content: '- '; }
-    .details { margin: 1px 5px 5px 35px; color: #b03911; }
+    body { background-color: #fdf6e3; padding: 0; margin: 10px; overflow-y: scroll }
+    .success, .failure, .ignored { margin: 0px; padding: 1px 5px; color: #eee; cursor: pointer; }
+    .success:hover, .failure:hover { background: rgba(0,0,0,0.1) }
+    #testreport { font-size: 13px; font-family: Monaco, "Lucida Console", monospace }
+    h1 { color: #657b83; font-size: 20px; font-family: Monaco, "Lucida Console", monospace }
+    .success { color: #5e7d00 }
+    .failure { color: #b03911 }
+    .ignored { color: #bababa }
+    .success::before { content: '✓ ' }
+    .failure::before { content: '✗ ' }
+    .ignored::before { content: '- ' }
+    .details { margin: 1px 5px 5px 35px; color: #b03911 }
   </style>
 </head>
 
