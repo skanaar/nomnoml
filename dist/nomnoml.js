@@ -1097,12 +1097,12 @@ _.maxBy = _.maxBy || _.max // polyfill the differences between lodash and unders
 
 nomnoml.parse = function (source){
 	function onlyCompilables(line){
-		var ok = line[0] !== '#' && line.substring(0,2) !== '//'
-		return ok ? line : ''
+		var ok = line[0] !== '#' && line.trim().substring(0,2) !== '//'
+		return ok ? line.trim() : ''
 	}
 	var isDirective = function (line){ return line.text[0] === '#' }
 	var lines = source.split('\n').map(function (s, i){
-		return {text: s.trim(), index: i }
+		return {text: s, index: i }
 	})
 	var pureDirectives = _.filter(lines, isDirective)
 	var directives = {}
