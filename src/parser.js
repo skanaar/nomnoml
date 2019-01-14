@@ -25,7 +25,54 @@ nomnoml.parse = function (source){
 	var pureDiagramCode = _.map(_.map(lines, 'text'), onlyCompilables).join('\n').trim()
 	var ast = nomnoml.transformParseIntoSyntaxTree(nomnoml.intermediateParse(pureDiagramCode))
 	ast.directives = directives
+	ast.config = getConfig(ast.directives)
 	return ast
+	
+	function directionToDagre(word) {
+		return { down: 'TB', right: 'LR' }[word] || 'TB'
+	}
+
+	function parseCustomStyle(styleDef) {
+		return {
+			center: (styleDef.indexOf('center') > -1) || 1, // default to match visual class
+			bold: (styleDef.indexOf('bold') > -1),
+			underline: (styleDef.indexOf('underline') > -1),
+			italic: (styleDef.indexOf('italic') > -1),
+			dashed: (styleDef.indexOf('dashed') > -1),
+			empty: (styleDef.indexOf('empty') > -1),
+			fill: _.last(styleDef.match('fill=([^ ]*)')),
+			visual: _.last(styleDef.match('visual=([^ ]*)')) || 'class',
+			direction: directionToDagre(_.last(styleDef.match('direction=([^ ]*)')))
+		}
+	}
+
+	function getConfig(d) {
+		var userStyles = {}
+		_.each(d, function (styleDef, key){
+			if (key[0] != '.') return
+			userStyles[key.substring(1).toUpperCase()] = parseCustomStyle(styleDef)
+		})
+		return {
+			arrowSize: +d.arrowSize || 1,
+			bendSize: +d.bendSize || 0.3,
+			direction: directionToDagre(d.direction),
+			gutter: +d.gutter || 5,
+			edgeMargin: (+d.edgeMargin) || 0,
+			edges: { hard: 'hard', rounded: 'rounded' }[d.edges] || 'rounded',
+			fill: (d.fill || '#eee8d5;#fdf6e3;#eee8d5;#fdf6e3').split(';'),
+			fillArrows: d.fillArrows === 'true',
+			font: d.font || 'Calibri',
+			fontSize: (+d.fontSize) || 12,
+			leading: (+d.leading) || 1.25,
+			lineWidth: (+d.lineWidth) || 3,
+			padding: (+d.padding) || 8,
+			spacing: (+d.spacing) || 40,
+			stroke: d.stroke || '#33322E',
+			title: d.title || 'nomnoml',
+			zoom: +d.zoom || 1,
+			styles: _.extend({}, nomnoml.styles, userStyles)
+		};
+	}
 }
 
 nomnoml.intermediateParse = function (source){

@@ -207,6 +207,17 @@ suite.test('layouter should handle [apa|[flea]->[dandruff]] vertically stacked i
     assertEqual(dandruff.y, 10+2+2+5+7)
 })
 
+suite.test('layouter should handle style specific direction', function(){
+    var ast = nomnoml.parse('#.horiz:direction=right\n[<horiz>apa|[a]->[b]]->[banan]')
+    var layouted = nomnoml.layout(measurer, ast.config, ast)
+    var apa = layouted.nodes[0]
+    var banan = layouted.nodes[1]
+    var a = apa.compartments[1].nodes[0]
+    var b = apa.compartments[1].nodes[1]
+    assertEqual(a.y, b.y)
+    assertEqual(apa.x, banan.x)
+})
+
 suite.test('layouter should handle [apa|[flea]->[dandruff]] relation placement', function(){
     var root = compClas('class', 'apa', [
         comp(['apa'],[],[]),
