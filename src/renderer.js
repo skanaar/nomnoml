@@ -9,7 +9,7 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 	function renderCompartment(compartment, style, level){
 		g.save()
 		g.translate(padding, padding)
-		g.fillStyle(config.stroke)
+		g.fillStyle(style.stroke || config.stroke)
 		_.each(compartment.lines, function (text, i){
 			g.textAlign(style.center ? 'center' : 'left')
 			var x = style.center ? compartment.width/2 - padding : 0
@@ -36,6 +36,7 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 		var style = config.styles[node.type] || nomnoml.styles.CLASS
 
 		g.fillStyle(style.fill || config.fill[level] || _.last(config.fill))
+		g.strokeStyle(style.stroke || config.stroke)
 		if (style.dashed){
 			var dash = Math.max(4, 2*config.lineWidth)
 			g.setLineDash([dash, dash])
@@ -46,7 +47,7 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 
 		var yDivider = (style.visual === 'actor' ? y + padding*3/4 : y)
 		_.each(node.compartments, function (part, i){
-			var s = i > 0 ? {} : style; // only style node title
+			var s = i > 0 ? { stroke: style.stroke } : style; // only style node title
 			if (s.empty) return
 			g.save()
 			g.translate(x, yDivider)
@@ -63,8 +64,9 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 					{x:x+w, y:yDivider-part.height/2},
 					{x:x+w, y:yDivider-part.height}
 					]).stroke()
-			} else
+			} else {
 				g.path([{x:x, y:yDivider}, {x:x+node.width, y:yDivider}]).stroke()
+			}
 		})
 	}
 

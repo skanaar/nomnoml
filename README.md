@@ -42,7 +42,7 @@ Html usage with a Canvas rendering target:
 
 ## SVG support
 
-An experimental (and not fully featured) SVG rendering mode is available as the `nomnoml.renderSvg` function.
+SVG rendering mode is available as the `nomnoml.renderSvg` function.
 
 ## Command Line Interface
 
@@ -146,6 +146,8 @@ A directive that starts with "." define a classifier style. The style is written
 Available key/value pairs are
 
     fill=(any css color)
+
+    stroke=(any css color)
 
     align=center
     align=left

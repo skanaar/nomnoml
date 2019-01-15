@@ -42,6 +42,7 @@ nomnoml.parse = function (source){
 			empty: contains(styleDef, 'empty'),
 			center: _.last(styleDef.match('align=([^ ]*)')) == 'left' ? false : true,
 			fill: _.last(styleDef.match('fill=([^ ]*)')),
+			stroke: _.last(styleDef.match('stroke=([^ ]*)')),
 			visual: _.last(styleDef.match('visual=([^ ]*)')) || 'class',
 			direction: directionToDagre(_.last(styleDef.match('direction=([^ ]*)')))
 		}
