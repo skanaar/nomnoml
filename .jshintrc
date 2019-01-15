@@ -1,12 +1,14 @@
 {
   "globals": {
     "confirm": false,
+    "console": false,
     "$": false,
-    "_": false,
+    "_": true,
     "skanaar": true,
     "dagre": false,
     "nomnomlCoreParser": false,
     "require": false,
+    "module": false,
     "CodeMirror": false
   },
 

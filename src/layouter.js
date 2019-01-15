@@ -1,20 +1,5 @@
 var nomnoml = nomnoml || {}
 
-nomnoml.Classifier = function (type, name, compartments){
-	return {
-        type: type,
-        name: name,
-        compartments: compartments
-    }
-}
-nomnoml.Compartment = function (lines, nodes, relations){
-	return {
-        lines: lines,
-        nodes: nodes,
-        relations: relations
-    }
-}
-
 nomnoml.layout = function (measurer, config, ast){
 	function runDagre(input, style){
 		return dagre.layout()
@@ -24,6 +9,7 @@ nomnoml.layout = function (measurer, config, ast){
 					.rankDir(style.direction || config.direction)
 					.run(input)
 	}
+	
 	function measureLines(lines, fontWeight){
 		if (!lines.length)
 			return { width: 0, height: config.padding }
@@ -33,6 +19,7 @@ nomnoml.layout = function (measurer, config, ast){
 			height: Math.round(measurer.textHeight() * lines.length + 2*config.padding)
 		}
 	}
+	
 	function layoutCompartment(c, compartmentIndex, style){
 		var textSize = measureLines(c.lines, compartmentIndex ? 'normal' : 'bold')
 		c.width = textSize.width
@@ -52,14 +39,8 @@ nomnoml.layout = function (measurer, config, ast){
 		})
 		var dLayout = runDagre(g, style)
 
-		function indexBy(list, key) {
-			var obj = {}
-			_.each(list, function (e) { obj[e[key]] = e })
-			return obj
-		}
-
-		var rels = indexBy(c.relations, 'id')
-		var nodes = indexBy(c.nodes, 'name')
+		var rels = skanaar.indexBy(c.relations, 'id')
+		var nodes = skanaar.indexBy(c.nodes, 'name')
 		function toPoint(o){ return {x:o.x, y:o.y} }
 		dLayout.eachNode(function(u, value) {
 			nodes[u].x = value.x
@@ -76,10 +57,12 @@ nomnoml.layout = function (measurer, config, ast){
 		c.width = Math.max(textSize.width, graphWidth) + 2*config.padding
 		c.height = textSize.height + graphHeight + config.padding
 	}
+	
 	function layoutClassifier(clas){
 		var layout = getLayouter(clas)
 		layout(clas)
 	}
+	
 	function getLayouter(clas) {
 		var style = config.styles[clas.type] || nomnoml.styles.CLASS
 		switch(style.hull) {
@@ -101,6 +84,7 @@ nomnoml.layout = function (measurer, config, ast){
 			}
 		}
 	}
+
 	layoutCompartment(ast, 0, nomnoml.styles.CLASS)
 	return ast
 }

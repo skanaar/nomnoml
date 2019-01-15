@@ -1,6 +1,22 @@
 var nomnoml = nomnoml || {};
 
-(function () {
+nomnoml.Classifier = function (type, name, compartments){
+	return {
+        type: type,
+        name: name,
+        compartments: compartments
+    }
+}
+
+nomnoml.Compartment = function (lines, nodes, relations){
+	return {
+        lines: lines,
+        nodes: nodes,
+        relations: relations
+    }
+}
+
+;(function () {
 	'use strict';
 
 	function fitCanvasSize(canvas, rect, zoom) {

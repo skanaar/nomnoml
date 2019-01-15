@@ -1,4 +1,3 @@
-var _ = require('lodash')
 var nomnoml = require('../dist/nomnoml.js')
 var TestSuite = require('./skanaar.testsuite.js')
 
@@ -169,7 +168,7 @@ suite.test('layouter should handle [apa|[flea]]', function(){
     assertEqual(layouted.height, 2+10+2+2+2+10+2+2)
 })
 
-suite.test('layouter should handle [apa|[flea];[dandruff]] horizontally stacked inner classes', function(){
+suite.test('layout [apa|[flea];[dandruff]] horizontally stacked inner classes', function(){
     var root = compClas('class', 'apa', [
         comp(['apa'],[],[]),
         comp([],[
@@ -182,7 +181,7 @@ suite.test('layouter should handle [apa|[flea];[dandruff]] horizontally stacked 
     assertEqual(layouted.height, 2+10+2+2+2+10+2+2)
 })
 
-suite.test('layouter should handle [apa|[flea]->[dandruff]] vertically stacked inner classes', function(){
+suite.test('layout [apa|[flea]->[dandruff]] vertically stacked inner classes', function(){
     var root = compClas('class', 'apa', [
         comp(['apa'],[],[]),
         comp([],[

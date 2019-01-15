@@ -22,3 +22,10 @@ skanaar.format = function format(template /* variadic params */){
     var parts = Array.prototype.slice.call(arguments, 1)
     return _.flatten(_.zip(template.split('#'), parts)).join('')
 }
+
+skanaar.indexBy = function (list, key) {
+    var obj = {}
+    for(var i=0; i<list.length; i++)
+        obj[list[i][key]] = list[i]
+    return obj
+}

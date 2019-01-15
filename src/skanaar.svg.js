@@ -215,30 +215,28 @@ skanaar.Svg = function (globalStyle, canvas){
 			last(states).x += dx
 			last(states).y += dy
 		},
-    serialize: function (_attributes){
-      var attrs = _attributes || {};
-      attrs.version = attrs.version || '1.1';
-      attrs.baseProfile = attrs.baseProfile || 'full';
-      attrs.width = attrs.width || '100%';
-      attrs.height = attrs.height || '100%';
-      if(attrs.width !== '100%' && attrs.height != '100%') {
-        attrs.viewbox = '0 0 ' + attrs.width + ' ' + attrs.height;
-	  }
-      attrs.xmlns = attrs.xmlns || 'http://www.w3.org/2000/svg';
-      attrs['xmlns:xlink'] = attrs['xmlns:xlink'] || 'http://www.w3.org/1999/xlink';
-      attrs['xmlns:ev']  = attrs['xmlns:ev'] || 'http://www.w3.org/2001/xml-events';
-      attrs.style = attrs.style || lastDefined('font') + ';' + globalStyle;
-
-      function toAttr(obj){
-        function toKeyValue(key){ return key + '="' + obj[key] + '"' }
-        return Object.keys(obj).map(toKeyValue).join(' ')
-      }
-      function toHtml(e){
-        return '<'+e.name+' '+toAttr(e.attr)+'>'+(e.content || '')+'</'+e.name+'>'
-
-      }
-      var innerSvg = elements.map(toHtml).join('\n')
-      return toHtml(Element('svg', attrs, innerSvg))
-    }
+		serialize: function (_attributes){
+			var attrs = _attributes || {};
+			attrs.version = attrs.version || '1.1';
+			attrs.baseProfile = attrs.baseProfile || 'full';
+			attrs.width = attrs.width || '100%';
+			attrs.height = attrs.height || '100%';
+			if(attrs.width !== '100%' && attrs.height != '100%') {
+				attrs.viewbox = '0 0 ' + attrs.width + ' ' + attrs.height;
+			}
+			attrs.xmlns = attrs.xmlns || 'http://www.w3.org/2000/svg';
+			attrs['xmlns:xlink'] = attrs['xmlns:xlink'] || 'http://www.w3.org/1999/xlink';
+			attrs['xmlns:ev']  = attrs['xmlns:ev'] || 'http://www.w3.org/2001/xml-events';
+			attrs.style = attrs.style || lastDefined('font') + ';' + globalStyle;
+			function toAttr(obj){
+				function toKeyValue(key){ return key + '="' + obj[key] + '"' }
+				return Object.keys(obj).map(toKeyValue).join(' ')
+			}
+			function toHtml(e){
+				return '<'+e.name+' '+toAttr(e.attr)+'>'+(e.content || '')+'</'+e.name+'>'
+			}
+			var innerSvg = elements.map(toHtml).join('\n')
+			return toHtml(Element('svg', attrs, innerSvg))
+		}
 	}
 };
