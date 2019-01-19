@@ -198,6 +198,13 @@ skanaar.hasSubstring = function hasSubstring(haystack, needle){
 skanaar.format = function format(template /* variadic params */){
     var parts = Array.prototype.slice.call(arguments, 1)
     return _.flatten(_.zip(template.split('#'), parts)).join('')
+}
+
+skanaar.indexBy = function (list, key) {
+    var obj = {}
+    for(var i=0; i<list.length; i++)
+        obj[list[i][key]] = list[i]
+    return obj
 };
 var skanaar = skanaar || {};
 skanaar.vector = {
@@ -427,31 +434,29 @@ skanaar.Svg = function (globalStyle, canvas){
 			last(states).x += dx
 			last(states).y += dy
 		},
-    serialize: function (_attributes){
-      var attrs = _attributes || {};
-      attrs.version = attrs.version || '1.1';
-      attrs.baseProfile = attrs.baseProfile || 'full';
-      attrs.width = attrs.width || '100%';
-      attrs.height = attrs.height || '100%';
-      if(attrs.width !== '100%' && attrs.height != '100%') {
-        attrs.viewbox = '0 0 ' + attrs.width + ' ' + attrs.height;
-	  }
-      attrs.xmlns = attrs.xmlns || 'http://www.w3.org/2000/svg';
-      attrs['xmlns:xlink'] = attrs['xmlns:xlink'] || 'http://www.w3.org/1999/xlink';
-      attrs['xmlns:ev']  = attrs['xmlns:ev'] || 'http://www.w3.org/2001/xml-events';
-      attrs.style = attrs.style || lastDefined('font') + ';' + globalStyle;
-
-      function toAttr(obj){
-        function toKeyValue(key){ return key + '="' + obj[key] + '"' }
-        return Object.keys(obj).map(toKeyValue).join(' ')
-      }
-      function toHtml(e){
-        return '<'+e.name+' '+toAttr(e.attr)+'>'+(e.content || '')+'</'+e.name+'>'
-
-      }
-      var innerSvg = elements.map(toHtml).join('\n')
-      return toHtml(Element('svg', attrs, innerSvg))
-    }
+		serialize: function (_attributes){
+			var attrs = _attributes || {};
+			attrs.version = attrs.version || '1.1';
+			attrs.baseProfile = attrs.baseProfile || 'full';
+			attrs.width = attrs.width || '100%';
+			attrs.height = attrs.height || '100%';
+			if(attrs.width !== '100%' && attrs.height != '100%') {
+				attrs.viewbox = '0 0 ' + attrs.width + ' ' + attrs.height;
+			}
+			attrs.xmlns = attrs.xmlns || 'http://www.w3.org/2000/svg';
+			attrs['xmlns:xlink'] = attrs['xmlns:xlink'] || 'http://www.w3.org/1999/xlink';
+			attrs['xmlns:ev']  = attrs['xmlns:ev'] || 'http://www.w3.org/2001/xml-events';
+			attrs.style = attrs.style || lastDefined('font') + ';' + globalStyle;
+			function toAttr(obj){
+				function toKeyValue(key){ return key + '="' + obj[key] + '"' }
+				return Object.keys(obj).map(toKeyValue).join(' ')
+			}
+			function toHtml(e){
+				return '<'+e.name+' '+toAttr(e.attr)+'>'+(e.content || '')+'</'+e.name+'>'
+			}
+			var innerSvg = elements.map(toHtml).join('\n')
+			return toHtml(Element('svg', attrs, innerSvg))
+		}
 	}
 };
 ;
@@ -1135,6 +1140,7 @@ nomnoml.parse = function (source){
 			empty: contains(styleDef, 'empty'),
 			center: _.last(styleDef.match('align=([^ ]*)')) == 'left' ? false : true,
 			fill: _.last(styleDef.match('fill=([^ ]*)')),
+			stroke: _.last(styleDef.match('stroke=([^ ]*)')),
 			visual: _.last(styleDef.match('visual=([^ ]*)')) || 'class',
 			direction: directionToDagre(_.last(styleDef.match('direction=([^ ]*)')))
 		}
@@ -1374,21 +1380,6 @@ nomnoml.visualizers = {
 ;
 var nomnoml = nomnoml || {}
 
-nomnoml.Classifier = function (type, name, compartments){
-	return {
-        type: type,
-        name: name,
-        compartments: compartments
-    }
-}
-nomnoml.Compartment = function (lines, nodes, relations){
-	return {
-        lines: lines,
-        nodes: nodes,
-        relations: relations
-    }
-}
-
 nomnoml.layout = function (measurer, config, ast){
 	function runDagre(input, style){
 		return dagre.layout()
@@ -1398,6 +1389,7 @@ nomnoml.layout = function (measurer, config, ast){
 					.rankDir(style.direction || config.direction)
 					.run(input)
 	}
+	
 	function measureLines(lines, fontWeight){
 		if (!lines.length)
 			return { width: 0, height: config.padding }
@@ -1407,6 +1399,7 @@ nomnoml.layout = function (measurer, config, ast){
 			height: Math.round(measurer.textHeight() * lines.length + 2*config.padding)
 		}
 	}
+	
 	function layoutCompartment(c, compartmentIndex, style){
 		var textSize = measureLines(c.lines, compartmentIndex ? 'normal' : 'bold')
 		c.width = textSize.width
@@ -1426,14 +1419,8 @@ nomnoml.layout = function (measurer, config, ast){
 		})
 		var dLayout = runDagre(g, style)
 
-		function indexBy(list, key) {
-			var obj = {}
-			_.each(list, function (e) { obj[e[key]] = e })
-			return obj
-		}
-
-		var rels = indexBy(c.relations, 'id')
-		var nodes = indexBy(c.nodes, 'name')
+		var rels = skanaar.indexBy(c.relations, 'id')
+		var nodes = skanaar.indexBy(c.nodes, 'name')
 		function toPoint(o){ return {x:o.x, y:o.y} }
 		dLayout.eachNode(function(u, value) {
 			nodes[u].x = value.x
@@ -1450,10 +1437,12 @@ nomnoml.layout = function (measurer, config, ast){
 		c.width = Math.max(textSize.width, graphWidth) + 2*config.padding
 		c.height = textSize.height + graphHeight + config.padding
 	}
+	
 	function layoutClassifier(clas){
 		var layout = getLayouter(clas)
 		layout(clas)
 	}
+	
 	function getLayouter(clas) {
 		var style = config.styles[clas.type] || nomnoml.styles.CLASS
 		switch(style.hull) {
@@ -1475,6 +1464,7 @@ nomnoml.layout = function (measurer, config, ast){
 			}
 		}
 	}
+
 	layoutCompartment(ast, 0, nomnoml.styles.CLASS)
 	return ast
 }
@@ -1490,7 +1480,7 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 	function renderCompartment(compartment, style, level){
 		g.save()
 		g.translate(padding, padding)
-		g.fillStyle(config.stroke)
+		g.fillStyle(style.stroke || config.stroke)
 		_.each(compartment.lines, function (text, i){
 			g.textAlign(style.center ? 'center' : 'left')
 			var x = style.center ? compartment.width/2 - padding : 0
@@ -1517,6 +1507,7 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 		var style = config.styles[node.type] || nomnoml.styles.CLASS
 
 		g.fillStyle(style.fill || config.fill[level] || _.last(config.fill))
+		g.strokeStyle(style.stroke || config.stroke)
 		if (style.dashed){
 			var dash = Math.max(4, 2*config.lineWidth)
 			g.setLineDash([dash, dash])
@@ -1527,7 +1518,7 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 
 		var yDivider = (style.visual === 'actor' ? y + padding*3/4 : y)
 		_.each(node.compartments, function (part, i){
-			var s = i > 0 ? {} : style; // only style node title
+			var s = i > 0 ? { stroke: style.stroke } : style; // only style node title
 			if (s.empty) return
 			g.save()
 			g.translate(x, yDivider)
@@ -1544,8 +1535,9 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 					{x:x+w, y:yDivider-part.height/2},
 					{x:x+w, y:yDivider-part.height}
 					]).stroke()
-			} else
+			} else {
 				g.path([{x:x, y:yDivider}, {x:x+node.width, y:yDivider}]).stroke()
+			}
 		})
 	}
 
@@ -1712,7 +1704,23 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 ;
 var nomnoml = nomnoml || {};
 
-(function () {
+nomnoml.Classifier = function (type, name, compartments){
+	return {
+        type: type,
+        name: name,
+        compartments: compartments
+    }
+}
+
+nomnoml.Compartment = function (lines, nodes, relations){
+	return {
+        lines: lines,
+        nodes: nodes,
+        relations: relations
+    }
+}
+
+;(function () {
 	'use strict';
 
 	function fitCanvasSize(canvas, rect, zoom) {
