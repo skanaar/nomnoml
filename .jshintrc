@@ -6,6 +6,8 @@
     "_": true,
     "skanaar": true,
     "dagre": false,
+    "nomnoml": "true",
+    "saveAs": "false",
     "nomnomlCoreParser": false,
     "require": false,
     "module": false,

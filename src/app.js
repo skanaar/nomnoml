@@ -3,6 +3,7 @@ var app = app || {}
 ;(function (){
 
 	var storage = null
+	var graphTitle = 'diagram'
 	var viewport = window
 	var body = document.querySelector('body')
 	var tooltip = document.getElementById('tooltip')
@@ -165,17 +166,19 @@ var app = app || {}
 
 	function initSvgDownloadLink(link){
 		link.addEventListener('click', doDownload, false);
-		function doDownload(){
+		function doDownload(e){
 			var svg = nomnoml.renderSvg(currentText(), canvasElement)
-			link.href = 'data:image/svg+xml,' + svg;
+			saveAs(new Blob([svg], {type: 'image/svg+xml'}), graphTitle + '.svg')
+			e.preventDefault()
 		}
 	}
 
 	function initSrcDownloadLink(link){
 		link.addEventListener('click', doDownload, false);
-		function doDownload(){
-			var src = btoa(currentText())
-			link.href = 'data:text/txt;base64,' + src;
+		function doDownload(e){
+			var src = currentText()
+			saveAs(new Blob([src], {type: 'text/txt'}), graphTitle + '.nomnoml')
+			e.preventDefault()
 		}
 	}
 
@@ -226,6 +229,7 @@ var app = app || {}
 
 			var model = nomnoml.draw(canvasElement, currentText(), scale)
 			positionCanvas(canvasElement, superSampling, offset)
+			graphTitle = model.config.title
 			setFilenames(model.config.title)
 			storage.save(currentText())
 		} catch (e){
