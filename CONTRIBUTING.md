@@ -8,10 +8,10 @@ Running `node build.js` will run the linter, the tests and bundle a stand alone 
 
 ## Testing
 
-Before committing and before making a pull request it is useful to make sure that all unit tests are still working and that the usecases are also running fine. Here is a good procedure:
+Before committing and before making a pull request make sure that all unit tests and usecase tests are ok. Here is a good procedure:
 
  1. Run `node build.js`
  2. Check `index.html`
  3. Check `test/index.html`
- 4. Run `nom run-script test_cli`
+ 4. Run `npm run-script test_cli`
  5. Check `test/output.node-test.svg`
