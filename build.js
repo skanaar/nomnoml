@@ -3,7 +3,7 @@ var jison = require('jison');
 var jshint = require('jshint').JSHINT;
 
 var nomnomlParser = new jison.Parser(fs.readFileSync('src/nomnoml.jison', { encoding: 'utf8' }));
-fs.writeFileSync('src/jison-parser.js', nomnomlParser.generate({moduleName: 'nomnomlCoreParser'}));
+fs.writeFileSync('src/jison-parser.js', nomnomlParser.generate({moduleName: 'nomnomlCoreParser',moduleType:'js'}));
 
 var nomnomlFiles = [
     'src/skanaar.canvas.js',
