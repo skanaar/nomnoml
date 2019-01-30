@@ -19,11 +19,15 @@ The [nomnoml](http://www.nomnoml.com) standalone javascript library can be used 
 
 NodeJS usage with SVG output:
 
-    npm install nomnoml
+```
+    > npm install nomnoml
+```
 
+```js
     var nomnoml = require('nomnoml');
     var src = '[nomnoml] is -> [awesome]';
     console.log(nomnoml.renderSvg(src));
+```
 
 Html usage with a Canvas rendering target:
 
