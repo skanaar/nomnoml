@@ -3,7 +3,7 @@ nomnoml
 
 Hello, this is [nomnoml](http://www.nomnoml.com), a tool for drawing UML diagrams based on a simple syntax. It tries to keep its syntax visually as close as possible to the generated UML diagram without resorting to ASCII drawings.
 
-Created by [Daniel Kallin](https://github.com/skanaar) and a cadre of [contributers](https://github.com/skanaar/nomnoml/graphs/contributors).
+Created by [Daniel Kallin](https://github.com/skanaar) and a cadre of [contributors](https://github.com/skanaar/nomnoml/graphs/contributors).
 
 ### Nomnoml was made possible by these cool projects
 
