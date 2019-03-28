@@ -53,6 +53,10 @@ var app = app || {}
 
 	reloadStorage()
 
+    function hasError(){
+        return lineNumbers.classList.contains('error')
+    }
+
 	function classToggler(element, className, state){
 		return function () {
 			if(state) element.classList.add(className)
@@ -61,25 +65,33 @@ var app = app || {}
 	}
 
 	function mouseDown(e){
-		canvasPanner.style.width = '100%'
-		mouseDownPoint = vm.diff({ x: e.pageX, y: e.pageY }, offset)
+        if (!hasError()) {
+		    canvasPanner.style.width = '100%'
+		    mouseDownPoint = vm.diff({ x: e.pageX, y: e.pageY }, offset)
+        }
 	}
 
 	function mouseMove(e){
-		if (mouseDownPoint){
-			offset = vm.diff({ x: e.pageX, y: e.pageY }, mouseDownPoint)
-			sourceChanged()
-		}
+        if (!hasError()) {
+		    if (mouseDownPoint){
+			    offset = vm.diff({ x: e.pageX, y: e.pageY }, mouseDownPoint)
+			    sourceChanged()
+		    }
+        }
 	}
 
 	function mouseUp(){
-		mouseDownPoint = false
-		canvasPanner.style.width = '33%'
+        if (!hasError()) {
+		    mouseDownPoint = false
+		    canvasPanner.style.width = '33%'
+        }
 	}
 
 	function magnify(e){
-		zoomLevel = Math.min(10, zoomLevel - (e.deltaY < 0 ? -1 : 1))
-		sourceChanged()
+        if (!hasError()) {
+		    zoomLevel = Math.min(10, zoomLevel - (e.deltaY < 0 ? -1 : 1))
+		    sourceChanged()
+        }
 	}
 
 	app.magnifyViewport = function (diff){
@@ -109,7 +121,7 @@ var app = app || {}
 	}
 
 	app.saveViewModeToStorage = function (){
-		var question = 
+		var question =
 			'Do you want to overwrite the diagram in ' +
 			'localStorage with the currently viewed diagram?'
 		if (confirm(question)){
