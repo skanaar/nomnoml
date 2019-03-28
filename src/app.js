@@ -20,6 +20,7 @@ var app = app || {}
 	var canvasTools = document.getElementById('canvas-tools')
 	var defaultSource = (document.getElementById('defaultGraph') || {}).innerHTML || ''
 	var zoomLevel = 0
+    var renderedText = null;
 	var offset = {x:0, y:0}
 	var mouseDownPoint = false
 	var vm = skanaar.vector
@@ -240,6 +241,7 @@ var app = app || {}
 			var scale = superSampling * Math.exp(zoomLevel/10)
 
 			var model = nomnoml.draw(canvasElement, currentText(), scale)
+            renderedText = currentText()
 			positionCanvas(canvasElement, superSampling, offset)
 			graphTitle = model.config.title
 			setFilenames(model.config.title)
@@ -250,6 +252,10 @@ var app = app || {}
 			if (matches){
 				var lineHeight = parseFloat(editorElement.style.lineHeight) || 12
 				lineMarker.style.top = 3 + lineHeight*matches[1] + 'px'
+
+                // Rerender canvas with last successfully rendered text.
+                nomnoml.draw(canvasElement, renderedText, scale)
+			    positionCanvas(canvasElement, superSampling, offset)
 			} else {
 				throw e
 			}
