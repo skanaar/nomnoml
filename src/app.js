@@ -160,8 +160,13 @@ var app = app || {}
 	function initPngDownloadLink(link){
 		link.addEventListener('click', doDownload, false);
 		function doDownload(){
-			var url = canvasElement.toDataURL('image/png')
-			link.href = url;
+			if (!!canvasElement.msToBlob) {
+				saveAs(canvasElement.msToBlob(), graphTitle + '.png')
+			}
+			else {
+				canvasElement.toBlob(function (blob) { saveAs(blob, graphTitle + '.png') })
+			}
+			e.preventDefault()
 		}
 	}
 
