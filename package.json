@@ -18,7 +18,7 @@
     "dagre": "0.4.x"
   },
   "devDependencies": {
-    "jshint": "2.9.5",
+    "jshint": "2.10.2",
     "jison": "0.4.13"
   },
   "scripts": {
