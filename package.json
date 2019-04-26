@@ -23,7 +23,7 @@
   },
   "scripts": {
     "build": "node build.js",
-    "prepublish": "node build.js",
+    "prepare": "node build.js",
     "test": "node test/nomnoml.spec.js",
     "test_cli": "node dist/nomnoml-cli.js sample.nomnoml test/output.node-test.svg"
   },
