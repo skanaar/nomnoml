@@ -48,6 +48,11 @@ fs.writeFileSync('dist/nomnoml.js', bundle)
 require('./test/render-svg.js')
 
 try {
+    var library = require('./dist/nomnoml.js')
+    var package = require('./package.json')
+    if (library.version != package.version) {
+        throw new Error('version of distribution bundle and npm package must match')
+    }
     require('./test/nomnoml.spec.js')
 }
 catch(e) {

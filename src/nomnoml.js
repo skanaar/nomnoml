@@ -1,5 +1,7 @@
 var nomnoml = nomnoml || {};
 
+nomnoml.version = '0.3.0'
+
 nomnoml.Classifier = function (type, name, compartments){
 	return {
         type: type,
