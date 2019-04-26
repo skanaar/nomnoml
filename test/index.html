@@ -17,6 +17,21 @@
     .failure::before { content: '✗ ' }
     .ignored::before { content: '- ' }
     .details { margin: 1px 5px 5px 35px; color: #b03911 }
+
+    svg, img { height: 200px; max-width: 400px; }
+    .testcase {
+      display: inline-block;
+      margin: 5px;
+      vertical-align: top;
+      background: #eee8d5;
+      border-radius: 5px;
+      padding: 10px;
+      height: 300px;
+    }
+    .testcase h1 {
+      font-size: 12px;
+      margin: 0 0 5px 0;
+    }
   </style>
 </head>
 
@@ -24,17 +39,30 @@
 
   <div id=testreport></div>
 
-  <h1>Canvas test</h1>
-  <canvas id="canvas1"></canvas>
+  <div class=testcase>
+    <h1>Canvas test</h1>
+    <canvas id="canvas1"></canvas>
+  </div>
 
-  <h1>Label placement test</h1>
-  <canvas id="canvas2"></canvas>
+  <div class=testcase>
+    <h1>Label placement test</h1>
+    <canvas id="canvas2"></canvas>
+  </div>
 
-  <h1>Svg test</h1>
-  <div id="svg-host"></div>
+  <div class=testcase>
+    <h1>Svg test</h1>
+    <div id="svg-host"></div>
+  </div>
 
-  <h1>Distribution bundle test</h1>
-  <iframe src="standalone.usecase.html"></iframe>
+  <div class=testcase>
+    <h1>NodeJS render test</h1>
+    <img src="output.node-test.svg">
+  </div>
+
+  <div class=testcase>
+    <h1>Distribution bundle test</h1>
+    <iframe src="standalone.usecase.html" height=270></iframe>
+  </div>
 
   <script id="label_test_source" type="text/vnd.nomnoml.class">
 #zoom: 0.5
