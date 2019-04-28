@@ -25,7 +25,7 @@
     "prepare": "npm run build && npm run test && npm run test_cli",
     "build": "node build.js",
     "test": "node test/nomnoml.spec.js",
-    "test_cli": "node dist/nomnoml-cli.js sample.nomnoml test/output.node-test.svg"
+    "test_cli": "node dist/nomnoml-cli.js test/import-test.nomnoml test/output.node-test.svg"
   },
   "directories": {
     "test": "test"

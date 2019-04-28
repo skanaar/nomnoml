@@ -1,5 +1,6 @@
 #! /usr/bin/env node
 var fs = require('fs')
+var path = require('path');
 var nomnoml = require('./nomnoml.js')
 
 var args = process.argv
@@ -38,6 +39,6 @@ function preprocessFile(filepath, depth){
     throw Error('max_import_chain_length exceeded')
   var source = fs.readFileSync(filepath, {encoding:'utf8'})
   return source.replace(/#import: *(.*)/g, function (a, file) {
-    return preprocessFile(file, depth+1)
+    return preprocessFile(path.dirname(filepath) + '/' + file, depth+1)
   })
 }
