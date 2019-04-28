@@ -13,6 +13,37 @@ function parse(source){ return nomnoml.intermediateParse(source) }
 var suite = TestSuite('nomnoml')
 var assertEqual = suite.assertEqual
 
+suite.test('skanaar.testsuite.isEqual', function(){
+    test(TestSuite.isEqual([1,2], [1,2]))
+    test(!TestSuite.isEqual([2,1], [1,2]))
+    test(TestSuite.isEqual({b:4, a:'asdf'}, {a:'asdf', b:4}))
+    test(!TestSuite.isEqual({b:4, a:'asdf'}, {a:'asdf'}))
+    test(!TestSuite.isEqual({a:'asdf'}, {a:'asdf', b:4}))
+    
+    function test(condition) {
+        if (!condition) throw new Error('testsuite failure')
+    }
+})
+
+suite.test('skanaar.utils.format', function(){
+    var str = nomnoml.skanaar.format('Hi #, how are you #. That is #', 'Bob', 'today', 'good')
+    assertEqual(str, 'Hi Bob, how are you today. That is good')
+    assertEqual(nomnoml.skanaar.format('# #', 1, 2, 3), '1 2')
+    assertEqual(nomnoml.skanaar.format('# # #', 1, 2), '1 2 ')
+})
+
+suite.test('skanaar.utils.max', function(){
+    assertEqual(nomnoml.skanaar.max([{a:7}, {a:10}, {a:6}], 'a'), 10)
+    assertEqual(nomnoml.skanaar.max([{a:7}, {a:10}, {a:6}], e => e.a), 10)
+    assertEqual(nomnoml.skanaar.max([7, 10, 6]), 10)
+})
+
+suite.test('skanaar.utils.flatten', function(){
+    assertEqual(nomnoml.skanaar.flatten([[4, 5]]), [4, 5])
+    assertEqual(nomnoml.skanaar.flatten([[7], [4, 5]]), [7, 4, 5])
+    assertEqual(nomnoml.skanaar.flatten([[7], [4, 5], [2]]), [7, 4, 5, 2])
+})
+
 suite.test('jison parser should handle single class', function(){
     var ast = parse('[apa]')
     assertEqual(ast, [c('apa')])

@@ -1,7 +1,5 @@
 var nomnoml = nomnoml || {}
 
-_.maxBy = _.maxBy || _.max // polyfill the differences between lodash and underscore
-
 nomnoml.parse = function (source){
 	function onlyCompilables(line){
 		var ok = line[0] !== '#' && line.trim().substring(0,2) !== '//'
@@ -11,9 +9,9 @@ nomnoml.parse = function (source){
 	var lines = source.split('\n').map(function (s, i){
 		return {text: s, index: i }
 	})
-	var pureDirectives = _.filter(lines, isDirective)
+	var pureDirectives = lines.filter(isDirective)
 	var directives = {}
-	_.each(pureDirectives, function (line){
+	pureDirectives.forEach(function (line){
 		try {
 			var tokens =  line.text.substring(1).split(':')
 			directives[tokens[0].trim()] = tokens[1].trim()
@@ -22,7 +20,7 @@ nomnoml.parse = function (source){
 			throw new Error('line ' + (line.index + 1))
 		}
 	})
-	var pureDiagramCode = _.map(_.map(lines, 'text'), onlyCompilables).join('\n').trim()
+	var pureDiagramCode = lines.map(function(e){ return onlyCompilables(e.text)}).join('\n').trim()
 	var ast = nomnoml.transformParseIntoSyntaxTree(nomnoml.intermediateParse(pureDiagramCode))
 	ast.directives = directives
 	ast.config = getConfig(ast.directives)
@@ -40,20 +38,21 @@ nomnoml.parse = function (source){
 			italic: contains(styleDef, 'italic'),
 			dashed: contains(styleDef, 'dashed'),
 			empty: contains(styleDef, 'empty'),
-			center: _.last(styleDef.match('align=([^ ]*)')) == 'left' ? false : true,
-			fill: _.last(styleDef.match('fill=([^ ]*)')),
-			stroke: _.last(styleDef.match('stroke=([^ ]*)')),
-			visual: _.last(styleDef.match('visual=([^ ]*)')) || 'class',
-			direction: directionToDagre(_.last(styleDef.match('direction=([^ ]*)')))
+			center: skanaar.last(styleDef.match('align=([^ ]*)') || []) == 'left' ? false : true,
+			fill: skanaar.last(styleDef.match('fill=([^ ]*)') || []),
+			stroke: skanaar.last(styleDef.match('stroke=([^ ]*)') || []),
+			visual: skanaar.last(styleDef.match('visual=([^ ]*)') || []) || 'class',
+			direction: directionToDagre(skanaar.last(styleDef.match('direction=([^ ]*)') || []))
 		}
 	}
 
 	function getConfig(d) {
 		var userStyles = {}
-		_.each(d, function (styleDef, key){
-			if (key[0] != '.') return
+		for (var key in d) {
+			if (key[0] != '.') continue
+			var styleDef = d[key]
 			userStyles[key.substring(1).toUpperCase()] = parseCustomStyle(styleDef)
-		})
+		}
 		return {
 			arrowSize: +d.arrowSize || 1,
 			bendSize: +d.bendSize || 0.3,
@@ -72,7 +71,7 @@ nomnoml.parse = function (source){
 			stroke: d.stroke || '#33322E',
 			title: d.title || 'nomnoml',
 			zoom: +d.zoom || 1,
-			styles: _.extend({}, nomnoml.styles, userStyles)
+			styles: skanaar.merged(nomnoml.styles, userStyles)
 		};
 	}
 }
@@ -89,40 +88,39 @@ nomnoml.transformParseIntoSyntaxTree = function (entity){
 		var lines = []
 		var rawClassifiers = []
 		var relations = []
-		_.each(parts, function (p){
+		parts.forEach(function (p){
 			if (typeof p === 'string')
 				lines.push(p)
 			if (p.assoc){ // is a relation
 				rawClassifiers.push(p.start)
 				rawClassifiers.push(p.end)
 				relations.push({
-                    id: relationId++,
-                    assoc: p.assoc,
-                    start: p.start.parts[0][0],
-                    end: p.end.parts[0][0],
-                    startLabel: p.startLabel,
-                    endLabel: p.endLabel
-                })
-            }
+						id: relationId++,
+						assoc: p.assoc,
+						start: p.start.parts[0][0],
+						end: p.end.parts[0][0],
+						startLabel: p.startLabel,
+						endLabel: p.endLabel
+					})
+				}
 			if (p.parts){ // is a classifier
 				rawClassifiers.push(p)
-            }
+			}
 		})
-		var allClassifiers = _.map(rawClassifiers, transformItem)
-		var noDuplicates = _.map(_.groupBy(allClassifiers, 'name'), function (cList){
-			return _.maxBy(cList, function (c){ return c.compartments.length })
+		var allClassifiers = rawClassifiers.map(transformItem).sort(function(a, b) {
+			return b.compartments.length - a.compartments.length
 		})
-
+		var noDuplicates = skanaar.uniqueBy(allClassifiers, 'name')
 		return nomnoml.Compartment(lines, noDuplicates, relations)
 	}
 
 	function transformItem(entity){
 		if (typeof entity === 'string')
 			return entity
-		if (_.isArray(entity))
+		if (Array.isArray(entity))
 			return transformCompartment(entity)
 		if (entity.parts){
-			var compartments = _.map(entity.parts, transformCompartment)
+			var compartments = entity.parts.map(transformCompartment)
 			return nomnoml.Classifier(entity.type, entity.id, compartments)
 		}
 		return undefined

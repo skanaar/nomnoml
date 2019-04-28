@@ -2,6 +2,8 @@ var nomnoml = nomnoml || {};
 
 nomnoml.version = '0.4.0'
 
+nomnoml.skanaar = skanaar
+
 nomnoml.Classifier = function (type, name, compartments){
 	return {
         type: type,

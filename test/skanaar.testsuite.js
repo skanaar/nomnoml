@@ -1,6 +1,4 @@
 // jshint quotmark: false
-var _ = require('lodash')
-
 function TestSuite(suiteName) {
     function log(text) { console.log(text) }
     log.red = function (msg) { console.log('\x1b[31m%s\x1b[0m', msg) }
@@ -18,7 +16,7 @@ function TestSuite(suiteName) {
             }
         },
         assertEqual: function (a, b) {
-            if(!_.isEqual(a, b))
+            if(!TestSuite.isEqual(a, b))
                 throw new Error(JSON.stringify(a) + ' != ' + JSON.stringify(b))
         },
         ignore: {
@@ -57,6 +55,36 @@ function TestSuite(suiteName) {
 TestSuite.run = function (suite, test) {
     try { TestSuite.suites[suite].tests[test]() }
     catch(e) {}
+}
+
+TestSuite.isEqual = function (a, b) {
+    switch (typeof(a)) {
+        case 'undefined':
+        case 'boolean':
+        case 'number':
+        case 'string':
+        case 'symbol':
+            return a === b
+        case 'function':
+            return typeof(a) === typeof(b)
+        case 'object':
+            if (a === null || b === null || b === undefined) {
+                return a === b
+            }
+            for(var key in a) {
+                if (a.hasOwnProperty(key)) {
+                    if (!TestSuite.isEqual(a[key], b[key]))
+                        return false
+                }
+            }
+            for(var bKey in b) {
+                if (b.hasOwnProperty(bKey)) {
+                    if (!TestSuite.isEqual(a[bKey], b[bKey]))
+                        return false
+                }
+            }
+            return true
+    }
 }
 
 module.exports = TestSuite

@@ -18,7 +18,7 @@
     .ignored::before { content: '- ' }
     .details { margin: 1px 5px 5px 35px; color: #b03911 }
 
-    svg, img { height: 200px; max-width: 400px; }
+    svg, img { height: 280px; max-width: 400px; }
     .testcase {
       display: inline-block;
       margin: 5px;
@@ -106,8 +106,7 @@
 [more loot] no ->[<end>e]
   </script>
 
-  <script src="../lib/underscore.min.js"></script>
-  <script src="../lib/dagre.min.js"></script>
+  <script src="../lib/dagre.js"></script>
   <script src="../src/skanaar.util.js"></script>
   <script src="../src/skanaar.canvas.js"></script>
   <script src="../src/skanaar.svg.js"></script>
@@ -121,7 +120,6 @@
   <script>
     function require(id) {
       return {
-        'lodash': _,
         './skanaar.testsuite.js': TestSuite,
         '../dist/nomnoml.js': nomnoml
       }[id]

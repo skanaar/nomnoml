@@ -168,7 +168,15 @@ skanaar.Svg = function (globalStyle, canvas){
 			if (font.indexOf('italic') > -1) {
 				attr.style += 'font-style:italic;'
 			}
-			return newElement('text', attr, _.escape(text))
+			function escapeHtml(unsafe) {
+				return unsafe
+					.replace(/&/g, '&amp;')
+					.replace(/</g, '&lt;')
+					.replace(/>/g, '&gt;')
+					.replace(/"/g, '&quot;')
+					.replace(/'/g, '&#039;');
+			}
+			return newElement('text', attr, escapeHtml(text))
 		},
 		lineCap: function (cap){ globalStyle += ';stroke-linecap:'+cap },
 		lineJoin: function (join){ globalStyle += ';stroke-linejoin:'+join },

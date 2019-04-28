@@ -15,7 +15,7 @@ Created by [Daniel Kallin](https://github.com/skanaar) and a cadre of [contribut
 
 ## Library
 
-The [nomnoml](http://www.nomnoml.com) standalone javascript library can be used to render diagrams on your own web page. The only dependencies are [lodash](http://lodash.com) and [dagre](https://github.com/cpettitt/dagre). Install it using either *npm* or good old script inclusion.
+The [nomnoml](http://www.nomnoml.com) standalone javascript library can be used to render diagrams on your own web page. The only dependency is [dagre](https://github.com/dagrejs/dagre). Install it using either *npm* or good old script inclusion.
 
 NodeJS usage with SVG output:
 
@@ -32,7 +32,6 @@ NodeJS usage with SVG output:
 Html usage with a Canvas rendering target:
 
 ```html
-<script src="lodash.js"></script>
 <script src="dagre.js"></script>
 <script src="nomnoml.js"></script>
 

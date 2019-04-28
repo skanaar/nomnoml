@@ -10,7 +10,7 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 		g.save()
 		g.translate(padding, padding)
 		g.fillStyle(style.stroke || config.stroke)
-		_.each(compartment.lines, function (text, i){
+		compartment.lines.forEach(function (text, i){
 			g.textAlign(style.center ? 'center' : 'left')
 			var x = style.center ? compartment.width/2 - padding : 0
 			var y = (0.5+(i+0.5)*config.leading)*config.fontSize
@@ -25,8 +25,8 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 			}
 		})
 		g.translate(config.gutter, config.gutter)
-		_.each(compartment.relations, function (r){ renderRelation(r, compartment) })
-		_.each(compartment.nodes, function (n){ renderNode(n, level) })
+		compartment.relations.forEach(function (r){ renderRelation(r, compartment) })
+		compartment.nodes.forEach(function (n){ renderNode(n, level) })
 		g.restore()
 	}
 
@@ -35,7 +35,7 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 		var y = Math.round(node.y-node.height/2)
 		var style = config.styles[node.type] || nomnoml.styles.CLASS
 
-		g.fillStyle(style.fill || config.fill[level] || _.last(config.fill))
+		g.fillStyle(style.fill || config.fill[level] || skanaar.last(config.fill))
 		g.strokeStyle(style.stroke || config.stroke)
 		if (style.dashed){
 			var dash = Math.max(4, 2*config.lineWidth)
@@ -46,7 +46,7 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 		g.setLineDash([])
 
 		var yDivider = (style.visual === 'actor' ? y + padding*3/4 : y)
-		_.each(node.compartments, function (part, i){
+		node.compartments.forEach(function (part, i){
 			var s = i > 0 ? { stroke: style.stroke } : style; // only style node title
 			if (s.empty) return
 			g.save()
@@ -79,7 +79,7 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 			for (var i = 1; i < p.length-1; i++){
 				g.arcTo(p[i].x, p[i].y, p[i+1].x, p[i+1].y, radius)
 			}
-			g.lineTo(_.last(p).x, _.last(p).y)
+			g.lineTo(skanaar.last(p).x, skanaar.last(p).y)
 			g.stroke()
 		}
 		else
@@ -93,14 +93,14 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 			var fontSize = config.fontSize
 			var lines = text.split('`')
 			var area = {
-				width : _.max(_.map(lines, function(l){ return g.measureText(l).width })),
+				width : skanaar.max(lines.map(function(l){ return g.measureText(l).width })),
 				height : fontSize*lines.length
 			}
 			var origin = {
 				x: pos.x + ((quadrant==1 || quadrant==4) ? padding : -area.width - padding),
 				y: pos.y + ((quadrant==3 || quadrant==4) ? padding : -area.height - padding)
 			}
-			_.each(lines, function(l, i){ g.fillText(l, origin.x, origin.y + fontSize*(i+1)) })
+			lines.forEach(function(l, i){ g.fillText(l, origin.x, origin.y + fontSize*(i+1)) })
 		}
 	}
 
@@ -130,8 +130,8 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 	}
 
 	function renderRelation(r, compartment){
-		var startNode = _.find(compartment.nodes, {name:r.start})
-		var endNode = _.find(compartment.nodes, {name:r.end})
+		var startNode = skanaar.find(compartment.nodes, function(e){ return e.name == r.start })
+		var endNode = skanaar.find(compartment.nodes, function(e){ return e.name == r.end })
 		var start = r.path[1]
 		var end = r.path[r.path.length-2]
 		var path = r.path.slice(1, -1)
@@ -165,13 +165,13 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 		}
 
 		var tokens = r.assoc.split('-')
-		drawArrowEnd(_.last(tokens), path, end)
-		drawArrowEnd(_.first(tokens), path.reverse(), start)
+		drawArrowEnd(skanaar.last(tokens), path, end)
+		drawArrowEnd(tokens[0], path.reverse(), start)
 	}
 
 	function drawArrow(path, isOpen, arrowPoint, diamond){
 		var size = config.spacing * config.arrowSize / 30
-		var v = vm.diff(path[path.length-2], _.last(path))
+		var v = vm.diff(path[path.length-2], skanaar.last(path))
 		var nv = vm.normalize(v)
 		function getArrowBase(s){ return vm.add(arrowPoint, vm.mult(nv, s*size)) }
 		var arrowBase = getArrowBase(diamond ? 7 : 10)

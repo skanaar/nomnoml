@@ -1,8 +1,8 @@
-(function (factoryFn) {
+;(function (factoryFn) {
   if (typeof module === 'object' && module.exports)
-  	module.exports = factoryFn(require('lodash'), require('dagre'));
-  else this.nomnoml = factoryFn(_, dagre);
-})(function (_, dagre) {
+  	module.exports = factoryFn(require('dagre'));
+  else this.nomnoml = factoryFn(dagre);
+})(function (dagre) {
   var skanaar = skanaar || {}
 skanaar.Canvas = function (canvas, callbacks){
 	var ctx = canvas.getContext('2d');
@@ -177,16 +177,48 @@ skanaar.Canvas = function (canvas, callbacks){
 ;
 var skanaar = skanaar || {}
 
-skanaar.sum = function sum(list, plucker){
-    var transform = {
-        'undefined': _.identity,
-        'string': function (obj){ return obj[plucker] },
-        'number': function (obj){ return obj[plucker] },
-        'function': plucker
-    }[typeof plucker]
+skanaar.plucker = function (pluckerDef){
+    return {
+        'undefined': function(e){ return e },
+        'string': function (obj){ return obj[pluckerDef] },
+        'number': function (obj){ return obj[pluckerDef] },
+        'function': pluckerDef
+    }[typeof pluckerDef]
+}
+
+skanaar.max = function (list, plucker){
+    var transform = skanaar.plucker(plucker)
+    var maximum = transform(list[0])
+    for(var i=0; i<list.length; i++) {
+        var item = transform(list[i])
+        maximum = (item > maximum) ? item : maximum 
+    }
+    return maximum
+}
+
+skanaar.sum = function (list, plucker){
+    var transform = skanaar.plucker(plucker)
     for(var i=0, summation=0, len=list.length; i<len; i++)
         summation += transform(list[i])
     return summation
+}
+
+skanaar.flatten = function (lists){
+    var out = []
+    for(var i=0; i<lists.length; i++)
+        out = out.concat(lists[i])
+    return out
+}
+
+skanaar.find = function (list, predicate){
+    for(var i=0; i<list.length; i++)
+        if (predicate(list[i]))
+            return list[i]
+    return undefined
+}
+
+skanaar.last = function (list){
+    return list[list.length-1]
 }
 
 skanaar.hasSubstring = function hasSubstring(haystack, needle){
@@ -197,7 +229,24 @@ skanaar.hasSubstring = function hasSubstring(haystack, needle){
 
 skanaar.format = function format(template /* variadic params */){
     var parts = Array.prototype.slice.call(arguments, 1)
-    return _.flatten(_.zip(template.split('#'), parts)).join('')
+    var matrix = template.split('#')
+    var output = [matrix[0]]
+    for (var i=0; i<matrix.length-1; i++) {
+        output.push(parts[i] || '')
+        output.push(matrix[i+1])
+    }
+    return output.join('')
+}
+
+skanaar.merged = function (a, b) {
+    function assign(target, data) {
+        for(var key in data)
+            target[key] = data[key]
+    }
+    var obj = {}
+    assign(obj, a)
+    assign(obj, b)
+    return obj
 }
 
 skanaar.indexBy = function (list, key) {
@@ -205,7 +254,22 @@ skanaar.indexBy = function (list, key) {
     for(var i=0; i<list.length; i++)
         obj[list[i][key]] = list[i]
     return obj
-};
+}
+
+skanaar.uniqueBy = function (list, pluckerDef) {
+    var seen = {}
+    var getKey = skanaar.plucker(pluckerDef)
+    var out = []
+    for(var i=0; i<list.length; i++) {
+        var key = getKey(list[i])
+        if (!seen[key]){
+            seen[key] = true
+            out.push(list[i])
+        }
+    }
+    return out
+}
+;
 var skanaar = skanaar || {};
 skanaar.vector = {
     dist: function (a,b){ return skanaar.vector.mag(skanaar.vector.diff(a,b)) },
@@ -387,7 +451,15 @@ skanaar.Svg = function (globalStyle, canvas){
 			if (font.indexOf('italic') > -1) {
 				attr.style += 'font-style:italic;'
 			}
-			return newElement('text', attr, _.escape(text))
+			function escapeHtml(unsafe) {
+				return unsafe
+					.replace(/&/g, '&amp;')
+					.replace(/</g, '&lt;')
+					.replace(/>/g, '&gt;')
+					.replace(/"/g, '&quot;')
+					.replace(/'/g, '&#039;');
+			}
+			return newElement('text', attr, escapeHtml(text))
 		},
 		lineCap: function (cap){ globalStyle += ';stroke-linecap:'+cap },
 		lineJoin: function (join){ globalStyle += ';stroke-linejoin:'+join },
@@ -1080,8 +1152,6 @@ return new Parser;
 })();;
 var nomnoml = nomnoml || {}
 
-_.maxBy = _.maxBy || _.max // polyfill the differences between lodash and underscore
-
 nomnoml.parse = function (source){
 	function onlyCompilables(line){
 		var ok = line[0] !== '#' && line.trim().substring(0,2) !== '//'
@@ -1091,9 +1161,9 @@ nomnoml.parse = function (source){
 	var lines = source.split('\n').map(function (s, i){
 		return {text: s, index: i }
 	})
-	var pureDirectives = _.filter(lines, isDirective)
+	var pureDirectives = lines.filter(isDirective)
 	var directives = {}
-	_.each(pureDirectives, function (line){
+	pureDirectives.forEach(function (line){
 		try {
 			var tokens =  line.text.substring(1).split(':')
 			directives[tokens[0].trim()] = tokens[1].trim()
@@ -1102,7 +1172,7 @@ nomnoml.parse = function (source){
 			throw new Error('line ' + (line.index + 1))
 		}
 	})
-	var pureDiagramCode = _.map(_.map(lines, 'text'), onlyCompilables).join('\n').trim()
+	var pureDiagramCode = lines.map(function(e){ return onlyCompilables(e.text)}).join('\n').trim()
 	var ast = nomnoml.transformParseIntoSyntaxTree(nomnoml.intermediateParse(pureDiagramCode))
 	ast.directives = directives
 	ast.config = getConfig(ast.directives)
@@ -1120,20 +1190,21 @@ nomnoml.parse = function (source){
 			italic: contains(styleDef, 'italic'),
 			dashed: contains(styleDef, 'dashed'),
 			empty: contains(styleDef, 'empty'),
-			center: _.last(styleDef.match('align=([^ ]*)')) == 'left' ? false : true,
-			fill: _.last(styleDef.match('fill=([^ ]*)')),
-			stroke: _.last(styleDef.match('stroke=([^ ]*)')),
-			visual: _.last(styleDef.match('visual=([^ ]*)')) || 'class',
-			direction: directionToDagre(_.last(styleDef.match('direction=([^ ]*)')))
+			center: skanaar.last(styleDef.match('align=([^ ]*)') || []) == 'left' ? false : true,
+			fill: skanaar.last(styleDef.match('fill=([^ ]*)') || []),
+			stroke: skanaar.last(styleDef.match('stroke=([^ ]*)') || []),
+			visual: skanaar.last(styleDef.match('visual=([^ ]*)') || []) || 'class',
+			direction: directionToDagre(skanaar.last(styleDef.match('direction=([^ ]*)') || []))
 		}
 	}
 
 	function getConfig(d) {
 		var userStyles = {}
-		_.each(d, function (styleDef, key){
-			if (key[0] != '.') return
+		for (var key in d) {
+			if (key[0] != '.') continue
+			var styleDef = d[key]
 			userStyles[key.substring(1).toUpperCase()] = parseCustomStyle(styleDef)
-		})
+		}
 		return {
 			arrowSize: +d.arrowSize || 1,
 			bendSize: +d.bendSize || 0.3,
@@ -1152,7 +1223,7 @@ nomnoml.parse = function (source){
 			stroke: d.stroke || '#33322E',
 			title: d.title || 'nomnoml',
 			zoom: +d.zoom || 1,
-			styles: _.extend({}, nomnoml.styles, userStyles)
+			styles: skanaar.merged(nomnoml.styles, userStyles)
 		};
 	}
 }
@@ -1169,40 +1240,39 @@ nomnoml.transformParseIntoSyntaxTree = function (entity){
 		var lines = []
 		var rawClassifiers = []
 		var relations = []
-		_.each(parts, function (p){
+		parts.forEach(function (p){
 			if (typeof p === 'string')
 				lines.push(p)
 			if (p.assoc){ // is a relation
 				rawClassifiers.push(p.start)
 				rawClassifiers.push(p.end)
 				relations.push({
-                    id: relationId++,
-                    assoc: p.assoc,
-                    start: p.start.parts[0][0],
-                    end: p.end.parts[0][0],
-                    startLabel: p.startLabel,
-                    endLabel: p.endLabel
-                })
-            }
+						id: relationId++,
+						assoc: p.assoc,
+						start: p.start.parts[0][0],
+						end: p.end.parts[0][0],
+						startLabel: p.startLabel,
+						endLabel: p.endLabel
+					})
+				}
 			if (p.parts){ // is a classifier
 				rawClassifiers.push(p)
-            }
+			}
 		})
-		var allClassifiers = _.map(rawClassifiers, transformItem)
-		var noDuplicates = _.map(_.groupBy(allClassifiers, 'name'), function (cList){
-			return _.maxBy(cList, function (c){ return c.compartments.length })
+		var allClassifiers = rawClassifiers.map(transformItem).sort(function(a, b) {
+			return b.compartments.length - a.compartments.length
 		})
-
+		var noDuplicates = skanaar.uniqueBy(allClassifiers, 'name')
 		return nomnoml.Compartment(lines, noDuplicates, relations)
 	}
 
 	function transformItem(entity){
 		if (typeof entity === 'string')
 			return entity
-		if (_.isArray(entity))
+		if (Array.isArray(entity))
 			return transformCompartment(entity)
 		if (entity.parts){
-			var compartments = _.map(entity.parts, transformCompartment)
+			var compartments = entity.parts.map(transformCompartment)
 			return nomnoml.Classifier(entity.type, entity.id, compartments)
 		}
 		return undefined
@@ -1368,7 +1438,7 @@ nomnoml.layout = function (measurer, config, ast){
 			return { width: 0, height: config.padding }
 		measurer.setFont(config, fontWeight)
 		return {
-			width: Math.round(_.max(_.map(lines, measurer.textWidth)) + 2*config.padding),
+			width: Math.round(skanaar.max(lines.map(measurer.textWidth)) + 2*config.padding),
 			height: Math.round(measurer.textHeight() * lines.length + 2*config.padding)
 		}
 	}
@@ -1381,7 +1451,7 @@ nomnoml.layout = function (measurer, config, ast){
 		if (!c.nodes.length && !c.relations.length)
 			return
 
-		_.each(c.nodes, layoutClassifier)
+		c.nodes.forEach(layoutClassifier)
 
 		var g = new dagre.graphlib.Graph()
 		g.setGraph({
@@ -1395,10 +1465,10 @@ nomnoml.layout = function (measurer, config, ast){
 			//acyclicer: //undefined [greedy] 
 			//ranker: //network-simplex [network-simplex, tight-tree or longest-path]
 		});
-		_.each(c.nodes, function (e){
+		c.nodes.forEach(function (e){
 			g.setNode(e.name, { width: e.layoutWidth, height: e.layoutHeight })
 		})
-		_.each(c.relations, function (r){
+		c.relations.forEach(function (r){
 			g.setEdge(r.start, r.end, { id: r.id })
 		})
 		dagre.layout(g)
@@ -1406,16 +1476,16 @@ nomnoml.layout = function (measurer, config, ast){
 		var rels = skanaar.indexBy(c.relations, 'id')
 		var nodes = skanaar.indexBy(c.nodes, 'name')
 		function toPoint(o){ return {x:o.x, y:o.y} }
-		_.each(g.nodes(), function(name) {
+		g.nodes().forEach(function(name) {
 			var node = g.node(name)
 			nodes[name].x = node.x
 			nodes[name].y = node.y
 		})
-		_.each(g.edges(), function(edgeObj) {
+		g.edges().forEach(function(edgeObj) {
 			var edge = g.edge(edgeObj)
 			var start = nodes[edgeObj.v]
 			var end = nodes[edgeObj.w]
-			rels[edge.id].path = _.map(_.flatten([start, edge.points, end]), toPoint)
+			rels[edge.id].path = skanaar.flatten([start, edge.points, end]).map(toPoint)
 		})
 		var graph = g.graph()
 		var graphHeight = graph.height ? graph.height + 2*config.gutter : 0
@@ -1444,12 +1514,12 @@ nomnoml.layout = function (measurer, config, ast){
 				clas.height = 0
 			}
 			default: return function (clas){
-				_.each(clas.compartments, function(co,i){ layoutCompartment(co, i, style) })
-				clas.width = _.max(_.map(clas.compartments, 'width'))
+				clas.compartments.forEach(function(co,i){ layoutCompartment(co, i, style) })
+				clas.width = skanaar.max(clas.compartments, 'width')
 				clas.height = skanaar.sum(clas.compartments, 'height')
 				clas.x = clas.layoutWidth/2
 				clas.y = clas.layoutHeight/2
-				_.each(clas.compartments, function(co){ co.width = clas.width })
+				clas.compartments.forEach(function(co){ co.width = clas.width })
 			}
 		}
 	}
@@ -1470,7 +1540,7 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 		g.save()
 		g.translate(padding, padding)
 		g.fillStyle(style.stroke || config.stroke)
-		_.each(compartment.lines, function (text, i){
+		compartment.lines.forEach(function (text, i){
 			g.textAlign(style.center ? 'center' : 'left')
 			var x = style.center ? compartment.width/2 - padding : 0
 			var y = (0.5+(i+0.5)*config.leading)*config.fontSize
@@ -1485,8 +1555,8 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 			}
 		})
 		g.translate(config.gutter, config.gutter)
-		_.each(compartment.relations, function (r){ renderRelation(r, compartment) })
-		_.each(compartment.nodes, function (n){ renderNode(n, level) })
+		compartment.relations.forEach(function (r){ renderRelation(r, compartment) })
+		compartment.nodes.forEach(function (n){ renderNode(n, level) })
 		g.restore()
 	}
 
@@ -1495,7 +1565,7 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 		var y = Math.round(node.y-node.height/2)
 		var style = config.styles[node.type] || nomnoml.styles.CLASS
 
-		g.fillStyle(style.fill || config.fill[level] || _.last(config.fill))
+		g.fillStyle(style.fill || config.fill[level] || skanaar.last(config.fill))
 		g.strokeStyle(style.stroke || config.stroke)
 		if (style.dashed){
 			var dash = Math.max(4, 2*config.lineWidth)
@@ -1506,7 +1576,7 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 		g.setLineDash([])
 
 		var yDivider = (style.visual === 'actor' ? y + padding*3/4 : y)
-		_.each(node.compartments, function (part, i){
+		node.compartments.forEach(function (part, i){
 			var s = i > 0 ? { stroke: style.stroke } : style; // only style node title
 			if (s.empty) return
 			g.save()
@@ -1539,7 +1609,7 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 			for (var i = 1; i < p.length-1; i++){
 				g.arcTo(p[i].x, p[i].y, p[i+1].x, p[i+1].y, radius)
 			}
-			g.lineTo(_.last(p).x, _.last(p).y)
+			g.lineTo(skanaar.last(p).x, skanaar.last(p).y)
 			g.stroke()
 		}
 		else
@@ -1553,14 +1623,14 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 			var fontSize = config.fontSize
 			var lines = text.split('`')
 			var area = {
-				width : _.max(_.map(lines, function(l){ return g.measureText(l).width })),
+				width : skanaar.max(lines.map(function(l){ return g.measureText(l).width })),
 				height : fontSize*lines.length
 			}
 			var origin = {
 				x: pos.x + ((quadrant==1 || quadrant==4) ? padding : -area.width - padding),
 				y: pos.y + ((quadrant==3 || quadrant==4) ? padding : -area.height - padding)
 			}
-			_.each(lines, function(l, i){ g.fillText(l, origin.x, origin.y + fontSize*(i+1)) })
+			lines.forEach(function(l, i){ g.fillText(l, origin.x, origin.y + fontSize*(i+1)) })
 		}
 	}
 
@@ -1590,8 +1660,8 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 	}
 
 	function renderRelation(r, compartment){
-		var startNode = _.find(compartment.nodes, {name:r.start})
-		var endNode = _.find(compartment.nodes, {name:r.end})
+		var startNode = skanaar.find(compartment.nodes, function(e){ return e.name == r.start })
+		var endNode = skanaar.find(compartment.nodes, function(e){ return e.name == r.end })
 		var start = r.path[1]
 		var end = r.path[r.path.length-2]
 		var path = r.path.slice(1, -1)
@@ -1625,13 +1695,13 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 		}
 
 		var tokens = r.assoc.split('-')
-		drawArrowEnd(_.last(tokens), path, end)
-		drawArrowEnd(_.first(tokens), path.reverse(), start)
+		drawArrowEnd(skanaar.last(tokens), path, end)
+		drawArrowEnd(tokens[0], path.reverse(), start)
 	}
 
 	function drawArrow(path, isOpen, arrowPoint, diamond){
 		var size = config.spacing * config.arrowSize / 30
-		var v = vm.diff(path[path.length-2], _.last(path))
+		var v = vm.diff(path[path.length-2], skanaar.last(path))
 		var nv = vm.normalize(v)
 		function getArrowBase(s){ return vm.add(arrowPoint, vm.mult(nv, s*size)) }
 		var arrowBase = getArrowBase(diamond ? 7 : 10)
@@ -1669,6 +1739,8 @@ nomnoml.render = function (graphics, config, compartment, setFont){
 var nomnoml = nomnoml || {};
 
 nomnoml.version = '0.4.0'
+
+nomnoml.skanaar = skanaar
 
 nomnoml.Classifier = function (type, name, compartments){
 	return {
