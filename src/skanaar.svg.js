@@ -158,8 +158,6 @@ skanaar.Svg = function (globalStyle, canvas){
 			return newElement('path', {d:''})
 		},
 		fillText: function (text, x, y){
-			if (lastDefined('textAlign') === 'center')
-				x -= this.measureText(text).width/2
 			var attr = { x: tX(x), y: tY(y), style: '' }
 			var font = lastDefined('font')
 			if (font.indexOf('bold') === -1) {
@@ -167,6 +165,9 @@ skanaar.Svg = function (globalStyle, canvas){
 			}
 			if (font.indexOf('italic') > -1) {
 				attr.style += 'font-style:italic;'
+			}
+			if (lastDefined('textAlign') === 'center') {
+				attr.style += 'text-anchor: middle;'
 			}
 			function escapeHtml(unsafe) {
 				return unsafe
