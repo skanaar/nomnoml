@@ -1,6 +1,10 @@
 # Changelog
 
-## [0.3.0] - 2019-04-26
+## [0.5.0] - 2019-05-01
+
+- improved text centering in SVG output
+
+## [0.4.0] - 2019-04-26
 
 ### Library
 

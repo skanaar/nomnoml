@@ -1,6 +1,6 @@
 var nomnoml = nomnoml || {};
 
-nomnoml.version = '0.4.0'
+nomnoml.version = '0.5.0'
 
 nomnoml.skanaar = skanaar
 
