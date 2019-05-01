@@ -17,8 +17,9 @@
     "dagre": "0.8.4"
   },
   "devDependencies": {
+    "jison": "0.4.13",
     "jshint": "2.10.2",
-    "jison": "0.4.13"
+    "uglify-js": "^3.5.9"
   },
   "scripts": {
     "prepare": "npm run build && npm run test && npm run test_cli",

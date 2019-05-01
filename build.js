@@ -1,5 +1,6 @@
 var fs = require('fs');
 var jison = require('jison');
+var uglify = require("uglify-js");
 var jshint = require('jshint').JSHINT;
 
 var nomnomlParser = new jison.Parser(fs.readFileSync('src/nomnoml.jison', { encoding: 'utf8' }));
@@ -43,21 +44,25 @@ function replace(source, token, replacement){
 var wrapper = fs.readFileSync('bundleWrapper.js', { encoding: 'utf8' })
 var bundle = replace(wrapper, '/*{{body}}*/', concat(nomnomlFiles))
 
+var dagreSrc = fs.readFileSync('node_modules/dagre/dist/dagre.min.js')
+fs.writeFileSync('lib/dagre.min.js', uglify.minify(dagreSrc).code);
+
 fs.writeFileSync('dist/nomnoml.js', bundle)
 
-require('./test/render-svg.js')
-
-fs.copyFile('node_modules/dagre/dist/dagre.min.js', 'lib/dagre.min.js', () => {});
-
 try {
-    var library = require('./dist/nomnoml.js')
-    var package = require('./package.json')
-    if (library.version != package.version) {
-        throw new Error('version of distribution bundle and npm package must match')
-    }
+    assertLibraryVersion()
+    require('./test/render-svg.js')
     require('./test/nomnoml.spec.js')
 }
 catch(e) {
     fs.unlinkSync('dist/nomnoml.js', bundle)
     throw e
+}
+
+function assertLibraryVersion() {
+    var library = require('./dist/nomnoml.js')
+    var package = require('./package.json')
+    if (library.version != package.version) {
+        throw new Error('version of distribution bundle and npm package must match')
+    }
 }
