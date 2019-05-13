@@ -18,12 +18,11 @@
   },
   "devDependencies": {
     "jison": "0.4.13",
-    "jshint": "2.10.2",
     "uglify-js": "^3.5.9"
   },
   "scripts": {
     "prepare": "npm run build && npm run test && npm run test_cli",
-    "build": "node build.js",
+    "build": "tsc & node build.js",
     "test": "node test/nomnoml.spec.js",
     "test_cli": "node dist/nomnoml-cli.js test/import-test.nomnoml test/output.node-test.svg"
   },

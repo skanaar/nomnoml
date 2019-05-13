@@ -4,3 +4,5 @@ node_modules/
 output.*
 nomnoml-0.1.0.tgz
 commercial/
+dist/nomnoml.compiled.js
+dist/nomnoml.web.js

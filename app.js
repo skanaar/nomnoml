@@ -23,7 +23,7 @@ var app = app || {}
     var renderedText = null;
 	var offset = {x:0, y:0}
 	var mouseDownPoint = false
-	var vm = skanaar.vector
+	var vm = nomnoml.skanaar.vector
 
 	var editor = CodeMirror.fromTextArea(textarea, {
 		lineNumbers: true,
