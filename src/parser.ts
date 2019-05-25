@@ -152,23 +152,19 @@ namespace nomnoml {
 					return b.compartments.length - a.compartments.length
 				})
 			var uniqClassifiers = skanaar.uniqueBy(allClassifiers, 'name')
-			return new Compartment(lines, uniqClassifiers, relations)
+			var uniqRelations = relations.filter(function (a){
+				for (var b of relations) {
+					if (a === b) return true
+					if (b.start == a.start && b.end == a.end) return false
+				}
+				return true
+			})
+			return new Compartment(lines, uniqClassifiers, uniqRelations)
 		}
 
 		function transformClassifier(entity: AstClassifier): Classifier {
 				var compartments = entity.parts.map(transformCompartment)
 				return new Classifier(entity.type, entity.id, compartments)
-		}
-
-		function transformItem(entity: AstSlot): undefined|string|Compartment|Classifier {
-			if (typeof entity === 'string')
-				return entity
-			if (isAstCompartment(entity))
-				return transformCompartment(entity)
-			if (isAstClassifier(entity)){
-				return transformClassifier(entity)
-			}
-			return undefined
 		}
 
 		return transformCompartment(entity)

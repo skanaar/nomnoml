@@ -327,21 +327,21 @@ var nomnoml;
                 return b.compartments.length - a.compartments.length;
             });
             var uniqClassifiers = nomnoml.skanaar.uniqueBy(allClassifiers, 'name');
-            return new nomnoml.Compartment(lines, uniqClassifiers, relations);
+            var uniqRelations = relations.filter(function (a) {
+                for (var _i = 0, relations_1 = relations; _i < relations_1.length; _i++) {
+                    var b = relations_1[_i];
+                    if (a === b)
+                        return true;
+                    if (b.start == a.start && b.end == a.end)
+                        return false;
+                }
+                return true;
+            });
+            return new nomnoml.Compartment(lines, uniqClassifiers, uniqRelations);
         }
         function transformClassifier(entity) {
             var compartments = entity.parts.map(transformCompartment);
             return new nomnoml.Classifier(entity.type, entity.id, compartments);
-        }
-        function transformItem(entity) {
-            if (typeof entity === 'string')
-                return entity;
-            if (isAstCompartment(entity))
-                return transformCompartment(entity);
-            if (isAstClassifier(entity)) {
-                return transformClassifier(entity);
-            }
-            return undefined;
         }
         return transformCompartment(entity);
     }

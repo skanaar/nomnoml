@@ -282,4 +282,10 @@ suite.test('layouter should handle [apa|[flea]->[dandruff]] relation placement',
     assertEqual(rel.path, [{x:52,y:7}, {x:52,y:14}, {x:52,y:16.5}, {x:52,y:19}, {x:52,y:26}])
 })
 
+suite.test('gracefully handle equivalent relations', function(){
+    var parsedGraph = nomnoml.parse('[a]-[b]\n[a]-[b]')
+    
+    assertEqual(parsedGraph.root.relations.length, 1)
+})
+
 suite.report()
