@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.6.0] - 2019-05-25
+
+- fixed crash when two relations had the same start and end
+
 ## [0.5.0] - 2019-05-01
 
 - improved text centering in SVG output
