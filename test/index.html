@@ -19,18 +19,18 @@
     .details { margin: 1px 5px 5px 35px; color: #b03911 }
 
     svg, img { height: 280px; max-width: 400px; }
+    canvas { max-height: 280px; }
     .testcase {
       display: inline-block;
       margin: 5px;
       vertical-align: top;
       background: #eee8d5;
       border-radius: 5px;
-      padding: 10px;
-      height: 300px;
+      height: 320px;
     }
     .testcase h1 {
       font-size: 12px;
-      margin: 0 0 5px 0;
+      margin: 10px 10px 5px 10px;
     }
   </style>
 </head>
@@ -40,71 +40,168 @@
   <div id=testreport></div>
 
   <div class=testcase>
-    <h1>Canvas test</h1>
-    <canvas id="canvas1"></canvas>
-  </div>
-
-  <div class=testcase>
-    <h1>Label placement test</h1>
-    <canvas id="canvas2"></canvas>
-  </div>
-
-  <div class=testcase>
-    <h1>Svg test</h1>
-    <div id="svg-host"></div>
-  </div>
-
-  <div class=testcase>
-    <h1>NodeJS render test</h1>
-    <img src="output.node-test.svg">
-  </div>
-
-  <div class=testcase>
-    <h1>Distribution bundle test</h1>
-    <iframe src="standalone.usecase.html" height=270></iframe>
-  </div>
-
-  <script id="label_test_source" type="text/vnd.nomnoml.class">
-#zoom: 0.5
-#direction: right
-#padding: 0
-#arrowSize: 0.2
-#spacing: 120
-#edgeMargin: 5
-[Left] left`association <-> right`association [Central 1]
-[Left] left`association <-> right`association [Central 2]
-[Left] left`association <-> right`association [Central 3]
-[Central 1] left`association <-> right`association [Right]
-[Central 2] left`association <-> right`association [Right]
-[Central 3] left`association <-> right`association [Right]
-
-[Central 1] self <-> [Central 1]     
-  </script>
-  <script id="sample_source" type="text/vnd.nomnoml.class">
-#zoom: 0.5
+    <h1>Canvas</h1>
+    <div nomnoml=canvas>
+      <script type="text/vnd.nomnoml">
 #font: Arial
 #.hello: underline
 [Pirate|
-    [beard]--[parrot]
-    [beard]-:>[foul mouth]
+  eyeCount: Int|
+  [beard]--[parrot]
+  [beard]-:>[foul mouth]
 ]
-[<abstract>iii]<:--[Pirate]
-[<abstract>mmm]<:--[Pirate]
-[<abstract>MMM]<:--[Pirate]
-[<abstract>ABC<T>]<:--[Pirate]
-[<abstract>漢字漢字]<:--[Pirate]
+[<abstract>Marauder]<:--[Pirate]
 [Pirate]- 0..7[mischief]
 [Pirate] - [<hello>Arrrrrr]
 [<database>jollyness]->[Pirate]
 [jollyness]->[rum]
-[jollyness]->[Bucchaneer]
 [Pirate]-> *[rum]
-[Bucchaneer|eyeCount: Int|raid();pillage()]<->[rum]
 [<start>st]->[<state>plunder]
 [plunder]->[<choice>more loot]
 [more loot]->[st]
 [more loot] no ->[<end>e]
-  </script>
+      </script>
+    </div>
+  </div>
+
+  <div class=testcase>
+    <h1>Svg</h1>
+    <div nomnoml=svg>
+      <script type="text/vnd.nomnoml">
+#font: Arial
+#.hello: underline
+[Pirate|
+  eyeCount: Int|
+  [beard]--[parrot]
+  [beard]-:>[foul mouth]
+]
+[<abstract>Marauder]<:--[Pirate]
+[Pirate]- 0..7[mischief]
+[Pirate] - [<hello>Arrrrrr]
+[<database>jollyness]->[Pirate]
+[jollyness]->[rum]
+[Pirate]-> *[rum]
+[<start>st]->[<state>plunder]
+[plunder]->[<choice>more loot]
+[more loot]->[st]
+[more loot] no ->[<end>e]
+      </script>
+    </div>
+  </div>
+
+  <div class=testcase>
+    <h1>Built in styles</h1>
+    <div nomnoml=canvas>
+      <script type="text/vnd.nomnoml">
+#direction: right
+[<frame>frame|[<note> note]]
+[<package>package|[<reference> reference]]
+[class|items: Object\[\]] - [<hidden> hidden]
+[hidden] -- [<label> label]
+[hidden] - [instance]
+[<abstract> abstract] <:-- [<instance> instance]
+[<package> package] <- [<frame> frame]
+[<database> database] <:- [<start> start]
+[<end> end] -/- [<state> state]
+[<choice> choice] <-o [<input> input]
+[<sender> sender] <-+ [<receiver> receiver]
+[<actor> actor] <-> [<usecase> usecase]
+      </script>
+    </div>
+  </div>
+
+  <div class=testcase>
+    <h1>Custom styles</h1>
+    <div nomnoml=canvas>
+      <script type="text/vnd.nomnoml">
+#direction: right
+#.box: fill=pink italic bold visual=rhomb
+[<box>box]
+#.blob: fill=limegreen dashed underline visual=ellipse
+[<blob>blob]
+#.quux: fill=pink italic bold visual=rhomb
+[<quux>quux]
+      </script>
+    </div>
+  </div>
+
+  <div class=testcase>
+    <h1>Text heuristic</h1>
+    <div nomnoml=svg>
+      <script type="text/vnd.nomnoml">
+#zoom: 0.5
+#font: Arial
+#direction: right
+[iii]
+[mmm]
+[MMM]
+[ABC<T>]
+[漢字漢字]
+      </script>
+    </div>
+  </div>
+
+  <div class=testcase>
+    <h1>Text measure</h1>
+    <div nomnoml=svg text-measure-canvas>
+      <script type="text/vnd.nomnoml">
+#zoom: 0.5
+#font: Arial
+#direction: right
+[iii]
+[mmm]
+[MMM]
+[ABC<T>]
+[漢字漢字]
+      </script>
+    </div>
+  </div>
+
+  <div class=testcase>
+    <h1>Edge label linebreak</h1>
+    <div nomnoml=canvas>
+      <script type="text/vnd.nomnoml">
+[Left] left`association <-> right`association [Right]
+      </script>
+    </div>
+  </div>
+
+  <div class=testcase>
+    <h1>Self referential</h1>
+    <div nomnoml=canvas>
+      <script type="text/vnd.nomnoml">
+[Banana] <-> self [Banana]
+      </script>
+    </div>
+  </div>
+
+  <div class=testcase>
+    <h1>Label placement</h1>
+    <div nomnoml=canvas>
+      <script type="text/vnd.nomnoml">
+#direction: right
+#spacing: 60
+#edgeMargin: -5
+[Left] left - right [C1]
+[Left] left - right [C2]
+[Left] left - right [C3]
+[C1] left - right [Right]
+[C2] left - right [Right]
+[C3] left - right [Right]
+      </script>
+    </div>
+  </div>
+
+  <div class=testcase>
+    <h1>NodeJS render</h1>
+    <img src="output.node-test.svg">
+  </div>
+
+  <div class=testcase>
+    <h1>Distribution bundle</h1>
+    <iframe src="standalone.usecase.html" height=270></iframe>
+  </div>
+
 
   <script src="../lib/dagre.js"></script>
   <script src="../src/skanaar.util.js"></script>
@@ -128,13 +225,26 @@
   </script>
   <script src="skanaar.testsuite.js"></script>
   <script src="nomnoml.spec.js"></script>
+
   <script>
-      function elem(id){ return document.getElementById(id) }
-      function script(id){ return document.getElementById(id).innerHTML }
-      nomnoml.draw(elem('canvas1'), script('sample_source'))
-      nomnoml.draw(elem('canvas2'), script('label_test_source'))
-      elem('svg-host').innerHTML = nomnoml.renderSvg(script('sample_source'),
-          document.createElement('canvas'))
+    function mountNomnoml() {
+      for (var el of document.querySelectorAll('[nomnoml=canvas]>script[type="text/vnd.nomnoml"]'))
+        mountCanvas(el.parentElement, el.innerText)
+
+      for (var el of document.querySelectorAll('[nomnoml=svg]>script[type="text/vnd.nomnoml"]'))
+        mountSvg(el.parentElement, el.innerText)
+
+      function mountCanvas(host, source){
+        nomnoml.draw(host.appendChild(document.createElement('canvas')), source)
+      }
+
+      function mountSvg(host, source){
+        var canvas = host.attributes['text-measure-canvas']
+        host.innerHTML = nomnoml.renderSvg(source, canvas ? document.createElement('canvas') : null)
+      }
+    }
+
+    mountNomnoml()
   </script>
 
 </body>
