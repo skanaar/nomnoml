@@ -21,10 +21,12 @@
     "uglify-js": "^3.5.9"
   },
   "scripts": {
-    "prepare": "npm run build && npm run test && npm run test_cli",
-    "minify-web": "uglifyjs dist/nomnoml.web.js --output dist/nomnoml.web.js",
-    "build": "tsc & node build.js",
-    "test": "node test/nomnoml.spec.js",
+    "prepare": "npm run compile && npm run pack && npm run test && npm run test_cli && npm run minify",
+    "minify": "uglifyjs dist/nomnoml.web.js --output dist/nomnoml.web.js",
+    "build": "tsc && node build.js",
+    "compile": "tsc",
+    "pack": "node build.js",
+    "test": "node test.js",
     "test_cli": "node dist/nomnoml-cli.js test/import-test.nomnoml test/output.node-test.svg"
   },
   "directories": {
