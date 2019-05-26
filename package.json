@@ -17,6 +17,7 @@
     "dagre": "0.8.4"
   },
   "devDependencies": {
+    "aws-sdk": "^2.463.0",
     "jison": "0.4.13",
     "uglify-js": "^3.5.9"
   },
