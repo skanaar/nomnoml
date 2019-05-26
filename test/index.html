@@ -20,6 +20,7 @@
 
     svg, img { height: 280px; max-width: 400px; }
     canvas { max-height: 280px; }
+    iframe { border: 1px solid #cacaca }
     .testcase {
       display: inline-block;
       margin: 5px;
@@ -37,8 +38,6 @@
 
 <body>
 
-  <div id=testreport></div>
-
   <div class=testcase>
     <h1>Canvas</h1>
     <div nomnoml=canvas>
@@ -47,19 +46,18 @@
 #.hello: underline
 [Pirate|
   eyeCount: Int|
-  [beard]--[parrot]
-  [beard]-:>[foul mouth]
+  [a]--[b]
+  [a]-:>[c]
 ]
 [<abstract>Marauder]<:--[Pirate]
-[Pirate]- 0..7[mischief]
-[Pirate] - [<hello>Arrrrrr]
-[<database>jollyness]->[Pirate]
-[jollyness]->[rum]
+[Pirate] - 0..7[<hello>Arrrrrr]
+[<database>db]->[Pirate]
+[db]->[rum]
 [Pirate]-> *[rum]
 [<start>st]->[<state>plunder]
-[plunder]->[<choice>more loot]
-[more loot]->[st]
-[more loot] no ->[<end>e]
+[plunder]->[<choice>loot]
+[loot]->[st]
+[loot] no ->[<end>e]
       </script>
     </div>
   </div>
@@ -72,19 +70,18 @@
 #.hello: underline
 [Pirate|
   eyeCount: Int|
-  [beard]--[parrot]
-  [beard]-:>[foul mouth]
+  [a]--[b]
+  [a]-:>[c]
 ]
 [<abstract>Marauder]<:--[Pirate]
-[Pirate]- 0..7[mischief]
-[Pirate] - [<hello>Arrrrrr]
-[<database>jollyness]->[Pirate]
-[jollyness]->[rum]
+[Pirate] - 0..7[<hello>Arrrrrr]
+[<database>db]->[Pirate]
+[db]->[rum]
 [Pirate]-> *[rum]
 [<start>st]->[<state>plunder]
-[plunder]->[<choice>more loot]
-[more loot]->[st]
-[more loot] no ->[<end>e]
+[plunder]->[<choice>loot]
+[loot]->[st]
+[loot] no ->[<end>e]
       </script>
     </div>
   </div>
@@ -98,7 +95,7 @@
 [<package>package|[<reference> reference]]
 [class|items: Object\[\]] - [<hidden> hidden]
 [hidden] -- [<label> label]
-[hidden] - [instance]
+[hidden] - [<instance> instance]
 [<abstract> abstract] <:-- [<instance> instance]
 [<package> package] <- [<frame> frame]
 [<database> database] <:- [<start> start]
@@ -201,6 +198,9 @@
     <h1>Distribution bundle</h1>
     <iframe src="standalone.usecase.html" height=270></iframe>
   </div>
+
+
+  <div id=testreport></div>
 
 
   <script src="../dist/nomnoml.web.js"></script>

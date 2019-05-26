@@ -6,7 +6,7 @@
 [<box>box]
 [class|items: Object\[\]] - [<hidden> hidden]
 [hidden] -- [<label> label]
-[hidden] - [instance]
+[hidden] - [<instance> instance]
 [<abstract> abstract] <:-- [<instance> instance]
 [<note> note] -- [<reference> reference]
 [<package> package] <- [<frame> frame]
