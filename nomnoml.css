@@ -124,10 +124,22 @@ a:hover {
 	display: block;
 	position: absolute;
 	top: 60px;
-	right: 0;
-	width: 24px;
+	right: -5px;
+	width: 34px;
 	opacity: 0;
 	transition: opacity 1s;
+}
+.canvas-tools .canvas-button {
+	box-sizing: border-box;
+	width: 34px;
+	height: 34px;
+	background: #fdf6e3;
+	border-radius: 20px;
+	padding: 5px;
+	margin-bottom: 5px;
+}
+.canvas-tools .canvas-button a {
+	display: block;
 }
 .canvas-mode .canvas-tools {
 	opacity: 1;
