@@ -1,6 +1,14 @@
 function TestSuite(suiteName, reportSelector) {
   var isBrowser = typeof document == 'object'
-  var suite = { tests: {}, promises: [], results: [], test, node_test, ignore_test, report }
+  var suite = {
+    tests: {},
+    promises: [],
+    results: [],
+    test,
+    node_test,
+    ignore_test,
+    report,
+  }
   TestSuite.suites = TestSuite.suites || {}
   TestSuite.suites[suiteName] = suite
 
@@ -16,7 +24,9 @@ function TestSuite(suiteName, reportSelector) {
 
   function ignore_test(name, test) {
     suite.tests[name] = test
-    suite.promises.push(Promise.resolve({ name: name, status: 'ignored', error: false }))
+    suite.promises.push(
+      Promise.resolve({ name: name, status: 'ignored', error: false })
+    )
   }
 
   async function report() {
@@ -28,12 +38,18 @@ function TestSuite(suiteName, reportSelector) {
 
   function report_html(results) {
     function esc(str) {
-      return str.toString().split('&').join('&amp;').split('<').join('&lt;').split('>').join('&gt;')
+      return str
+        .toString()
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
     }
     function renderResult(e) {
       var rerun = "TestSuite.run('" + suiteName + "','" + e.name + "')"
       var div = `<div class=${e.status} onclick="${rerun}">${esc(e.name)}</div>`
-      var details = e.error ? '<div class=details>' + esc(e.error) + '</div>' : ''
+      var details = e.error
+        ? '<div class=details>' + esc(e.error) + '</div>'
+        : ''
       return div + details
     }
     var report = `
@@ -41,7 +57,8 @@ function TestSuite(suiteName, reportSelector) {
 			<summary>${esc(suiteName)}</summary>
 			${results.map(renderResult).join('')}
 		</details>`
-    if (reportSelector) document.querySelector(reportSelector).innerHTML = report
+    if (reportSelector)
+      document.querySelector(reportSelector).innerHTML = report
     else {
       var host = document.createElement('div')
       host.innerHTML = report
@@ -55,10 +72,11 @@ function TestSuite(suiteName, reportSelector) {
     }
     var failures = results.filter((e) => e.status == 'failure')
     for (var failure of failures) {
-      console.log('\x1b[31m%s\x1b[0m', failure.name)
-      console.log('   ' + failure.error)
+      console.log('\x1b[31m%s\x1b[0m', suiteName + ': ' + failure.name)
+      if (!process.env.SUCCINCT) console.log('   ' + failure.error)
+      if (process.env.VERBOSE) throw failure.error
     }
-    if (failures.length) throw new Error(failures.length + ' test failures')
+    if (failures.length) process.exitCode = 1
   }
 
   return suite
@@ -82,6 +100,43 @@ TestSuite.evaluateTestAsync = function (name, test) {
 TestSuite.run = function (suite, testname) {
   var test = TestSuite.suites[suite].tests[testname]
   TestSuite.evaluateTestAsync(testname, test).then((res) => console.log(res))
+}
+
+function highlightDiff(a, b) {
+  let start = 0
+  let end = 0
+  for (let i = 0; i < Math.min(a.length, b.length); i++)
+    if (a[i] === b[i]) start++
+    else break
+  for (let i = 1; i < Math.min(a.length, b.length); i++)
+    if (a[a.length - i] === b[b.length - i]) end++
+    else break
+
+  if (typeof process === 'undefined')
+    return {
+      a: `...${a.substring(start, a.length - end)}...`,
+      b: `...${b.substring(start, b.length - end)}...`,
+    }
+
+  return {
+    a: `${a.substring(0, start)}\x1b[41m${a.substring(
+      start,
+      a.length - end
+    )}\x1b[0m${a.substring(a.length - end)}`,
+    b: `${b.substring(0, start)}\x1b[41m${b.substring(
+      start,
+      b.length - end
+    )}\x1b[0m${b.substring(b.length - end)}`,
+  }
+}
+
+function sortProperties(obj) {
+  if (Array.isArray(obj)) return obj.map(sortProperties)
+  if (typeof obj !== 'object' || !obj) return obj
+  var result = {}
+  for (let key of Object.keys(obj).sort())
+    result[key] = sortProperties(obj[key])
+  return result
 }
 
 TestSuite.isEqual = function (a, b) {
@@ -108,8 +163,14 @@ TestSuite.isEqual = function (a, b) {
 }
 
 TestSuite.assert = function (a, operator, b) {
+  function json(obj) {
+    return JSON.stringify(sortProperties(obj))
+  }
   function fatal(sym) {
-    throw new Error(JSON.stringify(a) + ' ' + sym + ' ' + JSON.stringify(b))
+    var ajson = json(a)
+    var bjson = json(b)
+    var diff = highlightDiff(ajson, bjson)
+    throw new Error('\n' + diff.a + '\n' + sym + '\n' + diff.b)
   }
   switch (operator) {
     case '=':
