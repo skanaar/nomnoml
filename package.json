@@ -17,18 +17,19 @@
     "dagre": "0.8.4"
   },
   "devDependencies": {
-    "aws-sdk": "^2.463.0",
+    "aws-sdk": "^2.476.0",
     "jison": "0.4.13",
-    "uglify-js": "^3.5.9"
+    "uglify-js": "^3.6.0"
   },
   "scripts": {
-    "prepare": "npm run compile && npm run pack && npm run test && npm run test_cli && npm run minify",
-    "minify": "uglifyjs dist/nomnoml.web.js --output dist/nomnoml.web.js",
-    "build": "tsc && node build.js",
-    "compile": "tsc",
-    "pack": "node build.js",
-    "test": "node test.js",
-    "test_cli": "node dist/nomnoml-cli.js test/import-test.nomnoml test/output.node-test.svg"
+    "prepare": "npm run compile && npm run bundle && npm run test && npm run test_cli && npm run minify && npm run webapp",
+    "minify": "uglifyjs dist/nomnoml.web.js -o dist/nomnoml.web.js",
+    "build": "cd src && tsc && npm run bundle",
+    "compile": "cd src && tsc",
+    "bundle": "node build/build.js",
+    "test": "node test/test.js",
+    "test_cli": "node dist/nomnoml-cli.js test/import-test.nomnoml test/output.node-test.svg",
+    "webapp": "node build/build-icons.js && ( cd webapp && tsc ) && uglifyjs dist/webapp.js -o dist/webapp.js"
   },
   "directories": {
     "test": "test"

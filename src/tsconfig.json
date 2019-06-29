@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "module": "None",
+    "noImplicitAny": true,
+    "removeComments": true,
+    "preserveConstEnums": true,
+    "outFile": "../dist/nomnoml.compiled.js"
+  }
+}

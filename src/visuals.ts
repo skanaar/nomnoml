@@ -1,5 +1,3 @@
-/* jshint maxlen:130 */
-
 namespace nomnoml {
   export var styles: { [key: string]: Style } = {
     ABSTRACT:    buildStyle({ visual:'class', center:true, italic:true }),

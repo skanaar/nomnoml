@@ -12,7 +12,7 @@ var dagreSrc = read('lib/dagre.min.js')
 var grammar = new jison.Parser(read('src/nomnoml.jison'));
 var parser = grammar.generate({moduleName: 'nomnomlCoreParser',moduleType:'js'})
 var source = read('dist/nomnoml.compiled.js') + ';\n' + parser
-var wrapper = read('bundleWrapper.js')
+var wrapper = read('build/umd-bundle.js.template')
 var bundle = replace(wrapper, '/*{{body}}*/', source)
 fs.writeFileSync('dist/nomnoml.js', bundle)
 fs.writeFileSync('dist/nomnoml.web.js', dagreSrc + ';' + bundle)

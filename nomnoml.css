@@ -18,7 +18,7 @@ h1 {
 	margin: 0;
 }
 img, svg {
-    vertical-align: middle;
+    vertical-align: bottom;
     border: 0;
 }
 
@@ -161,14 +161,15 @@ a:hover {
 	font-size: 90%;
 	color: #807C72;
 	position: fixed;
-	top: 7px;
+	top: 3px;
 	right: 20px;
 	text-align: right;
 	background: #fdf6e3;
 	border-radius: 2px;
 	padding: 0 5px;
 }
-.tools > #storage-status {
+
+.storage-status {
 	display: none;
 	color: #000;
 	opacity: 0.5;
@@ -179,10 +180,10 @@ a:hover {
 	width: 100%;
 	text-align: center;
 }
-.tools > #storage-status.visible {
+.storage-status.visible {
 	display: block;
 }
-.tools > #storage-status a {
+.storage-status a {
 	border: 2px solid #333;
 	padding: 0 5px;
 	border-radius: 4px;
@@ -233,7 +234,9 @@ a:hover {
 	display: block;
 	font-family: Calibri, Helvetica, sans-serif;
 	color: #93a1a1;
-	margin-top: 1em;
+	margin: 1em -10px 10px -20px;
+  border-bottom: 1px solid #0004;
+  padding: 15px 0 7px 20px;
 }
 .content b {
 	display: inline-block;
@@ -242,3 +245,26 @@ a:hover {
 	font-family: Calibri, Helvetica, sans-serif;
 	color: #93a1a1;
 }
+
+
+
+.file-menu .btn {
+  display: block;
+  padding: 1px;
+  margin-right: 30px;
+  border-radius: 6px;
+  font-family: Calibri, Helvetica, sans-serif;
+}
+.file-menu .btn:hover { background: rgba(0,0,0,0.07); }
+.file-entry {
+  display: flex;
+  align-items: center;
+  margin: 0 -10px 0 -20px;
+  padding: 0 30px 0 0;
+  border-bottom: 1px solid #0002;
+  font-family: Calibri, Helvetica, sans-serif;
+}
+.file-entry a { display: block; padding: 2px 2px 2px 20px; }
+.file-entry:hover { background: rgba(0,0,0,0.07); }
+.file-entry a:first-child { flex-grow: 1; }
+.file-entry img { width: 24px; height: 24px; vertical-align: baseline; }

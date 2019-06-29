@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "module": "None",
+    "target": "es5",
+    "noImplicitAny": true,
+    "removeComments": true,
+    "preserveConstEnums": true,
+    "outFile": "../dist/webapp.js"
+  },
+  "include": [
+    "*",
+    "../src/skanaar.vector.ts",
+    "../src/skanaar.util.ts"
+  ]
+}

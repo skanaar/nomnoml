@@ -235,30 +235,54 @@
 
 		<div id="export" class="sidebar">
 			<div class="content">
-				<a id="linkbutton" href="javascript:void(0)" target="_blank" title="Shareable link to this diagram">
-					<svg width="24" height="24" viewBox="0 0 24 24">
-						<path d="M17.5 6c.3 0 .6.1.8.3.4.5.4 1.1 0 1.6l-1.7 1.7.3.3c.5.6.9 1.4.9 2.2s-.4 1.6-1 2.2l-4.1 4.2c-.6.5-1.4.9-2.2.9s-1.6-.4-2.2-1l-.3-.2-1.7 1.7a1 1 0 0 1-1.6 0c-.4-.5-.4-1.1 0-1.6l1.7-1.7-.3-.3c-.5-.6-.9-1.4-.9-2.2s.4-1.6 1-2.2l4.1-4.2c.6-.5 1.4-.8 2.2-.8s1.6.3 2.2.8l.3.3 1.7-1.7c.2-.2.5-.3.8-.3m0-2a3 3 0 0 0-2.2 1l-.5.4a5.2 5.2 0 0 0-5.9 1l-4.2 4a5 5 0 0 0-1 6l-.4.5a3 3 0 0 0 0 4.4 3 3 0 0 0 4.4 0l.5-.5a5 5 0 0 0 5.9-1l4.2-4a5 5 0 0 0 1-6l.4-.5a3 3 0 0 0 0-4.4 3 3 0 0 0-2.2-.9zm-6.1 7.2a2 2 0 0 0 2 2L11.6 15a2 2 0 0 0-2-2l1.8-1.8M12.5 9c-.2 0-.5.1-.6.3l-4.2 4.2c-.2.1-.3.4-.3.6 0 .2.1.5.3.6l.3.3.7-.7a1 1 0 0 1 1.6 0c.4.5.4 1.1 0 1.6l-.7.7.3.3c.1.2.4.3.6.3l.6-.3 4.2-4.2c.2-.1.3-.4.3-.6 0-.2-.1-.5-.3-.6l-.3-.3-.7.7a1 1 0 0 1-1.6 0c-.4-.5-.4-1.1 0-1.6l.7-.7-.3-.3a.9.9 0 0 0-.6-.3z"/>
-					</svg> Open shareable link
-				</a><br/>
 
-				<a id="save-png-button" href="javascript:void(0)" download="nomnoml.png" title="Download snapshot of this diagram">
-					<svg width="24" height="24" viewBox="0 0 24 24">
-						<path d="M19 20H5a3 3 0 0 1-3-3V9a3 3 0 0 1 3-3h1.6l1-1c.6-.6 1.6-1 2.4-1h4c.8 0 1.8.4 2.4 1l1 1H19a3 3 0 0 1 3 3v8a3 3 0 0 1-3 3zM5 8a1 1 0 0 0-1 1v8c0 .6.4 1 1 1h14c.6 0 1-.4 1-1V9c0-.6-.4-1-1-1h-2a1 1 0 0 1-.7-.3L15 6.4c-.2-.2-.7-.4-1-.4h-4c-.3 0-.8.2-1 .4L7.7 7.7A1 1 0 0 1 7 8H5zm7 2a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5m0-1a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7zm6-.3a1.3 1.3 0 1 0 0 2.6 1.3 1.3 0 0 0 0-2.6z"/>
-					</svg> Download PNG
-				</a><br/>
+				<div class="file-menu">
 
-				<a id="save-svg-button" href="javascript:void(0)" download="nomnoml.svg" title="Download vectorized diagram">
-					<svg width="24" height="24" viewBox="0 0 24 24">
-						<circle cx="8.5" cy="8.5" r="2.5"/>
-						<path d="M16 10c-2 0-3 3-4.5 3S10 12 8 12s-3 4-3 4h14s-1-6-3-6zm4-7H4a2 2 0 0 0-2 2v12c0 1.1.9 2 2 2h16a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2zm0 14H4V5h16v12z"/>
-					</svg> Download SVG
-				</a><br/>
+				  <a class="btn" v-bind:href="shareLink" target="_blank">
+				   <icon id=link-outline></icon> Open shareable link
+				  </a>
 
-				<a id="save-source-button" href="javascript:void(0)" download="diagram.nomnoml" title="Download source">
-					<svg version="1.2" baseProfile="tiny" width="24" height="24" viewBox="0 0 24 24">
-						<path d="M19.7 7.3l-4-4A1 1 0 0 0 15 3H7a3 3 0 0 0-3 3v12a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V8a1 1 0 0 0-.3-.7zm-2.1.7h-1.1c-.8 0-1.5-.7-1.5-1.5v-1L17.6 8zM17 19H7a1 1 0 0 1-1-1V6c0-.6.4-1 1-1h7v1.5C14 7.9 15.1 9 16.5 9H18v9c0 .6-.4 1-1 1z"/>
-					</svg> Download source
-				</a>
+				  <a class="btn" href="/" v-on:click.prevent="downloadPng">
+				    <icon id=camera-outline></icon> Download PNG
+				  </a>
+
+				  <a class="btn" href="/" v-on:click.prevent="downloadSvg">
+				    <icon id=image-outline></icon> Download SVG
+				  </a>
+
+				  <a class="btn" href="/" v-on:click.prevent="downloadSrc">
+				    <icon id=download></icon>  Download source
+				  </a>
+
+				  <a class="btn" href="/" v-on:click.prevent="test">
+				    <icon id=input-checked></icon>  Run tests
+				  </a>
+
+				  <hr/>
+
+				  <h2>Current diagram</h2>
+				  <a href="#" class=btn v-if="isLocalFile()">
+				    <icon id=home-outline></icon> Home
+				  </a>
+				  <a href="/" class=btn v-on:click.prevent="discardCurrent">
+				    <icon id=trash></icon> Discard current
+				  </a>
+				  <a class="btn" href="/" v-on:click.prevent="saveAs">
+				    <icon id=document-add></icon>  Save to local file...
+				  </a>
+
+				  <hr/>
+
+				  <h2>Local files</h2>
+				  <div v-for="item in items()" class=file-entry>
+				    <a v-bind:href="itemPath(item)">{{item.name}}</a>
+				    <a v-on:click="discard(item)" title="Discard this diagram">
+				      <img src="img/trash.png">
+				    </a>
+				  </div>
+
+				</div>
+
 			</div>
 		</div>
 
@@ -272,22 +296,34 @@
 				</svg>
 			</a>
 			<a href="javascript:void(0)" onclick="app.toggleSidebar('reference')" title="Language reference">
-				<img src="img/book.png">
+				<svg version="1.2" width="24" height="24" viewBox="0 0 24 24">
+					<path d="M17 21H7a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3h10a3 3 0 0 1 3 3v12a3 3 0 0 1-3 3zM7 5a1 1 0 0 0-1 1v12c0 .6.4 1 1 1h10c.6 0 1-.4 1-1V6c0-.6-.4-1-1-1H7zm9 6H8a.5.5 0 0 1 0-1h8a.5.5 0 0 1 0 1zm0-3H8a.5.5 0 0 1 0-1h8a.5.5 0 0 1 0 1zm0 6H8a.5.5 0 0 1 0-1h8a.5.5 0 0 1 0 1zm0 3H8a.5.5 0 0 1 0-1h8a.5.5 0 0 1 0 1z"/>
+				</svg>
 			</a>
-			<a href="javascript:void(0)" onclick="app.toggleSidebar('export')" title="Export this diagram">
-				<svg version="1.2" baseProfile="tiny" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M12 21.312l-7.121-7.121c-1.17-1.17-1.17-3.073 0-4.242 1.094-1.094 2.978-1.138 4.121-.115v-4.834c0-1.654 1.346-3 3-3s3 1.346 3 3v4.834c1.143-1.023 3.027-.979 4.121.115 1.17 1.169 1.17 3.072 0 4.242l-7.121 7.121zm-5-10.242c-.268 0-.518.104-.707.293-.391.39-.391 1.023 0 1.414l5.707 5.707 5.707-5.707c.391-.391.391-1.024 0-1.414-.379-.379-1.035-.379-1.414 0l-3.293 3.293v-9.656c0-.551-.448-1-1-1s-1 .449-1 1v9.656l-3.293-3.293c-.189-.189-.439-.293-.707-.293z"/></svg>
+			<a href="javascript:void(0)" onclick="app.toggleSidebar('export')" title="Save this or load another diagram">
+				<svg version="1.2" width="24" height="24" viewBox="0 0 24 24">
+					<path d="M22.3 8h-2.4c-.4-1.2-1.5-2-2.8-2h-6c0-1.1-.9-2-2-2h-4.1c-1.7 0-3 1.3-3 3v10c0 1.7 1.3 3 3 3h12c1.7 0 3.4-1.3 3.8-3l2.2-8c.1-.6-.2-1-.7-1zm-18.3 1v-2c0-.6.4-1 1-1h4c0 1.1.9 2 2 2h6c.6 0 1 .4 1 1h-11.1c-.6 0-1.1.4-1.3 1l-1.6 6.3v-7.3zm14.9 7.5c-.2.8-1.1 1.5-1.9 1.5h-12s-.4-.2-.2-.8l1.9-7c0-.1.2-.2.3-.2h13.7l-1.8 6.5z"/>
+				</svg>
 			</a>
 			<a href="javascript:app.discardCurrentGraph()" title="Discard this diagram">
 				<img src="img/trash.png">
 			</a>
-			<span id="tooltip"></span>
-			<span id="storage-status">
-				View mode, changes are not saved.
-				<a href="javascript:app.saveViewModeToStorage()"
-				   title="Save this diagram to localStorage">save</a>
-				<a href="javascript:app.exitViewMode()"
-				   title="Discard this diagram">close</a>
-			</span>
+
+			<tooltip-display id="tooltip"></tooltip-display>
+			
+			<div class="storage-tools">
+				<span class="storage-status" v-bind:class="{ visible: isUrlStorage() }">
+					View mode, changes are not saved.
+					<a v-on:click.prevent="saveViewModeToStorage" href="/"
+					   title="Save this diagram to localStorage">save</a>
+					<a href="#" title="Discard this diagram">close</a>
+				</span>
+				
+				<span class="storage-status" v-bind:class="{ visible: isLocalFileStorage() }">
+					Editing local file
+					<a href="#" title="Exit from this file">close</a>
+				</span>
+			</div>
 
 			<div class="canvas-tools" id="canvas-tools">
 				<div class="canvas-button">
@@ -437,8 +473,16 @@
 	<script src="codemirror/codemirror-compressed.js"></script>
 	<script src="codemirror/nomnoml.codemirror-mode.js"></script>
 	<script src="dist/nomnoml.web.js"></script>
-	<script src="app.js"></script>
-
+	
+	<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+	<script src="dist/webapp.js"></script>
+	
+	<script>
+		var app = new App(nomnoml, CodeMirror, saveAs, _.throttle, _.debounce)
+		FileMenu('.file-menu', app)
+		StorageTools('.storage-tools', app)
+	</script>
+	
 	<script>
 		(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
 		(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
