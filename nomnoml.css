@@ -169,26 +169,50 @@ a:hover {
 	padding: 0 5px;
 }
 
-.storage-status {
-	display: none;
-	color: #000;
-	opacity: 0.5;
-	font-style: italic;
+.storage-tools {
 	position: fixed;
 	top: 7px;
 	right: 0;
-	width: 100%;
+	left: 0;
 	text-align: center;
 }
+
+.storage-status {
+	display: none;
+	background: #fdf6e3;
+	color: #0008;
+	font-style: italic;
+	border-radius: 8px;
+	padding: 10px 15px;
+}
 .storage-status.visible {
-	display: block;
+	display: inline-block;
 }
 .storage-status a {
-	border: 2px solid #333;
+	border: 2px solid #0008;
+	color: #0008;
 	padding: 0 5px;
+	margin: 0 0 0 10px;
 	border-radius: 4px;
 	font-style: normal;
 	opacity: 1;
+}
+.storage-status a:hover {
+	background: #3332;
+}
+
+.hint {
+	position: absolute;
+	top: 65px;
+	right: 60px;
+	width: 220px;
+	transform: rotate(-10deg);
+	color: #0008;
+	font-family: "Marker Felt", "Segoe Script", Calibri, Helvetica, sans-serif;
+}
+.hint svg {
+	display: block;
+	margin: 0 0 0 auto;
 }
 
 .sidebar {
