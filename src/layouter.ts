@@ -32,7 +32,7 @@ namespace nomnoml {
 				//marginx: //0 
 				//marginy: //0 
 				acyclicer: config.acyclicer,
-				ranker: config.ranker //network-simplex [network-simplex, tight-tree or longest-path]
+				ranker: config.ranker
 			});
 			c.nodes.forEach(function (e){
 				g.setNode(e.name, { width: e.layoutWidth, height: e.layoutHeight })
