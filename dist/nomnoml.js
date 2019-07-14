@@ -70,7 +70,9 @@ var nomnoml;
                 rankdir: style.direction || config.direction,
                 nodesep: config.spacing,
                 edgesep: config.spacing,
-                ranksep: config.spacing
+                ranksep: config.spacing,
+                acyclicer: config.acyclicer,
+                ranker: config.ranker
             });
             c.nodes.forEach(function (e) {
                 g.setNode(e.name, { width: e.layoutWidth, height: e.layoutHeight });
@@ -278,6 +280,8 @@ var nomnoml;
                 stroke: d.stroke || '#33322E',
                 title: d.title || 'nomnoml',
                 zoom: +d.zoom || 1,
+                acyclicer: d.acyclicer,
+                ranker: d.ranker || 'network-simplex',
                 styles: nomnoml.skanaar.merged(nomnoml.styles, userStyles)
             };
         }
