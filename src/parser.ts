@@ -98,6 +98,8 @@ namespace nomnoml {
 				stroke: d.stroke || '#33322E',
 				title: d.title || 'nomnoml',
 				zoom: +d.zoom || 1,
+				acyclicer: d.acyclicer,
+				ranker: d.ranker || 'network-simplex',
 				styles: skanaar.merged(nomnoml.styles, userStyles)
 			};
 		}

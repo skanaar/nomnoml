@@ -31,8 +31,8 @@ namespace nomnoml {
 				ranksep: config.spacing, //50 
 				//marginx: //0 
 				//marginy: //0 
-				//acyclicer: //undefined [greedy] 
-				//ranker: //network-simplex [network-simplex, tight-tree or longest-path]
+				acyclicer: config.acyclicer,
+				ranker: config.ranker //network-simplex [network-simplex, tight-tree or longest-path]
 			});
 			c.nodes.forEach(function (e){
 				g.setNode(e.name, { width: e.layoutWidth, height: e.layoutHeight })
