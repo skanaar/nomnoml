@@ -92,7 +92,7 @@ class App {
   }
 
   toggleSidebar(id: string){
-    var sidebars = ['about', 'reference', 'export']
+    var sidebars = ['about', 'reference', 'export', 'files']
     for(var key of sidebars){
       if (id !== key)
         document.getElementById(key).classList.remove('visible')

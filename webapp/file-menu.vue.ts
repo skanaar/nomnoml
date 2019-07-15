@@ -3,8 +3,7 @@ function FileMenu(selector: string, app: App): Vue {
     el: selector,
 
     data: {
-      source: '',
-      shareLink: ''
+      source: ''
     },
 
     mounted() {
@@ -41,22 +40,6 @@ function FileMenu(selector: string, app: App): Vue {
           app.filesystem.discard(item)
       },
 
-      test() {
-        test_ensureType()
-      },
-
-      downloadPng() {
-        app.downloader.pngDownload()
-      },
-
-      downloadSvg() {
-        app.downloader.svgDownload()
-      },
-
-      downloadSrc() {
-        app.downloader.srcDownload()
-      },
-
       saveAs() {
         var name = prompt('Name your diagram')
         if (name) {
@@ -70,16 +53,7 @@ function FileMenu(selector: string, app: App): Vue {
       },
 
       onSourceChange(src: string) {
-        // Adapted from http://meyerweb.com/eric/tools/dencoder/
-        function urlEncode(unencoded: string) {
-          return encodeURIComponent(unencoded).replace(/'/g,'%27').replace(/"/g,'%22')
-        }
-
-        function urlDecode(encoded: string) {
-          return decodeURIComponent(encoded.replace(/\+/g, ' '))
-        }
         this.source = src
-        this.shareLink = '#view/' + urlEncode(src)
       }
     }
 
