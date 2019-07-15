@@ -17,6 +17,8 @@ interface Config {
   arrowSize: number
   bendSize: number
   zoom: number
+  acyclicer?: string
+  ranker: string // 'network-simplex' | 'tight-tree' | 'longest-path'
 }
 
 interface Measurer {
