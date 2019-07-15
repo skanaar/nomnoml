@@ -43,7 +43,10 @@ class App {
 
     this.defaultSource = (document.getElementById('defaultGraph') || { innerHTML: '' }).innerHTML
 
+    var lastValidSource: string = null
+
     var reloadStorage = () => {
+      lastValidSource = null
       this.filesystem.configureByRoute(location.hash)
       this.editor.setValue(this.filesystem.storage.read() || this.defaultSource)
       this.sourceChanged()
@@ -53,14 +56,12 @@ class App {
     window.addEventListener('resize', throttle(() => this.sourceChanged(), 750, {leading: true}))
     this.editor.on('changes', debounce(() => this.sourceChanged(), 300))
 
-    var renderedText: string = null;
-
     this.sourceChanged = () => {
       try {
         devenv.clearState()
         var source = this.editor.getValue()
         var model = nomnoml.draw(canvasElement, source, this.panner.zoom())
-        renderedText = source
+        lastValidSource = source
         this.panner.positionCanvas(canvasElement)
         this.filesystem.storage.save(source)
         this.downloader.setFilename(model.config.title)
@@ -68,7 +69,9 @@ class App {
       } catch (e){
         devenv.setError(e)
         // Rerender canvas with last successfully rendered text.
-        nomnoml.draw(canvasElement, renderedText, this.panner.zoom())
+        if (lastValidSource) {
+          nomnoml.draw(canvasElement, lastValidSource, this.panner.zoom())
+        }
         this.panner.positionCanvas(canvasElement)
       }
     }
