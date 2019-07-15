@@ -85,9 +85,11 @@ export interface GraphLabel {
     ranksep?: number;
     marginx?: number;
     marginy?: number;
-    acyclicer?: string;
-    ranker?: string;
+    acyclicer?: 'greedy';
+    ranker?: Ranker;
 }
+
+export type Ranker = 'network-simplex' | 'tight-tree' | 'longest-path'
 
 export interface NodeConfig {
     width?: number;

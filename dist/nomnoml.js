@@ -238,6 +238,12 @@ var nomnoml;
             else
                 return 'TB';
         }
+        function parseRanker(word) {
+            if (word == 'network-simplex' || word == 'tight-tree' || word == 'longest-path') {
+                return word;
+            }
+            return 'network-simplex';
+        }
         function parseCustomStyle(styleDef) {
             var contains = nomnoml.skanaar.hasSubstring;
             return {
@@ -280,8 +286,8 @@ var nomnoml;
                 stroke: d.stroke || '#33322E',
                 title: d.title || 'nomnoml',
                 zoom: +d.zoom || 1,
-                acyclicer: d.acyclicer,
-                ranker: d.ranker || 'network-simplex',
+                acyclicer: d.acyclicer === 'greedy' ? 'greedy' : undefined,
+                ranker: parseRanker(d.ranker),
                 styles: nomnoml.skanaar.merged(nomnoml.styles, userStyles)
             };
         }

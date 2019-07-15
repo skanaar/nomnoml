@@ -56,6 +56,13 @@ namespace nomnoml {
 			else return 'TB'
 		}
 
+		function parseRanker(word: string | undefined): dagre.Ranker {
+			if (word == 'network-simplex' || word == 'tight-tree' || word == 'longest-path') {
+				return word
+			}
+			return 'network-simplex'
+		}
+
 		function parseCustomStyle(styleDef: string): Style {
 			var contains = skanaar.hasSubstring
 			return {
@@ -98,8 +105,8 @@ namespace nomnoml {
 				stroke: d.stroke || '#33322E',
 				title: d.title || 'nomnoml',
 				zoom: +d.zoom || 1,
-				acyclicer: d.acyclicer, // 'greedy' | undefined
-				ranker: d.ranker || 'network-simplex', // 'network-simplex' | 'tight-tree' | 'longest-path'
+				acyclicer: d.acyclicer === 'greedy' ? 'greedy' : undefined,
+				ranker: parseRanker(d.ranker),
 				styles: skanaar.merged(nomnoml.styles, userStyles)
 			};
 		}

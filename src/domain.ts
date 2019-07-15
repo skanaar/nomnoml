@@ -17,8 +17,8 @@ interface Config {
   arrowSize: number
   bendSize: number
   zoom: number
-  acyclicer?: string
-  ranker: string // 'network-simplex' | 'tight-tree' | 'longest-path'
+  acyclicer: 'greedy' | undefined
+  ranker: dagre.Ranker
 }
 
 interface Measurer {
