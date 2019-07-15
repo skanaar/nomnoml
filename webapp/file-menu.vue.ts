@@ -24,19 +24,12 @@ function FileMenu(selector: string, app: App): Vue {
         return app.filesystem.storage.kind === 'local_file'
       },
 
-      itemPath(item: FileEntry) {
-        return '#file/' + encodeURIComponent(item.name).replace(/%20/g, '+')
+      isAtHome() {
+        return app.filesystem.storage.kind === 'local_default'
       },
 
-      discardCurrent() {
-        if (app.filesystem.storage.kind === 'local_default') {
-          app.discardCurrentGraph()
-        }
-        else if (app.filesystem.storage.kind === 'local_file') {
-          if (confirm('Permanently delete "' + app.filesystem.activeFile.name + '"')) {
-            app.filesystem.discard(app.filesystem.activeFile)
-          }
-        }
+      itemPath(item: FileEntry) {
+        return '#file/' + encodeURIComponent(item.name).replace(/%20/g, '+')
       },
 
       discard(item: FileEntry) {

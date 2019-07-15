@@ -34,6 +34,7 @@ class FileSystem {
     }
     var index = this.files()
     index.push(entry)
+    index.sort((a,b) => a.name.localeCompare(b.name))
     localStorage['nomnoml.file_index'] = JSON.stringify(index)
     var fileStore = new LocalFileGraphStore(entry.name)
     fileStore.save(source)
