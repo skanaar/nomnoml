@@ -33,17 +33,22 @@ function FileMenu(selector: string, app: App): Vue {
       },
 
       discard(item: FileEntry) {
+        app.metrics.track('localfile_discard:query')
         if (confirm('Permanently delete "' + item.name + '"'))
+          app.metrics.track('localfile_discard:confirmed')
           app.filesystem.discard(item)
       },
 
       saveAs() {
+        app.metrics.track('save_as:query')
         var name = prompt('Name your diagram')
         if (name) {
           if (app.filesystem.files().some((e: FileEntry) => e.name === name)) {
+            app.metrics.track('save_as:file_already_exists')
             alert('A file named '+name+' already exists.')
             return
           }
+          app.metrics.track('save_as:confirmed')
           app.filesystem.moveToFileStorage(name, app.currentSource())
           location.href = '#file/' + encodeURIComponent(name)
         }

@@ -12,6 +12,7 @@ class App {
   constructor(
     nomnoml: Nomnoml,
     codeMirror: CodeMirror,
+    public metrics: Metrics,
     saveAs: (blob: Blob, name: string) => void,
     throttle: Throttler,
     debounce: Throttler
@@ -48,7 +49,13 @@ class App {
     var reloadStorage = () => {
       lastValidSource = null
       this.filesystem.configureByRoute(location.hash)
-      this.editor.setValue(this.filesystem.storage.read() || this.defaultSource)
+      var source = this.filesystem.storage.read()
+      this.editor.setValue(source || this.defaultSource)
+      metrics.track('load', {
+        storage: this.filesystem.storage.kind,
+        chars: source.length,
+        lines: source.split('\n').length
+      })
       this.sourceChanged()
     }
 
@@ -84,14 +91,17 @@ class App {
   }
 
   magnifyViewport(diff: number){
+    this.metrics.track('viewport_magnify', { direction: diff })
     this.panner.magnify(diff)
   }
 
   resetViewport(){
+    this.metrics.track('viewport_reset')
     this.panner.reset()
   }
 
   toggleSidebar(id: string){
+    this.metrics.track('toggle_sidebar', { sidebar: id })
     var sidebars = ['about', 'reference', 'export', 'files']
     for(var key of sidebars){
       if (id !== key)
@@ -102,23 +112,28 @@ class App {
   }
 
   discardCurrentGraph(){
+    this.metrics.track('discard_current_graph:query')
     if (confirm('Do you want to discard current diagram and load the default example?')){
+      this.metrics.track('discard_current_graph:confirmed')
       this.editor.setValue(this.defaultSource)
       this.sourceChanged()
     }
   }
 
   saveViewModeToStorage(){
+    this.metrics.track('view_mode_save:query')
     var question = 
       'Do you want to overwrite the diagram in ' +
       'localStorage with the currently viewed diagram?'
     if (confirm(question)){
+      this.metrics.track('view_mode_save:confirmed')
       this.filesystem.moveToLocalStorage(this.currentSource())
       window.location.href = './'
     }
   }
 
   exitViewMode(){
+    this.metrics.track('view_mode_exit')
     window.location.href = './'
   }
 }
