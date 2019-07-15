@@ -292,7 +292,8 @@ a:hover {
   border-bottom: 1px solid #0002;
   font-family: Calibri, Helvetica, sans-serif;
 }
-.file-entry a { display: block; padding: 2px 2px 2px 20px; }
+.file-entry.active { background: #0001; }
+.file-entry a[href] { display: block; padding: 8px 2px 8px 20px; }
 .file-entry:hover { background: rgba(0,0,0,0.07); }
 .file-entry a:first-child { flex-grow: 1; }
 .file-entry img { width: 24px; height: 24px; vertical-align: baseline; }

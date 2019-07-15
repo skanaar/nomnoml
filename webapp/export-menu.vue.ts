@@ -25,15 +25,7 @@ function ExportMenu(selector: string, app: App): Vue {
       },
 
       onSourceChange(src: string) {
-        // Adapted from http://meyerweb.com/eric/tools/dencoder/
-        function urlEncode(unencoded: string) {
-          return encodeURIComponent(unencoded).replace(/'/g,'%27').replace(/"/g,'%22')
-        }
-
-        function urlDecode(encoded: string) {
-          return decodeURIComponent(encoded.replace(/\+/g, ' '))
-        }
-        this.shareLink = '#view/' + urlEncode(src)
+        this.shareLink = '#view/' + Route.urlEncode(src)
       }
     }
 

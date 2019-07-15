@@ -16,6 +16,11 @@ function FileMenu(selector: string, app: App): Vue {
         return app.filesystem.files()
       },
 
+      isActive(item: FileEntry): boolean {
+        console.log(item, app.filesystem.activeFile)
+        return this.isLocalFile() && app.filesystem.activeFile.name === item.name
+      },
+
       isLocalFile() {
         return app.filesystem.storage.kind === 'local_file'
       },
