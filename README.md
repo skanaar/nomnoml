@@ -132,6 +132,8 @@ This is how the Decorator pattern looks like in nomnoml syntax:
     #stroke: #33322E
     #title: filename
     #zoom: 1
+    #acyclicer: greedy
+    #ranker: network-simplex | tight-tree | longest-path
 
 Directives only available when using the command line interface
 
