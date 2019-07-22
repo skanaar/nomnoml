@@ -250,21 +250,21 @@
 		<div id="export" class="sidebar">
 			<div class="content">
 				<div export-menu class="file-menu">
-				  <a class="btn" v-bind:href="shareLink" target="_blank">
-				   <icon id=link-outline></icon> Open shareable link
-				  </a>
+					<a class="btn" v-bind:href="shareLink" target="_blank">
+						<icon id=link-outline></icon> Open shareable link
+					</a>
 
-				  <a class="btn" href="/" v-on:click.prevent="downloadPng">
-				    <icon id=camera-outline></icon> Download PNG
-				  </a>
+					<a class="btn" href="/" v-on:click.prevent="downloadPng">
+						<icon id=camera-outline></icon> Download PNG
+					</a>
 
-				  <a class="btn" href="/" v-on:click.prevent="downloadSvg">
-				    <icon id=image-outline></icon> Download SVG
-				  </a>
+					<a class="btn" href="/" v-on:click.prevent="downloadSvg">
+						<icon id=image-outline></icon> Download SVG
+					</a>
 
-				  <a class="btn" href="/" v-on:click.prevent="downloadSrc">
-				    <icon id=download-outline></icon>  Download source
-				  </a>
+					<a class="btn" href="/" v-on:click.prevent="downloadSrc">
+						<icon id=download-outline></icon> Download source
+					</a>
 				</div>
 			</div>
 		</div>
@@ -274,7 +274,7 @@
 
 				<div file-menu class="file-menu">
 					<a class="btn" href="/" v-on:click.prevent="saveAs">
-						<icon id=document-add></icon>  Save to local file...
+						<icon id=document-add></icon> Save to local file...
 					</a>
 
 					<hr/>
@@ -298,10 +298,10 @@
 
 		<div id="file-system-hint" class="hint">
 			<svg width="100" height="80" xmlns="http://www.w3.org/2000/svg">
-			  <g stroke="#0008" fill="none" stroke-width="5.5" stroke-linecap="round">
-			    <path d="m5,66c46,-7 69,-29 80,-51"/>
-			    <path d="m66,18c11,-3 9,-5 21,-10c12,-4 -6,23 3,31"/>
-			  </g>
+				<g stroke="#0008" fill="none" stroke-width="5.5" stroke-linecap="round">
+					<path d="m5,66c46,-7 69,-29 80,-51"/>
+					<path d="m66,18c11,-3 9,-5 21,-10c12,-4 -6,23 3,31"/>
+				</g>
 			</svg>
 			You can now have multiple diagrams!
 		</div>

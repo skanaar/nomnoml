@@ -71,6 +71,7 @@ class App {
         lastValidSource = source
         this.panner.positionCanvas(canvasElement)
         this.filesystem.storage.save(source)
+        this.downloader.source = source
         this.downloader.setFilename(model.config.title)
         this.signals.trigger('source-changed', source)
       } catch (e){
