@@ -49,7 +49,7 @@ namespace nomnoml {
     return { config: config }
   }
 
-  export var version = '0.6.0'
+  export var version = '0.6.1'
 
   export function draw(canvas: HTMLCanvasElement, code: string, scale: number): { config: Config } {
     return parseAndRender(code, skanaar.Canvas(canvas), canvas, scale || 1)

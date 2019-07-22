@@ -163,7 +163,7 @@ var nomnoml;
         nomnoml.render(graphics, config, layout, measurer.setFont);
         return { config: config };
     }
-    nomnoml.version = '0.6.0';
+    nomnoml.version = '0.6.1';
     function draw(canvas, code, scale) {
         return parseAndRender(code, nomnoml.skanaar.Canvas(canvas), canvas, scale || 1);
     }
