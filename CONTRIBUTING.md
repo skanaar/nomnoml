@@ -4,7 +4,8 @@ To start contributing you will need to fork the repo on github and clone it firs
 
 ## Building
 
-Running `npm run prepare` will run compile both the nomnoml library and the webapp and run all unit tests.
+1. Ensure `typescript` is installed globally: `npm install --global typescript`
+2. Running `npm run prepare` will run compile both the nomnoml library and the webapp and run all unit tests.
 
 ## Testing
 
