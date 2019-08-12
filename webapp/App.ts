@@ -49,13 +49,17 @@ class App {
     var reloadStorage = () => {
       lastValidSource = null
       this.filesystem.configureByRoute(location.hash)
-      var source = this.filesystem.storage.read()
+      var source = this.filesystem.storage.read() || ''
       this.editor.setValue(source || this.defaultSource)
-      metrics.track('load', {
-        storage: this.filesystem.storage.kind,
-        chars: source.length,
-        lines: source.split('\n').length
-      })
+
+      try {
+        metrics.track('load', {
+          storage: this.filesystem.storage.kind,
+          chars: source.length,
+          lines: source.split('\n').length
+        })
+      } catch (e) {}
+
       this.sourceChanged()
     }
 
