@@ -193,7 +193,7 @@ var nomnoml;
         return skCanvas.serialize({
             width: layout.width,
             height: layout.height
-        });
+        }, code, config.title);
     }
     nomnoml.renderSvg = renderSvg;
 })(nomnoml || (nomnoml = {}));
@@ -699,6 +699,17 @@ var nomnoml;
         skanaar.Canvas = Canvas;
     })(skanaar = nomnoml.skanaar || (nomnoml.skanaar = {}));
 })(nomnoml || (nomnoml = {}));
+function escapeXml(unsafe) {
+    return unsafe.replace(/[<>&'"]/g, function (c) {
+        switch (c) {
+            case '<': return '&lt;';
+            case '>': return '&gt;';
+            case '&': return '&amp;';
+            case '\'': return '&apos;';
+            case '"': return '&quot;';
+        }
+    });
+}
 var nomnoml;
 (function (nomnoml) {
     var skanaar;
@@ -915,7 +926,7 @@ var nomnoml;
                     last(states).x += dx;
                     last(states).y += dy;
                 },
-                serialize: function (_attributes) {
+                serialize: function (_attributes, code, title) {
                     var attrs = _attributes || {};
                     attrs.version = attrs.version || '1.1';
                     attrs.baseProfile = attrs.baseProfile || 'full';
@@ -936,6 +947,12 @@ var nomnoml;
                         return '<' + e.name + ' ' + toAttr(e.attr) + '>' + (e.content || '') + '</' + e.name + '>';
                     }
                     var innerSvg = elements.map(toHtml).join('\n');
+                    if (code)
+                        innerSvg = toHtml(newElement('metadata', { content: code })) + innerSvg;
+                    if (code)
+                        innerSvg = toHtml(newElement('desc', {}, escapeXml(code))) + innerSvg;
+                    if (title)
+                        innerSvg = toHtml(newElement('title', {}, title)) + innerSvg;
                     return toHtml(Element('svg', attrs, innerSvg));
                 }
             };

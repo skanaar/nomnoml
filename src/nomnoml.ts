@@ -57,7 +57,9 @@ namespace nomnoml {
 
   export function renderSvg(code: string, docCanvas?: HTMLCanvasElement): string {
     var parsedDiagram = parse(code)
+    //console.log(parsedDiagram);
     var config = parsedDiagram.config
+    //console.log(config);
     var skCanvas = skanaar.Svg('', docCanvas)
     function setFont(config: Config, isBold: 'bold'|'normal', isItalic: 'italic'|undefined) {
       var style = (isBold === 'bold' ? 'bold' : '')
@@ -75,11 +77,11 @@ namespace nomnoml {
       textHeight: function (): number { return config.leading * config.fontSize }
     };
     var layout = nomnoml.layout(measurer, config, parsedDiagram.root)
-    
+
     nomnoml.render(skCanvas, config, layout, measurer.setFont)
     return skCanvas.serialize({
       width: layout.width,
       height: layout.height
-    })
+    }, code, config.title)
   }
 }
