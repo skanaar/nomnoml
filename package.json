@@ -19,6 +19,7 @@
   "devDependencies": {
     "aws-sdk": "^2.476.0",
     "jison": "0.4.13",
+    "typescript": "^3.6.3",
     "uglify-js": "^3.6.0"
   },
   "scripts": {
@@ -29,7 +30,7 @@
     "bundle": "node build/build.js",
     "test": "node test/test.js",
     "test_cli": "node dist/nomnoml-cli.js test/import-test.nomnoml test/output.node-test.svg",
-    "webapp": "node build/build-icons.js && ( cd webapp && tsc ) && uglifyjs dist/webapp.js -o dist/webapp.js"
+    "webapp": "node build/build-icons.js && ( cd webapp && tsc ) && cd .. && uglifyjs dist/webapp.js -o dist/webapp.js"
   },
   "directories": {
     "test": "test"
