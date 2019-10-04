@@ -700,15 +700,7 @@ var nomnoml;
     })(skanaar = nomnoml.skanaar || (nomnoml.skanaar = {}));
 })(nomnoml || (nomnoml = {}));
 function escapeXml(unsafe) {
-    return unsafe.replace(/[<>&'"]/g, function (c) {
-        switch (c) {
-            case '<': return '&lt;';
-            case '>': return '&gt;';
-            case '&': return '&amp;';
-            case '\'': return '&apos;';
-            case '"': return '&quot;';
-        }
-    });
+    return unsafe.replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 var nomnoml;
 (function (nomnoml) {
@@ -947,8 +939,6 @@ var nomnoml;
                         return '<' + e.name + ' ' + toAttr(e.attr) + '>' + (e.content || '') + '</' + e.name + '>';
                     }
                     var innerSvg = elements.map(toHtml).join('\n');
-                    if (code)
-                        innerSvg = toHtml(newElement('metadata', { content: code })) + innerSvg;
                     if (code)
                         innerSvg = toHtml(newElement('desc', {}, escapeXml(code))) + innerSvg;
                     if (title)

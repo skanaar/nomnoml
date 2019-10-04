@@ -130,7 +130,7 @@
 				visual=sender<br>
 				visual=start<br>
 				visual=transceiver
-				
+
 				<label>Available modifiers are</label>
 
 				bold<br>
@@ -277,6 +277,11 @@
 						<icon id=document-add></icon> Save to local file...
 					</a>
 
+					<a class="btn" href="/">
+						<icon id=image-outline></icon> Load an SVG...
+						<input type="file" accept="image/svg+xml" onchange="handleSVG(this.files)">
+					</a>
+
 					<hr/>
 
 					<h2>Local files</h2>
@@ -333,7 +338,7 @@
 			</a>
 
 			<div id="tooltip"></div>
-			
+
 			<div class="storage-tools">
 				<span class="storage-status" v-bind:class="{ visible: isUrlStorage() }">
 					View mode, changes are not saved.
@@ -341,7 +346,7 @@
 					   title="Save this diagram to localStorage">save</a>
 					<a href="#" title="Discard this diagram">close</a>
 				</span>
-				
+
 				<span class="storage-status" v-bind:class="{ visible: isLocalFileStorage() }">
 					Editing local file
 					<a href="#" title="Exit from this file">close</a>
@@ -497,19 +502,29 @@
 	<script src="codemirror/codemirror-compressed.js"></script>
 	<script src="codemirror/nomnoml.codemirror-mode.js"></script>
 	<script src="dist/nomnoml.web.js"></script>
-	
+
 	<script src="lib/vue.min.js"></script>
 	<script src="dist/webapp.js"></script>
-	
+
 	<script>
+		var handleSVG = (files)=>{
+			if(files.length !== 1) return alert('Only upload a single SVG.');
+			reader = new FileReader();
+			reader.onload = ()=>{
+				if(!app.loadSVG(reader.result)) alert("SVG did not have nomnoml code embedded within it.");
+			};
+			reader.readAsText(files[0]);
+		}
+
 		var metrics = isNomnomlDomain ? mixpanel : { track: console.log.bind(console) }
 		var app = new App(nomnoml, CodeMirror, metrics, saveAs, _.throttle, _.debounce)
+
 		ExportMenu('[export-menu]', app)
 		FileMenu('[file-menu]', app)
 		StorageTools('.storage-tools', app)
 		metrics.track('visit', { files: app.filesystem.files().length })
 	</script>
-	
+
 	<script>
 		(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
 		(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),

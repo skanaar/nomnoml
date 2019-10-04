@@ -1,16 +1,3 @@
-function escapeXml(unsafe: string) {
-    return unsafe.replace(/[<>&'"]/g, function (c) {
-        switch (c) {
-            case '<': return '&lt;';
-            case '>': return '&gt;';
-            case '&': return '&amp;';
-            case '\'': return '&apos;';
-            case '"': return '&quot;';
-        }
-    });
-}
-
-
 namespace nomnoml.skanaar {
 
 	interface SvgState {
@@ -272,8 +259,10 @@ namespace nomnoml.skanaar {
 				}
 				var innerSvg = elements.map(toHtml).join('\n')
 
-				//if(code) innerSvg = toHtml(newElement('metadata', {content: code})) + innerSvg;
-				if(code) innerSvg = toHtml(newElement('desc', {}, escapeXml(code))) + innerSvg;
+				if(code){
+					code = code.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+					innerSvg = toHtml(newElement('desc', {}, code)) + innerSvg;
+				}
 				if(title) innerSvg = toHtml(newElement('title', {}, title)) + innerSvg;
 				return toHtml(Element('svg', attrs, innerSvg))
 			}
