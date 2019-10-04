@@ -259,7 +259,7 @@
 					</a>
 
 					<a class="btn" href="/" v-on:click.prevent="downloadSvg">
-						<icon id=image-outline></icon> Download SVG
+						<icon id=image-outline></icon> Download SVG with source
 					</a>
 
 					<a class="btn" href="/" v-on:click.prevent="downloadSrc">
@@ -277,7 +277,7 @@
 						<icon id=document-add></icon> Save to local file...
 					</a>
 
-					<a class="btn" href="/">
+					<a class="btn">
 						<icon id=image-outline></icon> Load an SVG...
 						<input type="file" accept="image/svg+xml" onchange="handleSVG(this.files)">
 					</a>
