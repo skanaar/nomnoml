@@ -524,7 +524,6 @@
 		StorageTools('.storage-tools', app)
 		metrics.track('visit', { files: app.filesystem.files().length })
 
-
 		app.editor.on('drop', (cm,dragEvent)=>{
 			var files = dragEvent.dataTransfer.files;
 			if(files.length !== 1) return alert('Only upload a single file.')
