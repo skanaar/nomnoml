@@ -14,7 +14,7 @@ interface GraphStorage {
 }
 
 class FileSystem {
-  signals: Observable = Observable({})
+  signals: Observable = new Observable()
   on = this.signals.on
   off = this.signals.off
   files(): FileEntry[] {

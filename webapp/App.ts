@@ -5,7 +5,7 @@ class App {
   editor: CodeMirrorEditor
   sourceChanged: () => void
   downloader: DownloadLinks
-  signals: Observable = Observable({})
+  signals: Observable = new Observable()
   on = this.signals.on
   off = this.signals.off
 
