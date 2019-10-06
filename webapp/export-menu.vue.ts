@@ -7,8 +7,8 @@ function ExportMenu(selector: string, app: App): Vue {
     },
 
     mounted() {
-      app.on('source-changed', (src: string) => this.onSourceChange(src))
-      app.filesystem.on('updated', (src: string) => this.$forceUpdate())
+      app.signals.on('source-changed', (src: string) => this.onSourceChange(src))
+      app.filesystem.signals.on('updated', (src: string) => this.$forceUpdate())
     },
 
     methods: {
