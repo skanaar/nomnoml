@@ -5,7 +5,7 @@ interface CodeMirror {
 interface CodeMirrorEditor {
   getValue(): string
   setValue(value: string): void
-  on(event: string, callback: (arg?: any) => void): void
+  on(event: string, callback: (arg?: any, arg2?: any) => void): void
   getWrapperElement(): HTMLElement
 }
 

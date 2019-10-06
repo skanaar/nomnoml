@@ -3,7 +3,6 @@ class App {
   filesystem: FileSystem
   defaultSource: string
   editor: CodeMirrorEditor
-  loadSVG: (svg: string) => boolean
   sourceChanged: () => void
   downloader: DownloadLinks
   signals: Observable = new Observable()
@@ -32,7 +31,17 @@ class App {
       matchBrackets: true,
       theme: 'solarized light',
       keyMap: 'sublime'
-    });
+    })
+
+    this.editor.on('drop', (cm: any, dragEvent: DragEvent) => {
+      var files = dragEvent.dataTransfer.files
+      if(files.length !== 1)
+        return alert('Only upload a single file.')
+      if(files[0].type == 'image/svg+xml'){
+        dragEvent.preventDefault()
+        this.handleOpeningFiles(files)
+      }
+    })
 
     var editorElement = this.editor.getWrapperElement()
 
@@ -89,16 +98,18 @@ class App {
       }
     }
 
-    this.loadSVG = (svg) => {
-      var svgNodes = (new DOMParser()).parseFromString(svg,"text/xml");
-      if(svgNodes.getElementsByTagName('desc').length !== 1) return false;
-      var code = svgNodes.getElementsByTagName('desc')[0].childNodes[0].nodeValue;
-      code = code.replace(/&lt;/g, '<').replace(/&gt;/g, '>');
-      this.editor.setValue(code);
-      return true;
-    }
-
     reloadStorage()
+  }
+
+  loadSvg(svg: string) {
+    var svgNodes = (new DOMParser()).parseFromString(svg,'text/xml')
+    if(svgNodes.getElementsByTagName('desc').length !== 1) {
+      alert("SVG did not have nomnoml code embedded within it.")
+      return
+    }
+    var code = svgNodes.getElementsByTagName('desc')[0].childNodes[0].nodeValue
+    code = code.replace(/&lt;/g, '<').replace(/&gt;/g, '>')
+    this.editor.setValue(code)
   }
 
   currentSource(): string {
@@ -150,5 +161,13 @@ class App {
   exitViewMode(){
     this.metrics.track('view_mode_exit')
     window.location.href = './'
+  }
+
+  handleOpeningFiles(files: FileList) {
+    if(files.length !== 1)
+      return alert('Only upload a single file.')
+    var reader = new FileReader()
+    reader.onload = () => this.loadSvg(reader.result as string)
+    reader.readAsText(files[0])
   }
 }

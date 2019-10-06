@@ -3,7 +3,7 @@ function StorageTools(selector: string, app: App) {
     el: selector,
 
     mounted() {
-      app.filesystem.on('updated', (src: string) => this.$forceUpdate())
+      app.filesystem.signals.on('updated', (src: string) => this.$forceUpdate())
     },
 
     methods: {

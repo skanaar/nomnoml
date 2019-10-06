@@ -54,6 +54,11 @@ function FileMenu(selector: string, app: App): Vue {
         }
       },
 
+      loadSvg(e: Event) {
+        var files = (e.target as HTMLInputElement).files
+        app.handleOpeningFiles(files)
+      },
+
       onSourceChange(src: string) {
         this.source = src
       }
