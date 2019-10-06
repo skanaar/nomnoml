@@ -80,6 +80,6 @@ namespace nomnoml {
     return skCanvas.serialize({
       width: layout.width,
       height: layout.height
-    })
+    }, code, config.title)
   }
 }

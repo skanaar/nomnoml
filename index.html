@@ -259,7 +259,7 @@
 					</a>
 
 					<a class="btn" href="/" v-on:click.prevent="downloadSvg">
-						<icon id=image-outline></icon> Download SVG
+						<icon id=image-outline></icon> Download SVG with source
 					</a>
 
 					<a class="btn" href="/" v-on:click.prevent="downloadSrc">
@@ -275,6 +275,11 @@
 				<div file-menu class="file-menu">
 					<a class="btn" href="/" v-on:click.prevent="saveAs">
 						<icon id=document-add></icon> Save to local file...
+					</a>
+
+					<a class="btn">
+						<icon id=image-outline></icon> Load an SVG...
+						<input type="file" accept="image/svg+xml" onchange="handleSVG(this.files)">
 					</a>
 
 					<hr/>
@@ -502,12 +507,30 @@
 	<script src="dist/webapp.js"></script>
 	
 	<script>
+		var handleSVG = (files)=>{
+			if(files.length !== 1) return alert('Only upload a single file.');
+			reader = new FileReader();
+			reader.onload = ()=>{
+				if(!app.loadSVG(reader.result)) alert("SVG did not have nomnoml code embedded within it.");
+			};
+			reader.readAsText(files[0]);
+		}
+
 		var metrics = isNomnomlDomain ? mixpanel : { track: console.log.bind(console) }
 		var app = new App(nomnoml, CodeMirror, metrics, saveAs, _.throttle, _.debounce)
 		ExportMenu('[export-menu]', app)
 		FileMenu('[file-menu]', app)
 		StorageTools('.storage-tools', app)
 		metrics.track('visit', { files: app.filesystem.files().length })
+
+		app.editor.on('drop', (cm,dragEvent)=>{
+			var files = dragEvent.dataTransfer.files;
+			if(files.length !== 1) return alert('Only upload a single file.')
+			if(files[0].type == "image/svg+xml"){
+				dragEvent.preventDefault();
+				handleSVG(files);
+			}
+		})
 	</script>
 	
 	<script>

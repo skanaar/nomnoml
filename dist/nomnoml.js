@@ -193,7 +193,7 @@ var nomnoml;
         return skCanvas.serialize({
             width: layout.width,
             height: layout.height
-        });
+        }, code, config.title);
     }
     nomnoml.renderSvg = renderSvg;
 })(nomnoml || (nomnoml = {}));
@@ -915,7 +915,7 @@ var nomnoml;
                     last(states).x += dx;
                     last(states).y += dy;
                 },
-                serialize: function (_attributes) {
+                serialize: function (_attributes, code, title) {
                     var attrs = _attributes || {};
                     attrs.version = attrs.version || '1.1';
                     attrs.baseProfile = attrs.baseProfile || 'full';
@@ -936,6 +936,12 @@ var nomnoml;
                         return '<' + e.name + ' ' + toAttr(e.attr) + '>' + (e.content || '') + '</' + e.name + '>';
                     }
                     var innerSvg = elements.map(toHtml).join('\n');
+                    if (code) {
+                        code = code.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                        innerSvg = toHtml(newElement('desc', {}, code)) + innerSvg;
+                    }
+                    if (title)
+                        innerSvg = toHtml(newElement('title', {}, title)) + innerSvg;
                     return toHtml(Element('svg', attrs, innerSvg));
                 }
             };

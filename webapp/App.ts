@@ -3,6 +3,7 @@ class App {
   filesystem: FileSystem
   defaultSource: string
   editor: CodeMirrorEditor
+  loadSVG: (svg: string) => boolean
   sourceChanged: () => void
   downloader: DownloadLinks
   signals: Observable = new Observable()
@@ -88,6 +89,15 @@ class App {
       }
     }
 
+    this.loadSVG = (svg) => {
+      var svgNodes = (new DOMParser()).parseFromString(svg,"text/xml");
+      if(svgNodes.getElementsByTagName('desc').length !== 1) return false;
+      var code = svgNodes.getElementsByTagName('desc')[0].childNodes[0].nodeValue;
+      code = code.replace(/&lt;/g, '<').replace(/&gt;/g, '>');
+      this.editor.setValue(code);
+      return true;
+    }
+
     reloadStorage()
   }
 
@@ -127,7 +137,7 @@ class App {
 
   saveViewModeToStorage(){
     this.metrics.track('view_mode_save:query')
-    var question = 
+    var question =
       'Do you want to overwrite the diagram in ' +
       'localStorage with the currently viewed diagram?'
     if (confirm(question)){

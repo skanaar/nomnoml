@@ -11,7 +11,7 @@ namespace nomnoml.skanaar {
 	}
 
 	interface SvgGraphics extends Graphics {
-		serialize(_attributes: any): string
+		serialize(_attributes: any, code: string, title: string): string
 	}
 
   export function Svg(globalStyle: string, canvas?: HTMLCanvasElement): SvgGraphics {
@@ -211,7 +211,7 @@ namespace nomnoml.skanaar {
 							if (c === 'M' || c === 'W') { return 14 }
 							return c.charCodeAt(0) < 200 ? 9.5 : 16
 						})
-					}	
+					}
 				}
 			},
 			moveTo: function (x, y){
@@ -237,7 +237,7 @@ namespace nomnoml.skanaar {
 				last(states).x += dx
 				last(states).y += dy
 			},
-			serialize: function (_attributes: any): string {
+			serialize: function (_attributes: any, code: string, title: string): string {
 				var attrs = _attributes || {};
 				attrs.version = attrs.version || '1.1';
 				attrs.baseProfile = attrs.baseProfile || 'full';
@@ -258,6 +258,12 @@ namespace nomnoml.skanaar {
 					return '<'+e.name+' '+toAttr(e.attr)+'>'+(e.content || '')+'</'+e.name+'>'
 				}
 				var innerSvg = elements.map(toHtml).join('\n')
+
+				if(code){
+					code = code.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+					innerSvg = toHtml(newElement('desc', {}, code)) + innerSvg;
+				}
+				if(title) innerSvg = toHtml(newElement('title', {}, title)) + innerSvg;
 				return toHtml(Element('svg', attrs, innerSvg))
 			}
 		}
