@@ -508,7 +508,7 @@
 	
 	<script>
 		var metrics = isNomnomlDomain ? mixpanel : { track: console.log.bind(console) }
-		var app = new App(nomnoml, CodeMirror, metrics, saveAs, _.throttle, _.debounce)
+		var app = new App(nomnoml, CodeMirror, metrics, saveAs, _)
 		ExportMenu('[export-menu]', app)
 		FileMenu('[file-menu]', app)
 		StorageTools('.storage-tools', app)

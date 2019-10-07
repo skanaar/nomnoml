@@ -14,8 +14,7 @@ class App {
     codeMirror: CodeMirror,
     public metrics: Metrics,
     saveAs: (blob: Blob, name: string) => void,
-    throttle: Throttler,
-    debounce: Throttler
+    private _: Underscore
   ) {
     var body = document.querySelector('body')
     var lineNumbers = document.getElementById('linenumbers')
@@ -35,9 +34,7 @@ class App {
 
     this.editor.on('drop', (cm: any, dragEvent: DragEvent) => {
       var files = dragEvent.dataTransfer.files
-      if(files.length !== 1)
-        return alert('Only upload a single file.')
-      if(files[0].type == 'image/svg+xml'){
+      if (files[0].type == 'image/svg+xml') {
         dragEvent.preventDefault()
         this.handleOpeningFiles(files)
       }
@@ -47,7 +44,7 @@ class App {
 
     this.filesystem = new FileSystem()
     var devenv = new DevEnv(editorElement, lineMarker, lineNumbers)
-    this.panner = new CanvasPanner(canvasPanner, () => this.sourceChanged(), throttle)
+    this.panner = new CanvasPanner(canvasPanner, () => this.sourceChanged(), _.throttle)
     this.downloader = new DownloadLinks(canvasElement, saveAs)
     new HoverMarker('canvas-mode', body, [canvasPanner, canvasTools])
     new Tooltips(document.getElementById('tooltip'), document.querySelectorAll('.tools a'))
@@ -74,8 +71,8 @@ class App {
     }
 
     window.addEventListener('hashchange', () => reloadStorage());
-    window.addEventListener('resize', throttle(() => this.sourceChanged(), 750, {leading: true}))
-    this.editor.on('changes', debounce(() => this.sourceChanged(), 300))
+    window.addEventListener('resize', _.throttle(() => this.sourceChanged(), 750, {leading: true}))
+    this.editor.on('changes', _.debounce(() => this.sourceChanged(), 300))
 
     this.sourceChanged = () => {
       try {
@@ -108,7 +105,7 @@ class App {
       return
     }
     var code = svgNodes.getElementsByTagName('desc')[0].childNodes[0].nodeValue
-    code = code.replace(/&lt;/g, '<').replace(/&gt;/g, '>')
+    code = this._.unescape(code)
     this.editor.setValue(code)
   }
 
@@ -164,8 +161,10 @@ class App {
   }
 
   handleOpeningFiles(files: FileList) {
-    if(files.length !== 1)
-      return alert('Only upload a single file.')
+    if(files.length !== 1) {
+      alert('You can only upload one file at a time.')
+      return
+    }
     var reader = new FileReader()
     reader.onload = () => this.loadSvg(reader.result as string)
     reader.readAsText(files[0])

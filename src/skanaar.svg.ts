@@ -14,6 +14,15 @@ namespace nomnoml.skanaar {
 		serialize(_attributes: any, code: string, title: string): string
 	}
 
+	function xmlEncode(str: string) {
+		return str
+			.replace(/&/g, '&amp;')
+			.replace(/</g, '&lt;')
+			.replace(/>/g, '&gt;')
+			.replace(/"/g, '&quot;')
+			.replace(/'/g, '&apos;')
+	}
+
   export function Svg(globalStyle: string, canvas?: HTMLCanvasElement): SvgGraphics {
 		var initialState: SvgState = {
 			x: 0,
@@ -34,22 +43,24 @@ namespace nomnoml.skanaar {
 		var docFont = ''
 
 		function Element(name: string, attr: any, content?: string): any {
-			attr.style = attr.style || ''
 			return {
 				name: name,
 				attr: attr,
 				content: content || undefined,
 				stroke: function (){
-					this.attr.style += 'stroke:'+lastDefined('stroke')+
+					var base = this.attr.style || ''
+					this.attr.style = base + 'stroke:'+lastDefined('stroke')+
 					  ';fill:none;stroke-dasharray:' + lastDefined('dashArray') + ';';
 					return this
 				},
 				fill: function (){
-					this.attr.style += 'stroke:none; fill:'+lastDefined('fill')+';';
+					var base = this.attr.style || ''
+					this.attr.style = base + 'stroke:none; fill:'+lastDefined('fill')+';';
 					return this
 				},
 				fillAndStroke: function (){
-					this.attr.style += 'stroke:'+lastDefined('stroke')+';fill:'+lastDefined('fill')+
+					var base = this.attr.style || ''
+					this.attr.style = base + 'stroke:'+lastDefined('stroke')+';fill:'+lastDefined('fill')+
 					  ';stroke-dasharray:' + lastDefined('dashArray') + ';';
 					return this
 				}
@@ -181,15 +192,7 @@ namespace nomnoml.skanaar {
 				if (lastDefined('textAlign') === 'center') {
 					attr.style += 'text-anchor: middle;'
 				}
-				function escapeHtml(unsafe: string) {
-					return unsafe
-						.replace(/&/g, '&amp;')
-						.replace(/</g, '&lt;')
-						.replace(/>/g, '&gt;')
-						.replace(/"/g, '&quot;')
-						.replace(/'/g, '&#039;');
-				}
-				return newElement('text', attr, escapeHtml(text))
+				return newElement('text', attr, text)
 			},
 			lineCap: function (cap){ globalStyle += ';stroke-linecap:'+cap; return last(elements) },
 			lineJoin: function (join){ globalStyle += ';stroke-linejoin:'+join; return last(elements) },
@@ -237,34 +240,38 @@ namespace nomnoml.skanaar {
 				last(states).x += dx
 				last(states).y += dy
 			},
-			serialize: function (_attributes: any, code: string, title: string): string {
-				var attrs = _attributes || {};
-				attrs.version = attrs.version || '1.1';
-				attrs.baseProfile = attrs.baseProfile || 'full';
-				attrs.width = attrs.width || '100%';
-				attrs.height = attrs.height || '100%';
-				if(attrs.width !== '100%' && attrs.height != '100%') {
-					attrs.viewbox = '0 0 ' + attrs.width + ' ' + attrs.height;
-				}
-				attrs.xmlns = attrs.xmlns || 'http://www.w3.org/2000/svg';
-				attrs['xmlns:xlink'] = attrs['xmlns:xlink'] || 'http://www.w3.org/1999/xlink';
-				attrs['xmlns:ev']  = attrs['xmlns:ev'] || 'http://www.w3.org/2001/xml-events';
-				attrs.style = attrs.style || lastDefined('font') + ';' + globalStyle;
+			serialize: function (size: any, desc: string, title: string): string {
 				function toAttr(obj: any){
 					function toKeyValue(key: string){ return key + '="' + obj[key] + '"' }
 					return Object.keys(obj).map(toKeyValue).join(' ')
 				}
 				function toHtml(e: any){
-					return '<'+e.name+' '+toAttr(e.attr)+'>'+(e.content || '')+'</'+e.name+'>'
+					return '<'+e.name+' '+toAttr(e.attr)+'>'+(e.content ? xmlEncode(e.content) : '')+'</'+e.name+'>'
 				}
-				var innerSvg = elements.map(toHtml).join('\n')
 
-				if(code){
-					code = code.replace(/</g, '&lt;').replace(/>/g, '&gt;');
-					innerSvg = toHtml(newElement('desc', {}, code)) + innerSvg;
+				var elementsToSerialize = elements
+
+				if(desc){
+					elementsToSerialize.unshift(Element('desc', {}, desc))
 				}
-				if(title) innerSvg = toHtml(newElement('title', {}, title)) + innerSvg;
-				return toHtml(Element('svg', attrs, innerSvg))
+				if(title) {
+					elementsToSerialize.unshift(Element('title', {}, title))
+				}
+
+				var innerSvg = elementsToSerialize.map(toHtml).join('\n  ')
+
+				var attrs = {
+					version: '1.1',
+					baseProfile: 'full',
+					width: size.width,
+					height: size.height,
+					viewbox: '0 0 ' + size.width + ' ' + size.height,
+					xmlns: 'http://www.w3.org/2000/svg',
+					'xmlns:xlink': 'http://www.w3.org/1999/xlink',
+					'xmlns:ev': 'http://www.w3.org/2001/xml-events',
+					style: lastDefined('font') + ';' + globalStyle,
+				}
+				return '<svg '+toAttr(attrs)+'>\n  '+innerSvg+'\n</svg>'
 			}
 		}
 	}
