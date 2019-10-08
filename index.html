@@ -94,14 +94,14 @@
 				#ranker: network-simplex | tight-tree | longest-path<br>
 
 				<h2>Custom classifier styles</h2>
-				<label>A directive that starts with "." define a classifier style. The style is written as a space separated list of modifiers and key/value pairs.</label>
+				<h3>A directive that starts with "." define a classifier style. The style is written as a space separated list of modifiers and key/value pairs.</h3>
 
 				#.box: fill=#8f8 dashed<br>
 				#.blob: visual=ellipse<br>
 				[&lt;box&gt; GreenBox]<br>
 				[&lt;blob&gt; HideousBlob]
 
-				<label>Available key/value pairs are</label>
+				<h3>Available key/value pairs are</h3>
 
 				fill=(any css color)<br><br>
 
@@ -131,7 +131,7 @@
 				visual=start<br>
 				visual=transceiver
 				
-				<label>Available modifiers are</label>
+				<h3>Available modifiers are</h3>
 
 				bold<br>
 				underline<br>
@@ -184,65 +184,67 @@
 
 				<h2>Usage</h2>
 
-				<label>Car has an Engine</label>
-				[Car]-&gt;[Engine]
+				<h3>Car has an Engine</h3>
+				<pre>[Car]-&gt;[Engine]</pre>
 
-				<label>Car owns an arbitrary number of blemished</label>
-				[Car] +-&gt; 0..* [RustPatches]
+				<h3>Car owns an arbitrary number of blemished</h3>
+				<pre>[Car] +-&gt; 0..* [RustPatches]</pre>
 
-				<label>Car knows its Manufacturer</label>
-				[Car]o-&gt;[Manufacturer]
+				<h3>Car knows its Manufacturer</h3>
+				<pre>[Car]o-&gt;[Manufacturer]</pre>
 
-				<label>Car depends on Fuel</label>
-				[Car]--&gt;[Fuel]
+				<h3>Car depends on Fuel</h3>
+				<pre>[Car]--&gt;[Fuel]</pre>
 
-				<label>Pickup inherits from Car</label>
-				[Pickup]-:&gt;[Car]
+				<h3>Pickup inherits from Car</h3>
+				<pre>[Pickup]-:&gt;[Car]</pre>
 
-				<label>Car implements interface IVehicle</label>
-				[Car]--:&gt;[IVehicle]
+				<h3>Car implements interface IVehicle</h3>
+				<pre>[Car]--:&gt;[IVehicle]</pre>
 
-				<label>Paul and Ron have a named association</label>
-				[Paul] friend - [Ron]
+				<h3>Paul and Ron have a named association</h3>
+				<pre>[Paul] friend - [Ron]</pre>
 
-				<label>They both depend on each other</label>
-				[Chicken]&lt;-&gt;[Egg]
+				<h3>They both depend on each other</h3>
+				<pre>[Chicken]&lt;-&gt;[Egg]</pre>
 
-				<label>Car has some attributes</label>
-				[Car|maxSpeed: Float;color: Color|]
+				<h3>Car has some attributes</h3>
+				<pre>[Car|maxSpeed: Float;color: Color]</pre>
 
-				<label>Car has several valves</label>
-				[Car| valves: Valve\[\] ]
+				<h3>Car has several valves</h3>
+				<pre>[Car| valves: Valve\[\] ]</pre>
 
-				<label>Engine has an operation</label>
-				[Engine||start()]
+				<h3>Engine has an operation</h3>
+				<pre>[Engine||start()]</pre>
 
-				<label>Engine has internal parts</label>
-				[Engine|<br>
-				&nbsp;&nbsp;[Cylinder]->1[Piston]<br>
-				&nbsp;&nbsp;[Cylinder]->2[Valve]<br>
-				]<br>
+				<h3>Engine has internal parts</h3>
+				<pre>[Engine|
+  [Cylinder]->1[Piston]
+  [Cylinder]->2[Valve]
+]</pre>
 
-				<label>Engine is an abstract class</label>
-				[&lt;abstract&gt;Engine||start()]
+				<h3>Engine is an abstract class</h3>
+				<pre>[&lt;abstract&gt;Engine||start()]</pre>
 
-				<label>Car is in the package 'vehicles'</label>
-				[&lt;package&gt;vehicles|[Car]]
+				<h3>Car is in the package 'vehicles'</h3>
+				<pre>[&lt;package&gt;vehicles|[Car]]</pre>
 
-				<label>Car has an attached note</label>
-				[Car]--[&lt;note&gt;only driven;twice a month]
+				<h3>Car has an attached note</h3>
+				<pre>[Car]--[&lt;note&gt;only driven
+  twice a month
+]</pre>
 
-				<label>Set font</label>
-				#font: Times
+				<h3>Set font</h3>
+				<pre>#font: Times</pre>
 
-				<label>Layout the diagram really tight</label>
-				#fontSize: 8<br>
-				#spacing: 12<br>
-				#padding: 3
+				<h3>Layout the diagram really tight</h3>
+				<pre>#fontSize: 8
+#spacing: 12
+#padding: 3</pre>
 
-				<label>Create your own styles</label>
-				#.box: fill=#8f8 dashed<br>
-				[&lt;box&gt; GreenBox]
+				<h3>Create your own styles</h3>
+				<pre>#.box: fill=#8f8 dashed
+[&lt;box&gt; GreenBox]</pre>
 			</div>
 			<div class="logo-background"></div>
 		</div>
@@ -273,13 +275,14 @@
 			<div class="content">
 
 				<div file-menu class="file-menu">
+
+					<label class="btn">
+						<icon id=image-outline></icon> Open SVG with source...
+						<input type="file" accept="image/svg+xml" v-on:change="loadSvg">
+					</label>
+
 					<a class="btn" href="/" v-on:click.prevent="saveAs">
 						<icon id=document-add></icon> Save to local file...
-					</a>
-
-					<a class="btn">
-						<icon id=image-outline></icon> Load an SVG...
-						<input type="file" accept="image/svg+xml" v-on:change="loadSvg">
 					</a>
 
 					<hr/>
@@ -371,42 +374,7 @@
 				</div>
 			</div>
 		</div>
-
-		<div class="commercial-title" id="commercial-title">
-			<div class="commercial-dismiss" onclick="closeCommercial()">&times;</div>
-			<a href="https://itunes.apple.com/se/app/nebula-sky/id1268430694&mt=8">
-				<img src="commercial/appstore.svg">
-				I have made a game,<br/>try Nebula Sky now!
-			</a>
-		</div>
-		<div class="commercial show1" id="commercial" onclick="cycleCommercial()">
-			<div class="commercial-shadowcaster"></div>
-			<img class="commercial-frame" src="commercial/iphone-frame.png">
-			<img class="commercial-screen screen0" src="commercial/menu.png">
-			<img class="commercial-screen screen1" src="commercial/radar.png">
-			<img class="commercial-screen screen2" src="commercial/shipyard.png">
-			<img class="commercial-screen screen3" src="commercial/surface.png">
-		</div>
 	</div>
-
-	<script>
-		var commercialPage = 0
-		function closeCommercial() {
-			metrics.track('commercial_close')
-			document.getElementById('commercial').style.bottom = '-230px';
-			document.getElementById('commercial-title').style.bottom = '-100px';
-		}
-		function cycleCommercial() {
-			commercialPage += 1
-			var elem = document.getElementById('commercial')
-			elem.classList.remove('show0')
-			elem.classList.remove('show1')
-			elem.classList.remove('show2')
-			elem.classList.remove('show3')
-			elem.classList.add('show' + (commercialPage % 4))
-		}
-		setInterval(cycleCommercial, 10000)
-	</script>
 	<style>
 		.commercial-dismiss {
 			text-align: right;
@@ -475,6 +443,39 @@
 			box-shadow: 0 5px 20px rgba(0,0,0,.2);
 		}
 	</style>
+	<div class="commercial-title" id="commercial-title">
+		<div class="commercial-dismiss" onclick="closeCommercial()">&times;</div>
+		<a href="https://itunes.apple.com/se/app/nebula-sky/id1268430694&mt=8">
+			<img src="commercial/appstore.svg">
+			I have made a game,<br/>try Nebula Sky now!
+		</a>
+	</div>
+	<div class="commercial show1" id="commercial" onclick="cycleCommercial()">
+		<div class="commercial-shadowcaster"></div>
+		<img class="commercial-frame" src="commercial/iphone-frame.png">
+		<img class="commercial-screen screen0" src="commercial/menu.png">
+		<img class="commercial-screen screen1" src="commercial/radar.png">
+		<img class="commercial-screen screen2" src="commercial/shipyard.png">
+		<img class="commercial-screen screen3" src="commercial/surface.png">
+	</div>
+	<script>
+		var commercialPage = 0
+		function closeCommercial() {
+			metrics.track('commercial_close')
+			document.getElementById('commercial').style.bottom = '-230px';
+			document.getElementById('commercial-title').style.bottom = '-100px';
+		}
+		function cycleCommercial() {
+			commercialPage += 1
+			var elem = document.getElementById('commercial')
+			elem.classList.remove('show0')
+			elem.classList.remove('show1')
+			elem.classList.remove('show2')
+			elem.classList.remove('show3')
+			elem.classList.add('show' + (commercialPage % 4))
+		}
+		setInterval(cycleCommercial, 10000)
+	</script>
 
 	<script type="text/vnd.nomnoml.class" id="defaultGraph">[Pirate|eyeCount: Int|raid();pillage()|
   [beard]--[parrot]

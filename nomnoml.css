@@ -99,15 +99,27 @@ img, svg {
 	position: absolute;
 	cursor: move
 }
-a, a:active {
-	color: #000;
-	opacity: 0.5;
+a, a:active, label {
+	color: #0008;
 	text-decoration: none
 }
-a:hover {
-	color: #000;
-	opacity: 0.75;
+a:hover, label:hover {
+	color: #000C;
 	text-decoration: none
+}
+a svg,
+label svg {
+	fill: #0008;
+}
+a:hover svg,
+label:hover svg {
+	fill: #000C;
+}
+a img {
+	opacity: 0.5;
+}
+a:hover img {
+	opacity: 0.75;
 }
 .tools {
 	display: block;
@@ -154,7 +166,6 @@ a:hover {
 	margin-left: 5px;
 }
 .tools>.logo {
-	color: #000;
 	font-size: 150%;
 }
 .tools>#tooltip {
@@ -251,11 +262,21 @@ a:hover {
 .content p {
 	font-family: Calibri, Helvetica, sans-serif
 }
-.content label{
+.content pre {
+  border-radius: 3px;
+  background: #eee8d5;
+  padding: 5px;
+  margin: 2px 0px;
+  font-family: Consolas, Monaco, monospace;
+  font-size: 14px;
+}
+.content h3{
 	display: block;
 	font-family: Calibri, Helvetica, sans-serif;
 	color: #93a1a1;
-	margin-top: 1em;
+	margin: 1em 0 0 0;
+	font-size: inherit;
+	font-weight: normal;
 }
 .content h2{
 	font-size: inherit;
@@ -279,11 +300,13 @@ a:hover {
 .file-menu .btn {
   display: block;
   padding: 1px;
-  margin-right: 30px;
+  margin: 0 30px 10px 0;
   border-radius: 6px;
   font-family: Calibri, Helvetica, sans-serif;
+  cursor: pointer;
 }
 .file-menu .btn:hover { background: rgba(0,0,0,0.07); }
+.file-menu label.btn input[type=file] { position: absolute; top: -40px; }
 .file-entry {
   display: flex;
   align-items: center;
