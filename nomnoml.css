@@ -97,7 +97,8 @@ img, svg {
 }
 #canvas {
 	position: absolute;
-	cursor: move
+	cursor: move;
+	box-shadow: 0 1px 5px rgba(0, 0, 0, 0.36);
 }
 a, a:active, label {
 	color: #0008;
