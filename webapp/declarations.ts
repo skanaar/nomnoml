@@ -9,10 +9,6 @@ interface CodeMirrorEditor {
   getWrapperElement(): HTMLElement
 }
 
-interface Metrics {
-  track(event: string, payload?: any): void
-}
-
 interface Nomnoml {
   draw(canvasElement: HTMLCanvasElement, renderedText: string, zoom: number): {
     config: {

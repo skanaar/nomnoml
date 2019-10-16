@@ -13,17 +13,14 @@ function ExportMenu(selector: string, app: App): Vue {
 
     methods: {
       downloadPng() {
-        app.metrics.track('export_png')
         app.downloader.pngDownload()
       },
 
       downloadSvg() {
-        app.metrics.track('export_svg')
         app.downloader.svgDownload()
       },
 
       downloadSrc() {
-        app.metrics.track('export_src')
         app.downloader.srcDownload()
       },
 
