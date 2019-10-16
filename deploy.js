@@ -19,11 +19,7 @@ var files = [
   'codemirror/codemirror.css',
   'codemirror/nomnoml.codemirror-mode.js',
   'codemirror/solarized.nomnoml.css',
-  'img/interaction-tutorial.png',
-  'img/plus.png',
-  'img/equals.png',
-  'img/minus.png',
-  'img/trash.png',
+  'img/interaction-tutorial.svg',
 ]
 
 var contentTypes = {

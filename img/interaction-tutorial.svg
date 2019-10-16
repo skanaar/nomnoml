@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="200"
+     height="100"
+     viewBox="0 0 200 100">
+  <title>Nomnoml Usage Guide</title>
+  <style>
+    text {
+      font-family: sans-serif;
+      font-size: 11pt;
+      fill: #0008;
+      text-anchor: middle;
+    }
+    .divider {
+      stroke: rgba(0,0,0,0.3);
+      stroke-width: 2px;
+    }
+    .cursor {
+      fill: #888479;
+      stroke: #888479;
+      stroke-width: 1px;
+      stroke-linejoin: round;
+    }
+    .viewport {
+      stroke: #888479;
+      stroke-linejoin: round;
+      fill: none;
+      stroke-width: 2px;
+      rx: 3px;
+    }
+  </style>
+
+  <g transform="translate(2,2)">
+    <text x="40" y="66" width="80">edit code</text>
+    <rect class="viewport" width="80" height="50" />
+    <line class="divider" x1="53" y1="0" x2="53" y2="50" />
+    <path class="cursor" d="M25 5h20v10H25zM55 5h20v10H55zM45 15h10v70H45zM25 85h20v10H25zM55 85h20v10H55z" transform="translate(5,8), scale(0.25)"></path>
+  </g>
+
+  <g transform="translate(118,2)">
+    <text x="40" y="66" width="80">pan canvas</text>
+    <rect class="viewport" width="80" height="50" />
+    <line class="divider" x1="53" y1="0" x2="53" y2="50" />
+    <g transform="translate(45,0), scale(1.5)" class="cursor">
+      <path d="M11 14.3l1.9-.8 3 7.4-1.8.8z"/>
+      <path d="M9.2 7.3v11.2l3-2.9.4-.1h4.8z"/>
+    </g>
+  </g>
+
+</svg>
