@@ -33,8 +33,8 @@ class CanvasPanner {
     element.addEventListener('mousedown', mouseDown)
     element.addEventListener('mouseup', mouseUp)
     element.addEventListener('mouseleave', mouseUp)
-    element.addEventListener('wheel', throttle(magnify, 50))
-    element.addEventListener('mousemove', throttle(mouseMove, 50))
+    element.addEventListener('wheel', throttle(magnify, 50), {passive: true})
+    element.addEventListener('mousemove', throttle(mouseMove, 50), {passive: true})
   }
 
   positionCanvas(element: HTMLCanvasElement) {
