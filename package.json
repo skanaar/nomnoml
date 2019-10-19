@@ -17,10 +17,9 @@
     "dagre": "0.8.4"
   },
   "devDependencies": {
-    "aws-sdk": "^2.476.0",
-    "jison": "0.4.13",
-    "typescript": "^3.6.3",
-    "uglify-js": "^3.6.0"
+    "jison": "0.4.18",
+    "typescript": "^3.6.4",
+    "uglify-js": "^3.6.3"
   },
   "scripts": {
     "prepare": "npm run build && npm run test && npm run test_cli && npm run webapp && npm run minify",
