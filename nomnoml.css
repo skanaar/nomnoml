@@ -243,21 +243,18 @@ a:hover img {
 }
 .sidebar.visible {
 	display: block;
-	overflow: auto;
-}
-.sidebar .logo-background {
-	position: fixed;
-	top: 0;
-	right: 20px;
-	width: 300px;
-	height: 70px;
-	background: #fdf6e3
 }
 .content {
 	display: block;
+  position: absolute;
+  padding: 10px 10px 200px 20px;
+  left: 0;
+  right: 0;
+  top: 70px;
+  bottom: 0;
+  overflow: auto;
 	color: #586e75;
 	font-family: Consolas, Monaco, monospace;
-	padding: 70px 10px 200px 20px;
 }
 .content p {
 	font-family: Calibri, Helvetica, sans-serif
