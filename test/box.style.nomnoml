@@ -1,1 +1,1 @@
-#.box: fill=pink italic bold visual=rhomb
+#.box: fill=pink stroke=red italic bold visual=rhomb

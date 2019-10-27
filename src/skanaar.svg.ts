@@ -181,10 +181,10 @@ namespace nomnoml.skanaar {
 				return newElement('path', {d:''})
 			},
 			fillText: function (text, x, y){
-				var attr = { x: tX(x), y: tY(y), style: '' }
+				var attr = { x: tX(x), y: tY(y), style: 'fill: '+last(states).fill+';' }
 				var font = lastDefined('font')
 				if (font.indexOf('bold') === -1) {
-					attr.style = 'font-weight:normal;'
+					attr.style += 'font-weight:normal;'
 				}
 				if (font.indexOf('italic') > -1) {
 					attr.style += 'font-style:italic;'
