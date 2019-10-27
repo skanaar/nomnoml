@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.6.2] - 2019-10-27
+
+- fix bug where SVG output did not get the correct text color
+
 ## [0.6.1] - 2019-07-22
 
 - upgrade Lodash to fix a security vulnerability
