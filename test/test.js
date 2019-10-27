@@ -6,7 +6,7 @@ try {
     require('./nomnoml.spec.js')
 }
 catch(e) {
-    fs.unlinkSync('dist/nomnoml.js', bundle)
+    fs.unlinkSync('dist/nomnoml.js')
     throw e
 }
 
