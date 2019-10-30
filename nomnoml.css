@@ -213,23 +213,6 @@ a:hover img {
 	background: #3332;
 }
 
-.hint {
-	position: absolute;
-	top: 65px;
-	right: 60px;
-	width: 220px;
-	transform: rotate(-10deg);
-	color: #0008;
-	font-family: "Marker Felt", "Segoe Script", Calibri, Helvetica, sans-serif;
-}
-.hint svg {
-	display: block;
-	margin: 0 0 0 auto;
-}
-.hint.hidden {
-	display: none;
-}
-
 .sidebar {
 	display: none;
 	position: absolute;

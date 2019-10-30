@@ -118,7 +118,6 @@ class App {
         document.getElementById(key).classList.remove('visible')
     }
     document.getElementById(id).classList.toggle('visible')
-    document.getElementById('file-system-hint').classList.add('hidden')
   }
 
   discardCurrentGraph(){
