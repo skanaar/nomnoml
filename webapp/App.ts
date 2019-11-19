@@ -1,7 +1,7 @@
 import { CanvasPanner } from "./CanvasPanner"
 import { DevEnv } from "./DevEnv"
 import { DownloadLinks } from "./DownloadLinks"
-import { FileEntry, FileSystem, LocalFileGraphStore } from "./FileSystem"
+import { FileEntry, FileSystem, StoreLocal } from "./FileSystem"
 import { HoverMarker } from "./HoverMarker"
 import { Observable } from "./Observable"
 import { throttle, debounce, unescapeHtml } from "./util"
@@ -56,26 +56,28 @@ export class App {
 
     var lastValidSource: string = null
 
-    var reloadStorage = () => {
+    var reloadStorage = async () => {
       lastValidSource = null
-      this.filesystem.configureByRoute(location.hash)
-      var source = this.filesystem.storage.read() || ''
-      this.editor.setValue(source || this.defaultSource)
-      this.sourceChanged()
+      await this.filesystem.configureByRoute(location.hash)
+      try {
+        var source = await this.filesystem.storage.read()
+        this.editor.setValue(source || '')
+        this.sourceChanged()
+      } catch(e) { console.log(e) }
     }
 
     window.addEventListener('hashchange', () => reloadStorage());
     window.addEventListener('resize', throttle(() => this.sourceChanged(), 750, {leading: true}))
     this.editor.on('changes', debounce(() => this.sourceChanged(), 300))
     
-    function loadFile(key: string): string {
-      var storage = new LocalFileGraphStore(key)
+    async function loadFile(key: string): Promise<string> {
+      var storage = new StoreLocal(key)
       return storage.read()
     }
     
     function safelyProcessSource(source: string) {
       try {
-        return nomnoml.processImports(source, loadFile)
+        return nomnoml.processAsyncImports(source, loadFile)
       } catch(e) {
         if (e instanceof nomnoml.ImportDepthError) {
           return 'Error: too many imports'
@@ -85,12 +87,12 @@ export class App {
       }
     }
 
-    this.sourceChanged = () => {
+    this.sourceChanged = async () => {
       try {
         this.signals.trigger('compile-error', null)
         devenv.clearState()
         var source = this.editor.getValue()
-        var processedSource = safelyProcessSource(source)
+        var processedSource = await safelyProcessSource(source)
         var model = nomnoml.draw(canvasElement, processedSource, this.panner.zoom())
         lastValidSource = source
         this.panner.positionCanvas(canvasElement)
@@ -153,13 +155,16 @@ export class App {
 
   saveAs() {
     var name = prompt('Name your diagram')
+    var source = this.currentSource()
     if (name) {
-      if (this.filesystem.files().some((e: FileEntry) => e.name === name)) {
-        alert('A file named '+name+' already exists.')
-        return
-      }
-      this.filesystem.moveToFileStorage(name, this.currentSource())
-      location.href = '#file/' + encodeURIComponent(name)
+      this.filesystem.storage.files().then(files => {
+        if (files.some((e: FileEntry) => e.name === name)) {
+          alert('A file named '+name+' already exists.')
+        } else {
+          this.filesystem.moveToFileStorage(name, source)
+          location.href = '#file/' + encodeURIComponent(name)
+        }
+      })
     }
   }
 

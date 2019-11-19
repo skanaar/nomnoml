@@ -1,4 +1,11 @@
-export { draw, renderSvg, compileFile, processImports, ImportDepthError } from "./nomnoml"
+export {
+  draw,
+  renderSvg,
+  compileFile,
+  processImports,
+  processAsyncImports,
+  ImportDepthError 
+} from "./nomnoml"
 export var version = '1.3.1'
 
 export * as skanaar from "./util";

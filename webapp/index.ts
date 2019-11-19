@@ -20,17 +20,24 @@ export function bootstrap(CodeMirror: CodeMirror) {
   app = new App(CodeMirror)
   var elem = (query: string) => document.querySelector(query)
   render()
+  renderFileMenu()
 
   function render() {
-    ReactDOM.render(el(FileMenu, { app }), elem('[file-menu]'))
     ReactDOM.render(el(ExportMenu, { app }), elem('[export-menu]'))
     ReactDOM.render(el(Menu, { app }), elem('[menu]'))
     ReactDOM.render(el(CanvasTools, { app }), elem('[canvas-tools]'))
   }
+  
+  function renderFileMenu() {
+    ReactDOM.render(el(FileMenu, { app, files: [], isLoaded: false }), elem('[file-menu]'))
+    app.filesystem.storage.files().then(files => {
+      ReactDOM.render(el(FileMenu, { app, files, isLoaded: true }), elem('[file-menu]'))
+    })
+  }
 
   app.signals.on('source-changed', render)
   app.signals.on('compile-error', render)
-  app.filesystem.signals.on('updated', render)
+  app.filesystem.signals.on('updated', renderFileMenu)
 
   function renderPreviews() {
     var files: Record<string, string> = {}

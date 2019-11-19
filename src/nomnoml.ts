@@ -47,13 +47,44 @@ export function renderSvg(code: string, document?: HTMLDocument): string {
   }, code, config.title)
 }
 
-type FileLoader = (filename: string) => string
-
 export class ImportDepthError extends Error {
   constructor() {
     super('max_import_depth exceeded')
   }
 }
+
+type FileLoaderAsync = (filename: string) => Promise<string>
+
+export async function processAsyncImports(source: string, loadFile: FileLoaderAsync, maxImportDepth: number = 10): Promise<string> {
+
+  if (maxImportDepth == -1) {
+    throw new ImportDepthError()
+  }
+  
+  async function lenientLoadFile(key: string): Promise<string> {
+    try { return (await loadFile(key)) || '' }
+    catch(e) { return '' }
+  }
+  
+  var imports: { file: string, promise: Promise<string> }[] = []
+  
+  source.replace(/#import: *(.*)/g, function (a: any, file: string) {
+    var promise = lenientLoadFile(file).then(contents => processAsyncImports(contents, loadFile, maxImportDepth-1))
+    imports.push({ file, promise })
+    return ''
+  })
+  
+  var imported: Record<string, string> = {}
+  for(var imp of imports) {
+    imported[imp.file] = await imp.promise
+  }
+  
+  return source.replace(/#import: *(.*)/g, function (a: any, file: string) {
+    return imported[file]
+  })
+}
+
+type FileLoader = (filename: string) => string
 
 export function processImports(source: string, loadFile: FileLoader, maxImportDepth: number = 10): string {
 

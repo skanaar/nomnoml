@@ -21,6 +21,6 @@ export default {
     typescript({ noEmit: false }),
     nodeResolve({ preferBuiltins: true }),
     commonjs({ include: ['node_modules/**', 'dist/**'] }),
-    terser()
+    terser({ output: { comments: false } })
   ]
 };

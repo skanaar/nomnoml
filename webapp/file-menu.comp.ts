@@ -4,15 +4,13 @@ import { Icon } from "./Icon.comp"
 import { a, div, el, h2, input, label, prevent } from "./react-util"
 import { document_add, folder, home_outline, image_outline, trash } from "./typicons"
 
-export function FileMenu(props: { app: App }) {
-    
+export function FileMenu(props: { app: App, files: FileEntry[], isLoaded: boolean }) {
   var filesystem = props.app.filesystem
-  var items = filesystem.files()
   var isLocalFile = filesystem.storage.kind === 'local_file'
   var isAtHome = filesystem.storage.kind === 'local_default'
   var entries: Array<{ isDir: boolean, name: string, entry: FileEntry }> = []
   var currentDir = null
-  for(var entry of items) {
+  for(var entry of props.files) {
     var path = entry.name.split('/')
     var name = path.pop()
     var dir = path.join('/')
@@ -69,7 +67,7 @@ export function FileMenu(props: { app: App }) {
         el(Icon, { shape: document_add }), 'Save to local file...',
     ),
 
-    h2({}, 'Local files'),
+    h2({}, props.isLoaded ? 'Local files' : 'loading files...'),
 
     div({ className: 'file-entry ' + (isAtHome ? 'active' : '') },
         a({ href: "#" }, el(Icon, { shape: home_outline }), 'Home'),
