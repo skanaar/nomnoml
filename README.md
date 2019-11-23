@@ -1,4 +1,4 @@
-nomnoml
+nomnoml [![npm version](https://badge.fury.io/js/nomnoml.svg)](https://badge.fury.io/js/nomnoml) [![Known Vulnerabilities](https://snyk.io/test/npm/nomnoml/badge.svg)](https://snyk.io/test/npm/nomnoml)
 =======
 
 Hello, this is [nomnoml](http://www.nomnoml.com), a tool for drawing UML diagrams based on a simple syntax. It tries to keep its syntax visually as close as possible to the generated UML diagram without resorting to ASCII drawings.
