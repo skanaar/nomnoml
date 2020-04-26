@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.7.0] - 2020-04-26
+
+- expose compileFile to allow usage in a NodeJS environment
+
 ## [0.6.2] - 2019-10-27
 
 - fix bug where SVG output did not get the correct text color

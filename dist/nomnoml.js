@@ -133,6 +133,43 @@ var nomnoml;
     }
     nomnoml.layout = layout;
 })(nomnoml || (nomnoml = {}));
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var nomnoml;
+(function (nomnoml) {
+    var ImportDepthError = (function (_super) {
+        __extends(ImportDepthError, _super);
+        function ImportDepthError() {
+            return _super.call(this, 'max_import_depth exceeded') || this;
+        }
+        return ImportDepthError;
+    }(Error));
+    nomnoml.ImportDepthError = ImportDepthError;
+    function compileFile(filepath, maxImportDepth, depth) {
+        var fs = require('fs');
+        var path = require('path');
+        if (depth > maxImportDepth) {
+            throw new ImportDepthError();
+        }
+        var source = fs.readFileSync(filepath, { encoding: 'utf8' });
+        var directory = path.dirname(filepath);
+        return source.replace(/#import: *(.*)/g, function (a, file) {
+            return compileFile(path.join(directory, file), depth + 1);
+        });
+    }
+    nomnoml.compileFile = compileFile;
+})(nomnoml || (nomnoml = {}));
 var nomnoml;
 (function (nomnoml) {
     function fitCanvasSize(canvas, rect, zoom) {
@@ -163,7 +200,7 @@ var nomnoml;
         nomnoml.render(graphics, config, layout, measurer.setFont);
         return { config: config };
     }
-    nomnoml.version = '0.6.2';
+    nomnoml.version = '0.7.0';
     function draw(canvas, code, scale) {
         return parseAndRender(code, nomnoml.skanaar.Canvas(canvas), canvas, scale || 1);
     }

@@ -1,11 +1,10 @@
 #! /usr/bin/env node
 var fs = require('fs')
-var path = require('path');
 var nomnoml = require('./nomnoml.js')
 
-var args = process.argv
+var [_, _, filename, outfile, optionalMaxImportDepth] = process.argv
 
-if (args[2] == '--help' || args.length == 2){
+if (filename == '--help' || process.argv.length == 2){
   console.log(`
   Nomnoml command line utility for generating SVG diagrams.
 
@@ -20,25 +19,16 @@ if (args[2] == '--help' || args.length == 2){
   Third parameter overrides the import depth limit
   that protects us from recursive imports:
 
-  > node nomnoml-cli.js <source_file> <output_file> <max_import_chain_length>`)
+  > node nomnoml-cli.js <source_file> <output_file> <max_import_depth>`)
   return
 }
 
-var maxImportChainLength = args[4] || 10
+var maxImportDepth = optionalMaxImportDepth || 10
 
-var svg = nomnoml.renderSvg(preprocessFile(args[2], 0))
-if (args[3]){
-  fs.writeFileSync(args[3], svg)
+var svg = nomnoml.renderSvg(nomnoml.compileFile(filename, maxImportDepth, 0))
+if (outfile){
+  fs.writeFileSync(outfile, svg)
 }
 else {
   console.log(svg)
-}
-
-function preprocessFile(filepath, depth){
-  if (depth > maxImportChainLength)
-    throw Error('max_import_chain_length exceeded')
-  var source = fs.readFileSync(filepath, {encoding:'utf8'})
-  return source.replace(/#import: *(.*)/g, function (a, file) {
-    return preprocessFile(path.dirname(filepath) + '/' + file, depth+1)
-  })
 }
