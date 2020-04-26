@@ -26,6 +26,7 @@ var contentTypes = {
   js: 'application/javascript',
   css: 'text/css',
   html: 'text/html',
+  svg: 'image/svg+xml',
 }
 
 var subfolder = process.argv[2]
