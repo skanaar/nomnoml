@@ -165,7 +165,7 @@ var nomnoml;
         var source = fs.readFileSync(filepath, { encoding: 'utf8' });
         var directory = path.dirname(filepath);
         return source.replace(/#import: *(.*)/g, function (a, file) {
-            return compileFile(path.join(directory, file), depth + 1);
+            return compileFile(path.join(directory, file), maxImportDepth, depth + 1);
         });
     }
     nomnoml.compileFile = compileFile;

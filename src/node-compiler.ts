@@ -6,7 +6,7 @@ namespace nomnoml {
     }
   }
 
-  export function compileFile(filepath: string, maxImportDepth: number, depth?: number): string {
+  export function compileFile(filepath: string, maxImportDepth: number, depth: number): string {
     var fs = require('fs')
     var path = require('path')
 
@@ -18,7 +18,7 @@ namespace nomnoml {
     var directory = path.dirname(filepath)
 
     return source.replace(/#import: *(.*)/g, function (a: any, file: string) {
-      return compileFile(path.join(directory, file), depth+1)
+      return compileFile(path.join(directory, file), maxImportDepth, depth+1)
     })
   }
 
