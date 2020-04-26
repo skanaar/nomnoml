@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.7.1] - 2020-04-26
+
+- fixed bug in compileFile()
+
 ## [0.7.0] - 2020-04-26
 
 - expose compileFile to allow usage in a NodeJS environment
