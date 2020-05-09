@@ -15,13 +15,13 @@
     "dist/nomnoml-cli.js"
   ],
   "dependencies": {
-    "@types/node": "^13.13.2",
-    "dagre": "0.8.4"
+    "dagre": "0.8.5"
   },
   "devDependencies": {
+    "@types/node": "^13.13.5",
     "jison": "0.4.18",
-    "typescript": "^3.6.4",
-    "uglify-js": "^3.6.3"
+    "typescript": "^3.8.3",
+    "uglify-js": "^3.9.2"
   },
   "scripts": {
     "prepare": "npm run build && npm run test && npm run test_cli && npm run webapp && npm run minify",
