@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.7.2] - 2020-05-14
+
+- upgraded dependencies
+
 ## [0.7.1] - 2020-04-26
 
 - fixed bug in compileFile()
