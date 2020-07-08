@@ -13,7 +13,13 @@ catch(e) {
 function assertLibraryVersion() {
     var library = require('../dist/nomnoml.js')
     var package = require('../package.json')
+    var changelog = fs.readFileSync('changelog.md', { encoding: 'utf-8' })
+    var versionMatch = changelog.match(/\d+\.\d+\.\d+/)
+    var logVersion = versionMatch && versionMatch[0]
     if (library.version != package.version) {
         throw new Error('version of distribution bundle and npm package must match')
+    }
+    if (library.version != logVersion) {
+        throw new Error('version must be documented in changelog')
     }
 }

@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.7.3] - 2020-07-08
+
+- fixed incomplete rendering when edges extended outside bounding box
+
 ## [0.7.2] - 2020-05-14
 
 - upgraded dependencies
