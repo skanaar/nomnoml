@@ -284,8 +284,18 @@ suite.test('layouter should handle [apa|[flea]->[dandruff]] relation placement',
 
 suite.test('gracefully handle equivalent relations', function(){
     var parsedGraph = nomnoml.parse('[a]-[b]\n[a]-[b]')
-    
     assertEqual(parsedGraph.root.relations.length, 1)
+})
+
+suite.test('include edges in canvas size calculation', function(){
+    var { root, config } = nomnoml.parse(`
+    [a] - [foo]
+    [foo] - [b]
+    [a] - [bar]
+    [bar] - [b]
+    [a] - [b]`)
+    var compartment = nomnoml.layout(measurer, config, root)
+    assertEqual(compartment.width > 300, true)
 })
 
 suite.report()

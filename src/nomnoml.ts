@@ -3,7 +3,7 @@ interface Nomnoml {
   draw(canvas: HTMLCanvasElement, code: string, scale: number): { config: Config }
   render(graphics: Graphics, config: Config, compartment: nomnoml.Compartment, setFont: nomnoml.SetFont): void
   renderSvg(code: string, docCanvas?: HTMLCanvasElement): string
-  parse(source: string): any
+  parse(source: string):  { root: nomnoml.Compartment; config: Config }
   intermediateParse(source: string): nomnoml.AstRoot
   transformParseIntoSyntaxTree(entity: nomnoml.AstRoot): nomnoml.Compartment
   layout(measurer: Measurer, config: Config, ast: nomnoml.Compartment): nomnoml.Compartment

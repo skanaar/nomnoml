@@ -50,15 +50,21 @@ namespace nomnoml {
 				nodes[name].x = node.x
 				nodes[name].y = node.y
 			})
+			var edgeWidth = 0;
+			var edgeHeight = 0;
 			g.edges().forEach(function(edgeObj) {
 				var edge = g.edge(edgeObj)
 				var start = nodes[edgeObj.v]
 				var end = nodes[edgeObj.w]
 				rels[edge.id].path = skanaar.flatten([[start], edge.points, [end]]).map(toPoint)
+				edgeWidth = skanaar.max(edge.points.map(e => e.x))
+				edgeHeight = skanaar.max(edge.points.map(e => e.y))
 			})
 			var graph = g.graph()
-			var graphHeight = graph.height ? graph.height + 2*config.gutter : 0
-			var graphWidth = graph.width ? graph.width + 2*config.gutter : 0
+			var width = Math.max(graph.width, edgeWidth)
+			var height = Math.max(graph.height, edgeHeight)
+			var graphHeight = height ? height + 2*config.gutter : 0
+			var graphWidth = width ? width + 2*config.gutter : 0
 
 			c.width = Math.max(textSize.width, graphWidth) + 2*config.padding
 			c.height = textSize.height + graphHeight + config.padding
