@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.8.0] - 2020-07-09
+
+- #background directive to specify background color
+
 ## [0.7.3] - 2020-07-08
 
 - fixed incomplete rendering when edges extended outside bounding box
