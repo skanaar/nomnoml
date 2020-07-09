@@ -194,15 +194,24 @@ namespace nomnoml {
 			if (config.lineWidth % 2 === 1)
 				g.translate(0.5, 0.5)
 		}
+		
+		function setBackground() {
+			g.clear()
+			g.save()
+			g.strokeStyle('transparent')
+			g.fillStyle(config.background)
+			g.rect(0, 0, compartment.width, compartment.height).fill()
+			g.restore
+		}
 
-		g.clear()
-		setFont(config, 'bold')
 		g.save()
+		g.scale(config.zoom, config.zoom)
+		setBackground()
+		setFont(config, 'bold')
 		g.lineWidth(config.lineWidth)
 		g.lineJoin('round')
 		g.lineCap('round')
 		g.strokeStyle(config.stroke)
-		g.scale(config.zoom, config.zoom)
 		snapToPixels()
 		renderCompartment(compartment, buildStyle({ stroke: undefined }), 0)
 		g.restore()

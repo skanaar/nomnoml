@@ -95,6 +95,7 @@ namespace nomnoml {
 				edgeMargin: (+d.edgeMargin) || 0,
 				edges: d.edges == 'hard' ? 'hard' : 'rounded',
 				fill: (d.fill || '#eee8d5;#fdf6e3;#eee8d5;#fdf6e3').split(';'),
+				background: d.background || 'transparent',
 				fillArrows: d.fillArrows === 'true',
 				font: d.font || 'Calibri',
 				fontSize: (+d.fontSize) || 12,

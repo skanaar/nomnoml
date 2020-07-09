@@ -9,6 +9,7 @@ interface Config {
   gutter: number
   styles: { [key: string]: Style }
   fill: string[]
+  background: string
   edges: string
   edgeMargin: number
   spacing: number

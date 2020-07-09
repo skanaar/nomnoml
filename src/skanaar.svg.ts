@@ -104,7 +104,6 @@ namespace nomnoml.skanaar {
 		return {
 			width: function (){ return 0 },
 			height: function (){ return 0 },
-			background: function (/*r, g, b*/){},
 			clear: function (){},
 			circle: function (p: Vec, r: number){
 				var element = Element('circle', {r: r, cx: tX(p.x), cy: tY(p.y)})

@@ -12,7 +12,6 @@ interface Chainable {
 interface Graphics {
   width(): number
   height(): number
-  background(r: number, g: number, b: number): void
   clear(): void
   circle(center: Vec, r: number): Chainable
   ellipse(center: Vec, w: number, h: number, start?: number, stop?: number): Chainable

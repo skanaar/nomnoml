@@ -121,6 +121,7 @@ This is how the Decorator pattern looks like in nomnoml syntax:
     #gutter: 5
     #edgeMargin: 0
     #edges: hard | rounded
+    #background: transparent
     #fill: #eee8d5; #fdf6e3
     #fillArrows: false
     #font: Calibri

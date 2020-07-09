@@ -48,12 +48,6 @@ namespace nomnoml.skanaar {
 			}
 		}
 
-		function color255(r: number, g: number, b: number, a?: number): string {
-			var optionalAlpha = a === undefined ? 1 : a
-			var comps = [Math.floor(r), Math.floor(g), Math.floor(b), optionalAlpha]
-			return 'rgba('+ comps.join() +')'
-		}
-
 		function tracePath(path: Vec[], offset?: Vec, s?: number){
 			s = s === undefined ? 1 : s
 			offset = offset || {x:0, y:0}
@@ -68,10 +62,6 @@ namespace nomnoml.skanaar {
 			mousePos: function (){ return mousePos },
 			width: function (){ return canvas.width },
 			height: function (){ return canvas.height },
-			background: function (r, g, b){
-				ctx.fillStyle = color255(r, g, b)
-				ctx.fillRect (0, 0, canvas.width, canvas.height)
-			},
 			clear: function (){
 				ctx.clearRect(0, 0, canvas.width, canvas.height)
 			},
