@@ -33,12 +33,6 @@ suite.test('skanaar.format', function(){
     assertEqual(nomnoml.skanaar.format('# # #', 1, 2), '1 2 ')
 })
 
-suite.test('skanaar.max', function(){
-    assertEqual(nomnoml.skanaar.max([{a:7}, {a:10}, {a:6}], 'a'), 10)
-    assertEqual(nomnoml.skanaar.max([{a:7}, {a:10}, {a:6}], e => e.a), 10)
-    assertEqual(nomnoml.skanaar.max([7, 10, 6]), 10)
-})
-
 suite.test('skanaar.flatten', function(){
     assertEqual(nomnoml.skanaar.flatten([[4, 5]]), [4, 5])
     assertEqual(nomnoml.skanaar.flatten([[7], [4, 5]]), [7, 4, 5])
@@ -127,8 +121,8 @@ suite.test('astBuilder should handle single association', function(){
             assoc: '->',
             start: 'apa',
             end: 'banan',
-            startLabel: '',
-            endLabel: ''
+            startLabel: { text: '' },
+            endLabel: { text: '' }
         }
     ]))
 })
@@ -232,7 +226,9 @@ suite.test('layout [apa|[flea]->[dandruff]] vertically stacked inner classes', f
                 id: 0,
                 type: 'association',
                 start: 'flea',
-                end: 'dandruff'
+                end: 'dandruff',
+                startLabel: { text: '' },
+                endLabel: { text: '' },
             }]
         )
     ])
@@ -268,7 +264,9 @@ suite.test('layouter should handle [apa|[flea]->[dandruff]] relation placement',
                 id: 0,
                 type: 'association',
                 start: 'flea',
-                end: 'dandruff'
+                end: 'dandruff',
+                startLabel: { text: '' },
+                endLabel: { text: '' },
             }]
         )
     ])

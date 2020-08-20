@@ -46,6 +46,13 @@
     }());
     nomnoml.Classifier = Classifier;
 })(nomnoml || (nomnoml = {}));
+var __spreadArrays = (this && this.__spreadArrays) || function () {
+    for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
+    for (var r = Array(s), k = 0, i = 0; i < il; i++)
+        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
+            r[k] = a[j];
+    return r;
+};
 var nomnoml;
 (function (nomnoml) {
     function layout(measurer, config, ast) {
@@ -54,16 +61,18 @@ var nomnoml;
                 return { width: 0, height: config.padding };
             measurer.setFont(config, fontWeight, 'normal');
             return {
-                width: Math.round(nomnoml.skanaar.max(lines.map(measurer.textWidth)) + 2 * config.padding),
+                width: Math.round(Math.max.apply(Math, lines.map(measurer.textWidth)) + 2 * config.padding),
                 height: Math.round(measurer.textHeight() * lines.length + 2 * config.padding)
             };
         }
         function layoutCompartment(c, compartmentIndex, style) {
             var textSize = measureLines(c.lines, compartmentIndex ? 'normal' : 'bold');
-            c.width = textSize.width;
-            c.height = textSize.height;
-            if (!c.nodes.length && !c.relations.length)
+            if (!c.nodes.length && !c.relations.length) {
+                c.width = textSize.width;
+                c.height = textSize.height;
+                c.offset = { x: config.padding, y: config.padding };
                 return;
+            }
             c.nodes.forEach(layoutClassifier);
             var g = new dagre.graphlib.Graph();
             g.setGraph({
@@ -74,38 +83,95 @@ var nomnoml;
                 acyclicer: config.acyclicer,
                 ranker: config.ranker
             });
-            c.nodes.forEach(function (e) {
+            for (var _i = 0, _a = c.nodes; _i < _a.length; _i++) {
+                var e = _a[_i];
                 g.setNode(e.name, { width: e.layoutWidth, height: e.layoutHeight });
-            });
-            c.relations.forEach(function (r) {
+            }
+            for (var _b = 0, _c = c.relations; _b < _c.length; _b++) {
+                var r = _c[_b];
                 g.setEdge(r.start, r.end, { id: r.id });
-            });
+            }
             dagre.layout(g);
             var rels = nomnoml.skanaar.indexBy(c.relations, 'id');
             var nodes = nomnoml.skanaar.indexBy(c.nodes, 'name');
-            function toPoint(o) { return { x: o.x, y: o.y }; }
             g.nodes().forEach(function (name) {
                 var node = g.node(name);
                 nodes[name].x = node.x;
                 nodes[name].y = node.y;
             });
-            var edgeWidth = 0;
-            var edgeHeight = 0;
+            var left = 0;
+            var right = 0;
+            var top = 0;
+            var bottom = 0;
             g.edges().forEach(function (edgeObj) {
                 var edge = g.edge(edgeObj);
                 var start = nodes[edgeObj.v];
                 var end = nodes[edgeObj.w];
-                rels[edge.id].path = nomnoml.skanaar.flatten([[start], edge.points, [end]]).map(toPoint);
-                edgeWidth = nomnoml.skanaar.max(edge.points.map(function (e) { return e.x; }));
-                edgeHeight = nomnoml.skanaar.max(edge.points.map(function (e) { return e.y; }));
+                var rel = rels[edge.id];
+                rel.path = nomnoml.skanaar.flatten([[start], edge.points, [end]]).map(toPoint);
+                var startP = rel.path[1];
+                var endP = rel.path[rel.path.length - 2];
+                layoutLabel(rel.startLabel, startP, adjustQuadrant(quadrant(startP, start, 4), start, end));
+                layoutLabel(rel.endLabel, endP, adjustQuadrant(quadrant(endP, end, 2), end, start));
+                left = Math.min.apply(Math, __spreadArrays([left, rel.startLabel.x, rel.endLabel.x], edge.points.map(function (e) { return e.x; }), edge.points.map(function (e) { return e.x; })));
+                right = Math.max.apply(Math, __spreadArrays([right, rel.startLabel.x + rel.startLabel.width, rel.endLabel.x + rel.endLabel.width], edge.points.map(function (e) { return e.x; })));
+                top = Math.min.apply(Math, __spreadArrays([top, rel.startLabel.y, rel.endLabel.y], edge.points.map(function (e) { return e.y; })));
+                bottom = Math.max.apply(Math, __spreadArrays([bottom, rel.startLabel.y + rel.startLabel.height, rel.endLabel.y + rel.endLabel.height], edge.points.map(function (e) { return e.y; })));
             });
             var graph = g.graph();
-            var width = Math.max(graph.width, edgeWidth);
-            var height = Math.max(graph.height, edgeHeight);
+            var width = Math.max(graph.width, right - left);
+            var height = Math.max(graph.height, bottom - top);
             var graphHeight = height ? height + 2 * config.gutter : 0;
             var graphWidth = width ? width + 2 * config.gutter : 0;
             c.width = Math.max(textSize.width, graphWidth) + 2 * config.padding;
             c.height = textSize.height + graphHeight + config.padding;
+            c.offset = { x: config.padding - left, y: config.padding - top };
+        }
+        function toPoint(o) {
+            return { x: o.x, y: o.y };
+        }
+        function layoutLabel(label, point, quadrant) {
+            if (!label.text) {
+                label.width = 0;
+                label.height = 0;
+                label.x = point.x;
+                label.y = point.y;
+            }
+            else {
+                var fontSize = config.fontSize;
+                var lines = label.text.split('`');
+                label.width = Math.max.apply(Math, lines.map(function (l) { return measurer.textWidth(l); })),
+                    label.height = fontSize * lines.length;
+                label.x = point.x + ((quadrant == 1 || quadrant == 4) ? config.padding : -label.width - config.padding),
+                    label.y = point.y + ((quadrant == 3 || quadrant == 4) ? config.padding : -label.height - config.padding);
+            }
+        }
+        function quadrant(point, node, fallback) {
+            if (point.x < node.x && point.y < node.y)
+                return 1;
+            if (point.x > node.x && point.y < node.y)
+                return 2;
+            if (point.x > node.x && point.y > node.y)
+                return 3;
+            if (point.x < node.x && point.y > node.y)
+                return 4;
+            return fallback;
+        }
+        function adjustQuadrant(quadrant, point, opposite) {
+            if ((opposite.x == point.x) || (opposite.y == point.y))
+                return quadrant;
+            var flipHorizontally = [4, 3, 2, 1];
+            var flipVertically = [2, 1, 4, 3];
+            var oppositeQuadrant = (opposite.y < point.y) ?
+                ((opposite.x < point.x) ? 2 : 1) :
+                ((opposite.x < point.x) ? 3 : 4);
+            if (oppositeQuadrant === quadrant) {
+                if (config.direction === 'LR')
+                    return flipHorizontally[quadrant - 1];
+                if (config.direction === 'TB')
+                    return flipVertically[quadrant - 1];
+            }
+            return quadrant;
         }
         function layoutClassifier(clas) {
             var layout = getLayouter(clas);
@@ -126,7 +192,7 @@ var nomnoml;
                 };
                 default: return function (clas) {
                     clas.compartments.forEach(function (co, i) { layoutCompartment(co, i, style); });
-                    clas.width = nomnoml.skanaar.max(clas.compartments, 'width');
+                    clas.width = Math.max.apply(Math, clas.compartments.map(function (e) { return e.width; }));
                     clas.height = nomnoml.skanaar.sum(clas.compartments, 'height');
                     clas.x = clas.layoutWidth / 2;
                     clas.y = clas.layoutHeight / 2;
@@ -143,7 +209,7 @@ var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
         return extendStatics(d, b);
     };
     return function (d, b) {
@@ -367,8 +433,8 @@ var nomnoml;
                         assoc: p.assoc,
                         start: p.start.parts[0][0],
                         end: p.end.parts[0][0],
-                        startLabel: p.startLabel,
-                        endLabel: p.endLabel
+                        startLabel: { text: p.startLabel },
+                        endLabel: { text: p.endLabel }
                     });
                 }
                 if (isAstClassifier(p)) {
@@ -404,16 +470,15 @@ var nomnoml;
 var nomnoml;
 (function (nomnoml) {
     function render(graphics, config, compartment, setFont) {
-        var padding = config.padding;
         var g = graphics;
         var vm = nomnoml.skanaar.vector;
         function renderCompartment(compartment, style, level) {
             g.save();
-            g.translate(padding, padding);
+            g.translate(compartment.offset.x, compartment.offset.y);
             g.fillStyle(style.stroke || config.stroke);
             compartment.lines.forEach(function (text, i) {
                 g.textAlign(style.center ? 'center' : 'left');
-                var x = style.center ? compartment.width / 2 - padding : 0;
+                var x = style.center ? compartment.width / 2 - config.padding : 0;
                 var y = (0.5 + (i + 0.5) * config.leading) * config.fontSize;
                 if (text) {
                     g.fillText(text, x, y);
@@ -426,7 +491,7 @@ var nomnoml;
                 }
             });
             g.translate(config.gutter, config.gutter);
-            compartment.relations.forEach(function (r) { renderRelation(r, compartment); });
+            compartment.relations.forEach(function (r) { renderRelation(r); });
             compartment.nodes.forEach(function (n) { renderNode(n, level); });
             g.restore();
         }
@@ -443,7 +508,7 @@ var nomnoml;
             var drawNode = nomnoml.visualizers[style.visual] || nomnoml.visualizers["class"];
             drawNode(node, x, y, config, g);
             g.setLineDash([]);
-            var yDivider = (style.visual === 'actor' ? y + padding * 3 / 4 : y);
+            var yDivider = (style.visual === 'actor' ? y + config.padding * 3 / 4 : y);
             node.compartments.forEach(function (part, i) {
                 var s = i > 0 ? nomnoml.buildStyle({ stroke: style.stroke }) : style;
                 if (s.empty)
@@ -457,7 +522,7 @@ var nomnoml;
                     return;
                 yDivider += part.height;
                 if (style.visual === 'frame' && i === 0) {
-                    var w = g.measureText(node.name).width + part.height / 2 + padding;
+                    var w = g.measureText(node.name).width + part.height / 2 + config.padding;
                     g.path([
                         { x: x, y: yDivider },
                         { x: x + w - part.height / 2, y: yDivider },
@@ -485,58 +550,21 @@ var nomnoml;
                 g.path(p).stroke();
         }
         var empty = false, filled = true, diamond = true;
-        function renderLabel(text, pos, quadrant) {
-            if (text) {
-                var fontSize = config.fontSize;
-                var lines = text.split('`');
-                var area = {
-                    width: nomnoml.skanaar.max(lines.map(function (l) { return g.measureText(l).width; })),
-                    height: fontSize * lines.length
-                };
-                var origin = {
-                    x: pos.x + ((quadrant == 1 || quadrant == 4) ? padding : -area.width - padding),
-                    y: pos.y + ((quadrant == 3 || quadrant == 4) ? padding : -area.height - padding)
-                };
-                lines.forEach(function (l, i) { g.fillText(l, origin.x, origin.y + fontSize * (i + 1)); });
-            }
+        function renderLabel(label) {
+            if (!label || !label.text)
+                return;
+            var fontSize = config.fontSize;
+            var lines = label.text.split('`');
+            lines.forEach(function (l, i) { return g.fillText(l, label.x, label.y + fontSize * (i + 1)); });
         }
-        function quadrant(point, node, fallback) {
-            if (point.x < node.x && point.y < node.y)
-                return 1;
-            if (point.x > node.x && point.y < node.y)
-                return 2;
-            if (point.x > node.x && point.y > node.y)
-                return 3;
-            if (point.x < node.x && point.y > node.y)
-                return 4;
-            return fallback;
-        }
-        function adjustQuadrant(quadrant, point, opposite) {
-            if ((opposite.x == point.x) || (opposite.y == point.y))
-                return quadrant;
-            var flipHorizontally = [4, 3, 2, 1];
-            var flipVertically = [2, 1, 4, 3];
-            var oppositeQuadrant = (opposite.y < point.y) ?
-                ((opposite.x < point.x) ? 2 : 1) :
-                ((opposite.x < point.x) ? 3 : 4);
-            if (oppositeQuadrant === quadrant) {
-                if (config.direction === 'LR')
-                    return flipHorizontally[quadrant - 1];
-                if (config.direction === 'TB')
-                    return flipVertically[quadrant - 1];
-            }
-            return quadrant;
-        }
-        function renderRelation(r, compartment) {
-            var startNode = nomnoml.skanaar.find(compartment.nodes, function (e) { return e.name == r.start; });
-            var endNode = nomnoml.skanaar.find(compartment.nodes, function (e) { return e.name == r.end; });
+        function renderRelation(r) {
             var start = r.path[1];
             var end = r.path[r.path.length - 2];
             var path = r.path.slice(1, -1);
             g.fillStyle(config.stroke);
             setFont(config, 'normal');
-            renderLabel(r.startLabel, start, adjustQuadrant(quadrant(start, startNode, 4), start, end));
-            renderLabel(r.endLabel, end, adjustQuadrant(quadrant(end, endNode, 2), end, start));
+            renderLabel(r.startLabel);
+            renderLabel(r.endLabel);
             if (r.assoc !== '-/-') {
                 if (nomnoml.skanaar.hasSubstring(r.assoc, '--')) {
                     var dash = Math.max(4, 2 * config.lineWidth);
@@ -1006,16 +1034,6 @@ var nomnoml;
             }
         }
         skanaar.plucker = plucker;
-        function max(list, plucker) {
-            var transform = skanaar.plucker(plucker);
-            var maximum = transform(list[0]);
-            for (var i = 0; i < list.length; i++) {
-                var item = transform(list[i]);
-                maximum = (item > maximum) ? item : maximum;
-            }
-            return maximum;
-        }
-        skanaar.max = max;
         function sum(list, plucker) {
             var transform = skanaar.plucker(plucker);
             for (var i = 0, summation = 0, len = list.length; i < len; i++)

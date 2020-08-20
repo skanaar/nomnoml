@@ -7,15 +7,6 @@ namespace nomnoml.skanaar {
             case 'function': return pluckerDef
         }
     }
-    export function max(list: any[], plucker?: any): number {
-        var transform = skanaar.plucker(plucker)
-        var maximum = transform(list[0])
-        for(var i=0; i<list.length; i++) {
-            var item = transform(list[i])
-            maximum = (item > maximum) ? item : maximum 
-        }
-        return maximum
-    }
     export function sum<T>(list: { length: number, [i: number]: T }, plucker?: any){
         var transform = skanaar.plucker(plucker)
         for(var i=0, summation=0, len=list.length; i<len; i++)

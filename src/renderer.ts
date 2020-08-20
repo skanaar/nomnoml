@@ -1,20 +1,17 @@
 namespace nomnoml {
 
-	type Quadrant = 1|2|3|4
-
 	export function render(graphics: Graphics, config: Config, compartment: Compartment, setFont: nomnoml.SetFont){
 
-		var padding = config.padding
 		var g = graphics
 		var vm = nomnoml.skanaar.vector
 
 		function renderCompartment(compartment: Compartment, style: Style, level: number){
 			g.save()
-			g.translate(padding, padding)
+			g.translate(compartment.offset.x, compartment.offset.y)
 			g.fillStyle(style.stroke || config.stroke)
 			compartment.lines.forEach(function (text, i){
 				g.textAlign(style.center ? 'center' : 'left')
-				var x = style.center ? compartment.width/2 - padding : 0
+				var x = style.center ? compartment.width/2 - config.padding : 0
 				var y = (0.5+(i+0.5)*config.leading)*config.fontSize
 				if (text){
 					g.fillText(text, x, y)
@@ -27,7 +24,7 @@ namespace nomnoml {
 				}
 			})
 			g.translate(config.gutter, config.gutter)
-			compartment.relations.forEach(function (r){ renderRelation(r, compartment) })
+			compartment.relations.forEach(function (r){ renderRelation(r) })
 			compartment.nodes.forEach(function (n){ renderNode(n, level) })
 			g.restore()
 		}
@@ -47,7 +44,7 @@ namespace nomnoml {
 			drawNode(node, x, y, config, g)
 			g.setLineDash([])
 
-			var yDivider = (style.visual === 'actor' ? y + padding*3/4 : y)
+			var yDivider = (style.visual === 'actor' ? y + config.padding*3/4 : y)
 			node.compartments.forEach(function (part: Compartment, i: number){
 				var s = i > 0 ? buildStyle({ stroke: style.stroke }) : style; // only style node title
 				if (s.empty) return
@@ -59,7 +56,7 @@ namespace nomnoml {
 				if (i+1 === node.compartments.length) return
 				yDivider += part.height
 				if (style.visual === 'frame' && i === 0){
-					var w = g.measureText(node.name).width+part.height/2+padding
+					var w = g.measureText(node.name).width+part.height/2+config.padding
 					g.path([
 						{x:x, y:yDivider},
 						{x:x+w-part.height/2, y:yDivider},
@@ -90,50 +87,14 @@ namespace nomnoml {
 
 		var empty = false, filled = true, diamond = true
 
-	    function renderLabel(text: string, pos: Vector, quadrant: Quadrant){
-			if (text) {
-				var fontSize = config.fontSize
-				var lines = text.split('`')
-				var area = {
-					width : skanaar.max(lines.map(function(l){ return g.measureText(l).width })),
-					height : fontSize*lines.length
-				}
-				var origin = {
-					x: pos.x + ((quadrant==1 || quadrant==4) ? padding : -area.width - padding),
-					y: pos.y + ((quadrant==3 || quadrant==4) ? padding : -area.height - padding)
-				}
-				lines.forEach(function(l, i){ g.fillText(l, origin.x, origin.y + fontSize*(i+1)) })
-			}
+	    function renderLabel(label: RelationLabel){
+			if (!label || !label.text) return
+			var fontSize = config.fontSize
+			var lines = label.text.split('`')
+			lines.forEach((l, i) => g.fillText(l, label.x, label.y + fontSize*(i+1)))
 		}
 
-		// find basic quadrant using relative position of endpoint and block rectangle
-		function quadrant(point: Vector, node: Classifier, fallback: Quadrant): Quadrant {
-			if (point.x < node.x && point.y < node.y) return 1;
-			if (point.x > node.x && point.y < node.y) return 2;
-			if (point.x > node.x && point.y > node.y) return 3;
-			if (point.x < node.x && point.y > node.y) return 4;
-			return fallback;
-		}
-
-		// Flip basic label quadrant if needed, to avoid crossing a bent relationship line
-		function adjustQuadrant(quadrant: Quadrant, point: Vector, opposite: Vector): Quadrant {
-			if ((opposite.x == point.x) || (opposite.y == point.y)) return quadrant;
-			var flipHorizontally: Quadrant[] = [4, 3, 2, 1]
-			var flipVertically: Quadrant[] = [2, 1, 4, 3]
-			var oppositeQuadrant = (opposite.y < point.y) ?
-								((opposite.x < point.x) ? 2 : 1) :
-								((opposite.x < point.x) ? 3 : 4);
-			// if an opposite relation end is in the same quadrant as a label, we need to flip the label
-			if (oppositeQuadrant === quadrant) {
-				if (config.direction === 'LR') return flipHorizontally[quadrant-1];
-				if (config.direction === 'TB') return flipVertically[quadrant-1];
-			}
-			return quadrant; 	
-		}
-
-		function renderRelation(r: Relation, compartment: Compartment){
-			var startNode = skanaar.find(compartment.nodes, function(e: Classifier){ return e.name == r.start })
-			var endNode = skanaar.find(compartment.nodes, function(e: Classifier){ return e.name == r.end })
+		function renderRelation(r: Relation){
 			var start = r.path[1]
 			var end = r.path[r.path.length-2]
 			var path = r.path.slice(1, -1)
@@ -141,8 +102,8 @@ namespace nomnoml {
 			g.fillStyle(config.stroke)
 			setFont(config, 'normal')
 
-			renderLabel(r.startLabel, start, adjustQuadrant(quadrant(start, startNode, 4), start, end))
-			renderLabel(r.endLabel, end, adjustQuadrant(quadrant(end, endNode, 2), end, start))
+			renderLabel(r.startLabel)
+			renderLabel(r.endLabel)
 
 			if (r.assoc !== '-/-'){
 				if (skanaar.hasSubstring(r.assoc, '--')){

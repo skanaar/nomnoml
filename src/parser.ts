@@ -148,8 +148,8 @@ namespace nomnoml {
 							assoc: p.assoc,
 							start: p.start.parts[0][0] as string,
 							end: p.end.parts[0][0] as string,
-							startLabel: p.startLabel,
-							endLabel: p.endLabel
+							startLabel: { text: p.startLabel },
+							endLabel: { text: p.endLabel }
 						})
 					}
 				if (isAstClassifier(p)){

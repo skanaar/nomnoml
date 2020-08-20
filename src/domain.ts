@@ -68,11 +68,20 @@ namespace nomnoml {
   export class Compartment {
     width: number
     height: number
+    offset: Vector
     constructor(
       public lines: string[], 
       public nodes: Classifier[], 
       public relations: Relation[]
     ){}
+  }
+  
+  export interface RelationLabel {
+    x?: number
+    y?: number
+    width?: number
+    height?: number
+    text: string
   }
 
   export class Relation {
@@ -80,8 +89,8 @@ namespace nomnoml {
     path?: Vector[]
     start: string
     end: string
-    startLabel: string
-    endLabel: string
+    startLabel: RelationLabel
+    endLabel: RelationLabel
     assoc: string
   }
 
