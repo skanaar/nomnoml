@@ -18,10 +18,10 @@
     "dagre": "0.8.5"
   },
   "devDependencies": {
-    "@types/node": "^14.0.1",
+    "@types/node": "^14.6.0",
     "jison": "0.4.18",
-    "typescript": "^3.8.3",
-    "uglify-js": "^3.9.3"
+    "typescript": "^4.0.2",
+    "uglify-js": "^3.10.2"
   },
   "scripts": {
     "prepare": "npm run build && npm run test && npm run test_cli && npm run webapp && npm run minify",
