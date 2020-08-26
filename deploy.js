@@ -20,6 +20,13 @@ var files = [
   'codemirror/nomnoml.codemirror-mode.js',
   'codemirror/solarized.nomnoml.css',
   'img/interaction-tutorial.svg',
+  // test files
+  'dist/nomnoml.js',
+  'test/index.html',
+  'test/nomnoml.spec.js',
+  'test/output.node-test.svg',
+  'test/skanaar.testsuite.js',
+  'test/standalone.usecase.html',
 ]
 
 var contentTypes = {
