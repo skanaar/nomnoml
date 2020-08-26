@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.9.0] - 2020-08-26
+
+- fixed bug where labels could extend outside bounding box
+
 ## [0.8.0] - 2020-07-09
 
 - #background directive to specify background color
