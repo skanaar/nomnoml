@@ -108,6 +108,19 @@
   </div>
 
   <div class=testcase>
+    <h1>Custom shapes</h1>
+    <div nomnoml=canvas>
+      <script type="text/vnd.nomnoml">
+[<start> start] -:> [<database> database]
+[<choice> choice] <:-o [<end> end]
+[<usecase> usecase|row 2|row 3] -:> [<actor> actor]
+[actor] -> [<frame>frame|[note]]
+[database] -> [<package>pack|contents]
+      </script>
+    </div>
+  </div>
+
+  <div class=testcase>
     <h1>Custom styles</h1>
     <div nomnoml=canvas>
       <script type="text/vnd.nomnoml">

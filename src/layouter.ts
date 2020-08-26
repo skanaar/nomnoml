@@ -131,32 +131,11 @@ namespace nomnoml {
 		}
 		
 		function layoutClassifier(clas: Classifier): void {
-			var layout = getLayouter(clas)
-			layout(clas)
+			var style = config.styles[clas.type] || nomnoml.styles.CLASS
+			clas.compartments.forEach(function(co,i){ layoutCompartment(co, i, style) })
+			nomnoml.layouters[style.visual](config, clas)
 			clas.layoutWidth = clas.width + 2*config.edgeMargin
 			clas.layoutHeight = clas.height + 2*config.edgeMargin
-		}
-		
-		function getLayouter(clas: Classifier): (clas: Classifier) => void {
-			var style = config.styles[clas.type] || nomnoml.styles.CLASS
-			switch(style.hull) {
-				case 'icon': return function (clas: Classifier){
-					clas.width = config.fontSize * 2.5
-					clas.height = config.fontSize * 2.5
-				}
-				case 'empty': return function (clas: Classifier){
-					clas.width = 0
-					clas.height = 0
-				}
-				default: return function (clas){
-					clas.compartments.forEach(function(co,i){ layoutCompartment(co, i, style) })
-					clas.width = Math.max(...clas.compartments.map(e => e.width))
-					clas.height = skanaar.sum(clas.compartments, 'height')
-					clas.x = clas.layoutWidth/2
-					clas.y = clas.layoutHeight/2
-					clas.compartments.forEach(function(co){ co.width = clas.width })
-				}
-			}
 		}
 
 		layoutCompartment(ast, 0, nomnoml.styles.CLASS)

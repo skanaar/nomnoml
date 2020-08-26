@@ -5,9 +5,9 @@ namespace nomnoml {
     CHOICE:      buildStyle({ visual:'rhomb', center:true }),
     CLASS:       buildStyle({ visual:'class', center:true, bold:true }),
     DATABASE:    buildStyle({ visual:'database', center:true, bold:true }),
-    END:         buildStyle({ visual:'end', center:true, empty:true, hull:'icon' }),
+    END:         buildStyle({ visual:'end', center:true, empty:true }),
     FRAME:       buildStyle({ visual:'frame' }),
-    HIDDEN:      buildStyle({ visual:'hidden', center:true, empty:true, hull:'empty' }),
+    HIDDEN:      buildStyle({ visual:'hidden', center:true, empty:true }),
     INPUT:       buildStyle({ visual:'input', center:true }),
     INSTANCE:    buildStyle({ visual:'class', center:true, underline:true }),
     LABEL:       buildStyle({ visual:'none' }),
@@ -16,18 +16,141 @@ namespace nomnoml {
     RECEIVER:    buildStyle({ visual:'receiver' }),
     REFERENCE:   buildStyle({ visual:'class', center:true, dashed:true }),
     SENDER:      buildStyle({ visual:'sender' }),
-    START:       buildStyle({ visual:'start', center:true, empty:true, hull:'icon' }),
+    START:       buildStyle({ visual:'start', center:true, empty:true }),
     STATE:       buildStyle({ visual:'roundrect', center:true }),
     TRANSCEIVER: buildStyle({ visual:'transceiver' }),
     USECASE:     buildStyle({ visual:'ellipse', center:true }),
   }
+  
+  function box(config: Config, clas: Classifier) {
+    clas.width = Math.max(...clas.compartments.map(e => e.width))
+    clas.height = skanaar.sum(clas.compartments, 'height')
+    clas.dividers = []
+    var y = 0
+    for(var comp of clas.compartments) {
+      comp.x = 0
+      comp.y = y
+      comp.width = clas.width
+      y += comp.height
+      if (comp != skanaar.last(clas.compartments))
+        clas.dividers.push([{ x: 0, y: y }, { x: clas.width, y: y }])
+    }
+  }
+  
+  function icon(config: Config, clas: Classifier) {
+    clas.dividers = []
+    clas.compartments = []
+    clas.width = config.fontSize * 2.5
+    clas.height = config.fontSize * 2.5
+  }
+  
+  export var layouters: { [key in Visual]: NodeLayouter } = {
+    actor: function (config: Config, clas: Classifier) {
+      clas.width = Math.max(config.padding * 2, ...clas.compartments.map(e => e.width))
+      clas.height = config.padding * 3 + skanaar.sum(clas.compartments, 'height')
+      clas.dividers = []
+      var y = config.padding*3
+      for(var comp of clas.compartments) {
+        comp.x = 0
+        comp.y = y
+        comp.width = clas.width
+        y += comp.height
+        if (comp != skanaar.last(clas.compartments))
+          clas.dividers.push([{ x: config.padding, y: y }, { x: clas.width-config.padding, y: y }])
+      }
+    },
+    class: box,
+    database: function box(config: Config, clas: Classifier) {
+      clas.width = Math.max(...clas.compartments.map(e => e.width))
+      clas.height = skanaar.sum(clas.compartments, 'height') + config.padding*2
+      clas.dividers = []
+      var y = config.padding*1.5
+      for(var comp of clas.compartments) {
+        comp.x = 0
+        comp.y = y
+        comp.width = clas.width
+        y += comp.height
+        if (comp != skanaar.last(clas.compartments))
+          clas.dividers.push([{ x: 0, y: y }, { x: clas.width, y: y }])
+      }
+    },
+    ellipse: function box(config: Config, clas: Classifier) {
+      var width = Math.max(...clas.compartments.map(e => e.width))
+      var height = skanaar.sum(clas.compartments, 'height')
+      clas.width = width * 1.25
+      clas.height = height * 1.25
+      clas.dividers = []
+      var y = height*0.125
+      var sq = (x: number) => x*x
+      var rimPos = (y: number) => Math.sqrt(sq(0.5) - sq(y/clas.height-0.5)) * clas.width
+      for(var comp of clas.compartments) {
+        comp.x = width*0.125
+        comp.y = y
+        comp.width = width
+        y += comp.height
+        if (comp != skanaar.last(clas.compartments))
+          clas.dividers.push([
+            { x: clas.width/2 + rimPos(y) - 1, y: y },
+            { x: clas.width/2 - rimPos(y) + 1, y: y }
+          ])
+      }
+    },
+    end: icon,
+    frame: function (config: Config, clas: Classifier) {
+      var w = clas.compartments[0].width
+      var h = clas.compartments[0].height
+      box(config, clas)
+      if (clas.dividers.length) clas.dividers.shift()
+      clas.dividers.unshift([
+        {x:0, y:h},
+        {x:w-h/4, y:h},
+        {x:w+h/4, y:h/2},
+        {x:w+h/4, y:0}
+      ])
+    },
+    hidden: function (config: Config, clas: Classifier) {
+      clas.dividers = []
+      clas.compartments = []
+      clas.width = 0
+      clas.height = 0
+    },
+    input: box,
+    none: box,
+    note: box,
+    package: box,
+    receiver: box,
+    rhomb: function box(config: Config, clas: Classifier) {
+      var width = Math.max(...clas.compartments.map(e => e.width))
+      var height = skanaar.sum(clas.compartments, 'height')
+      clas.width = width * 1.5
+      clas.height = height * 1.5
+      clas.dividers = []
+      var y = height*0.25
+      for(var comp of clas.compartments) {
+        comp.x = width*0.25
+        comp.y = y
+        comp.width = width
+        y += comp.height
+        var slope = clas.width / clas.height
+        if (comp != skanaar.last(clas.compartments))
+          clas.dividers.push([
+            { x: clas.width/2 + (y<clas.height/2 ? y*slope : (clas.height-y)*slope), y: y },
+            { x: clas.width/2 - (y<clas.height/2 ? y*slope : (clas.height-y)*slope), y: y }
+          ])
+      }
+    },
+    roundrect: box,
+    sender: box,
+    start: icon,
+    transceiver: box,
+  }
 
-  export var visualizers: { [key: string]: Visualizer } = {
+  export var visualizers: { [key in Visual]: Visualizer } = {
     actor : function (node, x, y, config, g) {
       var a = config.padding/2
-      var yp = y + a/2
-      var actorCenter = {x: node.x, y: yp-a}
-      g.circle(actorCenter, a).fillAndStroke()
+      var yp = y + a*3
+      var faceCenter = {x: node.x, y: yp-a}
+      g.circle(faceCenter, a).fillAndStroke()
       g.path([ {x: node.x,   y: yp}, {x: node.x,   y: yp+2*a} ]).stroke()
       g.path([ {x: node.x-a, y: yp+a}, {x: node.x+a, y: yp+a} ]).stroke()
       g.path([ {x: node.x-a, y: yp+a+config.padding},
@@ -38,15 +161,16 @@ namespace nomnoml {
       g.rect(x, y, node.width, node.height).fillAndStroke()
     },
     database : function (node, x, y, config, g) {
-      var cy = y-config.padding/2
+      var pad = config.padding
+      var cy = y-pad/2
       var pi = 3.1416
-      g.rect(x, y, node.width, node.height).fill()
-      g.path([{x: x, y: cy}, {x: x, y: cy+node.height}]).stroke()
+      g.rect(x, y+pad, node.width, node.height-pad*1.5).fill()
+      g.path([{x: x, y: cy+pad*1.5}, {x: x, y: cy-pad*0.5+node.height}]).stroke()
       g.path([
-        {x: x+node.width, y: cy},
-        {x: x+node.width, y: cy+node.height}]).stroke()
-      g.ellipse({x: node.x, y: cy}, node.width, config.padding*1.5).fillAndStroke()
-      g.ellipse({x: node.x, y: cy+node.height}, node.width, config.padding*1.5, 0, pi)
+        {x: x+node.width, y: cy+pad*1.5},
+        {x: x+node.width, y: cy-pad*0.5+node.height}]).stroke()
+      g.ellipse({x: node.x, y: cy+pad*1.5}, node.width, pad*1.5).fillAndStroke()
+      g.ellipse({x: node.x, y: cy-pad*0.5+node.height}, node.width, pad*1.5, 0, pi)
       .fillAndStroke()
     },
     ellipse : function (node, x, y, config, g) {
@@ -109,10 +233,10 @@ namespace nomnoml {
     },
     rhomb : function (node, x, y, config, g) {
       g.circuit([
-        {x:node.x, y:y - config.padding},
-        {x:x+node.width + config.padding, y:node.y},
-        {x:node.x, y:y+node.height + config.padding},
-        {x:x - config.padding, y:node.y}
+        {x:node.x, y:y},
+        {x:x+node.width, y:node.y},
+        {x:node.x, y:y+node.height},
+        {x:x, y:node.y}
       ]).fillAndStroke()
     },
     roundrect : function (node, x, y, config, g) {

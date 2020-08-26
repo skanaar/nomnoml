@@ -44,29 +44,23 @@ namespace nomnoml {
 			drawNode(node, x, y, config, g)
 			g.setLineDash([])
 
-			var yDivider = (style.visual === 'actor' ? y + config.padding*3/4 : y)
+			g.save()
+			g.translate(x, y)
+
 			node.compartments.forEach(function (part: Compartment, i: number){
 				var s = i > 0 ? buildStyle({ stroke: style.stroke }) : style; // only style node title
 				if (s.empty) return
 				g.save()
-				g.translate(x, yDivider)
+				g.translate(part.x, part.y)
 				setFont(config, s.bold ? 'bold' : 'normal', s.italic ? 'italic' : undefined)
 				renderCompartment(part, s, level+1)
 				g.restore()
-				if (i+1 === node.compartments.length) return
-				yDivider += part.height
-				if (style.visual === 'frame' && i === 0){
-					var w = g.measureText(node.name).width+part.height/2+config.padding
-					g.path([
-						{x:x, y:yDivider},
-						{x:x+w-part.height/2, y:yDivider},
-						{x:x+w, y:yDivider-part.height/2},
-						{x:x+w, y:yDivider-part.height}
-						]).stroke()
-				} else {
-					g.path([{x:x, y:yDivider}, {x:x+node.width, y:yDivider}]).stroke()
-				}
 			})
+			for(var divider of node.dividers) {
+				g.path(divider).stroke()
+			}
+			
+			g.restore()
 		}
 
 		function strokePath(p: Vector[]){

@@ -32,7 +32,28 @@ interface Visualizer {
   (node: nomnoml.Classifier, x: number, y: number, config: Config, g: Graphics): void
 }
 
-type HullType = 'icon'|'empty'|'auto'
+interface NodeLayouter {
+  (config: Config, node: nomnoml.Classifier): void
+}
+
+type Visual = 
+  'actor'|
+  'class'|
+  'database'|
+  'ellipse'|
+  'end'|
+  'frame'|
+  'hidden'|
+  'input'|
+  'none'|
+  'note'|
+  'package'|
+  'receiver'|
+  'rhomb'|
+  'roundrect'|
+  'sender'|
+  'start'|
+  'transceiver'
 
 interface Style {
   bold: boolean
@@ -43,9 +64,8 @@ interface Style {
   center: boolean
   fill: string|undefined
   stroke: string|undefined
-  visual: string
+  visual: Visual
   direction: 'TB'|'LR'|undefined
-  hull: HullType
 }
 namespace nomnoml {
 
@@ -61,11 +81,12 @@ namespace nomnoml {
       stroke: conf.stroke || undefined,
       visual: conf.visual || 'class',
       direction: conf.direction || undefined,
-      hull: conf.hull || 'auto'
     }
   }
 
   export class Compartment {
+    x: number
+    y: number
     width: number
     height: number
     offset: Vector
@@ -101,10 +122,13 @@ namespace nomnoml {
     height: number
     layoutWidth: number
     layoutHeight: number
+    dividers: Vector[][]
     constructor(
       public type: string,
       public name: string,
       public compartments: Compartment[]
-    ){}
+    ){
+      this.dividers = []
+    }
   }
 }

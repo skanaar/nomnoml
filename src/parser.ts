@@ -74,9 +74,8 @@ namespace nomnoml {
 				center: skanaar.last(styleDef.match('align=([^ ]*)') || []) == 'left' ? false : true,
 				fill: skanaar.last(styleDef.match('fill=([^ ]*)') || []),
 				stroke: skanaar.last(styleDef.match('stroke=([^ ]*)') || []),
-				visual: skanaar.last(styleDef.match('visual=([^ ]*)') || []) || 'class',
+				visual: (skanaar.last(styleDef.match('visual=([^ ]*)') || []) || 'class') as Visual,
 				direction: directionToDagre(skanaar.last(styleDef.match('direction=([^ ]*)') || [])),
-				hull: 'auto'
 			}
 		}
 

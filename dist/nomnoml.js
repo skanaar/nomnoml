@@ -16,8 +16,7 @@
             fill: conf.fill || undefined,
             stroke: conf.stroke || undefined,
             visual: conf.visual || 'class',
-            direction: conf.direction || undefined,
-            hull: conf.hull || 'auto'
+            direction: conf.direction || undefined
         };
     }
     nomnoml.buildStyle = buildStyle;
@@ -41,6 +40,7 @@
             this.type = type;
             this.name = name;
             this.compartments = compartments;
+            this.dividers = [];
         }
         return Classifier;
     }());
@@ -174,31 +174,11 @@ var nomnoml;
             return quadrant;
         }
         function layoutClassifier(clas) {
-            var layout = getLayouter(clas);
-            layout(clas);
+            var style = config.styles[clas.type] || nomnoml.styles.CLASS;
+            clas.compartments.forEach(function (co, i) { layoutCompartment(co, i, style); });
+            nomnoml.layouters[style.visual](config, clas);
             clas.layoutWidth = clas.width + 2 * config.edgeMargin;
             clas.layoutHeight = clas.height + 2 * config.edgeMargin;
-        }
-        function getLayouter(clas) {
-            var style = config.styles[clas.type] || nomnoml.styles.CLASS;
-            switch (style.hull) {
-                case 'icon': return function (clas) {
-                    clas.width = config.fontSize * 2.5;
-                    clas.height = config.fontSize * 2.5;
-                };
-                case 'empty': return function (clas) {
-                    clas.width = 0;
-                    clas.height = 0;
-                };
-                default: return function (clas) {
-                    clas.compartments.forEach(function (co, i) { layoutCompartment(co, i, style); });
-                    clas.width = Math.max.apply(Math, clas.compartments.map(function (e) { return e.width; }));
-                    clas.height = nomnoml.skanaar.sum(clas.compartments, 'height');
-                    clas.x = clas.layoutWidth / 2;
-                    clas.y = clas.layoutHeight / 2;
-                    clas.compartments.forEach(function (co) { co.width = clas.width; });
-                };
-            }
         }
         layoutCompartment(ast, 0, nomnoml.styles.CLASS);
         return ast;
@@ -364,9 +344,8 @@ var nomnoml;
                 center: nomnoml.skanaar.last(styleDef.match('align=([^ ]*)') || []) == 'left' ? false : true,
                 fill: nomnoml.skanaar.last(styleDef.match('fill=([^ ]*)') || []),
                 stroke: nomnoml.skanaar.last(styleDef.match('stroke=([^ ]*)') || []),
-                visual: nomnoml.skanaar.last(styleDef.match('visual=([^ ]*)') || []) || 'class',
-                direction: directionToDagre(nomnoml.skanaar.last(styleDef.match('direction=([^ ]*)') || [])),
-                hull: 'auto'
+                visual: (nomnoml.skanaar.last(styleDef.match('visual=([^ ]*)') || []) || 'class'),
+                direction: directionToDagre(nomnoml.skanaar.last(styleDef.match('direction=([^ ]*)') || []))
             };
         }
         function getConfig(d) {
@@ -508,32 +487,23 @@ var nomnoml;
             var drawNode = nomnoml.visualizers[style.visual] || nomnoml.visualizers["class"];
             drawNode(node, x, y, config, g);
             g.setLineDash([]);
-            var yDivider = (style.visual === 'actor' ? y + config.padding * 3 / 4 : y);
+            g.save();
+            g.translate(x, y);
             node.compartments.forEach(function (part, i) {
                 var s = i > 0 ? nomnoml.buildStyle({ stroke: style.stroke }) : style;
                 if (s.empty)
                     return;
                 g.save();
-                g.translate(x, yDivider);
+                g.translate(part.x, part.y);
                 setFont(config, s.bold ? 'bold' : 'normal', s.italic ? 'italic' : undefined);
                 renderCompartment(part, s, level + 1);
                 g.restore();
-                if (i + 1 === node.compartments.length)
-                    return;
-                yDivider += part.height;
-                if (style.visual === 'frame' && i === 0) {
-                    var w = g.measureText(node.name).width + part.height / 2 + config.padding;
-                    g.path([
-                        { x: x, y: yDivider },
-                        { x: x + w - part.height / 2, y: yDivider },
-                        { x: x + w, y: yDivider - part.height / 2 },
-                        { x: x + w, y: yDivider - part.height }
-                    ]).stroke();
-                }
-                else {
-                    g.path([{ x: x, y: yDivider }, { x: x + node.width, y: yDivider }]).stroke();
-                }
             });
+            for (var _i = 0, _a = node.dividers; _i < _a.length; _i++) {
+                var divider = _a[_i];
+                g.path(divider).stroke();
+            }
+            g.restore();
         }
         function strokePath(p) {
             if (config.edges === 'rounded') {
@@ -1138,9 +1108,9 @@ var nomnoml;
         CHOICE: nomnoml.buildStyle({ visual: 'rhomb', center: true }),
         CLASS: nomnoml.buildStyle({ visual: 'class', center: true, bold: true }),
         DATABASE: nomnoml.buildStyle({ visual: 'database', center: true, bold: true }),
-        END: nomnoml.buildStyle({ visual: 'end', center: true, empty: true, hull: 'icon' }),
+        END: nomnoml.buildStyle({ visual: 'end', center: true, empty: true }),
         FRAME: nomnoml.buildStyle({ visual: 'frame' }),
-        HIDDEN: nomnoml.buildStyle({ visual: 'hidden', center: true, empty: true, hull: 'empty' }),
+        HIDDEN: nomnoml.buildStyle({ visual: 'hidden', center: true, empty: true }),
         INPUT: nomnoml.buildStyle({ visual: 'input', center: true }),
         INSTANCE: nomnoml.buildStyle({ visual: 'class', center: true, underline: true }),
         LABEL: nomnoml.buildStyle({ visual: 'none' }),
@@ -1149,17 +1119,143 @@ var nomnoml;
         RECEIVER: nomnoml.buildStyle({ visual: 'receiver' }),
         REFERENCE: nomnoml.buildStyle({ visual: 'class', center: true, dashed: true }),
         SENDER: nomnoml.buildStyle({ visual: 'sender' }),
-        START: nomnoml.buildStyle({ visual: 'start', center: true, empty: true, hull: 'icon' }),
+        START: nomnoml.buildStyle({ visual: 'start', center: true, empty: true }),
         STATE: nomnoml.buildStyle({ visual: 'roundrect', center: true }),
         TRANSCEIVER: nomnoml.buildStyle({ visual: 'transceiver' }),
         USECASE: nomnoml.buildStyle({ visual: 'ellipse', center: true })
     };
+    function box(config, clas) {
+        clas.width = Math.max.apply(Math, clas.compartments.map(function (e) { return e.width; }));
+        clas.height = nomnoml.skanaar.sum(clas.compartments, 'height');
+        clas.dividers = [];
+        var y = 0;
+        for (var _i = 0, _a = clas.compartments; _i < _a.length; _i++) {
+            var comp = _a[_i];
+            comp.x = 0;
+            comp.y = y;
+            comp.width = clas.width;
+            y += comp.height;
+            if (comp != nomnoml.skanaar.last(clas.compartments))
+                clas.dividers.push([{ x: 0, y: y }, { x: clas.width, y: y }]);
+        }
+    }
+    function icon(config, clas) {
+        clas.dividers = [];
+        clas.compartments = [];
+        clas.width = config.fontSize * 2.5;
+        clas.height = config.fontSize * 2.5;
+    }
+    nomnoml.layouters = {
+        actor: function (config, clas) {
+            clas.width = Math.max.apply(Math, __spreadArrays([config.padding * 2], clas.compartments.map(function (e) { return e.width; })));
+            clas.height = config.padding * 3 + nomnoml.skanaar.sum(clas.compartments, 'height');
+            clas.dividers = [];
+            var y = config.padding * 3;
+            for (var _i = 0, _a = clas.compartments; _i < _a.length; _i++) {
+                var comp = _a[_i];
+                comp.x = 0;
+                comp.y = y;
+                comp.width = clas.width;
+                y += comp.height;
+                if (comp != nomnoml.skanaar.last(clas.compartments))
+                    clas.dividers.push([{ x: config.padding, y: y }, { x: clas.width - config.padding, y: y }]);
+            }
+        },
+        "class": box,
+        database: function box(config, clas) {
+            clas.width = Math.max.apply(Math, clas.compartments.map(function (e) { return e.width; }));
+            clas.height = nomnoml.skanaar.sum(clas.compartments, 'height') + config.padding * 2;
+            clas.dividers = [];
+            var y = config.padding * 1.5;
+            for (var _i = 0, _a = clas.compartments; _i < _a.length; _i++) {
+                var comp = _a[_i];
+                comp.x = 0;
+                comp.y = y;
+                comp.width = clas.width;
+                y += comp.height;
+                if (comp != nomnoml.skanaar.last(clas.compartments))
+                    clas.dividers.push([{ x: 0, y: y }, { x: clas.width, y: y }]);
+            }
+        },
+        ellipse: function box(config, clas) {
+            var width = Math.max.apply(Math, clas.compartments.map(function (e) { return e.width; }));
+            var height = nomnoml.skanaar.sum(clas.compartments, 'height');
+            clas.width = width * 1.25;
+            clas.height = height * 1.25;
+            clas.dividers = [];
+            var y = height * 0.125;
+            var sq = function (x) { return x * x; };
+            var rimPos = function (y) { return Math.sqrt(sq(0.5) - sq(y / clas.height - 0.5)) * clas.width; };
+            for (var _i = 0, _a = clas.compartments; _i < _a.length; _i++) {
+                var comp = _a[_i];
+                comp.x = width * 0.125;
+                comp.y = y;
+                comp.width = width;
+                y += comp.height;
+                if (comp != nomnoml.skanaar.last(clas.compartments))
+                    clas.dividers.push([
+                        { x: clas.width / 2 + rimPos(y) - 1, y: y },
+                        { x: clas.width / 2 - rimPos(y) + 1, y: y }
+                    ]);
+            }
+        },
+        end: icon,
+        frame: function (config, clas) {
+            var w = clas.compartments[0].width;
+            var h = clas.compartments[0].height;
+            box(config, clas);
+            if (clas.dividers.length)
+                clas.dividers.shift();
+            clas.dividers.unshift([
+                { x: 0, y: h },
+                { x: w - h / 4, y: h },
+                { x: w + h / 4, y: h / 2 },
+                { x: w + h / 4, y: 0 }
+            ]);
+        },
+        hidden: function (config, clas) {
+            clas.dividers = [];
+            clas.compartments = [];
+            clas.width = 0;
+            clas.height = 0;
+        },
+        input: box,
+        none: box,
+        note: box,
+        package: box,
+        receiver: box,
+        rhomb: function box(config, clas) {
+            var width = Math.max.apply(Math, clas.compartments.map(function (e) { return e.width; }));
+            var height = nomnoml.skanaar.sum(clas.compartments, 'height');
+            clas.width = width * 1.5;
+            clas.height = height * 1.5;
+            clas.dividers = [];
+            var y = height * 0.25;
+            for (var _i = 0, _a = clas.compartments; _i < _a.length; _i++) {
+                var comp = _a[_i];
+                comp.x = width * 0.25;
+                comp.y = y;
+                comp.width = width;
+                y += comp.height;
+                var slope = clas.width / clas.height;
+                if (comp != nomnoml.skanaar.last(clas.compartments))
+                    clas.dividers.push([
+                        { x: clas.width / 2 + (y < clas.height / 2 ? y * slope : (clas.height - y) * slope), y: y },
+                        { x: clas.width / 2 - (y < clas.height / 2 ? y * slope : (clas.height - y) * slope), y: y }
+                    ]);
+            }
+        },
+        roundrect: box,
+        sender: box,
+        start: icon,
+        transceiver: box
+    };
     nomnoml.visualizers = {
         actor: function (node, x, y, config, g) {
             var a = config.padding / 2;
-            var yp = y + a / 2;
-            var actorCenter = { x: node.x, y: yp - a };
-            g.circle(actorCenter, a).fillAndStroke();
+            var yp = y + a * 3;
+            var faceCenter = { x: node.x, y: yp - a };
+            g.circle(faceCenter, a).fillAndStroke();
             g.path([{ x: node.x, y: yp }, { x: node.x, y: yp + 2 * a }]).stroke();
             g.path([{ x: node.x - a, y: yp + a }, { x: node.x + a, y: yp + a }]).stroke();
             g.path([{ x: node.x - a, y: yp + a + config.padding },
@@ -1170,16 +1266,17 @@ var nomnoml;
             g.rect(x, y, node.width, node.height).fillAndStroke();
         },
         database: function (node, x, y, config, g) {
-            var cy = y - config.padding / 2;
+            var pad = config.padding;
+            var cy = y - pad / 2;
             var pi = 3.1416;
-            g.rect(x, y, node.width, node.height).fill();
-            g.path([{ x: x, y: cy }, { x: x, y: cy + node.height }]).stroke();
+            g.rect(x, y + pad, node.width, node.height - pad * 1.5).fill();
+            g.path([{ x: x, y: cy + pad * 1.5 }, { x: x, y: cy - pad * 0.5 + node.height }]).stroke();
             g.path([
-                { x: x + node.width, y: cy },
-                { x: x + node.width, y: cy + node.height }
+                { x: x + node.width, y: cy + pad * 1.5 },
+                { x: x + node.width, y: cy - pad * 0.5 + node.height }
             ]).stroke();
-            g.ellipse({ x: node.x, y: cy }, node.width, config.padding * 1.5).fillAndStroke();
-            g.ellipse({ x: node.x, y: cy + node.height }, node.width, config.padding * 1.5, 0, pi)
+            g.ellipse({ x: node.x, y: cy + pad * 1.5 }, node.width, pad * 1.5).fillAndStroke();
+            g.ellipse({ x: node.x, y: cy - pad * 0.5 + node.height }, node.width, pad * 1.5, 0, pi)
                 .fillAndStroke();
         },
         ellipse: function (node, x, y, config, g) {
@@ -1242,10 +1339,10 @@ var nomnoml;
         },
         rhomb: function (node, x, y, config, g) {
             g.circuit([
-                { x: node.x, y: y - config.padding },
-                { x: x + node.width + config.padding, y: node.y },
-                { x: node.x, y: y + node.height + config.padding },
-                { x: x - config.padding, y: node.y }
+                { x: node.x, y: y },
+                { x: x + node.width, y: node.y },
+                { x: node.x, y: y + node.height },
+                { x: x, y: node.y }
             ]).fillAndStroke();
         },
         roundrect: function (node, x, y, config, g) {
