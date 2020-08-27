@@ -720,9 +720,9 @@ var nomnoml;
                 fillStyle: function (s) { ctx.fillStyle = s; },
                 strokeStyle: function (s) { ctx.strokeStyle = s; },
                 textAlign: function (a) { ctx.textAlign = a; },
-                lineCap: function (cap) { ctx.lineCap = cap; return chainable; },
-                lineJoin: function (join) { ctx.lineJoin = join; return chainable; },
-                lineWidth: function (w) { ctx.lineWidth = w; return chainable; },
+                lineCap: function (cap) { ctx.lineCap = cap; },
+                lineJoin: function (join) { ctx.lineJoin = join; },
+                lineWidth: function (w) { ctx.lineWidth = w; },
                 arcTo: function () { return ctx.arcTo.apply(ctx, arguments); },
                 beginPath: function () { return ctx.beginPath.apply(ctx, arguments); },
                 fillText: function () { return ctx.fillText.apply(ctx, arguments); },
@@ -757,6 +757,7 @@ var nomnoml;
                 x: 0,
                 y: 0,
                 stroke: 'none',
+                strokeWidth: 1,
                 dashArray: 'none',
                 fill: 'none',
                 textAlign: 'left',
@@ -775,8 +776,11 @@ var nomnoml;
                     content: content || undefined,
                     stroke: function () {
                         var base = this.attr.style || '';
-                        this.attr.style = base + 'stroke:' + lastDefined('stroke') +
-                            ';fill:none;stroke-dasharray:' + lastDefined('dashArray') + ';';
+                        this.attr.style = base +
+                            'stroke:' + lastDefined('stroke') +
+                            ';fill:none' +
+                            ';stroke-dasharray:' + lastDefined('dashArray') +
+                            ';stroke-width:' + lastDefined('strokeWidth') + ';';
                         return this;
                     },
                     fill: function () {
@@ -786,14 +790,17 @@ var nomnoml;
                     },
                     fillAndStroke: function () {
                         var base = this.attr.style || '';
-                        this.attr.style = base + 'stroke:' + lastDefined('stroke') + ';fill:' + lastDefined('fill') +
-                            ';stroke-dasharray:' + lastDefined('dashArray') + ';';
+                        this.attr.style = base +
+                            'stroke:' + lastDefined('stroke') +
+                            ';fill:' + lastDefined('fill') +
+                            ';stroke-dasharray:' + lastDefined('dashArray') +
+                            ';stroke-width:' + lastDefined('strokeWidth') + ';';
                         return this;
                     }
                 };
             }
             function State(dx, dy) {
-                return { x: dx, y: dy, stroke: null, fill: null, textAlign: null, dashArray: 'none', font: null };
+                return { x: dx, y: dy, stroke: null, strokeWidth: null, fill: null, textAlign: null, dashArray: 'none', font: null };
             }
             function trans(coord, axis) {
                 states.forEach(function (t) { coord += t[axis]; });
@@ -908,13 +915,15 @@ var nomnoml;
                     }
                     return newElement('text', attr, text);
                 },
-                lineCap: function (cap) { globalStyle += ';stroke-linecap:' + cap; return last(elements); },
-                lineJoin: function (join) { globalStyle += ';stroke-linejoin:' + join; return last(elements); },
+                lineCap: function (cap) { globalStyle += ';stroke-linecap:' + cap; },
+                lineJoin: function (join) { globalStyle += ';stroke-linejoin:' + join; },
                 lineTo: function (x, y) {
                     last(elements).attr.d += ('L' + tX(x) + ' ' + tY(y) + ' ');
                     return last(elements);
                 },
-                lineWidth: function (w) { globalStyle += ';stroke-width:' + w; return last(elements); },
+                lineWidth: function (w) {
+                    last(states).strokeWidth = w;
+                },
                 measureText: function (s) {
                     if (canUseCanvas) {
                         var fontStr = lastDefined('font');

@@ -26,10 +26,10 @@ interface Graphics {
   arcTo(x1: number, y1: number, x2: number, y2: number, radius: number): void
   beginPath(): Chainable
   fillText(text: string, x: number, y: number): Chainable
-  lineCap(cap: LineCap): Chainable
-  lineJoin(join: LineJoin): Chainable
+  lineCap(cap: LineCap): void
+  lineJoin(join: LineJoin): void
   lineTo(x: number, y: number): Chainable
-  lineWidth(w: number): Chainable
+  lineWidth(w: number): void
   measureText(s: string): { width: number }
   moveTo(x: number, y: number): void
   restore(): void

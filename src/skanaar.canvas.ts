@@ -120,9 +120,9 @@ namespace nomnoml.skanaar {
 			strokeStyle: function (s){ ctx.strokeStyle = s },
 			textAlign:   function (a){ ctx.textAlign = a as CanvasTextAlign },
 
-			lineCap:     function (cap){ ctx.lineCap = cap; return chainable },
-			lineJoin:    function (join){ ctx.lineJoin = join; return chainable },
-			lineWidth:   function (w){ ctx.lineWidth = w; return chainable },
+			lineCap:     function (cap){ ctx.lineCap = cap },
+			lineJoin:    function (join){ ctx.lineJoin = join },
+			lineWidth:   function (w){ ctx.lineWidth = w },
 			
 			arcTo:       function (){ return ctx.arcTo.apply(      ctx, arguments) },
 			beginPath:   function (){ return ctx.beginPath.apply(  ctx, arguments) },
