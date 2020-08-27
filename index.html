@@ -59,6 +59,7 @@
 				[&lt;usecase&gt; name]<br>
 				[&lt;label&gt; name]<br>
 				[&lt;hidden&gt; name]<br>
+				[&lt;table&gt; name| a|5 || b|7]<br>
 
 				<h2>Directives</h2>
 				#arrowSize: 1<br>
@@ -118,6 +119,7 @@
 				visual=roundrect<br>
 				visual=sender<br>
 				visual=start<br>
+				visual=table<br>
 				visual=transceiver
 				
 				<h3>Available modifiers are</h3>
@@ -232,6 +234,12 @@
 				<pre>#fontSize: 8
 #spacing: 12
 #padding: 3</pre>
+
+				<h3>Tables</h3>
+				<pre>[&lt;table&gt;Fruits|
+  Apples  | 17   ||
+  Oranges | 4711
+]</pre>
 
 				<h3>Create your own styles</h3>
 				<pre>#.box: fill=#8f8 dashed

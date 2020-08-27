@@ -18,6 +18,7 @@ namespace nomnoml {
     SENDER:      buildStyle({ visual:'sender' }),
     START:       buildStyle({ visual:'start', center:true, empty:true }),
     STATE:       buildStyle({ visual:'roundrect', center:true }),
+    TABLE:       buildStyle({ visual:'table', center:true, bold:true }),
     TRANSCEIVER: buildStyle({ visual:'transceiver' }),
     USECASE:     buildStyle({ visual:'ellipse', center:true }),
   }
@@ -60,7 +61,7 @@ namespace nomnoml {
       }
     },
     class: box,
-    database: function box(config: Config, clas: Classifier) {
+    database: function (config: Config, clas: Classifier) {
       clas.width = Math.max(...clas.compartments.map(e => e.width))
       clas.height = skanaar.sum(clas.compartments, 'height') + config.padding*2
       clas.dividers = []
@@ -74,7 +75,7 @@ namespace nomnoml {
           clas.dividers.push([{ x: 0, y: y }, { x: clas.width, y: y }])
       }
     },
-    ellipse: function box(config: Config, clas: Classifier) {
+    ellipse: function (config: Config, clas: Classifier) {
       var width = Math.max(...clas.compartments.map(e => e.width))
       var height = skanaar.sum(clas.compartments, 'height')
       clas.width = width * 1.25
@@ -119,7 +120,7 @@ namespace nomnoml {
     note: box,
     package: box,
     receiver: box,
-    rhomb: function box(config: Config, clas: Classifier) {
+    rhomb: function (config: Config, clas: Classifier) {
       var width = Math.max(...clas.compartments.map(e => e.width))
       var height = skanaar.sum(clas.compartments, 'height')
       clas.width = width * 1.5
@@ -142,6 +143,55 @@ namespace nomnoml {
     roundrect: box,
     sender: box,
     start: icon,
+    table: function (config: Config, clas: Classifier) {
+      if (clas.compartments.length == 1) {
+        box(config, clas)
+        return
+      }
+      var gridcells = clas.compartments.slice(1)
+      var rows: Compartment[][] = [[]]
+      function isRowBreak(e: Compartment): boolean {
+        return !e.lines.length && !e.nodes.length && !e.relations.length
+      }
+      function isRowFull(e: Compartment): boolean {
+        var current = skanaar.last(rows)
+        return rows[0] != current && rows[0].length == current.length
+      }
+      function isEnd(e: Compartment): boolean {
+        return comp == skanaar.last(gridcells)
+      }
+      for (var comp of gridcells) {
+        if (!isEnd(comp) && isRowBreak(comp)) {
+          rows.push([])
+        } else if (isRowFull(comp)) {
+          rows.push([comp])
+        } else {
+          skanaar.last(rows).push(comp)
+        }
+      }
+      var header = clas.compartments[0]
+      var cellW = Math.max(header.width/rows[0].length, ...gridcells.map(e => e.width))
+      var cellH = Math.max(...gridcells.map(e => e.height))
+      clas.width = cellW * rows[0].length
+      clas.height = header.height + cellH * rows.length  
+      var hh = header.height
+      clas.dividers = [
+        [{ x: 0, y: header.height }, { x: 0, y: header.height }],
+        ...rows.map((e,i) => [{ x: 0, y: hh+i*cellH }, { x: clas.width, y: hh+i*cellH }]),
+        ...rows[0].map((e,i) => [{ x: (i+1)*cellW, y: hh }, { x: (i+1)*cellW, y: clas.height }]),
+      ]
+      header.x = 0
+      header.y = 0
+      header.width = clas.width
+      for(var i=0; i<rows.length; i++) {
+        for(var j=0; j<rows[i].length; j++) {
+          var cell = rows[i][j]
+          cell.x = j * cellW
+          cell.y = hh + i * cellH
+          cell.width = cellW
+        }
+      }
+    },
     transceiver: box,
   }
 
@@ -255,6 +305,9 @@ namespace nomnoml {
     start : function (node, x, y, config, g) {
       g.fillStyle(config.stroke)
       g.circle({ x:node.x, y:y+node.height/2 }, node.height/2.5).fill()
+    },
+    table : function (node, x, y, config, g) {
+      g.rect(x, y, node.width, node.height).fillAndStroke()
     },
     transceiver : function (node, x, y, config, g) {
         g.circuit([

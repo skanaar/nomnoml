@@ -112,6 +112,7 @@ This is how the Decorator pattern looks like in nomnoml syntax:
     [<usecase> name]
     [<label> name]
     [<hidden> name]
+    [<table> name| a | 5 || b | 7]
 
 ### Directives
 
@@ -177,6 +178,7 @@ Available key/value pairs are
     visual=roundrect
     visual=sender
     visual=start
+    visual=table
     visual=transceiver
 
 Available modifiers are

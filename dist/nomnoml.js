@@ -907,6 +907,9 @@ var nomnoml;
                     if (font.indexOf('bold') === -1) {
                         attr.style += 'font-weight:normal;';
                     }
+                    else {
+                        attr.style += 'font-weight:bold;';
+                    }
                     if (font.indexOf('italic') > -1) {
                         attr.style += 'font-style:italic;';
                     }
@@ -1130,6 +1133,7 @@ var nomnoml;
         SENDER: nomnoml.buildStyle({ visual: 'sender' }),
         START: nomnoml.buildStyle({ visual: 'start', center: true, empty: true }),
         STATE: nomnoml.buildStyle({ visual: 'roundrect', center: true }),
+        TABLE: nomnoml.buildStyle({ visual: 'table', center: true, bold: true }),
         TRANSCEIVER: nomnoml.buildStyle({ visual: 'transceiver' }),
         USECASE: nomnoml.buildStyle({ visual: 'ellipse', center: true })
     };
@@ -1171,7 +1175,7 @@ var nomnoml;
             }
         },
         "class": box,
-        database: function box(config, clas) {
+        database: function (config, clas) {
             clas.width = Math.max.apply(Math, clas.compartments.map(function (e) { return e.width; }));
             clas.height = nomnoml.skanaar.sum(clas.compartments, 'height') + config.padding * 2;
             clas.dividers = [];
@@ -1186,7 +1190,7 @@ var nomnoml;
                     clas.dividers.push([{ x: 0, y: y }, { x: clas.width, y: y }]);
             }
         },
-        ellipse: function box(config, clas) {
+        ellipse: function (config, clas) {
             var width = Math.max.apply(Math, clas.compartments.map(function (e) { return e.width; }));
             var height = nomnoml.skanaar.sum(clas.compartments, 'height');
             clas.width = width * 1.25;
@@ -1233,7 +1237,7 @@ var nomnoml;
         note: box,
         package: box,
         receiver: box,
-        rhomb: function box(config, clas) {
+        rhomb: function (config, clas) {
             var width = Math.max.apply(Math, clas.compartments.map(function (e) { return e.width; }));
             var height = nomnoml.skanaar.sum(clas.compartments, 'height');
             clas.width = width * 1.5;
@@ -1257,6 +1261,56 @@ var nomnoml;
         roundrect: box,
         sender: box,
         start: icon,
+        table: function (config, clas) {
+            if (clas.compartments.length == 1) {
+                box(config, clas);
+                return;
+            }
+            var gridcells = clas.compartments.slice(1);
+            var rows = [[]];
+            function isRowBreak(e) {
+                return !e.lines.length && !e.nodes.length && !e.relations.length;
+            }
+            function isRowFull(e) {
+                var current = nomnoml.skanaar.last(rows);
+                return rows[0] != current && rows[0].length == current.length;
+            }
+            function isEnd(e) {
+                return comp == nomnoml.skanaar.last(gridcells);
+            }
+            for (var _i = 0, gridcells_1 = gridcells; _i < gridcells_1.length; _i++) {
+                var comp = gridcells_1[_i];
+                if (!isEnd(comp) && isRowBreak(comp)) {
+                    rows.push([]);
+                }
+                else if (isRowFull(comp)) {
+                    rows.push([comp]);
+                }
+                else {
+                    nomnoml.skanaar.last(rows).push(comp);
+                }
+            }
+            var header = clas.compartments[0];
+            var cellW = Math.max.apply(Math, __spreadArrays([header.width / rows[0].length], gridcells.map(function (e) { return e.width; })));
+            var cellH = Math.max.apply(Math, gridcells.map(function (e) { return e.height; }));
+            clas.width = cellW * rows[0].length;
+            clas.height = header.height + cellH * rows.length;
+            var hh = header.height;
+            clas.dividers = __spreadArrays([
+                [{ x: 0, y: header.height }, { x: 0, y: header.height }]
+            ], rows.map(function (e, i) { return [{ x: 0, y: hh + i * cellH }, { x: clas.width, y: hh + i * cellH }]; }), rows[0].map(function (e, i) { return [{ x: (i + 1) * cellW, y: hh }, { x: (i + 1) * cellW, y: clas.height }]; }));
+            header.x = 0;
+            header.y = 0;
+            header.width = clas.width;
+            for (var i = 0; i < rows.length; i++) {
+                for (var j = 0; j < rows[i].length; j++) {
+                    var cell = rows[i][j];
+                    cell.x = j * cellW;
+                    cell.y = hh + i * cellH;
+                    cell.width = cellW;
+                }
+            }
+        },
         transceiver: box
     };
     nomnoml.visualizers = {
@@ -1370,6 +1424,9 @@ var nomnoml;
         start: function (node, x, y, config, g) {
             g.fillStyle(config.stroke);
             g.circle({ x: node.x, y: y + node.height / 2 }, node.height / 2.5).fill();
+        },
+        table: function (node, x, y, config, g) {
+            g.rect(x, y, node.width, node.height).fillAndStroke();
         },
         transceiver: function (node, x, y, config, g) {
             g.circuit([

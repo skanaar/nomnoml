@@ -53,6 +53,7 @@ type Visual =
   'roundrect'|
   'sender'|
   'start'|
+  'table'|
   'transceiver'
 
 interface Style {
