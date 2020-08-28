@@ -192,6 +192,8 @@ namespace nomnoml.skanaar {
 				var font = lastDefined('font')
 				if (font.indexOf('bold') === -1) {
 					attr.style += 'font-weight:normal;'
+				} else {
+					attr.style += 'font-weight:bold;'
 				}
 				if (font.indexOf('italic') > -1) {
 					attr.style += 'font-style:italic;'
