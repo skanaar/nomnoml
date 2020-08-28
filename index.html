@@ -477,6 +477,72 @@
 		setInterval(cycleCommercial, 10000)
 	</script>
 
+	<style>
+		.alert-list {
+			position: absolute;
+			bottom: 0;
+			right: 20px;
+			width: 300px;
+			z-index: 2;
+		}
+		.alert.alert-hidden {
+			display: none;
+		}
+		
+		.alert {
+			position: relative;
+			padding: 10px 20px;
+			margin: 0 0 20px 0;
+			font-family: sans-serif;
+			color: #444;
+			background: #fffcf4;
+			border-radius: 5px;
+			box-shadow: 0 5px 10px #0004;
+		}
+		.alert-close {
+			position: absolute;
+			top: 0;
+			right: 8px;
+			cursor: pointer;
+			font-size: 25px;
+		}
+	</style>
+	
+	<div class=alert-list>
+		<div class="alert alert-hidden">
+			<b>Got tabular data? Present it with tables!</b>
+			<pre>[&lt;table&gt;Fruits|
+  Apples  | 17   ||
+  Oranges | 4711
+]</pre>
+			<svg version="1.1" baseProfile="full" width="192" height="119" viewbox="0 0 192 119" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:ev="http://www.w3.org/2001/xml-events" style="font-weight:italic ; font-size:12pt; font-family:'Calibri', Helvetica, sans-serif;;stroke-linejoin:round;stroke-linecap:round">
+				<rect x="0" y="0" height="119" width="192" style="stroke:none; fill:transparent;"></rect>
+				<rect x="13.5" y="13.5" height="93" width="166" style="stroke:#33322E;fill:#eee8d5;stroke-dasharray:none;stroke-width:3;"></rect>
+				<text x="96.5" y="35" style="fill: #33322E;font-weight:bold;text-anchor: middle;">Fruits</text>
+				<text x="21.5" y="66" style="fill: #33322E;">Apples</text>
+				<text x="104.5" y="66" style="fill: #33322E;">17</text>
+				<text x="21.5" y="97" style="fill: #33322E;">Oranges</text>
+				<text x="104.5" y="97" style="fill: #33322E;">4711</text>
+				<path d="M13.5 44.5 L13.5 44.5" style="stroke:#33322E;fill:none;stroke-width:3;"></path>
+				<path d="M13.5 44.5 L179.5 44.5" style="stroke:#33322E;fill:none;stroke-width:3;"></path>
+				<path d="M13.5 75.5 L179.5 75.5" style="stroke:#33322E;fill:none;stroke-width:3;"></path>
+				<path d="M96.5 44.5 L96.5 106.5" style="stroke:#33322E;fill:none;stroke-width:3;"></path>
+				<path d="M179.5 44.5 L179.5 106.5" style="stroke:#33322E;fill:none;stroke-width:3;"></path>
+			</svg>
+			<a class=alert-close onclick="closeAlert()">&times;</a>
+		</div>
+	</div>
+	
+	<script>
+		if (!localStorage['nomnoml.hide-notice.table']) {
+			document.querySelector('.alert').classList.remove('alert-hidden')
+		}
+		function closeAlert() {
+			document.querySelector('.alert').classList.add('alert-hidden')
+			localStorage['nomnoml.hide-notice.table'] = 'hide'
+		}
+	</script>
+
 	<script type="text/vnd.nomnoml.class" id="defaultGraph">[Pirate|eyeCount: Int|raid();pillage()|
   [beard]--[parrot]
   [beard]-:>[foul mouth]
