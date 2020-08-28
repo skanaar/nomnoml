@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.10.0] - 2020-08-31
+
+### New features
+- Table is a new classifier type that displays its compartments in a uniform grid.
+  Set the first row-break with a double pipe `||`.
+- Non-boxy shapes are laid out properly. Ellipses, rhombuses, and cylinders (<usecase>, <choice>, and <database>) no longer intersect awkwardly with the arrows.
+
+### Bug fixes
+- fixed bug where SVG did not support bold text
+- fixed bug where SVG did not track lineWidth in push/pop of graphic state
+
 ## [0.9.0] - 2020-08-26
 
 - fixed bug where labels could extend outside bounding box
