@@ -1280,7 +1280,7 @@ var nomnoml;
             }
             for (var _i = 0, gridcells_1 = gridcells; _i < gridcells_1.length; _i++) {
                 var comp = gridcells_1[_i];
-                if (!isEnd(comp) && isRowBreak(comp)) {
+                if (!isEnd(comp) && isRowBreak(comp) && nomnoml.skanaar.last(rows).length) {
                     rows.push([]);
                 }
                 else if (isRowFull(comp)) {

@@ -161,7 +161,7 @@ namespace nomnoml {
         return comp == skanaar.last(gridcells)
       }
       for (var comp of gridcells) {
-        if (!isEnd(comp) && isRowBreak(comp)) {
+        if (!isEnd(comp) && isRowBreak(comp) && skanaar.last(rows).length) {
           rows.push([])
         } else if (isRowFull(comp)) {
           rows.push([comp])
