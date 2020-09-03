@@ -25,7 +25,7 @@ interface Underscore {
   unescape(input: string): string
 }
 
-declare class Vue {
-    constructor(config: any)
-    static component(name: string, config: any): any
+declare var React: {
+  createElement: any,
+  useState: Function
 }

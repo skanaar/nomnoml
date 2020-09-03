@@ -14,7 +14,6 @@ var files = [
   'lib/dagre.min.js',
   'lib/filesaver.min.js',
   'lib/underscore.min.js',
-  'lib/vue.min.js',
   'codemirror/codemirror-compressed.js',
   'codemirror/codemirror.css',
   'codemirror/nomnoml.codemirror-mode.js',
@@ -27,6 +26,8 @@ var files = [
   'test/output.node-test.svg',
   'test/skanaar.testsuite.js',
   'test/standalone.usecase.html',
+  // additionals
+  'additionals.js',
 ]
 
 var contentTypes = {

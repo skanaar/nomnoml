@@ -275,7 +275,7 @@ a:hover img {
 	color: #93a1a1;
 }
 
-
+.content .btn .icon { margin-right: 6px; }
 
 .file-menu .btn {
   display: block;
@@ -300,3 +300,29 @@ a:hover img {
 .file-entry:hover { background: rgba(0,0,0,0.07); }
 .file-entry a:first-child { flex-grow: 1; }
 .file-entry img { width: 24px; height: 24px; vertical-align: baseline; }
+
+.alert-list {
+	position: absolute;
+	bottom: 0;
+	right: 20px;
+	width: 300px;
+	z-index: 2;
+}
+.alert {
+	position: relative;
+	padding: 10px 30px 10px 20px;
+	margin: 0 0 20px 0;
+	font-family: sans-serif;
+	color: #444;
+	background: #fffcf4;
+	border-radius: 5px;
+	box-shadow: 0 5px 10px #0004;
+}
+.alert.alert-hidden { display: none; }
+.alert-close {
+	position: absolute;
+	top: 0;
+	right: 8px;
+	cursor: pointer;
+	font-size: 25px;
+}
