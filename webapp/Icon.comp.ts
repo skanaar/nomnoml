@@ -8,7 +8,8 @@ var icons: { [key: string]: string } = {
   "trash": "M18 7h-1v-1c0-1.1-.8-2-2-2h-7c-1.1 0-2 .8-2 2v1h-1c-.5 0-1 .4-1 1s.4 1 1 1v8c0 2.2 1.7 4 4 4h5c2.2 0 4-1.7 4-4v-8c.5 0 1-.4 1-1s-.4-1-1-1zm-10-1h7v1h-7v-1zm8 11c0 1.1-.8 2-2 2h-5c-1.1 0-2-.8-2-2v-8h9v8zM8.5 10.5c-.2 0-.5.2-.5.5v6c0 .2.2.5.5.5s.5-.2.5-.5v-6c0-.2-.2-.5-.5-.5zM10.5 10.5c-.2 0-.5.2-.5.5v6c0 .2.2.5.5.5s.5-.2.5-.5v-6c0-.2-.2-.5-.5-.5zM12.5 10.5c-.2 0-.5.2-.5.5v6c0 .2.2.5.5.5s.5-.2.5-.5v-6c0-.2-.2-.5-.5-.5zM14.5 10.5c-.2 0-.5.2-.5.5v6c0 .2.2.5.5.5s.5-.2.5-.5v-6c0-.2-.2-.5-.5-.5z"
 };
 
-function Icon(props: { id: string }) {
+function Icon(props: { id?: string, shape?: string }) {
+    var path = (props.id ? icons[props.id] : props.shape)
     return React.createElement('i', { className: 'icon' },
         React.createElement('svg', {
         version: "1.2",
@@ -18,7 +19,7 @@ function Icon(props: { id: string }) {
         width: "24",
         height: "24"
         },
-            React.createElement('path', { d: icons[props.id] })
+            React.createElement('path', { d: path })
         )
     )
 }
