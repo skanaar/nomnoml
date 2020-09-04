@@ -287,29 +287,7 @@
 			
 			<div storage-tools></div>
 
-			<div class="canvas-tools" id="canvas-tools">
-				<div class="canvas-button">
-					<a href="javascript:app.magnifyViewport(2)" title="Zoom in">
-						<svg version="1.2" width="24" height="24" viewBox="0 0 24 24">
-							<path d="M18 10h-4v-4c0-1.1-.8-2-2-2s-2 .8-2 2l.0 4h-4.0c-1.1 0-2 .8-2 2s.8 2 2 2l4.0-.0-.0 4.0c0 1.1.8 2 2 2s2-.8 2-2v-4.0l4 .0c1.1 0 2-.8 2-2s-.8-2-2-2z"/>
-						</svg>
-					</a>
-				</div>
-				<div class="canvas-button">
-					<a href="javascript:app.resetViewport()" title="Reset zoom and panning">
-						<svg version="1.2" width="24" height="24" viewBox="0 0 24 24">
-							<path d="M18 7h-12c-1.1 0-2 .8-2 2s.8 2 2 2h12c1.1 0 2-.8 2-2s-.8-2-2-2zM18 14h-12c-1.1 0-2 .8-2 2s.8 2 2 2h12c1.1 0 2-.8 2-2s-.8-2-2-2z"/>
-						</svg>
-					</a>
-				</div>
-				<div class="canvas-button">
-					<a href="javascript:app.magnifyViewport(-2)" title="Zoom out">
-						<svg version="1.2" width="24" height="24" viewBox="0 0 24 24">
-							<path d="M18 11h-12c-1.1 0-2 .8-2 2s.8 2 2 2h12c1.1 0 2-.8 2-2s-.8-2-2-2z"/>
-						</svg>
-					</a>
-				</div>
-			</div>
+			<div class="canvas-tools" id="canvas-tools"></div>
 		</div>
 	</div>
 	
@@ -358,6 +336,7 @@
 			ReactDOM.render(React.createElement(FileMenu, { app }), elem('[file-menu]'))
 			ReactDOM.render(React.createElement(ExportMenu, { app }), elem('[export-menu]'))
 			ReactDOM.render(React.createElement(StorageTools, { app }), elem('[storage-tools]'))
+			ReactDOM.render(React.createElement(CanvasTools, { app }), elem('#canvas-tools'))
 		}
 		
 		app.signals.on('source-changed', render)

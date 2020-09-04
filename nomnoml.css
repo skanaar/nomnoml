@@ -152,6 +152,7 @@ a:hover img {
 }
 .canvas-tools .canvas-button a {
 	display: block;
+	cursor: pointer;
 }
 .canvas-mode .canvas-tools {
 	opacity: 1;
