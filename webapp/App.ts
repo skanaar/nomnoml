@@ -21,7 +21,6 @@ class App {
     var textarea = document.getElementById('textarea') as HTMLTextAreaElement
     var canvasElement = document.getElementById('canvas') as HTMLCanvasElement
     var canvasPanner = document.getElementById('canvas-panner')
-    var canvasTools = document.getElementById('canvas-tools')
 
     this.editor = codeMirror.fromTextArea(textarea, {
       lineNumbers: true,
@@ -45,8 +44,7 @@ class App {
     var devenv = new DevEnv(editorElement, lineMarker, lineNumbers)
     this.panner = new CanvasPanner(canvasPanner, () => this.sourceChanged(), _.throttle)
     this.downloader = new DownloadLinks(canvasElement, saveAs)
-    new HoverMarker('canvas-mode', body, [canvasPanner, canvasTools])
-    new Tooltips(document.getElementById('tooltip'), document.querySelectorAll('.tools a'))
+    new HoverMarker('canvas-mode', body, [canvasPanner])
 
     this.defaultSource = (document.getElementById('defaultGraph') || { innerHTML: '' }).innerHTML
 

@@ -1,5 +1,5 @@
 function CanvasTools(props: { app: App }) {
-  return div({},
+  return div({ className: 'canvas-tools' },
     div({ className: 'canvas-button' },
       a({ title: 'Zoom in', onClick: prevent(() => props.app.magnifyViewport(2))}, el(Icon, { id: 'plus' }))
     ),
