@@ -2,13 +2,16 @@ var fs = require('fs');
 var jison = require('jison');
 var uglify = require('uglify-js');
 
+var package = require('../package.json');
+var dagreMinified = 'cache/dagre-' + package.dependencies.dagre + '.json';
+
 // minification is slow so only run this on-demand
-if (!fs.existsSync('lib/dagre.min.js')) {
+if (!fs.existsSync(dagreMinified)) {
     var dagreRawSrc = read('node_modules/dagre/dist/dagre.min.js')
-    fs.writeFileSync('lib/dagre.min.js', uglify.minify(dagreRawSrc).code);
+    fs.writeFileSync(dagreMinified, uglify.minify(dagreRawSrc).code);
 }
 
-var dagreSrc = read('lib/dagre.min.js')
+var dagreSrc = read(dagreMinified)
 var grammar = new jison.Parser(read('src/nomnoml.jison'));
 var parser = grammar.generate({moduleName: 'nomnomlCoreParser',moduleType:'js'})
 var source = read('dist/nomnoml.compiled.js') + ';\n' + parser
