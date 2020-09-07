@@ -28,7 +28,8 @@ function Menu(props: { app: App }) {
             onMouseLeave: () => setHint(''),
             onMouseEnter: () => setHint('Save this or load another diagram')
         }, el(Icon, { id: 'folder-open' })),
-        a({
+        
+        app.dynamicButton ? app.dynamicButton(app, setHint) : a({
             onClick: prevent(() => app.discardCurrentGraph()),
             onMouseLeave: () => setHint(''),
             onMouseEnter: () => setHint('Discard current diagram')
