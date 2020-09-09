@@ -4,6 +4,9 @@ function ExportMenu(props: { app: App }) {
   return div({ className: "file-menu" },
     a({ className: 'btn', href: '#view/' + Route.urlEncode(sourceCode), target: '_blank' },
       el(Icon, { id: 'link-outline' }), 'Open shareable link'
+    ),  
+    a({ className: 'btn', href: 'image.svg?source=' + Route.urlEncode(sourceCode), target: '_blank' },
+      el(Icon, { id: 'globe' }), 'Open linkable SVG'
     ),
     a({ className: 'btn', href: '/', onClick: prevent(() => downloader.pngDownload()) },
       el(Icon, { id: 'camera-outline' }), 'Download PNG'
