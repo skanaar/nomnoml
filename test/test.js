@@ -19,7 +19,8 @@ function assertLibraryVersion() {
     if (library.version != package.version) {
         throw new Error('version of distribution bundle and npm package must match')
     }
-    if (library.version != logVersion) {
-        throw new Error('version must be documented in changelog')
+    var isProductionVersion = !library.version.includes('-')
+    if (isProductionVersion && library.version != logVersion) {
+        throw new Error('production versions must be documented in changelog')
     }
 }
