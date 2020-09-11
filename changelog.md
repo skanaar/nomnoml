@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.0.0] - 2020-09-11
+
+## Improved text measurement in SVG documents
+- better heuristic for text width when no rendering context is available
+- better text measurement when rendering context is available
+
 ## [0.10.0] - 2020-08-31
 
 ### New features
