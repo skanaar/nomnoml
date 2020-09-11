@@ -43,7 +43,7 @@
     <div nomnoml=canvas>
       <script type="text/vnd.nomnoml">
 #font: Arial
-#.hello: underline
+#.hello: underline stroke=teal fill=#ffa
 [Pirate|
   eyeCount: Int|
   [a]--[b]
@@ -108,9 +108,22 @@
   </div>
 
   <div class=testcase>
+    <h1>Custom direction</h1>
+    <div nomnoml=canvas>
+      <script type="text/vnd.nomnoml">
+#.right: direction=right
+[A] -> [<right>B|
+  [X]->[Y]
+]
+      </script>
+    </div>
+  </div>
+
+  <div class=testcase>
     <h1>Table</h1>
     <div nomnoml=canvas>
       <script type="text/vnd.nomnoml">
+#direction: right
 [<table> Long table title|
   nuts  | 89    ||
   bolts | 18
@@ -169,10 +182,9 @@
     <div nomnoml=svg>
       <script type="text/vnd.nomnoml">
 #zoom: 0.5
-#font: Arial
 #direction: right
 [iii]
-[mmm]
+[🍌🐵]
 [MMM]
 [ABC<T>]
 [漢字漢字]
@@ -185,10 +197,26 @@
     <div nomnoml=svg text-measure-canvas>
       <script type="text/vnd.nomnoml">
 #zoom: 0.5
-#font: Arial
 #direction: right
 [iii]
-[mmm]
+[🍌🐵]
+[MMM]
+[ABC<T>]
+[漢字漢字]
+      </script>
+    </div>
+  </div>
+
+  <div class=testcase>
+    <h1>Text heuristic large font</h1>
+    <div nomnoml=svg>
+      <script type="text/vnd.nomnoml">
+#zoom: 0.5
+#font: Arial
+#fontSize: 20
+#direction: right
+[iii]
+[🍌🐵]
 [MMM]
 [ABC<T>]
 [漢字漢字]
@@ -285,7 +313,7 @@
 
       function mountSvg(host, source){
         var canvas = host.attributes['text-measure-canvas']
-        host.innerHTML = nomnoml.renderSvg(source, canvas ? document.createElement('canvas') : null)
+        host.innerHTML = nomnoml.renderSvg(source, canvas ? document : undefined)
       }
     }
 

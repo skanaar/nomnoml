@@ -20,7 +20,7 @@ interface Graphics {
   rect(x: number, y: number, w: number, h: number): Chainable
   path(points: Vector[]): Chainable
   circuit(path: Vector[], offset?: Vec, s?: number): Chainable
-  font(font: string): void
+  setFont(fontFamily: string, bold: 'bold'|'normal', italic: 'italic'|null, fontSize: number): void
   strokeStyle(stroke: string): void
   fillStyle(fill: any): void
   arcTo(x1: number, y1: number, x2: number, y2: number, radius: number): void

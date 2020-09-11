@@ -1,0 +1,33 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>calculate char widths</title>
+  <link rel="shortcut icon" type="image/png" href="favicon.png">
+  <style>
+    body { background-color: #fdf6e3; padding: 0; margin: 10px; overflow-y: scroll }
+  </style>
+</head>
+
+<body>
+
+  <pre id=output></pre>
+
+  <script>
+    var ctx = document.createElement('canvas').getContext('2d')
+    ctx.font = 'normal 12pt Helvetica'
+    function range(start, end) {
+      return [...(Array(end)).keys()].slice(start)
+    }
+    function toCharWidthMap(codes) {
+      return codes
+        .map(i => String.fromCharCode(i))
+        .map(c => [c, ctx.measureText(c).width])
+        .reduce((memo, e) => (memo[e[0]] = Math.round(e[1]), memo), {})
+    }
+    var lut = JSON.stringify(toCharWidthMap(range(32, 127)))
+    document.querySelector('#output').innerText = lut
+  </script>
+
+</body>
+</html>

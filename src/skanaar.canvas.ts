@@ -115,7 +115,9 @@ namespace nomnoml.skanaar {
 				ctx.closePath()
 				return chainable
 			},
-			font:        function (f){ ctx.font = f },
+			setFont: function (font: string, bold: 'bold'|'normal', ital:'italic'|null, fontSize: number): void {
+				ctx.font = `${bold} ${ital || ''} ${fontSize}pt ${font}, Helvetica, sans-serif`
+			},
 			fillStyle:   function (s){ ctx.fillStyle = s },
 			strokeStyle: function (s){ ctx.strokeStyle = s },
 			textAlign:   function (a){ ctx.textAlign = a as CanvasTextAlign },

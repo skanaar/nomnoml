@@ -9,6 +9,7 @@ namespace nomnoml.skanaar {
 		fill: string|null
 		textAlign: string|null
 		font: string|null
+		fontSize: number|null
 	}
 
 	interface SvgGraphics extends Graphics {
@@ -24,7 +25,9 @@ namespace nomnoml.skanaar {
 			.replace(/'/g, '&apos;')
 	}
 
-  export function Svg(globalStyle: string, canvas?: HTMLCanvasElement): SvgGraphics {
+	export var charWidths: any = {"0":9,"1":9,"2":9,"3":9,"4":9,"5":9,"6":9,"7":9,"8":9,"9":9," ":4,"!":4,"\"":6,"#":9,"$":9,"%":14,"&":11,"'":3,"(":5,")":5,"*":6,"+":9,",":4,"-":5,".":4,"/":4,":":4,";":4,"<":9,"=":9,">":9,"?":9,"@":16,"A":11,"B":11,"C":12,"D":12,"E":11,"F":10,"G":12,"H":12,"I":4,"J":8,"K":11,"L":9,"M":13,"N":12,"O":12,"P":11,"Q":12,"R":12,"S":11,"T":10,"U":12,"V":11,"W":15,"X":11,"Y":11,"Z":10,"[":4,"\\":4,"]":4,"^":8,"_":9,"`":5,"a":9,"b":9,"c":8,"d":9,"e":9,"f":4,"g":9,"h":9,"i":4,"j":4,"k":8,"l":4,"m":13,"n":9,"o":9,"p":9,"q":9,"r":5,"s":8,"t":4,"u":9,"v":8,"w":12,"x":8,"y":8,"z":8,"{":5,"|":4,"}":5,"~":9}
+
+  export function Svg(globalStyle: string, document?: HTMLDocument): SvgGraphics {
 		var initialState: SvgState = {
 			x: 0,
 			y: 0,
@@ -33,16 +36,14 @@ namespace nomnoml.skanaar {
 			dashArray: 'none',
 			fill: 'none',
 			textAlign: 'left',
-			font: null
+			font: 'Helvetica, Arial, sans-serif',
+			fontSize: 12
 		}
 		var states = [initialState]
 		var elements: any[] = []
 
-		// canvas is an optional parameter
-		var ctx = canvas ? canvas.getContext('2d') : null
-		var canUseCanvas = false
-		var waitingForFirstFont = true
-		var docFont = ''
+		var measurementCanvas: HTMLCanvasElement = document ? document.createElement('canvas') : null;
+		var ctx = measurementCanvas ? measurementCanvas.getContext('2d') : null
 
 		function Element(name: string, attr: any, content?: string): any {
 			return {
@@ -76,7 +77,7 @@ namespace nomnoml.skanaar {
 		}
 
 		function State(dx: number, dy: number): SvgState {
-			return { x: dx, y: dy, stroke: null, strokeWidth: null, fill: null, textAlign: null, dashArray:'none', font: null }
+			return { x: dx, y: dy, stroke: null, strokeWidth: null, fill: null, textAlign: null, dashArray:'none', font: null, fontSize: null }
 		}
 
 		function trans(coord: number, axis: 'x'|'y'){
@@ -150,30 +151,10 @@ namespace nomnoml.skanaar {
 				element.attr.d += ' Z'
 				return element
 			},
-			font: function (font){
+			setFont: function (font: string, bold: 'bold'|'normal', ital:'italic'|null, fontSize: number): void {
+				var font = `${bold} ${ital || ''} ${fontSize}pt ${font}, Helvetica, sans-serif`
 				last(states).font = font;
-
-				if (waitingForFirstFont) {
-					// This is our first chance to test if we can use a canvas to measure text width.
-					if (ctx) {
-						var primaryFont = font.replace(/^.*family:/, '').replace(/[, ].*$/, '')
-						primaryFont = primaryFont.replace(/'/g, '')
-						canUseCanvas = /^(Arial|Helvetica|Times|Times New Roman)$/.test(primaryFont)
-						if (canUseCanvas) {
-							var fontSize = font.replace(/^.*font-size:/, '').replace(/;.*$/, '') + ' '
-							if (primaryFont === 'Arial') {
-								docFont = fontSize + 'Arial, Helvetica, sans-serif'
-							} else if (primaryFont === 'Helvetica') {
-								docFont = fontSize + 'Helvetica, Arial, sans-serif'
-							} else if (primaryFont === 'Times New Roman') {
-								docFont = fontSize + '"Times New Roman", Times, serif'
-							} else if (primaryFont === 'Times') {
-								docFont = fontSize + 'Times, "Times New Roman", serif'
-							}
-						}
-					}
-					waitingForFirstFont = false
-				}
+				last(states).fontSize = fontSize;
 			},
 			strokeStyle: function (stroke){
 				last(states).stroke = stroke
@@ -190,13 +171,8 @@ namespace nomnoml.skanaar {
 			fillText: function (text, x, y){
 				var attr = { x: tX(x), y: tY(y), style: 'fill: '+last(states).fill+';' }
 				var font = lastDefined('font')
-				if (font.indexOf('bold') === -1) {
-					attr.style += 'font-weight:normal;'
-				} else {
-					attr.style += 'font-weight:bold;'
-				}
-				if (font.indexOf('italic') > -1) {
-					attr.style += 'font-style:italic;'
+				if (font) {
+					attr.style += 'font:'+font+';'
 				}
 				if (lastDefined('textAlign') === 'center') {
 					attr.style += 'text-anchor: middle;'
@@ -213,17 +189,17 @@ namespace nomnoml.skanaar {
 				last(states).strokeWidth = w
 			},
 			measureText: function (s: string){
-				if (canUseCanvas) {
-					var fontStr = lastDefined('font')
-					var italicSpec = (/\bitalic\b/.test(fontStr) ? 'italic' : 'normal') + ' normal '
-					var boldSpec = /\bbold\b/.test(fontStr) ? 'bold ' : 'normal '
-					ctx.font = italicSpec + boldSpec + docFont
+				if (ctx) {
+					// use supplied canvas to measure text
+					ctx.font = lastDefined('font') || 'normal 12pt Helvetica'
 					return ctx.measureText(s)
 				} else {
+					// use heuristic to measure text
 					return {
 						width: skanaar.sum(s, function (c: string){
-							if (c === 'M' || c === 'W') { return 14 }
-							return c.charCodeAt(0) < 200 ? 9.5 : 16
+							var scale = lastDefined('fontSize')/12
+							if (charWidths[c]) { return charWidths[c] * scale }
+							return 16 * scale // non-ascii characters all treated as wide
 						})
 					}
 				}
@@ -280,7 +256,7 @@ namespace nomnoml.skanaar {
 					xmlns: 'http://www.w3.org/2000/svg',
 					'xmlns:xlink': 'http://www.w3.org/1999/xlink',
 					'xmlns:ev': 'http://www.w3.org/2001/xml-events',
-					style: lastDefined('font') + ';' + globalStyle,
+					style: 'font:'+lastDefined('font') + ';' + globalStyle,
 				}
 				return '<svg '+toAttr(attrs)+'>\n  '+innerSvg+'\n</svg>'
 			}

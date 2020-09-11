@@ -20,7 +20,7 @@ class DownloadLinks {
 
   svgDownload(){
     var dynamic: any = nomnoml
-    var svg = dynamic.renderSvg(this.source, this.canvasElement)
+    var svg = dynamic.renderSvg(this.source, document)
     this.saveAs(new Blob([svg], {type: 'image/svg+xml'}), this.filename + '.svg')
   }
 

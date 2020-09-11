@@ -13,6 +13,8 @@ interface Nomnoml {
 
 namespace nomnoml {
 
+  export var version = '0.10.0'
+
   export interface SetFont {
     (config: Config, isBold: string, isItalic?: string): void
   }
@@ -24,59 +26,34 @@ namespace nomnoml {
     canvas.height = rect.height * zoom;
   }
 
-  function setFont(config: Config, isBold: 'bold'|'normal', isItalic: 'italic'|undefined, graphics: Graphics) {
-    var style = (isBold === 'bold' ? 'bold' : '')
-    if (isItalic) style = 'italic ' + style
-    var defaultFont = 'Helvetica, sans-serif'
-    var font = skanaar.format('# #pt #, #', style, config.fontSize, config.font, defaultFont)
-    graphics.font(font)
-  }
+  function Measurer(config: Config, graphics: Graphics) {
+    return {
+      setFont(conf: Config, bold: 'bold'|'normal', ital:'italic'|undefined): void {
+        graphics.setFont(conf.font, bold, ital, config.fontSize)
+      },
+      textWidth: function (s: string): number { return graphics.measureText(s).width },
+      textHeight: function (): number { return config.leading * config.fontSize }
+    }
+  };
 
   function parseAndRender(code: string, graphics: Graphics, canvas: HTMLCanvasElement, scale: number) {
     var parsedDiagram = parse(code)
     var config = parsedDiagram.config
-    var measurer = {
-      setFont(conf: Config, bold: 'bold'|'normal', ital:'italic'|undefined): void {
-        setFont(conf, bold, ital, graphics)
-      },
-      textWidth(s: string): number { return graphics.measureText(s).width },
-      textHeight(): number { return config.leading * config.fontSize }
-    };
+    var measurer = Measurer(config, graphics)
     var layout = nomnoml.layout(measurer, config, parsedDiagram.root)
-    fitCanvasSize(canvas, layout, config.zoom * scale)
+    if (canvas) { fitCanvasSize(canvas, layout, config.zoom * scale) }
     config.zoom *= scale
     nomnoml.render(graphics, config, layout, measurer.setFont)
-    return { config: config }
+    return { config: config, layout: layout }
   }
-
-  export var version = '0.10.0'
 
   export function draw(canvas: HTMLCanvasElement, code: string, scale: number): { config: Config } {
     return parseAndRender(code, skanaar.Canvas(canvas), canvas, scale || 1)
   }
 
-  export function renderSvg(code: string, docCanvas?: HTMLCanvasElement): string {
-    var parsedDiagram = parse(code)
-    var config = parsedDiagram.config
-    var skCanvas = skanaar.Svg('', docCanvas)
-    function setFont(config: Config, isBold: 'bold'|'normal', isItalic: 'italic'|undefined) {
-      var style = (isBold === 'bold' ? 'bold' : '')
-      if (isItalic) style = 'italic ' + style
-      var defFont = 'Helvetica, sans-serif'
-      var template = 'font-weight:#; font-size:#pt; font-family:\'#\', #'
-      var font = skanaar.format(template, style, config.fontSize, config.font, defFont)
-      skCanvas.font(font)
-    }
-    var measurer = {
-      setFont(conf: Config, bold: 'bold'|'normal', ital:'italic'|undefined): void {
-        setFont(conf, bold, ital)
-      },
-      textWidth: function (s: string): number { return skCanvas.measureText(s).width },
-      textHeight: function (): number { return config.leading * config.fontSize }
-    };
-    var layout = nomnoml.layout(measurer, config, parsedDiagram.root)
-    
-    nomnoml.render(skCanvas, config, layout, measurer.setFont)
+  export function renderSvg(code: string, document?: HTMLDocument): string {
+    var skCanvas = skanaar.Svg('', document)
+    var { config, layout } = parseAndRender(code, skCanvas, null, 1)
     return skCanvas.serialize({
       width: layout.width,
       height: layout.height

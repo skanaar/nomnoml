@@ -224,61 +224,40 @@ var nomnoml;
 })(nomnoml || (nomnoml = {}));
 var nomnoml;
 (function (nomnoml) {
+    nomnoml.version = '0.10.0';
     function fitCanvasSize(canvas, rect, zoom) {
         canvas.width = rect.width * zoom;
         canvas.height = rect.height * zoom;
     }
-    function setFont(config, isBold, isItalic, graphics) {
-        var style = (isBold === 'bold' ? 'bold' : '');
-        if (isItalic)
-            style = 'italic ' + style;
-        var defaultFont = 'Helvetica, sans-serif';
-        var font = nomnoml.skanaar.format('# #pt #, #', style, config.fontSize, config.font, defaultFont);
-        graphics.font(font);
-    }
-    function parseAndRender(code, graphics, canvas, scale) {
-        var parsedDiagram = nomnoml.parse(code);
-        var config = parsedDiagram.config;
-        var measurer = {
+    function Measurer(config, graphics) {
+        return {
             setFont: function (conf, bold, ital) {
-                setFont(conf, bold, ital, graphics);
+                graphics.setFont(conf.font, bold, ital, config.fontSize);
             },
             textWidth: function (s) { return graphics.measureText(s).width; },
             textHeight: function () { return config.leading * config.fontSize; }
         };
+    }
+    ;
+    function parseAndRender(code, graphics, canvas, scale) {
+        var parsedDiagram = nomnoml.parse(code);
+        var config = parsedDiagram.config;
+        var measurer = Measurer(config, graphics);
         var layout = nomnoml.layout(measurer, config, parsedDiagram.root);
-        fitCanvasSize(canvas, layout, config.zoom * scale);
+        if (canvas) {
+            fitCanvasSize(canvas, layout, config.zoom * scale);
+        }
         config.zoom *= scale;
         nomnoml.render(graphics, config, layout, measurer.setFont);
-        return { config: config };
+        return { config: config, layout: layout };
     }
-    nomnoml.version = '0.10.0';
     function draw(canvas, code, scale) {
         return parseAndRender(code, nomnoml.skanaar.Canvas(canvas), canvas, scale || 1);
     }
     nomnoml.draw = draw;
-    function renderSvg(code, docCanvas) {
-        var parsedDiagram = nomnoml.parse(code);
-        var config = parsedDiagram.config;
-        var skCanvas = nomnoml.skanaar.Svg('', docCanvas);
-        function setFont(config, isBold, isItalic) {
-            var style = (isBold === 'bold' ? 'bold' : '');
-            if (isItalic)
-                style = 'italic ' + style;
-            var defFont = 'Helvetica, sans-serif';
-            var template = 'font-weight:#; font-size:#pt; font-family:\'#\', #';
-            var font = nomnoml.skanaar.format(template, style, config.fontSize, config.font, defFont);
-            skCanvas.font(font);
-        }
-        var measurer = {
-            setFont: function (conf, bold, ital) {
-                setFont(conf, bold, ital);
-            },
-            textWidth: function (s) { return skCanvas.measureText(s).width; },
-            textHeight: function () { return config.leading * config.fontSize; }
-        };
-        var layout = nomnoml.layout(measurer, config, parsedDiagram.root);
-        nomnoml.render(skCanvas, config, layout, measurer.setFont);
+    function renderSvg(code, document) {
+        var skCanvas = nomnoml.skanaar.Svg('', document);
+        var _a = parseAndRender(code, skCanvas, null, 1), config = _a.config, layout = _a.layout;
         return skCanvas.serialize({
             width: layout.width,
             height: layout.height
@@ -366,7 +345,7 @@ var nomnoml;
                 fill: (d.fill || '#eee8d5;#fdf6e3;#eee8d5;#fdf6e3').split(';'),
                 background: d.background || 'transparent',
                 fillArrows: d.fillArrows === 'true',
-                font: d.font || 'Calibri',
+                font: d.font || 'Helvetica',
                 fontSize: (+d.fontSize) || 12,
                 leading: (+d.leading) || 1.25,
                 lineWidth: (+d.lineWidth) || 3,
@@ -716,7 +695,9 @@ var nomnoml;
                     ctx.closePath();
                     return chainable;
                 },
-                font: function (f) { ctx.font = f; },
+                setFont: function (font, bold, ital, fontSize) {
+                    ctx.font = bold + " " + (ital || '') + " " + fontSize + "pt " + font + ", Helvetica, sans-serif";
+                },
                 fillStyle: function (s) { ctx.fillStyle = s; },
                 strokeStyle: function (s) { ctx.strokeStyle = s; },
                 textAlign: function (a) { ctx.textAlign = a; },
@@ -752,7 +733,8 @@ var nomnoml;
                 .replace(/"/g, '&quot;')
                 .replace(/'/g, '&apos;');
         }
-        function Svg(globalStyle, canvas) {
+        skanaar.charWidths = { "0": 9, "1": 9, "2": 9, "3": 9, "4": 9, "5": 9, "6": 9, "7": 9, "8": 9, "9": 9, " ": 4, "!": 4, "\"": 6, "#": 9, "$": 9, "%": 14, "&": 11, "'": 3, "(": 5, ")": 5, "*": 6, "+": 9, ",": 4, "-": 5, ".": 4, "/": 4, ":": 4, ";": 4, "<": 9, "=": 9, ">": 9, "?": 9, "@": 16, "A": 11, "B": 11, "C": 12, "D": 12, "E": 11, "F": 10, "G": 12, "H": 12, "I": 4, "J": 8, "K": 11, "L": 9, "M": 13, "N": 12, "O": 12, "P": 11, "Q": 12, "R": 12, "S": 11, "T": 10, "U": 12, "V": 11, "W": 15, "X": 11, "Y": 11, "Z": 10, "[": 4, "\\": 4, "]": 4, "^": 8, "_": 9, "`": 5, "a": 9, "b": 9, "c": 8, "d": 9, "e": 9, "f": 4, "g": 9, "h": 9, "i": 4, "j": 4, "k": 8, "l": 4, "m": 13, "n": 9, "o": 9, "p": 9, "q": 9, "r": 5, "s": 8, "t": 4, "u": 9, "v": 8, "w": 12, "x": 8, "y": 8, "z": 8, "{": 5, "|": 4, "}": 5, "~": 9 };
+        function Svg(globalStyle, document) {
             var initialState = {
                 x: 0,
                 y: 0,
@@ -761,14 +743,13 @@ var nomnoml;
                 dashArray: 'none',
                 fill: 'none',
                 textAlign: 'left',
-                font: null
+                font: 'Helvetica, Arial, sans-serif',
+                fontSize: 12
             };
             var states = [initialState];
             var elements = [];
-            var ctx = canvas ? canvas.getContext('2d') : null;
-            var canUseCanvas = false;
-            var waitingForFirstFont = true;
-            var docFont = '';
+            var measurementCanvas = document ? document.createElement('canvas') : null;
+            var ctx = measurementCanvas ? measurementCanvas.getContext('2d') : null;
             function Element(name, attr, content) {
                 return {
                     name: name,
@@ -800,7 +781,7 @@ var nomnoml;
                 };
             }
             function State(dx, dy) {
-                return { x: dx, y: dy, stroke: null, strokeWidth: null, fill: null, textAlign: null, dashArray: 'none', font: null };
+                return { x: dx, y: dy, stroke: null, strokeWidth: null, fill: null, textAlign: null, dashArray: 'none', font: null, fontSize: null };
             }
             function trans(coord, axis) {
                 states.forEach(function (t) { coord += t[axis]; });
@@ -863,31 +844,10 @@ var nomnoml;
                     element.attr.d += ' Z';
                     return element;
                 },
-                font: function (font) {
+                setFont: function (font, bold, ital, fontSize) {
+                    var font = bold + " " + (ital || '') + " " + fontSize + "pt " + font + ", Helvetica, sans-serif";
                     last(states).font = font;
-                    if (waitingForFirstFont) {
-                        if (ctx) {
-                            var primaryFont = font.replace(/^.*family:/, '').replace(/[, ].*$/, '');
-                            primaryFont = primaryFont.replace(/'/g, '');
-                            canUseCanvas = /^(Arial|Helvetica|Times|Times New Roman)$/.test(primaryFont);
-                            if (canUseCanvas) {
-                                var fontSize = font.replace(/^.*font-size:/, '').replace(/;.*$/, '') + ' ';
-                                if (primaryFont === 'Arial') {
-                                    docFont = fontSize + 'Arial, Helvetica, sans-serif';
-                                }
-                                else if (primaryFont === 'Helvetica') {
-                                    docFont = fontSize + 'Helvetica, Arial, sans-serif';
-                                }
-                                else if (primaryFont === 'Times New Roman') {
-                                    docFont = fontSize + '"Times New Roman", Times, serif';
-                                }
-                                else if (primaryFont === 'Times') {
-                                    docFont = fontSize + 'Times, "Times New Roman", serif';
-                                }
-                            }
-                        }
-                        waitingForFirstFont = false;
-                    }
+                    last(states).fontSize = fontSize;
                 },
                 strokeStyle: function (stroke) {
                     last(states).stroke = stroke;
@@ -904,14 +864,8 @@ var nomnoml;
                 fillText: function (text, x, y) {
                     var attr = { x: tX(x), y: tY(y), style: 'fill: ' + last(states).fill + ';' };
                     var font = lastDefined('font');
-                    if (font.indexOf('bold') === -1) {
-                        attr.style += 'font-weight:normal;';
-                    }
-                    else {
-                        attr.style += 'font-weight:bold;';
-                    }
-                    if (font.indexOf('italic') > -1) {
-                        attr.style += 'font-style:italic;';
+                    if (font) {
+                        attr.style += 'font:' + font + ';';
                     }
                     if (lastDefined('textAlign') === 'center') {
                         attr.style += 'text-anchor: middle;';
@@ -928,20 +882,18 @@ var nomnoml;
                     last(states).strokeWidth = w;
                 },
                 measureText: function (s) {
-                    if (canUseCanvas) {
-                        var fontStr = lastDefined('font');
-                        var italicSpec = (/\bitalic\b/.test(fontStr) ? 'italic' : 'normal') + ' normal ';
-                        var boldSpec = /\bbold\b/.test(fontStr) ? 'bold ' : 'normal ';
-                        ctx.font = italicSpec + boldSpec + docFont;
+                    if (ctx) {
+                        ctx.font = lastDefined('font') || 'normal 12pt Helvetica';
                         return ctx.measureText(s);
                     }
                     else {
                         return {
                             width: skanaar.sum(s, function (c) {
-                                if (c === 'M' || c === 'W') {
-                                    return 14;
+                                var scale = lastDefined('fontSize') / 12;
+                                if (skanaar.charWidths[c]) {
+                                    return skanaar.charWidths[c] * scale;
                                 }
-                                return c.charCodeAt(0) < 200 ? 9.5 : 16;
+                                return 16 * scale;
                             })
                         };
                     }
@@ -994,7 +946,7 @@ var nomnoml;
                         xmlns: 'http://www.w3.org/2000/svg',
                         'xmlns:xlink': 'http://www.w3.org/1999/xlink',
                         'xmlns:ev': 'http://www.w3.org/2001/xml-events',
-                        style: lastDefined('font') + ';' + globalStyle
+                        style: 'font:' + lastDefined('font') + ';' + globalStyle
                     };
                     return '<svg ' + toAttr(attrs) + '>\n  ' + innerSvg + '\n</svg>';
                 }
@@ -1316,7 +1268,7 @@ var nomnoml;
     nomnoml.visualizers = {
         actor: function (node, x, y, config, g) {
             var a = config.padding / 2;
-            var yp = y + a * 3;
+            var yp = y + a * 4;
             var faceCenter = { x: node.x, y: yp - a };
             g.circle(faceCenter, a).fillAndStroke();
             g.path([{ x: node.x, y: yp }, { x: node.x, y: yp + 2 * a }]).stroke();

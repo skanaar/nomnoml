@@ -96,7 +96,7 @@ namespace nomnoml {
 				fill: (d.fill || '#eee8d5;#fdf6e3;#eee8d5;#fdf6e3').split(';'),
 				background: d.background || 'transparent',
 				fillArrows: d.fillArrows === 'true',
-				font: d.font || 'Calibri',
+				font: d.font || 'Helvetica',
 				fontSize: (+d.fontSize) || 12,
 				leading: (+d.leading) || 1.25,
 				lineWidth: (+d.lineWidth) || 3,
