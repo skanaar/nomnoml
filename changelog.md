@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.0.1] - 2020-09-11
+
+- Tweaked the text measurement heuristic for better handling of long texts.
+
 ## [1.0.0] - 2020-09-11
 
 ## Improved text measurement in SVG documents

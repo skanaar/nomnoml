@@ -224,7 +224,7 @@ var nomnoml;
 })(nomnoml || (nomnoml = {}));
 var nomnoml;
 (function (nomnoml) {
-    nomnoml.version = '1.0.0';
+    nomnoml.version = '1.0.1';
     function fitCanvasSize(canvas, rect, zoom) {
         canvas.width = rect.width * zoom;
         canvas.height = rect.height * zoom;
