@@ -198,7 +198,7 @@ namespace nomnoml {
   export var visualizers: { [key in Visual]: Visualizer } = {
     actor : function (node, x, y, config, g) {
       var a = config.padding/2
-      var yp = y + a*3
+      var yp = y + a*4
       var faceCenter = {x: node.x, y: yp-a}
       g.circle(faceCenter, a).fillAndStroke()
       g.path([ {x: node.x,   y: yp}, {x: node.x,   y: yp+2*a} ]).stroke()
