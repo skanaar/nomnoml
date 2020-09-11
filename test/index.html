@@ -178,6 +178,54 @@
   </div>
 
   <div class=testcase>
+    <h1>Edge label linebreak</h1>
+    <div nomnoml=canvas>
+      <script type="text/vnd.nomnoml">
+[Left] left`association <-> right`association [Right]
+      </script>
+    </div>
+  </div>
+
+  <div class=testcase>
+    <h1>Self referential</h1>
+    <div nomnoml=canvas>
+      <script type="text/vnd.nomnoml">
+[Banana] <-> self [Banana]
+      </script>
+    </div>
+  </div>
+
+  <div class=testcase>
+    <h1>Label placement</h1>
+    <div nomnoml=canvas>
+      <script type="text/vnd.nomnoml">
+#direction: right
+#spacing: 60
+#edgeMargin: -5
+[Left] left - right [C1]
+[Left] left - right [C2]
+[Left] left - right [C3]
+[C1] left - right [Right]
+[C2] left - right [Right]
+[C3] left - right [Right]
+      </script>
+    </div>
+  </div>
+
+  <div class=testcase>
+    <h1>Graph size</h1>
+    <div nomnoml=canvas>
+      <script type="text/vnd.nomnoml">
+[a] - [foo]
+[foo] - [b]
+[a] - [bar]
+[bar] - [b]
+[a] - [b]
+      </script>
+    </div>
+  </div>
+
+  <div class=testcase>
     <h1>Text heuristic</h1>
     <div nomnoml=svg>
       <script type="text/vnd.nomnoml">
@@ -223,51 +271,12 @@
       </script>
     </div>
   </div>
-
+  
   <div class=testcase>
-    <h1>Edge label linebreak</h1>
-    <div nomnoml=canvas>
+    <h1>long text</h1>
+    <div nomnoml=svg>
       <script type="text/vnd.nomnoml">
-[Left] left`association <-> right`association [Right]
-      </script>
-    </div>
-  </div>
-
-  <div class=testcase>
-    <h1>Self referential</h1>
-    <div nomnoml=canvas>
-      <script type="text/vnd.nomnoml">
-[Banana] <-> self [Banana]
-      </script>
-    </div>
-  </div>
-
-  <div class=testcase>
-    <h1>Label placement</h1>
-    <div nomnoml=canvas>
-      <script type="text/vnd.nomnoml">
-#direction: right
-#spacing: 60
-#edgeMargin: -5
-[Left] left - right [C1]
-[Left] left - right [C2]
-[Left] left - right [C3]
-[C1] left - right [Right]
-[C2] left - right [Right]
-[C3] left - right [Right]
-      </script>
-    </div>
-  </div>
-
-  <div class=testcase>
-    <h1>Graph size</h1>
-    <div nomnoml=canvas>
-      <script type="text/vnd.nomnoml">
-[a] - [foo]
-[foo] - [b]
-[a] - [bar]
-[bar] - [b]
-[a] - [b]
+[First, Nomnoml is an amazing piece of software. So with that being said, thank you all for creating something so epic. ]
       </script>
     </div>
   </div>

@@ -23,7 +23,7 @@
       return codes
         .map(i => String.fromCharCode(i))
         .map(c => [c, ctx.measureText(c).width])
-        .reduce((memo, e) => (memo[e[0]] = Math.round(e[1]), memo), {})
+        .reduce((memo, e) => (memo[e[0]] = Math.ceil(e[1]+0.2), memo), {})
     }
     var lut = JSON.stringify(toCharWidthMap(range(32, 127)))
     document.querySelector('#output').innerText = lut
