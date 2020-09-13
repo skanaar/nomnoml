@@ -309,6 +309,12 @@ var nomnoml;
             }
         });
         var pureDiagramCode = lines.map(function (e) { return onlyCompilables(e.text); }).join('\n').trim();
+        if (pureDiagramCode == '') {
+            return {
+                root: new nomnoml.Compartment([], [], []),
+                config: getConfig(directives)
+            };
+        }
         var parseTree = nomnoml.intermediateParse(pureDiagramCode);
         return {
             root: nomnoml.transformParseIntoSyntaxTree(parseTree),
