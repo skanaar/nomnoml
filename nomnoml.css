@@ -131,6 +131,7 @@ a:hover img {
 	font-weight: bold;
 	background: #fdf6e3;
 	border-radius: 5px;
+	user-select: none;
 }
 .canvas-tools {
 	display: block;
@@ -140,6 +141,7 @@ a:hover img {
 	width: 34px;
 	opacity: 0;
 	transition: opacity 1s;
+	user-select: none;
 }
 .canvas-tools .canvas-button {
 	box-sizing: border-box;
