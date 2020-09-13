@@ -26,13 +26,6 @@ suite.test('skanaar.testsuite.isEqual', function(){
     }
 })
 
-suite.test('skanaar.format', function(){
-    var str = nomnoml.skanaar.format('Hi #, how are you #. That is #', 'Bob', 'today', 'good')
-    assertEqual(str, 'Hi Bob, how are you today. That is good')
-    assertEqual(nomnoml.skanaar.format('# #', 1, 2, 3), '1 2')
-    assertEqual(nomnoml.skanaar.format('# # #', 1, 2), '1 2 ')
-})
-
 suite.test('skanaar.flatten', function(){
     assertEqual(nomnoml.skanaar.flatten([[4, 5]]), [4, 5])
     assertEqual(nomnoml.skanaar.flatten([[7], [4, 5]]), [7, 4, 5])

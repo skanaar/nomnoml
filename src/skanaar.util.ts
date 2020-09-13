@@ -33,15 +33,6 @@ namespace nomnoml.skanaar {
         if (!haystack) return false
         return haystack.indexOf(needle) !== -1
     }
-    export function format(template: string, ...parts: any[]){
-        var matrix = template.split('#')
-        var output = [matrix[0]]
-        for (var i=0; i<matrix.length-1; i++) {
-            output.push(parts[i] || '')
-            output.push(matrix[i+1])
-        }
-        return output.join('')
-    }
     export function merged(a: any, b: any) {
         function assign(target: any, data: any) {
             for(var key in data)

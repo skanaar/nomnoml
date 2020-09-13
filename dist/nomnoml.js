@@ -1001,20 +1001,6 @@ var nomnoml;
             return haystack.indexOf(needle) !== -1;
         }
         skanaar.hasSubstring = hasSubstring;
-        function format(template) {
-            var parts = [];
-            for (var _i = 1; _i < arguments.length; _i++) {
-                parts[_i - 1] = arguments[_i];
-            }
-            var matrix = template.split('#');
-            var output = [matrix[0]];
-            for (var i = 0; i < matrix.length - 1; i++) {
-                output.push(parts[i] || '');
-                output.push(matrix[i + 1]);
-            }
-            return output.join('');
-        }
-        skanaar.format = format;
         function merged(a, b) {
             function assign(target, data) {
                 for (var key in data)
