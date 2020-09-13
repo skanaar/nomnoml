@@ -1,14 +1,8 @@
 var fs = require('fs');
 
-try {
-    assertLibraryVersion()
-    require('./render-svg.js')
-    require('./nomnoml.spec.js')
-}
-catch(e) {
-    fs.unlinkSync('dist/nomnoml.js')
-    throw e
-}
+assertLibraryVersion()
+require('./render-svg.js')
+require('./nomnoml.spec.js')
 
 function assertLibraryVersion() {
     var library = require('../dist/nomnoml.js')

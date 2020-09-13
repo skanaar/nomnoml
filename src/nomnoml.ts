@@ -59,4 +59,22 @@ namespace nomnoml {
       height: layout.height
     }, code, config.title)
   }
+  
+  export type FileLoader = (filename: string) => string
+  
+  export function processImports(source: string, loadFile: FileLoader, maxImportDepth: number = 10): string {
+
+    if (maxImportDepth == -1) {
+      throw new ImportDepthError()
+    }
+    
+    function lenientLoadFile(key: string) {
+      try { return loadFile(key) || '' }
+      catch(e) { return '' }
+    }
+    
+    return source.replace(/#import: *(.*)/g, function (a: any, file: string) {
+      return processImports(lenientLoadFile(file), loadFile, maxImportDepth-1)
+    })
+  }
 }

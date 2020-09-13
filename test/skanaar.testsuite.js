@@ -19,6 +19,13 @@ function TestSuite(suiteName) {
             if(!TestSuite.isEqual(a, b))
                 throw new Error(JSON.stringify(a) + ' != ' + JSON.stringify(b))
         },
+        assertThrows: function (action) {
+            var didThrow = false
+            try { action() }
+            catch(e) { didThrow = true }
+            if(!didThrow)
+                throw new Error('Function did not throw error')
+        },
         ignore: {
             test: function (name) {
                 results.push({ name: name, status: 'ignored', error: false })

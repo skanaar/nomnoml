@@ -289,4 +289,54 @@ suite.test('include edges in canvas size calculation', function(){
     assertEqual(compartment.width > 300, true)
 })
 
+suite.test('processImports resolves shallow imports', function(){
+    var mockFiles = {
+        importsOneFile: '#import: file1',
+        importsTwoFiles: '#import: file1\n#import: file2',
+        file1: 'file1-contents',
+        file2: 'file2-contents'
+    }
+    var loadFile = (key) => mockFiles[key]
+    var output = nomnoml.processImports(mockFiles['importsOneFile'], loadFile)
+    assertEqual(output, 'file1-contents')
+    output = nomnoml.processImports(mockFiles['importsTwoFiles'], loadFile)
+    assertEqual(output, 'file1-contents\nfile2-contents')
+})
+
+suite.test('processImports ignores bad imports', function(){
+    var out = nomnoml.processImports('#import: root', (key) => { throw new Error('filesystem bug') })
+    assertEqual(out, '')
+})
+
+suite.test('processImports throw on recursive imports', function(){
+    suite.assertThrows(() => nomnoml.processImports('#import: root', (key) => '#import: root'))
+})
+
+suite.test('processImports resolves deep imports', function(){
+    var mockFiles = {
+        root: `
+A
+#import: file1
+B
+#import: file2
+C`,
+        file1: `
+X
+#import: file3
+Y`,
+        file2: 'Q',
+        file3: 'W'
+    }
+    var output = nomnoml.processImports(mockFiles['root'], (key) => mockFiles[key])
+    assertEqual(output, `
+A
+
+X
+W
+Y
+B
+Q
+C`)
+})
+
 suite.report()

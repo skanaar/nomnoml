@@ -211,14 +211,12 @@ var nomnoml;
     function compileFile(filepath, maxImportDepth, depth) {
         var fs = require('fs');
         var path = require('path');
-        if (depth > maxImportDepth) {
-            throw new ImportDepthError();
-        }
-        var source = fs.readFileSync(filepath, { encoding: 'utf8' });
         var directory = path.dirname(filepath);
-        return source.replace(/#import: *(.*)/g, function (a, file) {
-            return compileFile(path.join(directory, file), maxImportDepth, depth + 1);
-        });
+        var rootFileName = filepath.substr(directory.length);
+        function loadFile(filename) {
+            return fs.readFileSync(path.join(directory, filename), { encoding: 'utf8' });
+        }
+        return nomnoml.processImports(loadFile(rootFileName), loadFile, maxImportDepth);
     }
     nomnoml.compileFile = compileFile;
 })(nomnoml || (nomnoml = {}));
@@ -264,6 +262,24 @@ var nomnoml;
         }, code, config.title);
     }
     nomnoml.renderSvg = renderSvg;
+    function processImports(source, loadFile, maxImportDepth) {
+        if (maxImportDepth === void 0) { maxImportDepth = 10; }
+        if (maxImportDepth == -1) {
+            throw new nomnoml.ImportDepthError();
+        }
+        function lenientLoadFile(key) {
+            try {
+                return loadFile(key) || '';
+            }
+            catch (e) {
+                return '';
+            }
+        }
+        return source.replace(/#import: *(.*)/g, function (a, file) {
+            return processImports(lenientLoadFile(file), loadFile, maxImportDepth - 1);
+        });
+    }
+    nomnoml.processImports = processImports;
 })(nomnoml || (nomnoml = {}));
 var nomnoml;
 (function (nomnoml) {

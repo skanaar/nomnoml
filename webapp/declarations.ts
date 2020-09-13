@@ -15,6 +15,8 @@ interface Nomnoml {
       title: string
     }
   }
+  processImports(source: string, loadFile: (filename: string) => string): string
+  ImportDepthError: Function
 }
 
 type Throttler = (func: (arg: any) => void, timespan: number, opts?: any) => (arg: any) => void

@@ -62,12 +62,30 @@ class App {
     window.addEventListener('hashchange', () => reloadStorage());
     window.addEventListener('resize', _.throttle(() => this.sourceChanged(), 750, {leading: true}))
     this.editor.on('changes', _.debounce(() => this.sourceChanged(), 300))
+    
+    function loadFile(key: string): string {
+      var storage = new LocalFileGraphStore(key)
+      return storage.read()
+    }
+    
+    function safelyProcessSource(source: string) {
+      try {
+        return nomnoml.processImports(source, loadFile)
+      } catch(e) {
+        if (e instanceof nomnoml.ImportDepthError) {
+          return 'Error: too many imports'
+        } else {
+          throw e
+        }
+      }
+    }
 
     this.sourceChanged = () => {
       try {
         devenv.clearState()
         var source = this.editor.getValue()
-        var model = nomnoml.draw(canvasElement, source, this.panner.zoom())
+        var processedSource = safelyProcessSource(source)
+        var model = nomnoml.draw(canvasElement, processedSource, this.panner.zoom())
         lastValidSource = source
         this.panner.positionCanvas(canvasElement)
         this.filesystem.storage.save(source)

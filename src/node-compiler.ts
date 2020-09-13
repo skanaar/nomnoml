@@ -10,16 +10,14 @@ namespace nomnoml {
     var fs = require('fs')
     var path = require('path')
 
-    if (depth > maxImportDepth) {
-      throw new ImportDepthError()
-    }
-
-    var source = fs.readFileSync(filepath, {encoding:'utf8'})
     var directory = path.dirname(filepath)
-
-    return source.replace(/#import: *(.*)/g, function (a: any, file: string) {
-      return compileFile(path.join(directory, file), maxImportDepth, depth+1)
-    })
+    var rootFileName = filepath.substr(directory.length)
+    
+    function loadFile(filename: string): string {
+      return fs.readFileSync(path.join(directory, filename), {encoding:'utf8'})
+    }
+    
+    return processImports(loadFile(rootFileName), loadFile, maxImportDepth)
   }
 
 }
