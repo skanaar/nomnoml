@@ -17,19 +17,19 @@ Created by [Daniel Kallin](https://github.com/skanaar) and a cadre of [contribut
 
 The [nomnoml](http://www.nomnoml.com) standalone javascript library can be used to render diagrams on your own web page. The only dependency is [dagre](https://github.com/dagrejs/dagre). Install it using either *npm* or good old script inclusion.
 
-NodeJS usage with SVG output:
+## SVG output in NodeJS
 
 ```
-    > npm install nomnoml
+npm install nomnoml
 ```
 
 ```js
-    var nomnoml = require('nomnoml');
-    var src = '[nomnoml] is -> [awesome]';
-    console.log(nomnoml.renderSvg(src));
+var nomnoml = require('nomnoml');
+var src = '[nomnoml] is -> [awesome]';
+console.log(nomnoml.renderSvg(src));
 ```
 
-Html usage with a Canvas rendering target:
+## HTML Canvas rendering target
 
 ```html
 <script src="dagre.js"></script>
@@ -42,10 +42,6 @@ Html usage with a Canvas rendering target:
     nomnoml.draw(canvas, source);
 </script>
 ```
-
-## SVG support
-
-SVG rendering mode is available as the `nomnoml.renderSvg` function.
 
 ## Command Line Interface
 
@@ -120,6 +116,7 @@ This is how the Decorator pattern looks like in nomnoml syntax:
 
 ### Directives
 
+    #import: my-common-styles.nomnoml
     #arrowSize: 1
     #bendSize: 0.3
     #direction: down | right
@@ -140,10 +137,6 @@ This is how the Decorator pattern looks like in nomnoml syntax:
     #zoom: 1
     #acyclicer: greedy
     #ranker: network-simplex | tight-tree | longest-path
-
-Directives only available when using the command line interface
-
-    #import: my-common-styles.nomnoml
 
 ### Custom classifier styles
 
