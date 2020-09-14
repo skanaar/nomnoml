@@ -34,6 +34,7 @@ interface Graphics {
   moveTo(x: number, y: number): void
   restore(): void
   save(): void
+  setData(name: string, value: string): void
   scale(x: number, y: number): void
   setLineDash(d: number[]): void
   stroke(): void

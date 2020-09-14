@@ -486,6 +486,7 @@ var nomnoml;
                 g.setLineDash([dash, dash]);
             }
             var drawNode = nomnoml.visualizers[style.visual] || nomnoml.visualizers["class"];
+            g.setData('name', node.name);
             drawNode(node, x, y, config, g);
             g.setLineDash([]);
             g.save();
@@ -733,6 +734,7 @@ var nomnoml;
                 measureText: function () { return ctx.measureText.apply(ctx, arguments); },
                 moveTo: function () { return ctx.moveTo.apply(ctx, arguments); },
                 restore: function () { return ctx.restore.apply(ctx, arguments); },
+                setData: function (name, value) { },
                 save: function () { return ctx.save.apply(ctx, arguments); },
                 scale: function () { return ctx.scale.apply(ctx, arguments); },
                 setLineDash: function () { return ctx.setLineDash.apply(ctx, arguments); },
@@ -766,7 +768,8 @@ var nomnoml;
                 fill: 'none',
                 textAlign: 'left',
                 font: 'Helvetica, Arial, sans-serif',
-                fontSize: 12
+                fontSize: 12,
+                attributes: {}
             };
             var states = [initialState];
             var elements = [];
@@ -803,7 +806,18 @@ var nomnoml;
                 };
             }
             function State(dx, dy) {
-                return { x: dx, y: dy, stroke: null, strokeWidth: null, fill: null, textAlign: null, dashArray: 'none', font: null, fontSize: null };
+                return {
+                    x: dx,
+                    y: dy,
+                    stroke: null,
+                    strokeWidth: null,
+                    fill: null,
+                    textAlign: null,
+                    dashArray: 'none',
+                    font: null,
+                    fontSize: null,
+                    attributes: null
+                };
             }
             function trans(coord, axis) {
                 states.forEach(function (t) { coord += t[axis]; });
@@ -828,6 +842,10 @@ var nomnoml;
             }
             function newElement(type, attr, content) {
                 var element = Element(type, attr, content);
+                var extraData = lastDefined('attributes');
+                for (var key in extraData) {
+                    element.attr['data-' + key] = extraData[key];
+                }
                 elements.push(element);
                 return element;
             }
@@ -836,9 +854,7 @@ var nomnoml;
                 height: function () { return 0; },
                 clear: function () { },
                 circle: function (p, r) {
-                    var element = Element('circle', { r: r, cx: tX(p.x), cy: tY(p.y) });
-                    elements.push(element);
-                    return element;
+                    return newElement('circle', { r: r, cx: tX(p.x), cy: tY(p.y) });
                 },
                 ellipse: function (center, w, h, start, stop) {
                     if (stop) {
@@ -928,6 +944,9 @@ var nomnoml;
                 },
                 save: function () {
                     states.push(State(0, 0));
+                },
+                setData: function (name, value) {
+                    lastDefined('attributes')[name] = value;
                 },
                 scale: function () { },
                 setLineDash: function (d) {

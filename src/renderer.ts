@@ -41,6 +41,7 @@ namespace nomnoml {
 				g.setLineDash([dash, dash])
 			}
 			var drawNode = nomnoml.visualizers[style.visual] || nomnoml.visualizers.class
+			g.setData('name', node.name)
 			drawNode(node, x, y, config, g)
 			g.setLineDash([])
 

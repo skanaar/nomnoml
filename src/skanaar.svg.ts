@@ -10,6 +10,7 @@ namespace nomnoml.skanaar {
 		textAlign: string|null
 		font: string|null
 		fontSize: number|null
+		attributes: any|null
 	}
 
 	interface SvgGraphics extends Graphics {
@@ -37,7 +38,8 @@ namespace nomnoml.skanaar {
 			fill: 'none',
 			textAlign: 'left',
 			font: 'Helvetica, Arial, sans-serif',
-			fontSize: 12
+			fontSize: 12,
+			attributes: {}
 		}
 		var states = [initialState]
 		var elements: any[] = []
@@ -77,7 +79,18 @@ namespace nomnoml.skanaar {
 		}
 
 		function State(dx: number, dy: number): SvgState {
-			return { x: dx, y: dy, stroke: null, strokeWidth: null, fill: null, textAlign: null, dashArray:'none', font: null, fontSize: null }
+			return {
+				x: dx,
+				y: dy,
+				stroke: null,
+				strokeWidth: null,
+				fill: null,
+				textAlign: null,
+				dashArray:'none',
+				font: null,
+				fontSize: null,
+				attributes: null
+			}
 		}
 
 		function trans(coord: number, axis: 'x'|'y'){
@@ -106,6 +119,10 @@ namespace nomnoml.skanaar {
 
 		function newElement(type: string, attr: any, content?: string) {
 			var element = Element(type, attr, content)
+			var extraData = lastDefined('attributes')
+			for(var key in extraData) {
+				element.attr['data-'+key] = extraData[key]
+			}
 			elements.push(element)
 			return element
 		}
@@ -115,9 +132,7 @@ namespace nomnoml.skanaar {
 			height: function (){ return 0 },
 			clear: function (){},
 			circle: function (p: Vec, r: number){
-				var element = Element('circle', {r: r, cx: tX(p.x), cy: tY(p.y)})
-				elements.push(element)
-				return element
+				return newElement('circle', {r: r, cx: tX(p.x), cy: tY(p.y)})
 			},
 			ellipse: function (center, w, h, start, stop){
 				if (stop) {
@@ -212,6 +227,9 @@ namespace nomnoml.skanaar {
 			},
 			save: function (){
 				states.push(State(0, 0))
+			},
+			setData: function (name: string, value: string) {
+				lastDefined('attributes')[name] = value
 			},
 			scale: function (){},
 			setLineDash: function (d){

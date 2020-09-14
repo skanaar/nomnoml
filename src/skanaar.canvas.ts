@@ -133,6 +133,7 @@ namespace nomnoml.skanaar {
 			measureText: function (){ return ctx.measureText.apply(ctx, arguments) },
 			moveTo:      function (){ return ctx.moveTo.apply(     ctx, arguments) },
 			restore:     function (){ return ctx.restore.apply(    ctx, arguments) },
+			setData:     function (name: string, value: string) {},
 			save:        function (){ return ctx.save.apply(       ctx, arguments) },
 			scale:       function (){ return ctx.scale.apply(      ctx, arguments) },
 			setLineDash: function (){ return ctx.setLineDash.apply(ctx, arguments) },
