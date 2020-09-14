@@ -11,7 +11,17 @@
   "main": "dist/nomnoml.js",
   "files": [
     "dist/nomnoml.js",
-    "dist/nomnoml-cli.js"
+    "dist/nomnoml-cli.js",
+    "dist/webapp.js",
+    "dist/nomnoml.web.js",
+    "index.html",
+    "nomnoml.css",
+    "favicon.png",
+    "img/interaction-tutorial.svg",
+    "codemirror/solarized.nomnoml.css",
+    "codemirror/nomnoml.codemirror-mode.js",
+    "codemirror/codemirror.css",
+    "codemirror/codemirror-compressed.js"
   ],
   "dependencies": {
     "dagre": "0.8.5"
