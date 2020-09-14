@@ -49,7 +49,11 @@ SVG rendering mode is available as the `nomnoml.renderSvg` function.
 
 ## Command Line Interface
 
-`dist/nomnoml-cli.js` exposes the SVG renderer with a command line interface. This mode also supports the `#import: <filename>` directive which allow you to separate complex diagrams into multiple files.
+`npx nomnoml` exposes the SVG renderer with a command line interface. This mode also supports the `#import: <filename>` directive which allow you to separate complex diagrams into multiple files.
+
+```
+npx nomnoml input-file.noml
+```
 
 ## Web application
 

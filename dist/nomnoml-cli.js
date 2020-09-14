@@ -10,16 +10,11 @@ if (filename == '--help' || process.argv.length == 2){
 
   Load source file and send rendered svg to stdout:
 
-  > node nomnoml-cli.js <source_file>
+  > npx nomnoml <source_file>
 
   Load source file and save rendered svg to <output_file>:
   
-  > node nomnoml-cli.js <source_file> <output_file>
-
-  Third parameter overrides the import depth limit
-  that protects us from recursive imports:
-
-  > node nomnoml-cli.js <source_file> <output_file> <max_import_depth>`)
+  > npx nomnoml <source_file> <output_file>`)
   return
 }
 
