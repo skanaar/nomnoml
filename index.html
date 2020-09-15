@@ -30,9 +30,7 @@
 				<b>dependency</b> --&gt;<br>
 				<b>dependency</b> &lt;--&gt;<br>
 				<b>generalization</b> -:&gt;<br>
-				<b>generalization</b> &lt;:-<br>
 				<b>implementation</b> --:&gt;<br>
-				<b>implementation</b> &lt;:--<br>
 				<b>composition</b> +-<br>
 				<b>composition</b> +-&gt;<br>
 				<b>aggregation</b> o-<br>
@@ -87,7 +85,7 @@
 				#ranker: network-simplex | tight-tree | longest-path<br>
 
 				<h2>Custom classifier styles</h2>
-				<h3>A directive that starts with "." define a classifier style. The style is written as a space separated list of modifiers and key/value pairs.</h3>
+				<p>A directive that starts with "." define a classifier style. The style is written as a space separated list of modifiers and key/value pairs.</p>
 
 				#.box: fill=#8f8 dashed<br>
 				#.blob: visual=ellipse<br>
@@ -180,77 +178,81 @@
 				<h2>Usage</h2>
 
 				<h3>Car has an Engine</h3>
-				<pre>[Car]-&gt;[Engine]</pre>
+				<pre append-nomnoml-preview>[Car]-&gt;[Engine]</pre>
 
 				<h3>Car owns an arbitrary number of blemished</h3>
-				<pre>[Car] +-&gt; 0..* [RustPatches]</pre>
+				<pre append-nomnoml-preview>[Car] +-&gt; 0..* [RustPatches]</pre>
 
 				<h3>Car knows its Manufacturer</h3>
-				<pre>[Car]o-&gt;[Manufacturer]</pre>
+				<pre append-nomnoml-preview>[Car]o-&gt;[Manufacturer]</pre>
 
 				<h3>Car depends on Fuel</h3>
-				<pre>[Car]--&gt;[Fuel]</pre>
+				<pre append-nomnoml-preview>[Car]--&gt;[Fuel]</pre>
 
 				<h3>Pickup inherits from Car</h3>
-				<pre>[Pickup]-:&gt;[Car]</pre>
+				<pre append-nomnoml-preview>[Pickup]-:&gt;[Car]</pre>
 
 				<h3>Car implements interface IVehicle</h3>
-				<pre>[Car]--:&gt;[IVehicle]</pre>
+				<pre append-nomnoml-preview>[Car]--:&gt;[IVehicle]</pre>
 
 				<h3>Paul and Ron have a named association</h3>
-				<pre>[Paul] friend - [Ron]</pre>
+				<pre append-nomnoml-preview>[Paul] friend - [Ron]</pre>
 
 				<h3>They both depend on each other</h3>
-				<pre>[Chicken]&lt;-&gt;[Egg]</pre>
+				<pre append-nomnoml-preview>[Chicken]&lt;-&gt;[Egg]</pre>
 
 				<h3>Car has some attributes</h3>
-				<pre>[Car|maxSpeed: Float;color: Color]</pre>
+				<pre append-nomnoml-preview>[Car|maxSpeed: Float;color: Color]</pre>
 
 				<h3>Car has several valves</h3>
-				<pre>[Car| valves: Valve\[\] ]</pre>
+				<pre append-nomnoml-preview>[Car| valves: Valve\[\] ]</pre>
 
 				<h3>Engine has an operation</h3>
-				<pre>[Engine||start()]</pre>
+				<pre append-nomnoml-preview>[Engine||start()]</pre>
 
 				<h3>Engine has internal parts</h3>
-				<pre>[Engine|
+				<pre append-nomnoml-preview>[Engine|
   [Cylinder]->1[Piston]
   [Cylinder]->2[Valve]
 ]</pre>
 
 				<h3>Engine is an abstract class</h3>
-				<pre>[&lt;abstract&gt;Engine||start()]</pre>
+				<pre append-nomnoml-preview>[&lt;abstract&gt;Engine||start()]</pre>
 
 				<h3>Car is in the package 'vehicles'</h3>
-				<pre>[&lt;package&gt;vehicles|[Car]]</pre>
+				<pre append-nomnoml-preview>[&lt;package&gt;vehicles|[Car]]</pre>
 
 				<h3>Car has an attached note</h3>
-				<pre>[Car]--[&lt;note&gt;only driven
+				<pre append-nomnoml-preview>[Car]--[&lt;note&gt;only driven
   twice a month
 ]</pre>
 
 				<h3>Set font</h3>
-				<pre>#font: Times</pre>
+				<pre append-nomnoml-preview>#font: Times
+Text with serifs
+				</pre>
 
 				<h3>Layout the diagram really tight</h3>
-				<pre>#fontSize: 8
+				<pre append-nomnoml-preview>#fontSize: 8
 #spacing: 12
-#padding: 3</pre>
+#padding: 3
+Lorem ipsum
+dolor sit amet</pre>
 
 				<h3>Tables</h3>
-				<pre>[&lt;table&gt;Fruits|
+				<pre append-nomnoml-preview>[&lt;table&gt;Fruits|
   Apples  | 17   ||
   Oranges | 4711
 ]</pre>
 
 				<h3>Create your own styles</h3>
-				<pre>#.box: fill=#8f8 dashed
+				<pre append-nomnoml-preview>#.box: fill=#8f8 dashed
 [&lt;box&gt; GreenBox]</pre>
 
-				<h3>Divide into mupltiple files</h3>
-				<pre>#import: boxy_styles
-[&lt;box&gt; GreenBox]
-</pre>
+				<h3>Divide into multiple files</h3>
+				<pre publish-as-file="blobby_styles">#.blob: fill=pink</pre>
+				<pre append-nomnoml-preview>#import: blobby_styles
+[&lt;blob&gt; Blobby]</pre>
 			</div>
 		</div>
 
@@ -326,6 +328,27 @@
 		
 		app.signals.on('source-changed', render)
 		app.filesystem.signals.on('updated', render)
+		
+		function renderPreviews() {
+			var files = {}
+			var includes = document.querySelectorAll('[publish-as-file]')
+			for(var i=0; i<includes.length; i++) {
+				var name = includes[i].attributes.getNamedItem('publish-as-file').value
+				files[name] = _.unescape(includes[i].innerHTML)
+			}
+
+			var sources = document.querySelectorAll('[append-nomnoml-preview]')
+			for(var i=0; i<sources.length; i++) {
+				var srcEl = sources[i]
+				var src = nomnoml.processImports(_.unescape(srcEl.innerHTML), key => files[key])
+				var svg = nomnoml.renderSvg(src, document)
+				var div = document.createElement('div')
+				div.innerHTML = svg
+				srcEl.append(div)
+			}
+		}
+		
+		renderPreviews()
 	</script>
 	
 	<script src="additionals.js"></script>
