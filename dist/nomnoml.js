@@ -589,7 +589,7 @@ var nomnoml;
             g.strokeStyle('transparent');
             g.fillStyle(config.background);
             g.rect(0, 0, compartment.width, compartment.height).fill();
-            g.restore;
+            g.restore();
         }
         g.save();
         g.scale(config.zoom, config.zoom);
