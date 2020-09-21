@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.1.1] - 2020-09-21
+
+- Fix bug when setting background color with `#background:`
+
 ## [1.1.0] - 2020-09-14
 
 - Node name is attached to SVG shapes with a `data-name` attribute. Can be used for interactive diagrams.
