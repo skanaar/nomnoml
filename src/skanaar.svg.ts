@@ -14,7 +14,7 @@ namespace nomnoml.skanaar {
 	}
 
 	interface SvgGraphics extends Graphics {
-		serialize(_attributes: any, code: string, title: string): string
+		serialize(size: { width: number, height: number }, code: string, title: string): string
 	}
 
 	function xmlEncode(str: string) {
@@ -26,7 +26,7 @@ namespace nomnoml.skanaar {
 			.replace(/'/g, '&apos;')
 	}
 
-	export var charWidths: any = {"0":10,"1":10,"2":10,"3":10,"4":10,"5":10,"6":10,"7":10,"8":10,"9":10," ":5,"!":5,"\"":6,"#":10,"$":10,"%":15,"&":11,"'":4,"(":6,")":6,"*":7,"+":10,",":5,"-":6,".":5,"/":5,":":5,";":5,"<":10,"=":10,">":10,"?":10,"@":17,"A":11,"B":11,"C":12,"D":12,"E":11,"F":10,"G":13,"H":12,"I":5,"J":9,"K":11,"L":10,"M":14,"N":12,"O":13,"P":11,"Q":13,"R":12,"S":11,"T":10,"U":12,"V":11,"W":16,"X":11,"Y":11,"Z":10,"[":5,"\\":5,"]":5,"^":8,"_":10,"`":6,"a":10,"b":10,"c":9,"d":10,"e":10,"f":5,"g":10,"h":10,"i":4,"j":4,"k":9,"l":4,"m":14,"n":10,"o":10,"p":10,"q":10,"r":6,"s":9,"t":5,"u":10,"v":9,"w":12,"x":9,"y":9,"z":9,"{":6,"|":5,"}":6,"~":10}
+	export var charWidths: { [key: string]: number } = {"0":10,"1":10,"2":10,"3":10,"4":10,"5":10,"6":10,"7":10,"8":10,"9":10," ":5,"!":5,"\"":6,"#":10,"$":10,"%":15,"&":11,"'":4,"(":6,")":6,"*":7,"+":10,",":5,"-":6,".":5,"/":5,":":5,";":5,"<":10,"=":10,">":10,"?":10,"@":17,"A":11,"B":11,"C":12,"D":12,"E":11,"F":10,"G":13,"H":12,"I":5,"J":9,"K":11,"L":10,"M":14,"N":12,"O":13,"P":11,"Q":13,"R":12,"S":11,"T":10,"U":12,"V":11,"W":16,"X":11,"Y":11,"Z":10,"[":5,"\\":5,"]":5,"^":8,"_":10,"`":6,"a":10,"b":10,"c":9,"d":10,"e":10,"f":5,"g":10,"h":10,"i":4,"j":4,"k":9,"l":4,"m":14,"n":10,"o":10,"p":10,"q":10,"r":6,"s":9,"t":5,"u":10,"v":9,"w":12,"x":9,"y":9,"z":9,"{":6,"|":5,"}":6,"~":10}
 
   export function Svg(globalStyle: string, document?: HTMLDocument): SvgGraphics {
 		var initialState: SvgState = {
@@ -42,39 +42,42 @@ namespace nomnoml.skanaar {
 			attributes: {}
 		}
 		var states = [initialState]
-		var elements: any[] = []
+		var elements: Element[] = []
 
 		var measurementCanvas: HTMLCanvasElement = document ? document.createElement('canvas') : null;
 		var ctx = measurementCanvas ? measurementCanvas.getContext('2d') : null
 
-		function Element(name: string, attr: any, content?: string): any {
-			return {
-				name: name,
-				attr: attr,
-				content: content || undefined,
-				stroke: function (){
-					var base = this.attr.style || ''
-					this.attr.style = base +
-						'stroke:'+lastDefined('stroke')+
-						';fill:none'+
-						';stroke-dasharray:' + lastDefined('dashArray') +
-						';stroke-width:' + lastDefined('strokeWidth') + ';';
-					return this
-				},
-				fill: function (){
-					var base = this.attr.style || ''
-					this.attr.style = base + 'stroke:none; fill:'+lastDefined('fill')+';';
-					return this
-				},
-				fillAndStroke: function (){
-					var base = this.attr.style || ''
-					this.attr.style = base +
-						'stroke:'+lastDefined('stroke')+
-						';fill:'+lastDefined('fill')+
-						';stroke-dasharray:' + lastDefined('dashArray') + 
-						';stroke-width:' + lastDefined('strokeWidth') +';';
-					return this
-				}
+		class Element {
+			constructor(name: string, attr: any, content?: string) {
+				this.name = name
+				this.attr = attr
+				this.content = content || undefined
+			}
+			name: string
+			attr: any
+			content: string
+			stroke(){
+				var base = this.attr.style || ''
+				this.attr.style = base +
+					'stroke:'+lastDefined('stroke')+
+					';fill:none'+
+					';stroke-dasharray:' + lastDefined('dashArray') +
+					';stroke-width:' + lastDefined('strokeWidth') + ';';
+				return this
+			}
+			fill(){
+				var base = this.attr.style || ''
+				this.attr.style = base + 'stroke:none; fill:'+lastDefined('fill')+';';
+				return this
+			}
+			fillAndStroke(){
+				var base = this.attr.style || ''
+				this.attr.style = base +
+					'stroke:'+lastDefined('stroke')+
+					';fill:'+lastDefined('fill')+
+					';stroke-dasharray:' + lastDefined('dashArray') + 
+					';stroke-width:' + lastDefined('strokeWidth') +';';
+				return this
 			}
 		}
 
@@ -99,7 +102,7 @@ namespace nomnoml.skanaar {
 		}
 		function tX(coord: number){ return Math.round(10*trans(coord, 'x'))/10 }
 		function tY(coord: number){ return Math.round(10*trans(coord, 'y'))/10 }
-		function lastDefined(property: keyof SvgState): any {
+		function lastDefined(property: keyof SvgState): string|number|any {
 			for(var i=states.length-1; i>=0; i--)
 				if (states[i][property])
 					return states[i][property]
@@ -118,7 +121,7 @@ namespace nomnoml.skanaar {
 		}
 
 		function newElement(type: string, attr: any, content?: string) {
-			var element = Element(type, attr, content)
+			var element = new Element(type, attr, content)
 			var extraData = lastDefined('attributes')
 			for(var key in extraData) {
 				element.attr['data-'+key] = extraData[key]
@@ -245,22 +248,22 @@ namespace nomnoml.skanaar {
 				last(states).x += dx
 				last(states).y += dy
 			},
-			serialize: function (size: any, desc: string, title: string): string {
+			serialize: function (size: { width: number, height: number }, desc: string, title: string): string {
 				function toAttr(obj: any){
 					function toKeyValue(key: string){ return key + '="' + obj[key] + '"' }
 					return Object.keys(obj).map(toKeyValue).join(' ')
 				}
-				function toHtml(e: any){
+				function toHtml(e: Element){
 					return '<'+e.name+' '+toAttr(e.attr)+'>'+(e.content ? xmlEncode(e.content) : '')+'</'+e.name+'>'
 				}
 
 				var elementsToSerialize = elements
 
 				if(desc){
-					elementsToSerialize.unshift(Element('desc', {}, desc))
+					elementsToSerialize.unshift(new Element('desc', {}, desc))
 				}
 				if(title) {
-					elementsToSerialize.unshift(Element('title', {}, title))
+					elementsToSerialize.unshift(new Element('title', {}, title))
 				}
 
 				var innerSvg = elementsToSerialize.map(toHtml).join('\n  ')

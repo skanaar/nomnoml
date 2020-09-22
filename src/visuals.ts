@@ -25,7 +25,7 @@ namespace nomnoml {
   
   function box(config: Config, clas: Classifier) {
     clas.width = Math.max(...clas.compartments.map(e => e.width))
-    clas.height = skanaar.sum(clas.compartments, 'height')
+    clas.height = skanaar.sum(clas.compartments, e => e.height)
     clas.dividers = []
     var y = 0
     for(var comp of clas.compartments) {
@@ -48,7 +48,7 @@ namespace nomnoml {
   export var layouters: { [key in Visual]: NodeLayouter } = {
     actor: function (config: Config, clas: Classifier) {
       clas.width = Math.max(config.padding * 2, ...clas.compartments.map(e => e.width))
-      clas.height = config.padding * 3 + skanaar.sum(clas.compartments, 'height')
+      clas.height = config.padding * 3 + skanaar.sum(clas.compartments, e => e.height)
       clas.dividers = []
       var y = config.padding*3
       for(var comp of clas.compartments) {
@@ -63,7 +63,7 @@ namespace nomnoml {
     class: box,
     database: function (config: Config, clas: Classifier) {
       clas.width = Math.max(...clas.compartments.map(e => e.width))
-      clas.height = skanaar.sum(clas.compartments, 'height') + config.padding*2
+      clas.height = skanaar.sum(clas.compartments, e => e.height) + config.padding*2
       clas.dividers = []
       var y = config.padding*1.5
       for(var comp of clas.compartments) {
@@ -77,7 +77,7 @@ namespace nomnoml {
     },
     ellipse: function (config: Config, clas: Classifier) {
       var width = Math.max(...clas.compartments.map(e => e.width))
-      var height = skanaar.sum(clas.compartments, 'height')
+      var height = skanaar.sum(clas.compartments, e => e.height)
       clas.width = width * 1.25
       clas.height = height * 1.25
       clas.dividers = []
@@ -122,7 +122,7 @@ namespace nomnoml {
     receiver: box,
     rhomb: function (config: Config, clas: Classifier) {
       var width = Math.max(...clas.compartments.map(e => e.width))
-      var height = skanaar.sum(clas.compartments, 'height')
+      var height = skanaar.sum(clas.compartments, e => e.height)
       clas.width = width * 1.5
       clas.height = height * 1.5
       clas.dividers = []

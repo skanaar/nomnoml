@@ -1,14 +1,5 @@
 namespace nomnoml.skanaar {
-    export function plucker<T>(pluckerDef: any): (e:any) => any {
-        switch (typeof pluckerDef) {
-            case 'undefined': return function(e: any): T { return e }
-            case 'string': return function (obj: any){ return obj[pluckerDef] }
-            case 'number': return function (obj: any){ return obj[pluckerDef] }
-            case 'function': return pluckerDef
-        }
-    }
-    export function sum<T>(list: { length: number, [i: number]: T }, plucker?: any){
-        var transform = skanaar.plucker(plucker)
+    export function sum<T>(list: ArrayLike<T>, transform: (item: T) => number){
         for(var i=0, summation=0, len=list.length; i<len; i++)
             summation += transform(list[i])
         return summation
@@ -49,12 +40,11 @@ namespace nomnoml.skanaar {
             obj[list[i][key] as any] = list[i]
         return obj
     }
-    export function uniqueBy<T>(list: T[], pluckerDef: string): T[] {
+    export function uniqueBy<T>(list: T[], property: keyof T): T[] {
         var seen: { [key:string]:boolean } = {}
-        var getKey = skanaar.plucker(pluckerDef)
         var out: T[] = []
         for(var i=0; i<list.length; i++) {
-            var key = getKey(list[i])
+            var key = list[i][property] as unknown as string
             if (!seen[key]){
                 seen[key] = true
                 out.push(list[i])

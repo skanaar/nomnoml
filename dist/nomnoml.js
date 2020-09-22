@@ -775,36 +775,37 @@ var nomnoml;
             var elements = [];
             var measurementCanvas = document ? document.createElement('canvas') : null;
             var ctx = measurementCanvas ? measurementCanvas.getContext('2d') : null;
-            function Element(name, attr, content) {
-                return {
-                    name: name,
-                    attr: attr,
-                    content: content || undefined,
-                    stroke: function () {
-                        var base = this.attr.style || '';
-                        this.attr.style = base +
-                            'stroke:' + lastDefined('stroke') +
-                            ';fill:none' +
-                            ';stroke-dasharray:' + lastDefined('dashArray') +
-                            ';stroke-width:' + lastDefined('strokeWidth') + ';';
-                        return this;
-                    },
-                    fill: function () {
-                        var base = this.attr.style || '';
-                        this.attr.style = base + 'stroke:none; fill:' + lastDefined('fill') + ';';
-                        return this;
-                    },
-                    fillAndStroke: function () {
-                        var base = this.attr.style || '';
-                        this.attr.style = base +
-                            'stroke:' + lastDefined('stroke') +
-                            ';fill:' + lastDefined('fill') +
-                            ';stroke-dasharray:' + lastDefined('dashArray') +
-                            ';stroke-width:' + lastDefined('strokeWidth') + ';';
-                        return this;
-                    }
+            var Element = (function () {
+                function Element(name, attr, content) {
+                    this.name = name;
+                    this.attr = attr;
+                    this.content = content || undefined;
+                }
+                Element.prototype.stroke = function () {
+                    var base = this.attr.style || '';
+                    this.attr.style = base +
+                        'stroke:' + lastDefined('stroke') +
+                        ';fill:none' +
+                        ';stroke-dasharray:' + lastDefined('dashArray') +
+                        ';stroke-width:' + lastDefined('strokeWidth') + ';';
+                    return this;
                 };
-            }
+                Element.prototype.fill = function () {
+                    var base = this.attr.style || '';
+                    this.attr.style = base + 'stroke:none; fill:' + lastDefined('fill') + ';';
+                    return this;
+                };
+                Element.prototype.fillAndStroke = function () {
+                    var base = this.attr.style || '';
+                    this.attr.style = base +
+                        'stroke:' + lastDefined('stroke') +
+                        ';fill:' + lastDefined('fill') +
+                        ';stroke-dasharray:' + lastDefined('dashArray') +
+                        ';stroke-width:' + lastDefined('strokeWidth') + ';';
+                    return this;
+                };
+                return Element;
+            }());
             function State(dx, dy) {
                 return {
                     x: dx,
@@ -841,7 +842,7 @@ var nomnoml;
                 return newElement('path', { d: d });
             }
             function newElement(type, attr, content) {
-                var element = Element(type, attr, content);
+                var element = new Element(type, attr, content);
                 var extraData = lastDefined('attributes');
                 for (var key in extraData) {
                     element.attr['data-' + key] = extraData[key];
@@ -972,10 +973,10 @@ var nomnoml;
                     }
                     var elementsToSerialize = elements;
                     if (desc) {
-                        elementsToSerialize.unshift(Element('desc', {}, desc));
+                        elementsToSerialize.unshift(new Element('desc', {}, desc));
                     }
                     if (title) {
-                        elementsToSerialize.unshift(Element('title', {}, title));
+                        elementsToSerialize.unshift(new Element('title', {}, title));
                     }
                     var innerSvg = elementsToSerialize.map(toHtml).join('\n  ');
                     var attrs = {
@@ -1000,17 +1001,7 @@ var nomnoml;
 (function (nomnoml) {
     var skanaar;
     (function (skanaar) {
-        function plucker(pluckerDef) {
-            switch (typeof pluckerDef) {
-                case 'undefined': return function (e) { return e; };
-                case 'string': return function (obj) { return obj[pluckerDef]; };
-                case 'number': return function (obj) { return obj[pluckerDef]; };
-                case 'function': return pluckerDef;
-            }
-        }
-        skanaar.plucker = plucker;
-        function sum(list, plucker) {
-            var transform = skanaar.plucker(plucker);
+        function sum(list, transform) {
             for (var i = 0, summation = 0, len = list.length; i < len; i++)
                 summation += transform(list[i]);
             return summation;
@@ -1060,12 +1051,11 @@ var nomnoml;
             return obj;
         }
         skanaar.indexBy = indexBy;
-        function uniqueBy(list, pluckerDef) {
+        function uniqueBy(list, property) {
             var seen = {};
-            var getKey = skanaar.plucker(pluckerDef);
             var out = [];
             for (var i = 0; i < list.length; i++) {
-                var key = getKey(list[i]);
+                var key = list[i][property];
                 if (!seen[key]) {
                     seen[key] = true;
                     out.push(list[i]);
@@ -1118,7 +1108,7 @@ var nomnoml;
     };
     function box(config, clas) {
         clas.width = Math.max.apply(Math, clas.compartments.map(function (e) { return e.width; }));
-        clas.height = nomnoml.skanaar.sum(clas.compartments, 'height');
+        clas.height = nomnoml.skanaar.sum(clas.compartments, function (e) { return e.height; });
         clas.dividers = [];
         var y = 0;
         for (var _i = 0, _a = clas.compartments; _i < _a.length; _i++) {
@@ -1140,7 +1130,7 @@ var nomnoml;
     nomnoml.layouters = {
         actor: function (config, clas) {
             clas.width = Math.max.apply(Math, __spreadArrays([config.padding * 2], clas.compartments.map(function (e) { return e.width; })));
-            clas.height = config.padding * 3 + nomnoml.skanaar.sum(clas.compartments, 'height');
+            clas.height = config.padding * 3 + nomnoml.skanaar.sum(clas.compartments, function (e) { return e.height; });
             clas.dividers = [];
             var y = config.padding * 3;
             for (var _i = 0, _a = clas.compartments; _i < _a.length; _i++) {
@@ -1156,7 +1146,7 @@ var nomnoml;
         "class": box,
         database: function (config, clas) {
             clas.width = Math.max.apply(Math, clas.compartments.map(function (e) { return e.width; }));
-            clas.height = nomnoml.skanaar.sum(clas.compartments, 'height') + config.padding * 2;
+            clas.height = nomnoml.skanaar.sum(clas.compartments, function (e) { return e.height; }) + config.padding * 2;
             clas.dividers = [];
             var y = config.padding * 1.5;
             for (var _i = 0, _a = clas.compartments; _i < _a.length; _i++) {
@@ -1171,7 +1161,7 @@ var nomnoml;
         },
         ellipse: function (config, clas) {
             var width = Math.max.apply(Math, clas.compartments.map(function (e) { return e.width; }));
-            var height = nomnoml.skanaar.sum(clas.compartments, 'height');
+            var height = nomnoml.skanaar.sum(clas.compartments, function (e) { return e.height; });
             clas.width = width * 1.25;
             clas.height = height * 1.25;
             clas.dividers = [];
@@ -1218,7 +1208,7 @@ var nomnoml;
         receiver: box,
         rhomb: function (config, clas) {
             var width = Math.max.apply(Math, clas.compartments.map(function (e) { return e.width; }));
-            var height = nomnoml.skanaar.sum(clas.compartments, 'height');
+            var height = nomnoml.skanaar.sum(clas.compartments, function (e) { return e.height; });
             clas.width = width * 1.5;
             clas.height = height * 1.5;
             clas.dividers = [];
