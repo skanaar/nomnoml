@@ -10,6 +10,7 @@
   ],
   "main": "dist/nomnoml.js",
   "files": [
+    "index.d.ts",
     "dist/nomnoml.js",
     "dist/nomnoml-cli.js",
     "dist/webapp.js",
@@ -23,6 +24,7 @@
     "codemirror/codemirror.css",
     "codemirror/codemirror-compressed.js"
   ],
+  "types": "index.d.ts",
   "dependencies": {
     "dagre": "0.8.5"
   },
@@ -41,9 +43,6 @@
     "test": "node test/test.js",
     "test_cli": "node dist/nomnoml-cli.js test/import-test.nomnoml test/output.node-test.svg",
     "webapp": "tsc --build webapp/tsconfig.json"
-  },
-  "directories": {
-    "test": "test"
   },
   "repository": {
     "type": "git",
