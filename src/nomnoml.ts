@@ -1,6 +1,6 @@
 interface Nomnoml {
   version: string
-  draw(canvas: HTMLCanvasElement, code: string, scale: number): { config: Config }
+  draw(canvas: HTMLCanvasElement, code: string, scale?: number): { config: Config }
   render(graphics: Graphics, config: Config, compartment: nomnoml.Compartment, setFont: nomnoml.SetFont): void
   renderSvg(code: string, docCanvas?: HTMLCanvasElement): string
   parse(source: string):  { root: nomnoml.Compartment; config: Config }
@@ -47,7 +47,7 @@ namespace nomnoml {
     return { config: config, layout: layout }
   }
 
-  export function draw(canvas: HTMLCanvasElement, code: string, scale: number): { config: Config } {
+  export function draw(canvas: HTMLCanvasElement, code: string, scale?: number): { config: Config } {
     return parseAndRender(code, skanaar.Canvas(canvas), canvas, scale || 1)
   }
 

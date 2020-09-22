@@ -2,7 +2,7 @@
 var fs = require('fs')
 var nomnoml = require('./nomnoml.js')
 
-var [_, _, filename, outfile, optionalMaxImportDepth] = process.argv
+var [_, _, filename, outfile] = process.argv
 
 if (filename == '--help' || process.argv.length == 2){
   console.log(`
@@ -18,9 +18,7 @@ if (filename == '--help' || process.argv.length == 2){
   return
 }
 
-var maxImportDepth = optionalMaxImportDepth || 10
-
-var svg = nomnoml.renderSvg(nomnoml.compileFile(filename, maxImportDepth, 0))
+var svg = nomnoml.renderSvg(nomnoml.compileFile(filename))
 if (outfile){
   fs.writeFileSync(outfile, svg)
 }

@@ -208,7 +208,7 @@ var nomnoml;
         return ImportDepthError;
     }(Error));
     nomnoml.ImportDepthError = ImportDepthError;
-    function compileFile(filepath, maxImportDepth, depth) {
+    function compileFile(filepath, maxImportDepth) {
         var fs = require('fs');
         var path = require('path');
         var directory = path.dirname(filepath);

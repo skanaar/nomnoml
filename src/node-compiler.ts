@@ -6,7 +6,7 @@ namespace nomnoml {
     }
   }
 
-  export function compileFile(filepath: string, maxImportDepth: number, depth: number): string {
+  export function compileFile(filepath: string, maxImportDepth?: number): string {
     var fs = require('fs')
     var path = require('path')
 
