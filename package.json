@@ -31,12 +31,12 @@
   "devDependencies": {
     "@types/node": "^14.6.4",
     "jison": "0.4.18",
-    "typescript": "^4.0.2",
-    "uglify-js": "^3.10.2"
+    "terser": "^5.3.2",
+    "typescript": "^4.0.2"
   },
   "scripts": {
     "prepare": "npm run build && npm run test && npm run test_cli && npm run webapp && npm run minify",
-    "minify": "uglifyjs dist/nomnoml.web.js -o dist/nomnoml.web.js && uglifyjs dist/webapp.js -o dist/webapp.js",
+    "minify": "terser dist/nomnoml.web.js -o dist/nomnoml.web.js && terser dist/webapp.js -o dist/webapp.js",
     "build": "npm run compile && npm run bundle",
     "compile": "tsc --build src/tsconfig.json",
     "bundle": "node build/build.js",
