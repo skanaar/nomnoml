@@ -16,7 +16,7 @@
             fill: conf.fill || undefined,
             stroke: conf.stroke || undefined,
             visual: conf.visual || 'class',
-            direction: conf.direction || undefined
+            direction: conf.direction || undefined,
         };
     }
     nomnoml.buildStyle = buildStyle;
@@ -346,7 +346,7 @@ var nomnoml;
                 fill: nomnoml.skanaar.last(styleDef.match('fill=([^ ]*)') || []),
                 stroke: nomnoml.skanaar.last(styleDef.match('stroke=([^ ]*)') || []),
                 visual: (nomnoml.skanaar.last(styleDef.match('visual=([^ ]*)') || []) || 'class'),
-                direction: directionToDagre(nomnoml.skanaar.last(styleDef.match('direction=([^ ]*)') || []))
+                direction: directionToDagre(nomnoml.skanaar.last(styleDef.match('direction=([^ ]*)') || [])),
             };
         }
         function getConfig(d) {
@@ -485,7 +485,7 @@ var nomnoml;
                 var dash = Math.max(4, 2 * config.lineWidth);
                 g.setLineDash([dash, dash]);
             }
-            var drawNode = nomnoml.visualizers[style.visual] || nomnoml.visualizers["class"];
+            var drawNode = nomnoml.visualizers[style.visual] || nomnoml.visualizers.class;
             g.setData('name', node.name);
             drawNode(node, x, y, config, g);
             g.setLineDash([]);
@@ -988,7 +988,7 @@ var nomnoml;
                         xmlns: 'http://www.w3.org/2000/svg',
                         'xmlns:xlink': 'http://www.w3.org/1999/xlink',
                         'xmlns:ev': 'http://www.w3.org/2001/xml-events',
-                        style: 'font:' + lastDefined('font') + ';' + globalStyle
+                        style: 'font:' + lastDefined('font') + ';' + globalStyle,
                     };
                     return '<svg ' + toAttr(attrs) + '>\n  ' + innerSvg + '\n</svg>';
                 }
@@ -1104,7 +1104,7 @@ var nomnoml;
         STATE: nomnoml.buildStyle({ visual: 'roundrect', center: true }),
         TABLE: nomnoml.buildStyle({ visual: 'table', center: true, bold: true }),
         TRANSCEIVER: nomnoml.buildStyle({ visual: 'transceiver' }),
-        USECASE: nomnoml.buildStyle({ visual: 'ellipse', center: true })
+        USECASE: nomnoml.buildStyle({ visual: 'ellipse', center: true }),
     };
     function box(config, clas) {
         clas.width = Math.max.apply(Math, clas.compartments.map(function (e) { return e.width; }));
@@ -1143,7 +1143,7 @@ var nomnoml;
                     clas.dividers.push([{ x: config.padding, y: y }, { x: clas.width - config.padding, y: y }]);
             }
         },
-        "class": box,
+        class: box,
         database: function (config, clas) {
             clas.width = Math.max.apply(Math, clas.compartments.map(function (e) { return e.width; }));
             clas.height = nomnoml.skanaar.sum(clas.compartments, function (e) { return e.height; }) + config.padding * 2;
@@ -1280,7 +1280,7 @@ var nomnoml;
                 }
             }
         },
-        transceiver: box
+        transceiver: box,
     };
     nomnoml.visualizers = {
         actor: function (node, x, y, config, g) {
@@ -1294,7 +1294,7 @@ var nomnoml;
                 { x: node.x, y: yp + config.padding },
                 { x: node.x + a, y: yp + a + config.padding }]).stroke();
         },
-        "class": function (node, x, y, config, g) {
+        class: function (node, x, y, config, g) {
             g.rect(x, y, node.width, node.height).fillAndStroke();
         },
         database: function (node, x, y, config, g) {
@@ -1406,7 +1406,7 @@ var nomnoml;
                 { x: x - config.padding, y: y + node.height },
                 { x: x, y: y + node.height / 2 }
             ]).fillAndStroke();
-        }
+        },
     };
 })(nomnoml || (nomnoml = {}));
 ;
