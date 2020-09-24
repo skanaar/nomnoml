@@ -7,11 +7,6 @@ html, body {
 	overflow-y: hidden;
 	background: #fdf6e3;
 }
-hr {
-	border: 0;
-	background: #fdf6e3;
-	height: 5px;
-}
 h1 {
 	font-size: 100%;
 	display: inline;
