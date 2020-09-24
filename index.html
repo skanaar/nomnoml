@@ -92,10 +92,10 @@
 				<h2>Custom classifier styles</h2>
 				<p>A directive that starts with "." define a classifier style. The style is written as a space separated list of modifiers and key/value pairs.</p>
 
-				#.box: fill=#8f8 dashed<br>
-				#.blob: visual=ellipse<br>
-				[&lt;box&gt; GreenBox]<br>
-				[&lt;blob&gt; HideousBlob]
+				<pre append-nomnoml-preview>#.box: fill=#8f8 dashed
+#.blob: visual=ellipse
+[&lt;box&gt; GreenBox]
+[&lt;blob&gt; Blobby]</pre>
 
 				<h3>Available key/value pairs are</h3>
 
@@ -162,31 +162,14 @@
 				<pre append-nomnoml-preview>[Car]-&gt;[Engine]</pre>
 
 				<h3>Car owns an arbitrary number of blemished</h3>
-				<pre append-nomnoml-preview>[Car] +-&gt; 0..* [RustPatches]</pre>
+				<pre append-nomnoml-preview>[Car] +-&gt; 0..* [RustPatch]</pre>
 
-				<h3>Car knows its Manufacturer</h3>
-				<pre append-nomnoml-preview>[Car]o-&gt;[Manufacturer]</pre>
-
-				<h3>Car depends on Fuel</h3>
-				<pre append-nomnoml-preview>[Car]--&gt;[Fuel]</pre>
-
-				<h3>Pickup inherits from Car</h3>
-				<pre append-nomnoml-preview>[Pickup]-:&gt;[Car]</pre>
-
-				<h3>Car implements interface IVehicle</h3>
-				<pre append-nomnoml-preview>[Car]--:&gt;[IVehicle]</pre>
-
-				<h3>Paul and Ron have a named association</h3>
-				<pre append-nomnoml-preview>[Paul] friend - [Ron]</pre>
-
-				<h3>They both depend on each other</h3>
-				<pre append-nomnoml-preview>[Chicken]&lt;-&gt;[Egg]</pre>
+				<h3>Car knows its Manufacturer and is the parent of Pickup</h3>
+				<pre append-nomnoml-preview>[Car]o-&gt;[Manufacturer]
+[Car]&lt;:-[Pickup]</pre>
 
 				<h3>Car has some attributes</h3>
-				<pre append-nomnoml-preview>[Car|maxSpeed: Float;color: Color]</pre>
-
-				<h3>Car has several valves</h3>
-				<pre append-nomnoml-preview>[Car| valves: Valve\[\] ]</pre>
+				<pre append-nomnoml-preview>[Car|speed: Number;valves: Valve\[\] ]</pre>
 
 				<h3>Engine has an operation</h3>
 				<pre append-nomnoml-preview>[Engine||start()]</pre>
@@ -195,17 +178,6 @@
 				<pre append-nomnoml-preview>[Engine|
   [Cylinder]->1[Piston]
   [Cylinder]->2[Valve]
-]</pre>
-
-				<h3>Engine is an abstract class</h3>
-				<pre append-nomnoml-preview>[&lt;abstract&gt;Engine||start()]</pre>
-
-				<h3>Car is in the package 'vehicles'</h3>
-				<pre append-nomnoml-preview>[&lt;package&gt;vehicles|[Car]]</pre>
-
-				<h3>Car has an attached note</h3>
-				<pre append-nomnoml-preview>[Car]--[&lt;note&gt;only driven
-  twice a month
 ]</pre>
 
 				<h3>Set font</h3>
@@ -217,8 +189,7 @@ Text with serifs
 				<pre append-nomnoml-preview>#fontSize: 8
 #spacing: 12
 #padding: 3
-Lorem ipsum
-dolor sit amet</pre>
+[Lorem ipsum]-[dolor sit amet]</pre>
 
 				<h3>Tables</h3>
 				<pre append-nomnoml-preview>[&lt;table&gt;Fruits|
