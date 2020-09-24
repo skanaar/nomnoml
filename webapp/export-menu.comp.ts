@@ -13,9 +13,11 @@ function ExportMenu(props: { app: App }) {
     a({ className: 'btn', href: '/', onClick: prevent(() => downloader.pngDownload()) },
       el(Icon, { id: 'camera-outline' }), 'PNG image'
     ),
+    el('p', {}, 'Downloaded image files will be given the filename in the ', el('tt', {}, '#title'), ' directive'),
     a({ className: 'btn', href: '/', onClick: prevent(() => downloader.svgDownload()) },
       el(Icon, { id: 'image-outline' }), 'SVG with source'
     ),
+    el('p', {}, "Downloaded SVG files will have the source code embedded. Open an exported SVG file to load it's nomnoml source."),
     a({ className: 'btn', href: '/', onClick: prevent(() => downloader.srcDownload()) },
       el(Icon, { id: 'download-outline' }), 'Source code'
     ),

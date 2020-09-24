@@ -136,18 +136,10 @@
 
 		<div id="about" class="sidebar">
 			<div class="content">
-				<p>Hello, this is nomnoml, a tool for drawing UML diagrams based on a simple syntax.
+				<h2>Welcome to nomnoml</h2>
+				<p>A tool for drawing UML diagrams based on a simple syntax.
 				<p>Try and edit the code on the left and watch the diagram change. Any changes are saved to the browser's <i>localStorage</i>, so your diagram should be here the next time, (but no guarantees).</p>
 				<p>Created by <a href="mailto:daniel.kallin@gmail.com">Daniel Kallin</a> and hosted on <a href="https://github.com/skanaar/nomnoml" target="_blank">GitHub</a> for your perusal.</p>
-				<p>Nomnoml was made possible by the cool projects
-				<a target="_blank" href="https://zaa.ch/jison">jison</a>,
-				<a target="_blank" href="https://github.com/dagrejs/dagre">dagre</a>,
-				<a target="_blank" href="https://www.s-ings.com/typicons">typicons</a> ,
-				<a target="_blank" href="https://codemirror.net">codemirror</a> and
-				<a target="_blank" href="https://ethanschoonover.com/solarized/">solarized</a>.
-				</p>
-
-				<hr>
 
 				<h2>Interaction</h2>
 
@@ -156,24 +148,8 @@
 
 				<img src="img/interaction-tutorial.svg" alt="interaction tutorial">
 
-				<p>Downloaded image files will be given the filename in the <tt>#title</tt> directive.
-				</p>
-
-				<p>Downloaded SVG files will have the source code embedded. Open an exported SVG file to load it's nomnoml source.
-				</p>
-
 				<p>The editor supports a subset of <i>Sublime Text's</i> <a href="https://codemirror.net/demo/sublime.html" target="_blank">keymappings</a>.
 				</p>
-
-				<hr>
-
-				<h2>Examples</h2>
-
-				<a target="_BLANK" href="#view/[<frame>Decorator%20pattern|%0A%20%20[<abstract>Component||+%20operation()]%0A%20%20[Client]%20depends%20-->%20[Component]%0A%20%20[Decorator|-%20next:%20Component]%0A%20%20[Decorator]%20decorates%20--%20[ConcreteComponent]%0A%20%20[Component]%20<:-%20[Decorator]%0A%20%20[Component]%20<:-%20[ConcreteComponent]%0A]">Decorator pattern</a><br>
-				<a target="_BLANK" href="#view/[<frame>Strategy%20pattern|%0A%20%20[client]%20o-%20[<abstract>Strategy|+%20operation()]%0A%20%20[Strategy]%20<:--%20[StrategyA]%0A%20%20[Strategy]%20<:--%20[StrategyB]%0A]">Strategy pattern</a><br>
-				<a target="_BLANK" href="#view/[<package>UML%20Representation|%0A%20%20[Compartment|lines:%20string*;nodes:%20Classifier*;relations:%20Relations*]%0A%20%20[Classifier|type:%20string;name:%20string;compartments:%20Compartment*;width:%20int;height:%20int;x:%20int;y:%20int]%0A%20%20[Relation|startLabel:%20string;endLabel:%20string;type:%20string;startShape:%20string;endShape:%20string;path:%20Point*]%0A%20%20[Compartment]+->[Classifier]%0A%20%20[Classifier]+->[Compartment]%0A%20%20[Compartment]+->[Relation]%0A]%0A[parser]-->[UML%20Representation]%0A[layouter||layout(ast:%20Compartment)]%0A[renderer||render(d:%20Compartment)]%0A[parser||parse(source:%20String):%20Classifier]+->[Jison]%0A[layouter]-->[UML%20Representation]%0A[layouter]+->[dagre]%0A[renderer]-->[UML%20Representation]%0A[renderer]o->[<instance>:Canvas]%0A[measurer]<:--[renderer]%0A[layouter]->[measurer]">nomnoml architecture</a>
-
-				<hr>
 
 				<h2>Usage</h2>
 
