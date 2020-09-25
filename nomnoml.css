@@ -178,7 +178,24 @@ a:hover img {
 	padding: 0 5px;
 }
 
-.storage-tools {
+.card {
+	background: #fffcf4;
+  border-radius: 5px;
+  box-shadow: 0 5px 10px #0004;
+	color: #000C;
+}
+.card-warning {
+	text-align: left;
+}
+.card-warning tt {
+	white-space: pre-wrap;
+	font-family: Menlo, Consolas, monospace;
+	font-size: 70%;
+	margin-top: 10px;
+	color: #0008;
+}
+
+.system-banners {
 	position: fixed;
 	top: 7px;
 	right: 0;
@@ -187,18 +204,23 @@ a:hover img {
 	text-align: center;
 }
 
-.storage-status {
+.terminal-banners {
+  position: fixed;
+  left: 50px;
+  bottom: 10px;
+	text-align: left;
+}
+
+.banner {
 	display: none;
-	background: #fdf6e3;
-	color: #0008;
-	font-style: italic;
 	border-radius: 8px;
 	padding: 10px 15px;
+	margin-top: 10px;
 }
-.storage-status.visible {
+.banner.visible {
 	display: inline-block;
 }
-.storage-status a {
+.banner a {
 	border: 2px solid #0008;
 	color: #0008;
 	padding: 0 5px;
@@ -207,7 +229,7 @@ a:hover img {
 	font-style: normal;
 	opacity: 1;
 }
-.storage-status a:hover {
+.banner a:hover {
 	background: #3332;
 }
 
@@ -311,9 +333,6 @@ a:hover img {
 	margin: 0 0 20px 0;
 	font-family: sans-serif;
 	color: #444;
-	background: #fffcf4;
-	border-radius: 5px;
-	box-shadow: 0 5px 10px #0004;
 }
 .alert.alert-hidden { display: none; }
 .alert-close {

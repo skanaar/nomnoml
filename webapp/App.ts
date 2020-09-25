@@ -82,6 +82,7 @@ class App {
 
     this.sourceChanged = () => {
       try {
+        this.signals.trigger('compile-error', null)
         devenv.clearState()
         var source = this.editor.getValue()
         var processedSource = safelyProcessSource(source)
@@ -93,12 +94,13 @@ class App {
         this.downloader.setFilename(model.config.title)
         this.signals.trigger('source-changed', source)
       } catch (e){
-        devenv.setError(e)
+        this.signals.trigger('compile-error', e)
         // Rerender canvas with last successfully rendered text.
         if (lastValidSource) {
           nomnoml.draw(canvasElement, lastValidSource, this.panner.zoom())
         }
         this.panner.positionCanvas(canvasElement)
+        devenv.setError(e)
       }
     }
 

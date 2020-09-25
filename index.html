@@ -282,6 +282,7 @@ Text with serifs
 		}
 		
 		app.signals.on('source-changed', render)
+		app.signals.on('compile-error', render)
 		app.filesystem.signals.on('updated', render)
 		
 		function renderPreviews() {

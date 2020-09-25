@@ -1522,6 +1522,9 @@ break;
 case 10:
 
            var t = $$[$0-1].trim().replace(/\\(\[|\]|\|)/g, '$'+'1').match('^(.*?)([<:o+]*[-_]/?[-_]*[:o+>]*)(.*)$');
+           if (!t) {
+             throw new Error('line '+_$[$0].first_line+': Classifiers must be separated by a relation or a line break')
+           }
            this.$ = {assoc:t[2], start:$$[$0-2], end:$$[$0], startLabel:t[1].trim(), endLabel:t[3].trim()};
   
 break;

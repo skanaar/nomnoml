@@ -6,7 +6,7 @@ function DailyTip(props: { id: string, message: string, source?: string, hidePre
       localStorage[props.id] = 'hide'
       setVisible(false)
     }
-    return div({ className: "alert " + (visible ? '' : 'alert-hidden') },
+    return div({ className: "alert card " + (visible ? '' : 'alert-hidden') },
       b({}, props.message),
       props.source && pre({}, props.source),
       props.source && !props.hidePreview && span({ dangerouslySetInnerHTML: { __html: (nomnoml as any).renderSvg(props.source) } }),

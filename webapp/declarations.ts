@@ -29,5 +29,6 @@ interface Underscore {
 
 declare var React: {
   createElement: any,
-  useState: Function
+  useState: Function,
+  useEffect: Function,
 }

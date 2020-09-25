@@ -1,10 +1,9 @@
-function StorageTools(props: { app: App }) {
-
+function SystemBanners(props: { app: App }) {
   var isUrlStorage = (props.app.filesystem.storage.kind == 'url')
   var isLocalFileStorage = (props.app.filesystem.storage.kind == 'local_file')
 
-  return div({ className: "storage-tools" },
-    span({ className: "storage-status " + (isUrlStorage ? 'visible' : '') },
+  return div({ className: "system-banners" },
+    span({ className: "banner card " + (isUrlStorage ? 'visible' : '') },
       'View mode, changes are not saved.',
       a({
         onClick: prevent(() => props.app.saveViewModeToStorage()),
@@ -17,7 +16,9 @@ function StorageTools(props: { app: App }) {
       }, 'close'),
     ),
     
-    span({ className: "storage-status " + (isLocalFileStorage ? 'visible' : '') },
+    isLocalFileStorage ? el('br') : null,
+    
+    span({ className: "banner card " + (isLocalFileStorage ? 'visible' : '') },
       'Editing local file',
       a({
         href: "#",
