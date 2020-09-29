@@ -339,4 +339,10 @@ Q
 C`)
 })
 
+suite.test('<hidden> style works', function() {
+    var output = nomnoml.parse('[<hidden>x]\n[a] - [x]\n[x] -> [b]')
+    var layouted = nomnoml.layout(measurer, config, output.root)
+    assertEqual(layouted.height > 10)
+})
+
 suite.report()
