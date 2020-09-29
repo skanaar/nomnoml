@@ -33,14 +33,20 @@ function TestSuite(suiteName) {
             assertEqual: function () {}
         },
         report: function () {
+            function escape(str) {
+                return str
+                    .split('&').join('&amp;')
+                    .split('<').join('&lt;')
+                    .split('>').join('&gt;')
+            }
             if(typeof document == 'object') {
                 var divs = results.map(function (e){
                     var rerunCallback = "TestSuite.run('"+suiteName+"','"+e.name+"')"
                     var div = '<div class='+e.status+' onclick="'+rerunCallback+'">'
-                    var details = e.error ? '<div class=details>'+e.error+'</div>' : ''
-                    return div + e.name + '</div>' + details
+                    var details = e.error ? '<div class=details>'+escape(e.error.toString())+'</div>' : ''
+                    return div + escape(e.name) + '</div>' + details
                 })
-                var h1 = '<h1>' + suiteName + '</h1>'
+                var h1 = '<h1>' + escape(suiteName) + '</h1>'
                 document.getElementById('testreport').innerHTML = h1 + divs.join('')
             }
             else {
