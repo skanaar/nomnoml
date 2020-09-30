@@ -108,7 +108,7 @@ var nomnoml;
                 var start = nodes[edgeObj.v];
                 var end = nodes[edgeObj.w];
                 var rel = rels[edge.id];
-                rel.path = nomnoml.skanaar.flatten([[start], edge.points, [end]]).map(toPoint);
+                rel.path = __spreadArrays([start], edge.points, [end]).map(toPoint);
                 var startP = rel.path[1];
                 var endP = rel.path[rel.path.length - 2];
                 layoutLabel(rel.startLabel, startP, adjustQuadrant(quadrant(startP, start, 4), start, end));
@@ -1007,13 +1007,6 @@ var nomnoml;
             return summation;
         }
         skanaar.sum = sum;
-        function flatten(lists) {
-            var out = [];
-            for (var i = 0; i < lists.length; i++)
-                out = out.concat(lists[i]);
-            return out;
-        }
-        skanaar.flatten = flatten;
         function find(list, predicate) {
             for (var i = 0; i < list.length; i++)
                 if (predicate(list[i]))

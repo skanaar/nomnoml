@@ -62,7 +62,7 @@ namespace nomnoml {
 				var start = nodes[edgeObj.v]
 				var end = nodes[edgeObj.w]
 				var rel = rels[edge.id]
-				rel.path = skanaar.flatten([[start], edge.points, [end]]).map(toPoint)
+				rel.path = [start, ...edge.points, end].map(toPoint)
 				
 				var startP = rel.path[1];
 				var endP = rel.path[rel.path.length - 2];

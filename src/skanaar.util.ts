@@ -4,12 +4,6 @@ namespace nomnoml.skanaar {
             summation += transform(list[i])
         return summation
     }
-    export function flatten<T>(lists: T[][]): T[]{
-        var out: T[] = []
-        for(var i=0; i<lists.length; i++)
-            out = out.concat(lists[i])
-        return out
-    }
     export function find<T>(list: T[], predicate: (e:T)=>boolean){
         for(var i=0; i<list.length; i++)
             if (predicate(list[i]))

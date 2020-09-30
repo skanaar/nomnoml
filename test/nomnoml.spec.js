@@ -37,12 +37,6 @@ suite.test('skanaar.testsuite.assert', function(){
     suite.assertThrows(() => suite.assert(true))
 })
 
-suite.test('skanaar.flatten', function(){
-    assertEqual(nomnoml.skanaar.flatten([[4, 5]]), [4, 5])
-    assertEqual(nomnoml.skanaar.flatten([[7], [4, 5]]), [7, 4, 5])
-    assertEqual(nomnoml.skanaar.flatten([[7], [4, 5], [2]]), [7, 4, 5, 2])
-})
-
 suite.test('skanaar.indexBy', function(){
     assertEqual(nomnoml.skanaar.indexBy([], 'name'), {})
     assertEqual(nomnoml.skanaar.indexBy([{name:'apa'}], 'name'), {apa:{name:'apa'}})
