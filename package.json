@@ -35,14 +35,11 @@
     "typescript": "^4.0.2"
   },
   "scripts": {
-    "prepare": "npm run build && npm run test && npm run test_cli && npm run webapp && npm run minify",
+    "prepare": "npm run build && npm run test && npm run test_cli && npm run minify",
     "minify": "terser dist/nomnoml.web.js -o dist/nomnoml.web.js && terser dist/webapp.js -o dist/webapp.js",
-    "build": "npm run compile && npm run bundle",
-    "compile": "tsc --build src/tsconfig.json",
-    "bundle": "node build/build.js",
+    "build": "tsc --build webapp/tsconfig.json && tsc --build src/tsconfig.json && node build/build.js",
     "test": "node test/test.js",
-    "test_cli": "node dist/nomnoml-cli.js test/import-test.nomnoml test/output.node-test.svg",
-    "webapp": "tsc --build webapp/tsconfig.json"
+    "test_cli": "node dist/nomnoml-cli.js test/import-test.nomnoml test/output.node-test.svg"
   },
   "repository": {
     "type": "git",
