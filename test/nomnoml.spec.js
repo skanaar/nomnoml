@@ -223,6 +223,7 @@ suite.test('layout [apa|[flea]->[dandruff]] vertically stacked inner classes', f
             ],[{
                 id: 0,
                 type: 'association',
+                assoc: '-',
                 start: 'flea',
                 end: 'dandruff',
                 startLabel: { text: '' },
@@ -263,6 +264,7 @@ suite.test('layouter should handle [apa|[flea]->[dandruff]] relation placement',
                 type: 'association',
                 start: 'flea',
                 end: 'dandruff',
+                assoc: '-',
                 startLabel: { text: '' },
                 endLabel: { text: '' },
             }]

@@ -100,8 +100,8 @@ namespace nomnoml {
 			renderLabel(r.startLabel)
 			renderLabel(r.endLabel)
 
-			if (r.assoc !== '-/-'){
-				if (skanaar.hasSubstring(r.assoc, '--')){
+			if (r.assoc !== '-/-' && r.assoc !== '_/_'){
+				if (skanaar.hasSubstring(r.assoc, '--') || skanaar.hasSubstring(r.assoc, '__')){
 					var dash = Math.max(4, 2*config.lineWidth)
 					g.setLineDash([dash, dash])
 					strokePath(path)
@@ -122,7 +122,7 @@ namespace nomnoml {
 					drawArrow(path, empty, end, diamond)
 			}
 
-			var tokens = r.assoc.split('-')
+			var tokens = r.assoc.split(/[-_]/)
 			drawArrowEnd(skanaar.last(tokens), path, end)
 			drawArrowEnd(tokens[0], path.reverse(), start)
 		}

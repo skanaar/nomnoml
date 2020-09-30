@@ -89,6 +89,8 @@ This is how the Decorator pattern looks like in nomnoml syntax:
     o->  aggregation
     --   note
     -/-  hidden
+    _>   weightless edge
+    __   weightless dashed edge
 
 ### Classifier types
 
@@ -122,6 +124,7 @@ This is how the Decorator pattern looks like in nomnoml syntax:
     #direction: down | right
     #gutter: 5
     #edgeMargin: 0
+    #gravity: 1
     #edges: hard | rounded
     #background: transparent
     #fill: #eee8d5; #fdf6e3

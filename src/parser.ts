@@ -100,6 +100,7 @@ namespace nomnoml {
 				direction: directionToDagre(d.direction),
 				gutter: +d.gutter || 5,
 				edgeMargin: (+d.edgeMargin) || 0,
+				gravity: +(d.gravity ?? 1),
 				edges: d.edges == 'hard' ? 'hard' : 'rounded',
 				fill: (d.fill || '#eee8d5;#fdf6e3;#eee8d5;#fdf6e3').split(';'),
 				background: d.background || 'transparent',

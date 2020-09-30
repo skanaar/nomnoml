@@ -12,6 +12,7 @@ interface Config {
   background: string
   edges: string
   edgeMargin: number
+  gravity: number
   spacing: number
   direction: 'TB'|'LR'
   fillArrows: boolean

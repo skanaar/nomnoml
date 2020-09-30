@@ -42,7 +42,13 @@ namespace nomnoml {
 				g.setNode(e.name, { width: e.layoutWidth, height: e.layoutHeight })
 			}
 			for(var r of c.relations){
-				g.setEdge(r.start, r.end, { id: r.id })
+				if (r.assoc.indexOf('_') > -1){
+					g.setEdge(r.start, r.end, { id: r.id, minlen: 0 })
+				} else if ((config.gravity ?? 1) != 1){
+					g.setEdge(r.start, r.end, { id: r.id, minlen: config.gravity })
+				} else {
+					g.setEdge(r.start, r.end, { id: r.id })
+				}
 			}
 			dagre.layout(g)
 

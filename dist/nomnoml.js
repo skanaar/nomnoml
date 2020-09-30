@@ -66,6 +66,7 @@ var nomnoml;
             };
         }
         function layoutCompartment(c, compartmentIndex, style) {
+            var _a;
             var textSize = measureLines(c.lines, compartmentIndex ? 'normal' : 'bold');
             if (!c.nodes.length && !c.relations.length) {
                 c.width = textSize.width;
@@ -83,13 +84,22 @@ var nomnoml;
                 acyclicer: config.acyclicer,
                 ranker: config.ranker
             });
-            for (var _i = 0, _a = c.nodes; _i < _a.length; _i++) {
-                var e = _a[_i];
+            for (var _i = 0, _b = c.nodes; _i < _b.length; _i++) {
+                var e = _b[_i];
                 g.setNode(e.name, { width: e.layoutWidth, height: e.layoutHeight });
             }
-            for (var _b = 0, _c = c.relations; _b < _c.length; _b++) {
-                var r = _c[_b];
-                g.setEdge(r.start, r.end, { id: r.id });
+            for (var _c = 0, _d = c.relations; _c < _d.length; _c++) {
+                var r = _d[_c];
+                if (r.assoc.indexOf('_') > -1) {
+                    g.setEdge(r.start, r.end, { id: r.id, minlen: 0 });
+                }
+                else if (((_a = config.gravity) !== null && _a !== void 0 ? _a : 1) != 1) {
+                    console.log({ gravity: config.gravity });
+                    g.setEdge(r.start, r.end, { id: r.id, minlen: config.gravity });
+                }
+                else {
+                    g.setEdge(r.start, r.end, { id: r.id });
+                }
             }
             dagre.layout(g);
             var rels = nomnoml.skanaar.indexBy(c.relations, 'id');
@@ -350,6 +360,7 @@ var nomnoml;
             };
         }
         function getConfig(d) {
+            var _a;
             var userStyles = {};
             for (var key in d) {
                 if (key[0] != '.')
@@ -363,6 +374,7 @@ var nomnoml;
                 direction: directionToDagre(d.direction),
                 gutter: +d.gutter || 5,
                 edgeMargin: (+d.edgeMargin) || 0,
+                gravity: +((_a = d.gravity) !== null && _a !== void 0 ? _a : 1),
                 edges: d.edges == 'hard' ? 'hard' : 'rounded',
                 fill: (d.fill || '#eee8d5;#fdf6e3;#eee8d5;#fdf6e3').split(';'),
                 background: d.background || 'transparent',
@@ -537,8 +549,8 @@ var nomnoml;
             setFont(config, 'normal');
             renderLabel(r.startLabel);
             renderLabel(r.endLabel);
-            if (r.assoc !== '-/-') {
-                if (nomnoml.skanaar.hasSubstring(r.assoc, '--')) {
+            if (r.assoc !== '-/-' && r.assoc !== '_/_') {
+                if (nomnoml.skanaar.hasSubstring(r.assoc, '--') || nomnoml.skanaar.hasSubstring(r.assoc, '__')) {
                     var dash = Math.max(4, 2 * config.lineWidth);
                     g.setLineDash([dash, dash]);
                     strokePath(path);
@@ -557,7 +569,7 @@ var nomnoml;
                 else if (id === 'o')
                     drawArrow(path, empty, end, diamond);
             }
-            var tokens = r.assoc.split('-');
+            var tokens = r.assoc.split(/[-_]/);
             drawArrowEnd(nomnoml.skanaar.last(tokens), path, end);
             drawArrowEnd(tokens[0], path.reverse(), start);
         }
@@ -1511,7 +1523,7 @@ this.$ = $$[$0-1].concat([[]]);
 break;
 case 10:
 
-           var t = $$[$0-1].trim().replace(/\\(\[|\]|\|)/g, '$'+'1').match('^(.*?)([<:o+]*-/?-*[:o+>]*)(.*)$');
+           var t = $$[$0-1].trim().replace(/\\(\[|\]|\|)/g, '$'+'1').match('^(.*?)([<:o+]*[-_]/?[-_]*[:o+>]*)(.*)$');
            this.$ = {assoc:t[2], start:$$[$0-2], end:$$[$0], startLabel:t[1].trim(), endLabel:t[3].trim()};
   
 break;
