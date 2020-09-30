@@ -15,6 +15,20 @@ function TestSuite(suiteName) {
                 results.push({ name: name, status: 'failure', error: e })
             }
         },
+        assert: function (a, operator, b) {
+            if (operator == '='){
+                if(!TestSuite.isEqual(a, b))
+                    throw new Error(JSON.stringify(a) + ' ≠ ' + JSON.stringify(b))
+            } else if (operator == '>') {
+                if(a <= b)
+                    throw new Error(JSON.stringify(a) + ' ≯ ' + JSON.stringify(b))
+            } else if (operator == '<') {
+                if(a >= b)
+                    throw new Error(JSON.stringify(a) + ' ≮ ' + JSON.stringify(b))
+            }
+            else
+                throw new Error('bad assert operator ', operator)
+        },
         assertEqual: function (a, b) {
             if(!TestSuite.isEqual(a, b))
                 throw new Error(JSON.stringify(a) + ' != ' + JSON.stringify(b))

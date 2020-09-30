@@ -26,6 +26,16 @@ suite.test('skanaar.testsuite.isEqual', function(){
     }
 })
 
+suite.test('skanaar.testsuite.assert', function(){
+    suite.assert([1,2], '=', [1,2])
+    suite.assertThrows(() => suite.assert([1,2], '=', [17]))
+    suite.assert(4, '<', 5)
+    suite.assertThrows(() => suite.assert(5, '<', 4))
+    suite.assert(6, '>', 5)
+    suite.assertThrows(() => suite.assert(3, '>', 4))
+    suite.assertThrows(() => suite.assert(true))
+})
+
 suite.test('skanaar.flatten', function(){
     assertEqual(nomnoml.skanaar.flatten([[4, 5]]), [4, 5])
     assertEqual(nomnoml.skanaar.flatten([[7], [4, 5]]), [7, 4, 5])
@@ -286,7 +296,7 @@ suite.test('include edges in canvas size calculation', function(){
     [bar] - [b]
     [a] - [b]`)
     var compartment = nomnoml.layout(measurer, config, root)
-    assertEqual(compartment.width > 300, true)
+    assert(compartment.width, '>', 300)
 })
 
 suite.test('processImports resolves shallow imports', function(){
