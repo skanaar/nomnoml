@@ -13,6 +13,7 @@ function parse(source){ return nomnoml.intermediateParse(source) }
 
 var suite = TestSuite('nomnoml')
 var assertEqual = suite.assertEqual
+var assert = suite.assert
 
 suite.test('skanaar.testsuite.isEqual', function(){
     test(TestSuite.isEqual([1,2], [1,2]))
@@ -275,11 +276,7 @@ suite.test('layouter should handle [apa|[flea]->[dandruff]] relation placement',
     ])
     var layouted = nomnoml.layout(measurer, config, root).nodes[0]
     var rel = layouted.compartments[1].relations[0]
-    
-    // dagre 0.4.5
-    //assertEqual(rel.path, [{x:52,y:7}, {x:52,y:16.5}, {x:52,y:26}])
-    
-    // dagre 0.7.1
+
     assertEqual(rel.path, [{x:52,y:7}, {x:52,y:14}, {x:52,y:16.5}, {x:52,y:19}, {x:52,y:26}])
 })
 
@@ -352,7 +349,7 @@ C`)
 suite.test('<hidden> style works', function() {
     var output = nomnoml.parse('[<hidden>x]\n[a] - [x]\n[x] -> [b]')
     var layouted = nomnoml.layout(measurer, config, output.root)
-    assertEqual(layouted.height > 10)
+    assert(layouted.height, '>', 10)
 })
 
 suite.report()

@@ -112,8 +112,8 @@ namespace nomnoml {
     hidden: function (config: Config, clas: Classifier) {
       clas.dividers = []
       clas.compartments = []
-      clas.width = 0
-      clas.height = 0
+      clas.width = 1
+      clas.height = 1
     },
     input: box,
     none: box,
