@@ -17,8 +17,8 @@ namespace nomnoml.skanaar {
 		serialize(size: { width: number, height: number }, code: string, title: string): string
 	}
 
-	function xmlEncode(str: string) {
-		return str
+	function xmlEncode(str: any) {
+		return (str ?? '').toString()
 			.replace(/&/g, '&amp;')
 			.replace(/</g, '&lt;')
 			.replace(/>/g, '&gt;')
@@ -250,11 +250,10 @@ namespace nomnoml.skanaar {
 			},
 			serialize: function (size: { width: number, height: number }, desc: string, title: string): string {
 				function toAttr(obj: any){
-					function toKeyValue(key: string){ return key + '="' + obj[key] + '"' }
-					return Object.keys(obj).map(toKeyValue).join(' ')
+					return Object.keys(obj).map(key => `${key}="${xmlEncode(obj[key])}"`).join(' ')
 				}
 				function toHtml(e: Element){
-					return '<'+e.name+' '+toAttr(e.attr)+'>'+(e.content ? xmlEncode(e.content) : '')+'</'+e.name+'>'
+					return `<${e.name} ${toAttr(e.attr)}>${xmlEncode(e.content)}</${e.name}>`
 				}
 
 				var elementsToSerialize = elements

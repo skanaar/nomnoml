@@ -94,7 +94,6 @@ var nomnoml;
                     g.setEdge(r.start, r.end, { id: r.id, minlen: 0 });
                 }
                 else if (((_a = config.gravity) !== null && _a !== void 0 ? _a : 1) != 1) {
-                    console.log({ gravity: config.gravity });
                     g.setEdge(r.start, r.end, { id: r.id, minlen: config.gravity });
                 }
                 else {
@@ -762,7 +761,7 @@ var nomnoml;
     var skanaar;
     (function (skanaar) {
         function xmlEncode(str) {
-            return str
+            return (str !== null && str !== void 0 ? str : '').toString()
                 .replace(/&/g, '&amp;')
                 .replace(/</g, '&lt;')
                 .replace(/>/g, '&gt;')
@@ -977,11 +976,10 @@ var nomnoml;
                 },
                 serialize: function (size, desc, title) {
                     function toAttr(obj) {
-                        function toKeyValue(key) { return key + '="' + obj[key] + '"'; }
-                        return Object.keys(obj).map(toKeyValue).join(' ');
+                        return Object.keys(obj).map(function (key) { return key + "=\"" + xmlEncode(obj[key]) + "\""; }).join(' ');
                     }
                     function toHtml(e) {
-                        return '<' + e.name + ' ' + toAttr(e.attr) + '>' + (e.content ? xmlEncode(e.content) : '') + '</' + e.name + '>';
+                        return "<" + e.name + " " + toAttr(e.attr) + ">" + xmlEncode(e.content) + "</" + e.name + ">";
                     }
                     var elementsToSerialize = elements;
                     if (desc) {

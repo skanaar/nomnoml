@@ -25,6 +25,9 @@ function TestSuite(suiteName) {
             } else if (operator == '<') {
                 if(a >= b)
                     throw new Error(JSON.stringify(a) + ' ≮ ' + JSON.stringify(b))
+            } else if (operator == 'includes') {
+                if(!a.includes(b))
+                    throw new Error(JSON.stringify(a) + ' does not include ' + JSON.stringify(b))
             }
             else
                 throw new Error('bad assert operator ', operator)

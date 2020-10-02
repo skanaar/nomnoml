@@ -348,4 +348,9 @@ suite.test('<hidden> style works', function() {
     assert(layouted.height, '>', 10)
 })
 
+suite.test('escape [data-name] attribute value in SVG', function() {
+    var output = nomnoml.renderSvg('[&]-[<]')
+    assert(output, 'includes', 'data-name="&amp;"')
+})
+
 suite.report()
