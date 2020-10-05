@@ -9,7 +9,22 @@ function compClas(type, name, parts){
 }
 
 function c(id){ return { type:'CLASS', parts:[[id]], id:id } }
-function parse(source){ return nomnoml.intermediateParse(source) }
+
+function Association(start, assoc, end) {
+    return {
+        id: 0,
+        start,
+        end,
+        assoc,
+        startLabel: { text: '' },
+        endLabel: { text: '' },
+    }
+}
+
+function parseAndLayout(source) {
+    var { root, config } = nomnoml.parse(source)
+    return nomnoml.layout(measurer, config, root)
+}
 
 var suite = TestSuite('nomnoml')
 var assertEqual = suite.assertEqual
@@ -43,12 +58,12 @@ suite.test('skanaar.indexBy', function(){
 })
 
 suite.test('jison parser should handle single class', function(){
-    var ast = parse('[apa]')
+    var ast = nomnoml.intermediateParse('[apa]')
     assertEqual(ast, [c('apa')])
 })
 
 suite.test('jison parser should handle single class with compartments', function(){
-    var ast = parse('[apa|+field: int;#x:int|apply]')
+    var ast = nomnoml.intermediateParse('[apa|+field: int;#x:int|apply]')
     assertEqual(ast.length, 1)
     assertEqual(ast[0], {
         type: 'CLASS',
@@ -58,7 +73,7 @@ suite.test('jison parser should handle single class with compartments', function
 })
 
 suite.test('jison parser should handle single relation', function(){
-    var ast = parse('[apa]->[banan]')
+    var ast = nomnoml.intermediateParse('[apa]->[banan]')
     assertEqual(ast.length, 1)
     var assoc = ast[0]
     assertEqual(assoc.assoc, '->')
@@ -113,16 +128,7 @@ suite.test('astBuilder should handle single association', function(){
     assertEqual(ast, new Compartment([],[
         new Classifier('CLASS', 'apa', [new Compartment(['apa'],[],[])]),
         new Classifier('CLASS', 'banan', [new Compartment(['banan'],[],[])])
-    ],[
-        {
-            id: 0,
-            assoc: '->',
-            start: 'apa',
-            end: 'banan',
-            startLabel: { text: '' },
-            endLabel: { text: '' }
-        }
-    ]))
+    ],[Association('apa', '->', 'banan')]))
 })
 
 suite.test('astBuilder should handle nested classes [apa|[flea]]', function(){
@@ -220,15 +226,7 @@ suite.test('layout [apa|[flea]->[dandruff]] vertically stacked inner classes', f
         new Compartment([],[
                 new Classifier('class', 'flea', [new Compartment(['flea'],[],[])]),
                 new Classifier('class', 'dandruff', [new Compartment(['dandruff'],[],[])])
-            ],[{
-                id: 0,
-                type: 'association',
-                assoc: '-',
-                start: 'flea',
-                end: 'dandruff',
-                startLabel: { text: '' },
-                endLabel: { text: '' },
-            }]
+            ],[Association('flea', '-', 'dandruff')]
         )
     ])
     var layouted = nomnoml.layout(measurer, config, root).nodes[0]
@@ -259,15 +257,7 @@ suite.test('layouter should handle [apa|[flea]->[dandruff]] relation placement',
         new Compartment([],[
                 new Classifier('class', 'flea', [new Compartment(['flea'],[],[])]),
                 new Classifier('class', 'dandruff', [new Compartment(['dandruff'],[],[])])
-            ],[{
-                id: 0,
-                type: 'association',
-                start: 'flea',
-                end: 'dandruff',
-                assoc: '-',
-                startLabel: { text: '' },
-                endLabel: { text: '' },
-            }]
+            ],[Association('flea', '-', 'dandruff')]
         )
     ])
     var layouted = nomnoml.layout(measurer, config, root).nodes[0]
@@ -282,13 +272,12 @@ suite.test('gracefully handle equivalent relations', function(){
 })
 
 suite.test('include edges in canvas size calculation', function(){
-    var { root, config } = nomnoml.parse(`
+    var compartment = parseAndLayout(`
     [a] - [foo]
     [foo] - [b]
     [a] - [bar]
     [bar] - [b]
     [a] - [b]`)
-    var compartment = nomnoml.layout(measurer, config, root)
     assert(compartment.width, '>', 300)
 })
 
@@ -351,6 +340,14 @@ suite.test('<hidden> style works', function() {
 suite.test('escape [data-name] attribute value in SVG', function() {
     var output = nomnoml.renderSvg('[&]-[<]')
     assert(output, 'includes', 'data-name="&amp;"')
+})
+
+suite.test('weightless relations with _> edges', function() {
+    var weighted = parseAndLayout('[a]->[b]')
+    var weightless = parseAndLayout('[a]_>[b]')
+    var directive = parseAndLayout('#gravity: 0\n[a]->[b]')
+    assert(weighted.height, '>', weightless.height)
+    assert(directive.height, '=', weightless.height)
 })
 
 suite.report()
