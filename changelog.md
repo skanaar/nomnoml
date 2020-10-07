@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.2.0] - 2020-10-07
+
+- Fixed layout bug when using HIDDEN nodes
+- Fixed bug where SVG attributes were not properly escaped
+- New association type `_>` that creates a shorter (weightless) edge
+- New directive `#gravity: 0` that makes every association weightless
+- Type definitions included (typescript .d file)
+- Drop ES3 support and target ES5 explicitly
+
 ## [1.1.1] - 2020-09-21
 
 - Fix bug when setting background color with `#background:`

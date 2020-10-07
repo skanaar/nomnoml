@@ -13,7 +13,7 @@ interface Nomnoml {
 
 namespace nomnoml {
 
-  export var version = '1.1.1'
+  export var version = '1.2.0'
 
   export interface SetFont {
     (config: Config, isBold: string, isItalic?: string): void
