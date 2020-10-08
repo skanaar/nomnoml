@@ -3,11 +3,6 @@ Solarized theme for code-mirror
 http://ethanschoonover.com/solarized
 */
 
-/*
-Solarized color pallet
-http://ethanschoonover.com/solarized/img/solarized-palette.png
-*/
-
 .solarized.base03 { color: #002b36; }
 .solarized.base02 { color: #073642; }
 .solarized.base01 { color: #586e75; }
@@ -24,8 +19,6 @@ http://ethanschoonover.com/solarized/img/solarized-palette.png
 .solarized.solar-blue { color: #268bd2; }
 .solarized.solar-cyan { color: #2aa198; }
 .solarized.solar-green { color: #859900; }
-
-/* Color scheme for code-mirror */
 
 .cm-s-solarized {
   color-profile: sRGB;
@@ -84,11 +77,6 @@ http://ethanschoonover.com/solarized/img/solarized-palette.png
   text-decoration-style: dotted;
 }
 .cm-s-solarized .cm-strong { color: #eee; }
-.cm-s-solarized .cm-tab:before {
-  content: "➤";   /*visualize tab character*/
-  color: #586e75;
-  position:absolute;
-}
 .cm-s-solarized .cm-error,
 .cm-s-solarized .cm-invalidchar {
   color: #586e75;
@@ -104,35 +92,6 @@ http://ethanschoonover.com/solarized/img/solarized-palette.png
   background: rgba(0, 0, 0, 0.1);
 }
 
-/* Editor styling */
-
-
-
-/* Little shadow on the view-port of the buffer view */
-.cm-s-solarized.CodeMirror {
-  -moz-box-shadow: none;
-  -webkit-box-shadow: none;
-  box-shadow: none;
-}
-
-/* Gutter border and some shadow from it  */
-.cm-s-solarized .CodeMirror-gutters {
-  border-right: 1px solid;
-}
-
-/* Gutter colors and line number styling based of color scheme (dark / light) */
-
-/* Dark */
-.cm-s-solarized.cm-s-dark .CodeMirror-gutters {
-  background-color:  #002b36;
-  border-color: #00232c;
-}
-
-.cm-s-solarized.cm-s-dark .CodeMirror-linenumber {
-  text-shadow: none;
-}
-
-/* Light */
 .cm-s-solarized.cm-s-light .CodeMirror-gutters {
   color: #D4CEBD;
   background-color: transparent;
@@ -156,10 +115,6 @@ http://ethanschoonover.com/solarized/img/solarized-palette.png
   border-left: 1px solid #819090;
 }
 
-/*
-Active line. Negative margin compensates left padding of the text in the
-view-port
-*/
 .cm-s-solarized.cm-s-dark .CodeMirror-activeline-background {
   background: rgba(255, 255, 255, 0.10);
 }
