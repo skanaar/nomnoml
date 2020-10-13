@@ -314,10 +314,10 @@ var nomnoml;
                 directives[tokens[0].trim()] = tokens[1].trim();
             }
             catch (e) {
-                throw new Error('line ' + (line.index + 1));
+                throw new Error('line ' + (line.index + 1) + ': Malformed directive');
             }
         });
-        var pureDiagramCode = lines.map(function (e) { return onlyCompilables(e.text); }).join('\n').trim();
+        var pureDiagramCode = lines.map(function (e) { return onlyCompilables(e.text); }).join('\n');
         if (pureDiagramCode == '') {
             return {
                 root: new nomnoml.Compartment([], [], []),
@@ -1487,39 +1487,42 @@ var nomnoml;
   }
 */
 var nomnomlCoreParser = (function(){
-var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,4],$V1=[1,7],$V2=[1,9],$V3=[5,10,12,14],$V4=[12,14];
+var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,5],$V1=[1,8],$V2=[5,6,12,14],$V3=[12,14],$V4=[1,22];
 var parser = {trace: function trace () { },
 yy: {},
-symbols_: {"error":2,"root":3,"compartment":4,"EOF":5,"slot":6,"IDENT":7,"class":8,"association":9,"SEP":10,"parts":11,"|":12,"[":13,"]":14,"$accept":0,"$end":1},
-terminals_: {2:"error",5:"EOF",7:"IDENT",10:"SEP",12:"|",13:"[",14:"]"},
-productions_: [0,[3,2],[6,1],[6,1],[6,1],[4,1],[4,3],[11,1],[11,3],[11,2],[9,3],[8,3]],
+symbols_: {"error":2,"root":3,"compartment":4,"EOF":5,"SEP":6,"slot":7,"IDENT":8,"class":9,"association":10,"parts":11,"|":12,"[":13,"]":14,"$accept":0,"$end":1},
+terminals_: {2:"error",5:"EOF",6:"SEP",8:"IDENT",12:"|",13:"[",14:"]"},
+productions_: [0,[3,2],[3,3],[3,4],[3,3],[7,1],[7,1],[7,1],[4,1],[4,3],[11,1],[11,3],[11,2],[10,3],[9,3]],
 performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */) {
 /* this == yyval */
 
 var $0 = $$.length - 1;
 switch (yystate) {
-case 1:
+case 1: case 2:
  return $$[$0-1] 
 break;
-case 2:
+case 3: case 4:
+ return $$[$0-2] 
+break;
+case 5:
 this.$ = $$[$0].trim().replace(/\\(\[|\]|\|)/g, '$'+'1');
 break;
-case 3: case 4:
+case 6: case 7:
 this.$ = $$[$0];
 break;
-case 5: case 7:
+case 8: case 10:
 this.$ = [$$[$0]];
 break;
-case 6:
+case 9:
 this.$ = $$[$0-2].concat($$[$0]);
 break;
-case 8:
+case 11:
 this.$ = $$[$0-2].concat([$$[$0]]);
 break;
-case 9:
+case 12:
 this.$ = $$[$0-1].concat([[]]);
 break;
-case 10:
+case 13:
 
            var t = $$[$0-1].trim().replace(/\\(\[|\]|\|)/g, '$'+'1').match('^(.*?)([<:o+]*[-_]/?[-_]*[:o+>]*)(.*)$');
            if (!t) {
@@ -1528,7 +1531,7 @@ case 10:
            this.$ = {assoc:t[2], start:$$[$0-2], end:$$[$0], startLabel:t[1].trim(), endLabel:t[3].trim()};
   
 break;
-case 11:
+case 14:
 
            var type = 'CLASS';
            var id = $$[$0-1][0][0];
@@ -1543,8 +1546,8 @@ case 11:
 break;
 }
 },
-table: [{3:1,4:2,6:3,7:$V0,8:5,9:6,13:$V1},{1:[3]},{5:[1,8],10:$V2},o($V3,[2,5]),o($V3,[2,2]),o($V3,[2,3],{7:[1,10]}),o($V3,[2,4]),{4:12,6:3,7:$V0,8:5,9:6,11:11,13:$V1},{1:[2,1]},{6:13,7:$V0,8:5,9:6,13:$V1},{8:14,13:$V1},{12:[1,16],14:[1,15]},o($V4,[2,7],{10:$V2}),o($V3,[2,6]),o($V3,[2,10]),o([5,7,10,12,14],[2,11]),o($V4,[2,9],{6:3,8:5,9:6,4:17,7:$V0,13:$V1}),o($V4,[2,8],{10:$V2})],
-defaultActions: {8:[2,1]},
+table: [{3:1,4:2,6:[1,3],7:4,8:$V0,9:6,10:7,13:$V1},{1:[3]},{5:[1,9],6:[1,10]},{4:11,7:4,8:$V0,9:6,10:7,13:$V1},o($V2,[2,8]),o($V2,[2,5]),o($V2,[2,6],{8:[1,12]}),o($V2,[2,7]),{4:14,7:4,8:$V0,9:6,10:7,11:13,13:$V1},{1:[2,1]},{5:[1,15],7:16,8:$V0,9:6,10:7,13:$V1},{5:[1,17],6:[1,18]},{9:19,13:$V1},{12:[1,21],14:[1,20]},o($V3,[2,10],{6:$V4}),{1:[2,4]},o($V2,[2,9]),{1:[2,2]},{5:[1,23],7:16,8:$V0,9:6,10:7,13:$V1},o($V2,[2,13]),o([5,6,8,12,14],[2,14]),o($V3,[2,12],{7:4,9:6,10:7,4:24,8:$V0,13:$V1}),{7:16,8:$V0,9:6,10:7,13:$V1},{1:[2,3]},o($V3,[2,11],{6:$V4})],
+defaultActions: {9:[2,1],15:[2,4],17:[2,2],23:[2,3]},
 parseError: function parseError (str, hash) {
     if (hash.recoverable) {
         this.trace(str);
@@ -2021,13 +2024,13 @@ var YYSTATE=YY_START;
 switch($avoiding_name_collisions) {
 case 0:return 12
 break;
-case 1:return 7
+case 1:return 8
 break;
 case 2:return 13
 break;
 case 3:return 14
 break;
-case 4:return 10
+case 4:return 6
 break;
 case 5:return 5
 break;

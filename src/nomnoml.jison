@@ -16,7 +16,10 @@
 %% /* ------------------------------------------------- */
 
 root
-    : compartment EOF      { return $1 };
+    : compartment EOF      { return $1 }
+    | SEP compartment EOF  { return $2 }
+    | SEP compartment SEP EOF { return $2 }
+    | compartment SEP EOF  { return $1 };
 
 slot
   : IDENT                  {$$ = $1.trim().replace(/\\(\[|\]|\|)/g, '$'+'1');}

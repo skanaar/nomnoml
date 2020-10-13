@@ -350,4 +350,20 @@ suite.test('weightless relations with _> edges', function() {
     assert(directive.height, '=', weightless.height)
 })
 
+suite.test('leading and trailing whitespace', function() {
+    nomnoml.parse('\n[a]')
+    nomnoml.parse('[a]\n')
+    nomnoml.parse(' \n [a] \n ')
+})
+
+suite.test('parse errors are reported on correct line', function() {
+    try { nomnoml.parse('\n[a][b]') }
+    catch (e) {
+        var position = e.message.substr('Parse error on '.length, 6)
+        assert(position, '=', 'line 2')
+        return
+    }
+    assert('failure', '=', '')
+})
+
 suite.report()

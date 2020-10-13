@@ -40,10 +40,10 @@ namespace nomnoml {
 				directives[tokens[0].trim()] = tokens[1].trim()
 			}
 			catch (e) {
-				throw new Error('line ' + (line.index + 1))
+				throw new Error('line ' + (line.index + 1) + ': Malformed directive')
 			}
 		})
-		var pureDiagramCode = lines.map(function(e){ return onlyCompilables(e.text)}).join('\n').trim()
+		var pureDiagramCode = lines.map(e => onlyCompilables(e.text)).join('\n')
 		
 		if (pureDiagramCode == '') {
 			return {
