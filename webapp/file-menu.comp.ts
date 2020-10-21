@@ -4,6 +4,18 @@ function FileMenu(props: { app: App }) {
   var items = filesystem.files()
   var isLocalFile = filesystem.storage.kind === 'local_file'
   var isAtHome = filesystem.storage.kind === 'local_default'
+  var entries: Array<{ isDir: boolean, name: string, entry: FileEntry }> = []
+  var currentDir = null
+  for(var entry of items) {
+    var path = entry.name.split('/')
+    var name = path.pop()
+    var dir = path.join('/')
+    if (currentDir != dir && dir !== '') {
+      currentDir = dir
+      entries.push({ isDir: true, name: dir, entry: null })
+    }
+    entries.push({ isDir: false, name, entry })
+  }
 
   function isActive(item: FileEntry): boolean {
     return isLocalFile && filesystem.activeFile.name === item.name
@@ -34,6 +46,23 @@ function FileMenu(props: { app: App }) {
     var files = (e.target as HTMLInputElement).files
     props.app.handleOpeningFiles(files)
   }
+  
+  function makeFileEntry(name: string, entry: FileEntry) {
+    var activeness = isActive(entry) ? 'active ' : ''
+    var indention = (name === entry.name) ? '' : 'indented'
+    return div({ key: entry.name, className: 'file-entry ' + activeness + indention },
+      a({ href: itemPath(entry) }, name),
+      a({ onClick: prevent(() =>discard(entry)), title: "Discard this diagram" },
+          el(Icon, { id: 'trash' })
+      )
+    )
+  }
+  
+  function makeDirEntry(name: string) {
+    return div({ key: '//dir/'+name, className: 'file-entry directory' },
+      a({ href: 'javascript:void(0)' }, el(Icon, { id: 'folder' }), name)
+    )
+  }
     
   return div({ className: "file-menu" },
 
@@ -54,11 +83,6 @@ function FileMenu(props: { app: App }) {
         a({ href: "#" }, el(Icon, { id: 'home-outline' }), 'Home'),
     ),
 
-    items.map(item => div({ key: item.name, className: 'file-entry ' + (isActive(item) ? 'active' : '') },
-        a({ href: itemPath(item) }, item.name),
-        a({ onClick: prevent(() =>discard(item)), title: "Discard this diagram" },
-            el(Icon, { id: 'trash' })
-        )
-    ))
+    entries.map(e => (e.isDir ? makeDirEntry(e.name) : makeFileEntry(e.name, e.entry)))
   )
 }

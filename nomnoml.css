@@ -310,15 +310,19 @@ a:hover img {
   display: flex;
   align-items: center;
   margin: 0 -10px 0 -20px;
-  padding: 0 30px 0 0;
-  border-bottom: 1px solid #0002;
+  padding: 0 10px 0 0;
+  border-top: 1px solid #0002;
   font-family: Calibri, Helvetica, sans-serif;
 }
+.file-entry:last-child { border-bottom: 1px solid #0002; }
 .file-entry.active { background: #0001; }
+.file-entry.indented { margin-left: 10px; border-left: 1px solid #0002; }
+.file-entry.indented a[href] { padding-left: 10px; }
 .file-entry a[href] { display: block; padding: 8px 2px 8px 20px; }
 .file-entry:hover { background: rgba(0,0,0,0.07); }
+.file-entry.directory:hover { background: none; cursor: default; }
 .file-entry a:first-child { flex-grow: 1; }
-.file-entry img { width: 24px; height: 24px; vertical-align: baseline; }
+.file-entry i.icon svg { margin: -3px 5px -3px -3px; }
 
 .alert-list {
 	position: absolute;
