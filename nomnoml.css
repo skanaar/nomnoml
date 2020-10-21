@@ -262,6 +262,13 @@ a:hover img {
 .content p {
 	font-family: Calibri, Helvetica, sans-serif
 }
+.content code {
+	font-family: Consolas, Monaco, monospace;
+  background: #fffcf4;
+  padding: 0 2px;
+  border-radius: 3px;
+  border: 1px solid #0001;
+}
 .content pre {
   border-radius: 5px;
   background: #eee8d5;

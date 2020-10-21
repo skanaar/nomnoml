@@ -73,9 +73,11 @@ function FileMenu(props: { app: App }) {
 
     a({ className: "btn", href: "/", onClick: prevent(() => saveAs()) },
         el(Icon, { id: 'document-add' }), 'Save to local file...',
-    ),    
-
-    hr(),
+    ),
+    
+    el('p', {}, 'Import files with the #import directive', el('br', {}), el('code', {}, '#import: filename')),
+    
+    el('p', {}, 'Use ', el('code', {}, '/'),' in your file names to specify folders.'),
 
     h2({}, 'Local files'),
 
