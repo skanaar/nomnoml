@@ -22,7 +22,7 @@ function FileMenu(props: { app: App }) {
   }
 
   function itemPath(item: FileEntry) {
-    return '#file/' + encodeURIComponent(item.name).replace(/%20/g, '+')
+    return '#file/' + encodeURIComponent(item.name).replace(/%20/g, '+').replace(/%2F/g, '/')
   }
 
   function discard(item: FileEntry) {
