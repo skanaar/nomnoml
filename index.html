@@ -96,12 +96,15 @@
 				<p>A directive that starts with "." define a classifier style. The style is written as a space separated list of modifiers and key/value pairs.</p>
 
 				<pre append-nomnoml-preview>#.box: fill=#8f8 dashed
-#.blob: visual=ellipse
+#.blob: visual=ellipse title=bold
 [&lt;box&gt; GreenBox]
 [&lt;blob&gt; Blobby]</pre>
+				
+				<h3>Modifiers</h3>
+				dashed<br>
+				empty<br>
 
-				<h3>Available key/value pairs are</h3>
-
+				<h3>Key/value pairs</h3>
 				fill=(any css color)<br><br>
 
 				stroke=(any css color)<br><br>
@@ -129,15 +132,18 @@
 				visual=sender<br>
 				visual=start<br>
 				visual=table<br>
-				visual=transceiver
-				
-				<h3>Available modifiers are</h3>
+				visual=transceiver<br>
 
+				<h3>Style title and text body</h3>
+				title=left,italic,bold<br>
+				body=center,italic,bold<br>
+				
+				<h3>Text modifiers</h3>
 				bold<br>
-				underline<br>
+				center<br>
 				italic<br>
-				dashed<br>
-				empty
+				left<br>
+				underline<br>
 			</div>
 
 		</div>

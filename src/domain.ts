@@ -56,14 +56,19 @@ type Visual =
   'start'|
   'table'|
   'transceiver'
-
-interface Style {
+  
+interface TextStyle {
   bold: boolean
   underline: boolean
   italic: boolean
+  center: boolean
+}
+
+interface Style {
+  title: TextStyle
+  body: TextStyle
   dashed: boolean
   empty: boolean
-  center: boolean
   fill: string|undefined
   stroke: string|undefined
   visual: Visual
@@ -71,14 +76,22 @@ interface Style {
 }
 namespace nomnoml {
 
-  export function buildStyle(conf: Partial<Style>): Style {
+  export function buildStyle(conf: Partial<Style>, title: Partial<TextStyle>, body: Partial<TextStyle> = {}): Style {
     return {
-      bold: conf.bold || false,
-      underline: conf.underline || false,
-      italic: conf.italic || false,
+      title: {
+        bold: title.bold || false,
+        underline: title.underline || false,
+        italic: title.italic || false,
+        center: title.center || false,
+      },
+      body: {
+        bold: body.bold || false,
+        underline: body.underline || false,
+        italic: body.italic || false,
+        center: body.center || false,
+      },
       dashed: conf.dashed || false,
       empty: conf.empty || false,
-      center: conf.center || false,
       fill: conf.fill || undefined,
       stroke: conf.stroke || undefined,
       visual: conf.visual || 'class',

@@ -5,10 +5,10 @@ namespace nomnoml {
 		var g = graphics
 		var vm = nomnoml.skanaar.vector
 
-		function renderCompartment(compartment: Compartment, style: Style, level: number){
+		function renderCompartment(compartment: Compartment, color: string, style: TextStyle, level: number){
 			g.save()
 			g.translate(compartment.offset.x, compartment.offset.y)
-			g.fillStyle(style.stroke || config.stroke)
+			g.fillStyle(color || config.stroke)
 			compartment.lines.forEach(function (text, i){
 				g.textAlign(style.center ? 'center' : 'left')
 				var x = style.center ? compartment.width/2 - config.padding : 0
@@ -19,7 +19,11 @@ namespace nomnoml {
 				if (style.underline){
 					var w = g.measureText(text).width
 					y += Math.round(config.fontSize * 0.2)+0.5
-					g.path([{x:x-w/2, y:y}, {x:x+w/2, y:y}]).stroke()
+					if (style.center){
+						g.path([{x:x-w/2, y:y}, {x:x+w/2, y:y}]).stroke()
+					} else {
+						g.path([{x:x, y:y}, {x:x+w, y:y}]).stroke()
+					}
 					g.lineWidth(config.lineWidth)
 				}
 			})
@@ -49,12 +53,12 @@ namespace nomnoml {
 			g.translate(x, y)
 
 			node.compartments.forEach(function (part: Compartment, i: number){
-				var s = i > 0 ? buildStyle({ stroke: style.stroke }) : style; // only style node title
-				if (s.empty) return
+				var textStyle = i == 0 ? style.title : style.body;
+				if (style.empty) return
 				g.save()
 				g.translate(part.x, part.y)
-				setFont(config, s.bold ? 'bold' : 'normal', s.italic ? 'italic' : undefined)
-				renderCompartment(part, s, level+1)
+				setFont(config, textStyle.bold ? 'bold' : 'normal', textStyle.italic ? 'italic' : undefined)
+				renderCompartment(part, style.stroke, textStyle, level+1)
 				g.restore()
 			})
 			for(var divider of node.dividers) {
@@ -169,7 +173,7 @@ namespace nomnoml {
 		g.lineCap('round')
 		g.strokeStyle(config.stroke)
 		snapToPixels()
-		renderCompartment(compartment, buildStyle({ stroke: undefined }), 0)
+		renderCompartment(compartment, undefined, buildStyle({}, {}).title, 0)
 		g.restore()
 	}
 }

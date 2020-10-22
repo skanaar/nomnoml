@@ -73,13 +73,24 @@ namespace nomnoml {
 
 		function parseCustomStyle(styleDef: string): Style {
 			var contains = skanaar.hasSubstring
+			var floatingKeywords = styleDef.replace(/[a-z]*=[^ ]+/g, '')
+			var titleDef = skanaar.last(styleDef.match('title=([^ ]*)') || [''])
+			var bodyDef = skanaar.last(styleDef.match('body=([^ ]*)') || [''])
 			return {
-				bold: contains(styleDef, 'bold'),
-				underline: contains(styleDef, 'underline'),
-				italic: contains(styleDef, 'italic'),
+				title: {
+					bold: contains(titleDef, 'bold') || contains(floatingKeywords, 'bold'),
+					underline: contains(titleDef, 'underline') || contains(floatingKeywords, 'underline'),
+					italic: contains(titleDef, 'italic') || contains(floatingKeywords, 'italic'),
+					center: !(contains(titleDef, 'left') || contains(styleDef, 'align=left')),
+				},
+				body: {
+					bold: contains(bodyDef, 'bold'),
+					underline: contains(bodyDef, 'underline'),
+					italic: contains(bodyDef, 'italic'),
+					center: contains(bodyDef, 'center'),
+				},
 				dashed: contains(styleDef, 'dashed'),
 				empty: contains(styleDef, 'empty'),
-				center: skanaar.last(styleDef.match('align=([^ ]*)') || []) == 'left' ? false : true,
 				fill: skanaar.last(styleDef.match('fill=([^ ]*)') || []),
 				stroke: skanaar.last(styleDef.match('stroke=([^ ]*)') || []),
 				visual: (skanaar.last(styleDef.match('visual=([^ ]*)') || []) || 'class') as Visual,

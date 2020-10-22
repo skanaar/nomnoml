@@ -146,11 +146,16 @@ This is how the Decorator pattern looks like in nomnoml syntax:
 A directive that starts with "." define a classifier style. The style is written as a space separated list of modifiers and key/value pairs.
 
     #.box: fill=#8f8 dashed
-    #.blob: visual=ellipse
+    #.blob: visual=ellipse title=bold
     [<box> GreenBox]
     [<blob> HideousBlob]
 
-Available key/value pairs are
+Modifiers
+
+    dashed
+    empty
+
+Key/value pairs
 
     fill=(any css color)
 
@@ -181,13 +186,18 @@ Available key/value pairs are
     visual=table
     visual=transceiver
 
-Available modifiers are
+Style title and text body
+
+    title=left,italic,bold
+    body=center,italic,bold
+    
+Text modifiers
 
     bold
-    underline
+    center
     italic
-    dashed
-    empty
+    left
+    underline
 
 ## Contributing
 

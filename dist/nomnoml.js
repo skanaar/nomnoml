@@ -5,14 +5,23 @@
 })(function (graphre) {
   var nomnoml;
 (function (nomnoml) {
-    function buildStyle(conf) {
+    function buildStyle(conf, title, body) {
+        if (body === void 0) { body = {}; }
         return {
-            bold: conf.bold || false,
-            underline: conf.underline || false,
-            italic: conf.italic || false,
+            title: {
+                bold: title.bold || false,
+                underline: title.underline || false,
+                italic: title.italic || false,
+                center: title.center || false,
+            },
+            body: {
+                bold: body.bold || false,
+                underline: body.underline || false,
+                italic: body.italic || false,
+                center: body.center || false,
+            },
             dashed: conf.dashed || false,
             empty: conf.empty || false,
-            center: conf.center || false,
             fill: conf.fill || undefined,
             stroke: conf.stroke || undefined,
             visual: conf.visual || 'class',
@@ -345,13 +354,24 @@ var nomnoml;
         }
         function parseCustomStyle(styleDef) {
             var contains = nomnoml.skanaar.hasSubstring;
+            var floatingKeywords = styleDef.replace(/[a-z]*=[^ ]+/g, '');
+            var titleDef = nomnoml.skanaar.last(styleDef.match('title=([^ ]*)') || ['']);
+            var bodyDef = nomnoml.skanaar.last(styleDef.match('body=([^ ]*)') || ['']);
             return {
-                bold: contains(styleDef, 'bold'),
-                underline: contains(styleDef, 'underline'),
-                italic: contains(styleDef, 'italic'),
+                title: {
+                    bold: contains(titleDef, 'bold') || contains(floatingKeywords, 'bold'),
+                    underline: contains(titleDef, 'underline') || contains(floatingKeywords, 'underline'),
+                    italic: contains(titleDef, 'italic') || contains(floatingKeywords, 'italic'),
+                    center: !(contains(titleDef, 'left') || contains(styleDef, 'align=left')),
+                },
+                body: {
+                    bold: contains(bodyDef, 'bold'),
+                    underline: contains(bodyDef, 'underline'),
+                    italic: contains(bodyDef, 'italic'),
+                    center: contains(bodyDef, 'center'),
+                },
                 dashed: contains(styleDef, 'dashed'),
                 empty: contains(styleDef, 'empty'),
-                center: nomnoml.skanaar.last(styleDef.match('align=([^ ]*)') || []) == 'left' ? false : true,
                 fill: nomnoml.skanaar.last(styleDef.match('fill=([^ ]*)') || []),
                 stroke: nomnoml.skanaar.last(styleDef.match('stroke=([^ ]*)') || []),
                 visual: (nomnoml.skanaar.last(styleDef.match('visual=([^ ]*)') || []) || 'class'),
@@ -463,10 +483,10 @@ var nomnoml;
     function render(graphics, config, compartment, setFont) {
         var g = graphics;
         var vm = nomnoml.skanaar.vector;
-        function renderCompartment(compartment, style, level) {
+        function renderCompartment(compartment, color, style, level) {
             g.save();
             g.translate(compartment.offset.x, compartment.offset.y);
-            g.fillStyle(style.stroke || config.stroke);
+            g.fillStyle(color || config.stroke);
             compartment.lines.forEach(function (text, i) {
                 g.textAlign(style.center ? 'center' : 'left');
                 var x = style.center ? compartment.width / 2 - config.padding : 0;
@@ -477,7 +497,12 @@ var nomnoml;
                 if (style.underline) {
                     var w = g.measureText(text).width;
                     y += Math.round(config.fontSize * 0.2) + 0.5;
-                    g.path([{ x: x - w / 2, y: y }, { x: x + w / 2, y: y }]).stroke();
+                    if (style.center) {
+                        g.path([{ x: x - w / 2, y: y }, { x: x + w / 2, y: y }]).stroke();
+                    }
+                    else {
+                        g.path([{ x: x, y: y }, { x: x + w, y: y }]).stroke();
+                    }
                     g.lineWidth(config.lineWidth);
                 }
             });
@@ -503,13 +528,13 @@ var nomnoml;
             g.save();
             g.translate(x, y);
             node.compartments.forEach(function (part, i) {
-                var s = i > 0 ? nomnoml.buildStyle({ stroke: style.stroke }) : style;
-                if (s.empty)
+                var textStyle = i == 0 ? style.title : style.body;
+                if (style.empty)
                     return;
                 g.save();
                 g.translate(part.x, part.y);
-                setFont(config, s.bold ? 'bold' : 'normal', s.italic ? 'italic' : undefined);
-                renderCompartment(part, s, level + 1);
+                setFont(config, textStyle.bold ? 'bold' : 'normal', textStyle.italic ? 'italic' : undefined);
+                renderCompartment(part, style.stroke, textStyle, level + 1);
                 g.restore();
             });
             for (var _i = 0, _a = node.dividers; _i < _a.length; _i++) {
@@ -611,7 +636,7 @@ var nomnoml;
         g.lineCap('round');
         g.strokeStyle(config.stroke);
         snapToPixels();
-        renderCompartment(compartment, nomnoml.buildStyle({ stroke: undefined }), 0);
+        renderCompartment(compartment, undefined, nomnoml.buildStyle({}, {}).title, 0);
         g.restore();
     }
     nomnoml.render = render;
@@ -1095,27 +1120,27 @@ var nomnoml;
 var nomnoml;
 (function (nomnoml) {
     nomnoml.styles = {
-        ABSTRACT: nomnoml.buildStyle({ visual: 'class', center: true, italic: true }),
-        ACTOR: nomnoml.buildStyle({ visual: 'actor', center: true }),
-        CHOICE: nomnoml.buildStyle({ visual: 'rhomb', center: true }),
-        CLASS: nomnoml.buildStyle({ visual: 'class', center: true, bold: true }),
-        DATABASE: nomnoml.buildStyle({ visual: 'database', center: true, bold: true }),
-        END: nomnoml.buildStyle({ visual: 'end', center: true, empty: true }),
-        FRAME: nomnoml.buildStyle({ visual: 'frame' }),
-        HIDDEN: nomnoml.buildStyle({ visual: 'hidden', center: true, empty: true }),
-        INPUT: nomnoml.buildStyle({ visual: 'input', center: true }),
-        INSTANCE: nomnoml.buildStyle({ visual: 'class', center: true, underline: true }),
-        LABEL: nomnoml.buildStyle({ visual: 'none' }),
-        NOTE: nomnoml.buildStyle({ visual: 'note' }),
-        PACKAGE: nomnoml.buildStyle({ visual: 'package' }),
-        RECEIVER: nomnoml.buildStyle({ visual: 'receiver' }),
-        REFERENCE: nomnoml.buildStyle({ visual: 'class', center: true, dashed: true }),
-        SENDER: nomnoml.buildStyle({ visual: 'sender' }),
-        START: nomnoml.buildStyle({ visual: 'start', center: true, empty: true }),
-        STATE: nomnoml.buildStyle({ visual: 'roundrect', center: true }),
-        TABLE: nomnoml.buildStyle({ visual: 'table', center: true, bold: true }),
-        TRANSCEIVER: nomnoml.buildStyle({ visual: 'transceiver' }),
-        USECASE: nomnoml.buildStyle({ visual: 'ellipse', center: true }),
+        ABSTRACT: nomnoml.buildStyle({ visual: 'class' }, { center: true, italic: true }),
+        ACTOR: nomnoml.buildStyle({ visual: 'actor' }, { center: true }, { center: true }),
+        CHOICE: nomnoml.buildStyle({ visual: 'rhomb' }, { center: true }, { center: true }),
+        CLASS: nomnoml.buildStyle({ visual: 'class' }, { center: true, bold: true }),
+        DATABASE: nomnoml.buildStyle({ visual: 'database' }, { center: true, bold: true }, { center: true }),
+        END: nomnoml.buildStyle({ visual: 'end', empty: true }, {}),
+        FRAME: nomnoml.buildStyle({ visual: 'frame' }, {}),
+        HIDDEN: nomnoml.buildStyle({ visual: 'hidden', empty: true }, {}),
+        INPUT: nomnoml.buildStyle({ visual: 'input' }, { center: true }),
+        INSTANCE: nomnoml.buildStyle({ visual: 'class' }, { center: true, underline: true }),
+        LABEL: nomnoml.buildStyle({ visual: 'none' }, {}),
+        NOTE: nomnoml.buildStyle({ visual: 'note' }, {}),
+        PACKAGE: nomnoml.buildStyle({ visual: 'package' }, {}),
+        RECEIVER: nomnoml.buildStyle({ visual: 'receiver' }, {}),
+        REFERENCE: nomnoml.buildStyle({ visual: 'class', dashed: true }, { center: true }),
+        SENDER: nomnoml.buildStyle({ visual: 'sender' }, {}),
+        START: nomnoml.buildStyle({ visual: 'start', empty: true }, {}),
+        STATE: nomnoml.buildStyle({ visual: 'roundrect' }, { center: true }),
+        TABLE: nomnoml.buildStyle({ visual: 'table' }, { center: true, bold: true }),
+        TRANSCEIVER: nomnoml.buildStyle({ visual: 'transceiver' }, {}),
+        USECASE: nomnoml.buildStyle({ visual: 'ellipse' }, { center: true }, { center: true }),
     };
     function box(config, clas) {
         clas.width = Math.max.apply(Math, clas.compartments.map(function (e) { return e.width; }));
