@@ -1011,6 +1011,14 @@ var nomnoml;
 (function (nomnoml) {
     var skanaar;
     (function (skanaar) {
+        function range(_a, count) {
+            var min = _a[0], max = _a[1];
+            var output = [];
+            for (var i = 0; i < count; i++)
+                output.push(min + (max - min) * i / (count - 1));
+            return output;
+        }
+        skanaar.range = range;
         function sum(list, transform) {
             for (var i = 0, summation = 0, len = list.length; i < len; i++)
                 summation += transform(list[i]);
@@ -1158,8 +1166,13 @@ var nomnoml;
                 comp.y = y;
                 comp.width = clas.width;
                 y += comp.height;
-                if (comp != nomnoml.skanaar.last(clas.compartments))
-                    clas.dividers.push([{ x: 0, y: y }, { x: clas.width, y: y }]);
+                if (comp != nomnoml.skanaar.last(clas.compartments)) {
+                    var path = nomnoml.skanaar.range([0, Math.PI], 16).map(function (a) { return ({
+                        x: clas.width * 0.5 * (1 - Math.cos(a)),
+                        y: y + config.padding * (0.75 * Math.sin(a) - 0.5),
+                    }); });
+                    clas.dividers.push(path);
+                }
             }
         },
         ellipse: function (config, clas) {

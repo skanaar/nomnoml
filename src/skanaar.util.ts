@@ -1,4 +1,9 @@
 namespace nomnoml.skanaar {
+    export function range([min, max]: [min: number, max: number], count: number): number[] {
+        var output = []
+        for(var i=0; i<count; i++) output.push(min + (max-min) * i/(count-1))
+        return output;
+    }
     export function sum<T>(list: ArrayLike<T>, transform: (item: T) => number){
         for(var i=0, summation=0, len=list.length; i<len; i++)
             summation += transform(list[i])

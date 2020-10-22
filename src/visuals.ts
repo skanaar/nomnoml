@@ -71,8 +71,13 @@ namespace nomnoml {
         comp.y = y
         comp.width = clas.width
         y += comp.height
-        if (comp != skanaar.last(clas.compartments))
-          clas.dividers.push([{ x: 0, y: y }, { x: clas.width, y: y }])
+        if (comp != skanaar.last(clas.compartments)){
+          var path = skanaar.range([0, Math.PI], 16).map(a => ({
+            x: clas.width * 0.5 * (1 - Math.cos(a)),
+            y: y + config.padding * (0.75 * Math.sin(a) - 0.5),
+          }))
+          clas.dividers.push(path)
+        }
       }
     },
     ellipse: function (config: Config, clas: Classifier) {
