@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.3.0] - 2020-11-04
+
+- More options to style text
+- Style node titles with `title=bold,italic,left`
+- Style node bodys with `body=bold,italic,left`
+- Nicer database graphics
+- More descriptive compilation errors
+- Switch to **Graphre** (a forked version of Dagre)
+- Support Webpack
+
+**Webapp**
+- Folders in file system view
+- Always as for filename when saving a #view url graph
+- Improved file system view
+
 ## [1.2.0] - 2020-10-07
 
 - Fixed layout bug when using HIDDEN nodes

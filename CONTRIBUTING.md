@@ -4,12 +4,12 @@ To start contributing you will need to fork the repo on github and clone it firs
 
 ## Building
 
-Running `npm run prepare` will run compile both the nomnoml library and the webapp and run all unit tests.
+Running `npm run build` will run compile the nomnoml library, the webapp and run all tests.
 
 ## Testing
 
 Before committing and before making a pull request make sure that all unit tests and usecase tests are ok. Here is a good procedure:
 
- 1. Run `npm run prepare`
+ 1. Run `npm run build`
  2. Check `index.html`
  3. Check `test/index.html`
