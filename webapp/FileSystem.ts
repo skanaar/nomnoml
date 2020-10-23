@@ -53,7 +53,14 @@ class FileSystem {
   configureByRoute(path: string) {
     var route = Route.from(path)
     this.storage = this.routedStorage(route)
-    this.activeFile = nomnoml.skanaar.find(this.files(), e => e.name === route.path) || { name: route.path, date: (new Date()).toISOString(), backingStore: 'local_file' }
+    var now = (new Date()).toISOString()
+    if (route.context == 'file') {
+      this.activeFile = nomnoml.skanaar.find(this.files(), e => e.name === route.path) || { name: route.path, date: now, backingStore: 'local_file' }
+    } else if (route.context == 'view') {
+      this.activeFile = { name: '', date: now, backingStore: 'url' }
+    } else {
+      this.activeFile = { name: '', date: now, backingStore: 'local_default' }
+    }
     this.signals.trigger('updated')
   }
   routedStorage(route: Route): GraphStorage {

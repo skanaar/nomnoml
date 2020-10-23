@@ -30,7 +30,7 @@ class DownloadLinks {
   }
 
   setFilename(filename: string): void {
-    filename = filename || 'graph'
-    this.filename = filename
+    filename = filename || 'nomnoml'
+    this.filename = filename.replace(/[^ a-zA-Z0-9_-]/g, '_')
   }
 }
