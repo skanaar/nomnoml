@@ -91,7 +91,7 @@ class App {
         this.panner.positionCanvas(canvasElement)
         this.filesystem.storage.save(source)
         this.downloader.source = source
-        this.downloader.setFilename(model.config.title)
+        this.downloader.setFilename(model.config.title || this.filesystem.activeFile.name)
         this.signals.trigger('source-changed', source)
       } catch (e){
         this.signals.trigger('compile-error', e)
@@ -146,13 +146,15 @@ class App {
     }
   }
 
-  saveViewModeToStorage(){
-    var question =
-      'Do you want to overwrite the diagram in ' +
-      'localStorage with the currently viewed diagram?'
-    if (confirm(question)){
-      this.filesystem.moveToLocalStorage(this.currentSource())
-      window.location.href = './'
+  saveAs() {
+    var name = prompt('Name your diagram')
+    if (name) {
+      if (this.filesystem.files().some((e: FileEntry) => e.name === name)) {
+        alert('A file named '+name+' already exists.')
+        return
+      }
+      this.filesystem.moveToFileStorage(name, this.currentSource())
+      location.href = '#file/' + encodeURIComponent(name)
     }
   }
 

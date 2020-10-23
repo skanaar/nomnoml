@@ -385,7 +385,7 @@ var nomnoml;
                 padding: (+d.padding) || 8,
                 spacing: (+d.spacing) || 40,
                 stroke: d.stroke || '#33322E',
-                title: d.title || 'nomnoml',
+                title: d.title || '',
                 zoom: +d.zoom || 1,
                 acyclicer: d.acyclicer === 'greedy' ? 'greedy' : undefined,
                 ranker: parseRanker(d.ranker),

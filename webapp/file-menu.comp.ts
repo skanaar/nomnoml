@@ -30,18 +30,6 @@ function FileMenu(props: { app: App }) {
       filesystem.discard(item)
   }
 
-  function saveAs() {
-    var name = prompt('Name your diagram')
-    if (name) {
-      if (filesystem.files().some((e: FileEntry) => e.name === name)) {
-        alert('A file named '+name+' already exists.')
-        return
-      }
-      filesystem.moveToFileStorage(name, props.app.currentSource())
-      location.href = '#file/' + encodeURIComponent(name)
-    }
-  }
-
   function loadSvg(e: Event) {
     var files = (e.target as HTMLInputElement).files
     props.app.handleOpeningFiles(files)
@@ -71,7 +59,7 @@ function FileMenu(props: { app: App }) {
         input({ type: "file", accept: "image/svg+xml", onChange: prevent(loadSvg) })
     ),
 
-    a({ className: "btn", href: "/", onClick: prevent(() => saveAs()) },
+    a({ className: "btn", href: "/", onClick: prevent(() => props.app.saveAs()) },
         el(Icon, { id: 'document-add' }), 'Save to local file...',
     ),
     
