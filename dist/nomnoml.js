@@ -1,8 +1,8 @@
 ;(function (factoryFn) {
   if (typeof module === 'object' && module.exports)
-  	module.exports = factoryFn(require('dagre'));
-  else this.nomnoml = factoryFn(dagre);
-})(function (dagre) {
+  	module.exports = factoryFn(require('graphre'));
+  else this.nomnoml = factoryFn(graphre);
+})(function (graphre) {
   var nomnoml;
 (function (nomnoml) {
     function buildStyle(conf) {
@@ -75,7 +75,7 @@ var nomnoml;
                 return;
             }
             c.nodes.forEach(layoutClassifier);
-            var g = new dagre.graphlib.Graph();
+            var g = new graphre.graphlib.Graph();
             g.setGraph({
                 rankdir: style.direction || config.direction,
                 nodesep: config.spacing,
@@ -100,7 +100,7 @@ var nomnoml;
                     g.setEdge(r.start, r.end, { id: r.id });
                 }
             }
-            dagre.layout(g);
+            graphre.layout(g);
             var rels = nomnoml.skanaar.indexBy(c.relations, 'id');
             var nodes = nomnoml.skanaar.indexBy(c.nodes, 'name');
             g.nodes().forEach(function (name) {

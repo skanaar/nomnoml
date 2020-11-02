@@ -26,7 +26,7 @@ namespace nomnoml {
 
 			c.nodes.forEach(layoutClassifier)
 
-			var g = new dagre.graphlib.Graph()
+			var g = new graphre.graphlib.Graph()
 			g.setGraph({
 				rankdir: style.direction || config.direction,
 				//align: //undefined [UL, UR, DL, DR]
@@ -50,7 +50,7 @@ namespace nomnoml {
 					g.setEdge(r.start, r.end, { id: r.id })
 				}
 			}
-			dagre.layout(g)
+			graphre.layout(g)
 
 			var rels = skanaar.indexBy(c.relations, 'id')
 			var nodes = skanaar.indexBy(c.nodes, 'name')

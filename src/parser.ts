@@ -64,7 +64,7 @@ namespace nomnoml {
 			else return 'TB'
 		}
 
-		function parseRanker(word: string | undefined): dagre.Ranker {
+		function parseRanker(word: string | undefined): graphre.Ranker {
 			if (word == 'network-simplex' || word == 'tight-tree' || word == 'longest-path') {
 				return word
 			}

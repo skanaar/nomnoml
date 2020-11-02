@@ -7,7 +7,7 @@
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
 // TypeScript Version: 2.2
 
-export as namespace dagre;
+export as namespace graphre;
 
 export namespace graphlib {
     class Graph {

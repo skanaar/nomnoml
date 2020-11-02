@@ -20,7 +20,7 @@ interface Config {
   bendSize: number
   zoom: number
   acyclicer: 'greedy' | undefined
-  ranker: dagre.Ranker
+  ranker: graphre.Ranker
 }
 
 interface Measurer {
