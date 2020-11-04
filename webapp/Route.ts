@@ -1,4 +1,4 @@
-class Route {
+export class Route {
   constructor(
     public context: string,
     public path: string

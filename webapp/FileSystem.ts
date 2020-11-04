@@ -1,19 +1,22 @@
-type StoreKind = 'local_default' | 'local_file' | 'cloud' | 'url'
+import { Observable } from "./Observable"
+import { Route } from "./Route"
 
-interface FileEntry {
+export type StoreKind = 'local_default' | 'local_file' | 'cloud' | 'url'
+
+export interface FileEntry {
   name: string
   date: string
   backingStore: StoreKind
 }
 
-interface GraphStorage {
+export interface GraphStorage {
   read(): string
   save(src: string): void
   clear(): void
   kind: StoreKind
 }
 
-class FileSystem {
+export class FileSystem {
   signals: Observable = new Observable()
   on = this.signals.on
   off = this.signals.off
@@ -55,7 +58,7 @@ class FileSystem {
     this.storage = this.routedStorage(route)
     var now = (new Date()).toISOString()
     if (route.context == 'file') {
-      this.activeFile = nomnoml.skanaar.find(this.files(), e => e.name === route.path) || { name: route.path, date: now, backingStore: 'local_file' }
+      this.activeFile = this.files().filter(e => e.name === route.path)[0] || { name: route.path, date: now, backingStore: 'local_file' }
     } else if (route.context == 'view') {
       this.activeFile = { name: '', date: now, backingStore: 'url' }
     } else {
@@ -82,17 +85,17 @@ abstract class LocalGraphStore implements GraphStorage {
   clear(): void { localStorage.removeItem(this.key) }
 }
 
-class LocalFileGraphStore extends LocalGraphStore {
+export class LocalFileGraphStore extends LocalGraphStore {
   kind: StoreKind = 'local_file'
   constructor(key: string) { super('nomnoml.files/' + key) }
 }
 
-class DefaultGraphStore extends LocalGraphStore {
+export class DefaultGraphStore extends LocalGraphStore {
   kind: StoreKind ='local_default'
   constructor() { super('nomnoml.lastSource') }
 }
 
-class UrlGraphStore implements GraphStorage {
+export class UrlGraphStore implements GraphStorage {
   kind: StoreKind = 'url'
   constructor(private source: string) {}
   read(): string { return this.source }

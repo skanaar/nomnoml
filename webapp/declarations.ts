@@ -9,26 +9,12 @@ interface CodeMirrorEditor {
   getWrapperElement(): HTMLElement
 }
 
-interface Nomnoml {
-  draw(canvasElement: HTMLCanvasElement, renderedText: string, zoom: number): {
-    config: {
-      title: string
-    }
-  }
-  processImports(source: string, loadFile: (filename: string) => string): string
-  ImportDepthError: Function
+declare module "react-dom" {
+  export function render(comp: any, element: Element): void
 }
 
-type Throttler = (func: (arg: any) => void, timespan: number, opts?: any) => (arg: any) => void
-
-interface Underscore {
-  throttle: Throttler
-  debounce: Throttler
-  unescape(input: string): string
-}
-
-declare var React: {
-  createElement: any,
-  useState: Function,
-  useEffect: Function,
+declare module "react" {
+  export function createElement(...args: any[]): any
+  export function useState<T>(initial: T): [T, (x:T)=>void]
+  export function useEffect(fn: Function): void
 }

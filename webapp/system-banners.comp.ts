@@ -1,4 +1,7 @@
-function SystemBanners(props: { app: App }) {
+import { App } from "./App"
+import { a, div, prevent, span } from "./react-util"
+
+export function SystemBanners(props: { app: App }) {
   var isUrlStorage = (props.app.filesystem.storage.kind == 'url')
   var isLocalFileStorage = (props.app.filesystem.storage.kind == 'local_file')
   var saveAs = prevent(() => props.app.saveAs())

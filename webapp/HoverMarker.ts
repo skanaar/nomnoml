@@ -1,4 +1,4 @@
-class HoverMarker {
+export class HoverMarker {
   constructor(className: string, elementToMark: HTMLElement, hoverables: HTMLElement[]) {
     function classToggler(state: boolean){
       return function () {

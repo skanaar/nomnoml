@@ -1,5 +1,12 @@
-function Menu(props: { app: App }) {
-    var [hint, setHint] = React.useState('')
+import { useState } from "react"
+import { App } from "./App"
+import { Icon } from "./Icon.comp"
+import { a, div, el, h1, prevent } from "./react-util"
+import { SystemBanners } from "./system-banners.comp"
+import { TerminalBanners } from "./terminal-banners.comp"
+
+export function Menu(props: { app: App }) {
+    var [hint, setHint] = useState('')
     var app = props.app
     return div({ className: 'tools' },
         a({

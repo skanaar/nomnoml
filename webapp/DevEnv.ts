@@ -1,4 +1,4 @@
-class DevEnv {
+export class DevEnv {
   constructor(
     private editor: HTMLElement,
     private marker: HTMLElement,

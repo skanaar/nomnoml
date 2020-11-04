@@ -1,7 +1,7 @@
 ;(function (factoryFn) {
   if (typeof module === 'object' && module.exports)
   	module.exports = factoryFn(require('graphre'));
-  else this.nomnoml = factoryFn(graphre);
+  else window.nomnoml = factoryFn(graphre);
 })(function (graphre) {
   var nomnoml;
 (function (nomnoml) {

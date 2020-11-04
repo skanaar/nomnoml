@@ -1,4 +1,9 @@
-function FileMenu(props: { app: App }) {
+import { App } from "./App"
+import { FileEntry } from "./FileSystem"
+import { Icon } from "./Icon.comp"
+import { a, div, el, h2, input, label, prevent } from "./react-util"
+
+export function FileMenu(props: { app: App }) {
     
   var filesystem = props.app.filesystem
   var items = filesystem.files()

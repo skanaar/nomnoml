@@ -5,6 +5,6 @@
     "noImplicitAny": true,
     "removeComments": true,
     "preserveConstEnums": true,
-    "outFile": "../dist/nomnoml.compiled.js"
+    "outFile": "../dist/nomnoml.compiled.js",
   }
 }

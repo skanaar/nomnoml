@@ -1,4 +1,4 @@
-class Observable {
+export class Observable {
 
   callbacks: { [key: string]: Function[] } = {}
 

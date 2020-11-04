@@ -1,4 +1,9 @@
-function ExportMenu(props: { app: App }) {
+import { App } from "./App"
+import { Icon } from "./Icon.comp"
+import { a, div, el, h2, prevent } from "./react-util"
+import { Route } from "./Route"
+
+export function ExportMenu(props: { app: App }) {
   var downloader = props.app.downloader
   var sourceCode = props.app.downloader.source
   return div({ className: "file-menu" },

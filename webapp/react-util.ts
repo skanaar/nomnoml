@@ -1,19 +1,21 @@
-var el = React.createElement;
+import { createElement } from "react";
 
-var div = (...args: any[]) => el('div', ...args)
-var span = (...args: any[]) => el('span', ...args)
-var pre = (...args: any[]) => el('pre', ...args)
-var b = (...args: any[]) => el('b', ...args)
-var h1 = (...args: any[]) => el('h1', ...args)
-var h2 = (...args: any[]) => el('h2', ...args)
-var label = (...args: any[]) => el('label', ...args)
-var hr = (...args: any[]) => el('label', ...args)
-var a = (...args: any[]) => el('a', ...args)
-var input = (...args: any[]) => el('input', ...args)
+export var el = createElement;
 
-function prevent(func: Function) {
-    return function (e: Event) {
-      e.preventDefault()
-      func(e)
-    }
+export var div = (...args: any[]) => el('div', ...args)
+export var span = (...args: any[]) => el('span', ...args)
+export var pre = (...args: any[]) => el('pre', ...args)
+export var b = (...args: any[]) => el('b', ...args)
+export var h1 = (...args: any[]) => el('h1', ...args)
+export var h2 = (...args: any[]) => el('h2', ...args)
+export var label = (...args: any[]) => el('label', ...args)
+export var hr = (...args: any[]) => el('label', ...args)
+export var a = (...args: any[]) => el('a', ...args)
+export var input = (...args: any[]) => el('input', ...args)
+
+export function prevent(func: Function) {
+  return function (e: Event) {
+    e.preventDefault()
+    func(e)
   }
+}

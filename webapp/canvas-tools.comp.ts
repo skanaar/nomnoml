@@ -1,4 +1,8 @@
-function CanvasTools(props: { app: App }) {
+import { App } from "./App";
+import { Icon } from "./Icon.comp";
+import { a, div, el, prevent } from "./react-util"
+
+export function CanvasTools(props: { app: App }) {
   return div({ className: 'canvas-tools' },
     div({ className: 'canvas-button' },
       a({ title: 'Zoom in', onClick: prevent(() => props.app.magnifyViewport(2))}, el(Icon, { id: 'plus' }))

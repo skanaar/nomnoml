@@ -1,16 +1,24 @@
-class CanvasPanner {
+import { throttle } from "./util"
+
+type Vec = { x: number, y: number }
+
+function diff(a: Vec, b: Vec): Vec {
+  return { x: a.x - b.x, y: a.y - b.y }
+}
+    
+export class CanvasPanner {
   
   offset: Vec = {x:0, y:0}
 
   zoomLevel: number = 0
 
-  constructor(element: HTMLElement, private onChange: () => void, throttle: Throttler) {
+  constructor(element: HTMLElement, private onChange: () => void) {
     var mouseDownPoint: Vec | boolean = false
     function isVec(value: Vec | boolean): value is Vec { return value != false }
 
     var mouseMove = (e: MouseEvent) => {
       if (isVec(mouseDownPoint)){
-        this.offset = nomnoml.skanaar.vector.diff({ x: e.pageX, y: e.pageY }, mouseDownPoint)
+        this.offset = diff({ x: e.pageX, y: e.pageY }, mouseDownPoint)
         onChange()
       }
     }
@@ -27,7 +35,7 @@ class CanvasPanner {
 
     var mouseDown = (e: MouseEvent) => {
       element.style.width = '100%'
-      mouseDownPoint = nomnoml.skanaar.vector.diff({ x: e.pageX, y: e.pageY }, this.offset)
+      mouseDownPoint = diff({ x: e.pageX, y: e.pageY }, this.offset)
     }
 
     element.addEventListener('mousedown', mouseDown)

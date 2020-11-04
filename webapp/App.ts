@@ -1,4 +1,14 @@
-class App {
+import { CanvasPanner } from "./CanvasPanner"
+import { DevEnv } from "./DevEnv"
+import { DownloadLinks } from "./DownloadLinks"
+import { FileEntry, FileSystem, LocalFileGraphStore } from "./FileSystem"
+import { HoverMarker } from "./HoverMarker"
+import { Observable } from "./Observable"
+import { throttle, debounce, unescapeHtml } from "./util"
+// @ts-ignore
+import * as nomnoml from "../dist/nomnoml.js"
+
+export class App {
   panner: CanvasPanner
   filesystem: FileSystem
   defaultSource: string
@@ -10,12 +20,7 @@ class App {
   on = this.signals.on
   off = this.signals.off
 
-  constructor(
-    nomnoml: Nomnoml,
-    codeMirror: CodeMirror,
-    saveAs: (blob: Blob, name: string) => void,
-    private _: Underscore
-  ) {
+  constructor(codeMirror: CodeMirror) {
     var body = document.querySelector('body')
     var lineNumbers = document.getElementById('linenumbers')
     var lineMarker = document.getElementById('linemarker')
@@ -43,8 +48,8 @@ class App {
 
     this.filesystem = new FileSystem()
     var devenv = new DevEnv(editorElement, lineMarker, lineNumbers)
-    this.panner = new CanvasPanner(canvasPanner, () => this.sourceChanged(), _.throttle)
-    this.downloader = new DownloadLinks(canvasElement, saveAs)
+    this.panner = new CanvasPanner(canvasPanner, () => this.sourceChanged())
+    this.downloader = new DownloadLinks(canvasElement)
     new HoverMarker('canvas-mode', body, [canvasPanner])
 
     this.defaultSource = (document.getElementById('defaultGraph') || { innerHTML: '' }).innerHTML
@@ -60,8 +65,8 @@ class App {
     }
 
     window.addEventListener('hashchange', () => reloadStorage());
-    window.addEventListener('resize', _.throttle(() => this.sourceChanged(), 750, {leading: true}))
-    this.editor.on('changes', _.debounce(() => this.sourceChanged(), 300))
+    window.addEventListener('resize', throttle(() => this.sourceChanged(), 750, {leading: true}))
+    this.editor.on('changes', debounce(() => this.sourceChanged(), 300))
     
     function loadFile(key: string): string {
       var storage = new LocalFileGraphStore(key)
@@ -114,7 +119,7 @@ class App {
       return
     }
     var code = svgNodes.getElementsByTagName('desc')[0].childNodes[0].nodeValue
-    code = this._.unescape(code)
+    code = unescapeHtml(code)
     this.editor.setValue(code)
   }
 

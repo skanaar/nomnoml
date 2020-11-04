@@ -1,32 +1,33 @@
-class DownloadLinks {
+// @ts-ignore
+import saveAs from "file-saver"
+// @ts-ignore
+import * as nomnoml from "../dist/nomnoml.js"
+
+export class DownloadLinks {
 
   filename: string = 'graph'
   source: string = ''
   
-  constructor(
-    private canvasElement: HTMLCanvasElement,
-    private saveAs: (blob: Blob, name: string) => void
-  ) {}
+  constructor(private canvasElement: HTMLCanvasElement) {}
 
   pngDownload(){
     var dynamic: any = this.canvasElement
     if (!!dynamic.msToBlob) {
-      this.saveAs(dynamic.msToBlob(), this.filename + '.png')
+      saveAs(dynamic.msToBlob(), this.filename + '.png')
     }
     else {
-      this.canvasElement.toBlob((blob: Blob) => this.saveAs(blob, this.filename + '.png'))
+      this.canvasElement.toBlob((blob: Blob) => saveAs(blob, this.filename + '.png'))
     }
   }
 
   svgDownload(){
-    var dynamic: any = nomnoml
-    var svg = dynamic.renderSvg(this.source, document)
-    this.saveAs(new Blob([svg], {type: 'image/svg+xml'}), this.filename + '.svg')
+    var svg = nomnoml.renderSvg(this.source, document)
+    saveAs(new Blob([svg], {type: 'image/svg+xml'}), this.filename + '.svg')
   }
 
   srcDownload(){
     var src = this.source
-    this.saveAs(new Blob([src], {type: 'text/txt'}), this.filename + '.nomnoml')
+    saveAs(new Blob([src], {type: 'text/txt'}), this.filename + '.nomnoml')
   }
 
   setFilename(filename: string): void {

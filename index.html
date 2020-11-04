@@ -259,52 +259,15 @@ Text with serifs
 
 [<actor>Sailor] - [<usecase>shiver me;timbers]</script>
 
-	<script src="//unpkg.com/underscore@1.11.0/underscore-min.js"></script>
-	<script src="//unpkg.com/file-saver@2.0.2/dist/FileSaver.min.js"></script>
 	<script src="codemirror/codemirror-compressed.js"></script>
 	<script src="codemirror/nomnoml.codemirror-mode.js"></script>
-	<script src="dist/nomnoml.web.js"></script>
 
 	<script crossorigin src="//unpkg.com/react@17/umd/react.production.min.js"></script>
 	<script crossorigin src="//unpkg.com/react-dom@17/umd/react-dom.production.min.js"></script>
 	<script src="dist/webapp.js"></script>
 	
 	<script>
-		var app = new App(nomnoml, CodeMirror, saveAs, _)
-		var elem = query => document.querySelector(query)
-		render()
-		
-		function render() {
-			ReactDOM.render(React.createElement(FileMenu, { app }), elem('[file-menu]'))
-			ReactDOM.render(React.createElement(ExportMenu, { app }), elem('[export-menu]'))
-			ReactDOM.render(React.createElement(Menu, { app }), elem('[menu]'))
-			ReactDOM.render(React.createElement(CanvasTools, { app }), elem('[canvas-tools]'))
-		}
-		
-		app.signals.on('source-changed', render)
-		app.signals.on('compile-error', render)
-		app.filesystem.signals.on('updated', render)
-		
-		function renderPreviews() {
-			var files = {}
-			var includes = document.querySelectorAll('[publish-as-file]')
-			for(var i=0; i<includes.length; i++) {
-				var name = includes[i].attributes.getNamedItem('publish-as-file').value
-				files[name] = _.unescape(includes[i].innerHTML)
-			}
-
-			var sources = document.querySelectorAll('[append-nomnoml-preview]')
-			for(var i=0; i<sources.length; i++) {
-				var srcEl = sources[i]
-				var src = nomnoml.processImports(_.unescape(srcEl.innerHTML), key => files[key])
-				var svg = nomnoml.renderSvg(src, document)
-				var div = document.createElement('div')
-				div.innerHTML = svg
-				srcEl.append(div)
-			}
-		}
-		
-		renderPreviews()
+		WebApp.bootstrap(CodeMirror)
 	</script>
 	
 	<script src="additionals.js"></script>

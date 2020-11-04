@@ -1,10 +1,14 @@
-function TerminalBanners(props: { app: App }) {
+import { useState, useEffect } from "react"
+import { App } from "./App"
+import { div, el, span } from "./react-util"
 
-  var [error, setError] = React.useState(null)
+export function TerminalBanners(props: { app: App }) {
+
+  var [error, setError] = useState(null)
   function onError(err: Error) {
       setError(err ? { title: 'Compile error', details: err.message } : null)
   }
-  React.useEffect(function () {
+  useEffect(function () {
       props.app.signals.on('compile-error', onError)
       return () => props.app.signals.off('compile-error', onError)
   })
