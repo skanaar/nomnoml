@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.3.1] - 2020-11-05
+
+- fix bug where bundles were incompatible with Node 12
+
 ## [1.3.0] - 2020-11-04
 
 - More options to style text
