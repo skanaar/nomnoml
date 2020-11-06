@@ -1,25 +1,25 @@
-interface Vector { x: number, y: number }
+export interface Vector { x: number, y: number }
 
 type LineCap = 'butt' | 'round' | 'square'
 type LineJoin = 'bevel' | 'round' | 'miter'
 
-interface Chainable {
+export interface Chainable {
   stroke(): Chainable
   fill(): Chainable
   fillAndStroke(): Chainable
 }
 
-interface Graphics {
+export interface Graphics {
   width(): number
   height(): number
   clear(): void
-  circle(center: Vec, r: number): Chainable
-  ellipse(center: Vec, w: number, h: number, start?: number, stop?: number): Chainable
+  circle(center: Vector, r: number): Chainable
+  ellipse(center: Vector, w: number, h: number, start?: number, stop?: number): Chainable
   arc(x: number, y: number, r: number, start: number, stop: number): Chainable
   roundRect(x: number, y: number, w: number, h: number, r: number): Chainable
   rect(x: number, y: number, w: number, h: number): Chainable
   path(points: Vector[]): Chainable
-  circuit(path: Vector[], offset?: Vec, s?: number): Chainable
+  circuit(path: Vector[], offset?: Vector, s?: number): Chainable
   setFont(fontFamily: string, bold: 'bold'|'normal', italic: 'italic'|null, fontSize: number): void
   strokeStyle(stroke: string): void
   fillStyle(fill: any): void
@@ -42,6 +42,3 @@ interface Graphics {
   translate(dx: number, dy: number): void
 }
 
-interface SvgGraphics extends Graphics {
-  serialize(): string
-}

@@ -11,3 +11,4 @@ deploy.sh
 cache/
 output.*
 
+dist/nomnoml-core-parser.js

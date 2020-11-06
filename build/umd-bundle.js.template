@@ -1,8 +1,0 @@
-;(function (factoryFn) {
-  if (typeof module === 'object' && module.exports)
-  	module.exports = factoryFn(require('graphre'));
-  else window.nomnoml = factoryFn(graphre);
-})(function (graphre) {
-  /*{{body}}*/;
-  return nomnoml;
-});

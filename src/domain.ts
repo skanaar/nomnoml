@@ -1,4 +1,7 @@
-interface Config {
+import { Ranker } from "graphre/decl/types"
+import { Graphics } from "./Graphics"
+
+export interface Config {
   padding: number
   stroke: string
   font: string
@@ -20,24 +23,24 @@ interface Config {
   bendSize: number
   zoom: number
   acyclicer: 'greedy' | undefined
-  ranker: graphre.Ranker
+  ranker: Ranker
 }
 
-interface Measurer {
+export interface Measurer {
     setFont(config: Config, isBold: 'bold'|'normal', isItalic:'italic'|'normal'): void
     textWidth(text: string): number
     textHeight(): number
 }
 
-interface Visualizer {
-  (node: nomnoml.Classifier, x: number, y: number, config: Config, g: Graphics): void
+export interface Visualizer {
+  (node: Classifier, x: number, y: number, config: Config, g: Graphics): void
 }
 
-interface NodeLayouter {
-  (config: Config, node: nomnoml.Classifier): void
+export interface NodeLayouter {
+  (config: Config, node: Classifier): void
 }
 
-type Visual = 
+export type Visual = 
   'actor'|
   'class'|
   'database'|
@@ -57,14 +60,14 @@ type Visual =
   'table'|
   'transceiver'
   
-interface TextStyle {
+export interface TextStyle {
   bold: boolean
   underline: boolean
   italic: boolean
   center: boolean
 }
 
-interface Style {
+export interface Style {
   title: TextStyle
   body: TextStyle
   dashed: boolean
@@ -74,76 +77,51 @@ interface Style {
   visual: Visual
   direction: 'TB'|'LR'|undefined
 }
-namespace nomnoml {
 
-  export function buildStyle(conf: Partial<Style>, title: Partial<TextStyle>, body: Partial<TextStyle> = {}): Style {
-    return {
-      title: {
-        bold: title.bold || false,
-        underline: title.underline || false,
-        italic: title.italic || false,
-        center: title.center || false,
-      },
-      body: {
-        bold: body.bold || false,
-        underline: body.underline || false,
-        italic: body.italic || false,
-        center: body.center || false,
-      },
-      dashed: conf.dashed || false,
-      empty: conf.empty || false,
-      fill: conf.fill || undefined,
-      stroke: conf.stroke || undefined,
-      visual: conf.visual || 'class',
-      direction: conf.direction || undefined,
-    }
-  }
+export class Compartment {
+  x: number
+  y: number
+  width: number
+  height: number
+  offset: { x: number, y: number }
+  constructor(
+    public lines: string[], 
+    public nodes: Classifier[], 
+    public relations: Relation[]
+  ){}
+}
 
-  export class Compartment {
-    x: number
-    y: number
-    width: number
-    height: number
-    offset: Vector
-    constructor(
-      public lines: string[], 
-      public nodes: Classifier[], 
-      public relations: Relation[]
-    ){}
-  }
-  
-  export interface RelationLabel {
-    x?: number
-    y?: number
-    width?: number
-    height?: number
-    text: string
-  }
+export interface RelationLabel {
+  x?: number
+  y?: number
+  width?: number
+  height?: number
+  text: string
+}
 
-  export class Relation {
-    id: number
-    path?: Vector[]
-    start: string
-    end: string
-    startLabel: RelationLabel
-    endLabel: RelationLabel
-    assoc: string
-  }
+export class Relation {
+  id: number
+  path?: { x: number, y: number }[]
+  start: string
+  end: string
+  startLabel: RelationLabel
+  endLabel: RelationLabel
+  assoc: string
+}
 
-  export class Classifier implements Vec {
-    x: number
-    y: number
-    width: number
-    height: number
-    layoutWidth: number
-    layoutHeight: number
-    dividers: Vector[][]
-    constructor(
-      public type: string,
-      public name: string,
-      public compartments: Compartment[]
-    ){
-      this.dividers = []
-    }
+export class Classifier {
+  x: number
+  y: number
+  width: number
+  height: number
+  layoutWidth: number
+  layoutHeight: number
+  dividers: { x: number, y: number }[][]
+  constructor(
+    public type: string,
+    public name: string,
+    public compartments: Compartment[]
+  ){
+    this.dividers = []
   }
 }
