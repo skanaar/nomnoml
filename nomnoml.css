@@ -265,7 +265,7 @@ a:hover img {
 .content code {
 	font-family: Consolas, Monaco, monospace;
   background: #fffcf4;
-  padding: 0 2px;
+  padding: 0 4px;
   border-radius: 3px;
   border: 1px solid #0001;
 }

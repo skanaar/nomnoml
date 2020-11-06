@@ -68,9 +68,9 @@ export function FileMenu(props: { app: App }) {
         el(Icon, { id: 'document-add' }), 'Save to local file...',
     ),
     
-    el('p', {}, 'Import files with the #import directive', el('br', {}), el('code', {}, '#import: filename')),
+    el('p', {}, 'Import files with ', el('code', {}, '#import: file')),
     
-    el('p', {}, 'Use ', el('code', {}, '/'),' in your file names to specify folders.'),
+    el('p', {}, 'Create folders with ', el('code', {}, '/'),' in filename'),
 
     h2({}, 'Local files'),
 
