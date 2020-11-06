@@ -2,6 +2,13 @@ import { App } from "./App"
 import { Icon } from "./Icon.comp"
 import { a, div, el, h2, prevent } from "./react-util"
 import { Route } from "./Route"
+import {
+  camera_outline,
+  download_outline,
+  globe_meridians,
+  image_outline,
+  link_outline
+} from "./typicons"
 
 export function ExportMenu(props: { app: App }) {
   var downloader = props.app.downloader
@@ -9,22 +16,22 @@ export function ExportMenu(props: { app: App }) {
   return div({ className: "file-menu" },
     h2({}, 'Share diagram'),
     a({ className: 'btn', href: '#view/' + Route.urlEncode(sourceCode), target: '_blank' },
-      el(Icon, { id: 'link-outline' }), 'Shareable link'
+      el(Icon, { shape: link_outline }), 'Shareable link'
     ),  
     a({ className: 'btn', href: 'image.svg?source=' + Route.urlEncode(sourceCode), target: '_blank' },
-      el(Icon, { id: 'globe' }), 'Server hosted SVG'
+      el(Icon, { shape: globe_meridians }), 'Server hosted SVG'
     ),
     h2({}, 'Downloads'),
     a({ className: 'btn', href: '/', onClick: prevent(() => downloader.pngDownload()) },
-      el(Icon, { id: 'camera-outline' }), 'PNG image'
+      el(Icon, { shape: camera_outline }), 'PNG image'
     ),
     el('p', {}, 'Downloaded image files will be given the filename in the ', el('tt', {}, '#title'), ' directive'),
     a({ className: 'btn', href: '/', onClick: prevent(() => downloader.svgDownload()) },
-      el(Icon, { id: 'image-outline' }), 'SVG with source'
+      el(Icon, { shape: image_outline }), 'SVG with source'
     ),
     el('p', {}, "Downloaded SVG files will have the source code embedded. Open an exported SVG file to load it's nomnoml source."),
     a({ className: 'btn', href: '/', onClick: prevent(() => downloader.srcDownload()) },
-      el(Icon, { id: 'download-outline' }), 'Source code'
+      el(Icon, { shape: download_outline }), 'Source code'
     ),
   )
 }

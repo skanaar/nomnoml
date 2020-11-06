@@ -2,6 +2,7 @@ import { App } from "./App"
 import { FileEntry } from "./FileSystem"
 import { Icon } from "./Icon.comp"
 import { a, div, el, h2, input, label, prevent } from "./react-util"
+import { document_add, folder, home_outline, image_outline, trash } from "./typicons"
 
 export function FileMenu(props: { app: App }) {
     
@@ -46,26 +47,26 @@ export function FileMenu(props: { app: App }) {
     return div({ key: entry.name, className: 'file-entry ' + activeness + indention },
       a({ href: itemPath(entry) }, name),
       a({ onClick: prevent(() =>discard(entry)), title: "Discard this diagram" },
-          el(Icon, { id: 'trash' })
+          el(Icon, { shape: trash })
       )
     )
   }
   
   function makeDirEntry(name: string) {
     return div({ key: '//dir/'+name, className: 'file-entry directory' },
-      a({ href: 'javascript:void(0)' }, el(Icon, { id: 'folder' }), name)
+      a({ href: 'javascript:void(0)' }, el(Icon, { shape: folder }), name)
     )
   }
     
   return div({ className: "file-menu" },
 
     label({ className: "btn" },
-        el(Icon, { id: 'image-outline' }), 'Open SVG with source...',
+        el(Icon, { shape: image_outline }), 'Open SVG with source...',
         input({ type: "file", accept: "image/svg+xml", onChange: prevent(loadSvg) })
     ),
 
     a({ className: "btn", href: "/", onClick: prevent(() => props.app.saveAs()) },
-        el(Icon, { id: 'document-add' }), 'Save to local file...',
+        el(Icon, { shape: document_add }), 'Save to local file...',
     ),
     
     el('p', {}, 'Import files with ', el('code', {}, '#import: file')),
@@ -75,7 +76,7 @@ export function FileMenu(props: { app: App }) {
     h2({}, 'Local files'),
 
     div({ className: 'file-entry ' + (isAtHome ? 'active' : '') },
-        a({ href: "#" }, el(Icon, { id: 'home-outline' }), 'Home'),
+        a({ href: "#" }, el(Icon, { shape: home_outline }), 'Home'),
     ),
 
     entries.map(e => (e.isDir ? makeDirEntry(e.name) : makeFileEntry(e.name, e.entry)))

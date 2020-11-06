@@ -14,7 +14,8 @@ declare module "react-dom" {
 }
 
 declare module "react" {
-  export function createElement(...args: any[]): any
+  export function createElement<T>(comp: (props: T) => any, props: T, ...args: any[]): any
+  export function createElement<T>(comp: string, ...args: any[]): any
   export function useState<T>(initial: T): [T, (x:T)=>void]
   export function useEffect(fn: Function): void
 }
