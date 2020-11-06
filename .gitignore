@@ -5,7 +5,6 @@ additionals.js
 nomnoml.sublime-project
 nomnoml.sublime-workspace
 dist/nomnoml.compiled.js
-dist/nomnoml.web.js
 dist/webapp.js
 deploy.sh
 
