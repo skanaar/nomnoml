@@ -11,11 +11,13 @@ import * as nomnoml from "../dist/nomnoml.js"
 
 // @ts-ignore
 export * as nomnoml from "../dist/nomnoml.js"
+export { DailyTip, NomnomlGraph } from './daily-tip.comp'
+export { App } from "./App"
 
-export { DailyTip } from './daily-tip.comp'
+export var app: App;
 
 export function bootstrap(CodeMirror: CodeMirror) {
-  var app = new App(CodeMirror)
+  app = new App(CodeMirror)
   var elem = (query: string) => document.querySelector(query)
   render()
 
