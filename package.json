@@ -45,8 +45,8 @@
     "build": "npm run lib && npm run webapp && npm run test",
     "webapp": "rollup -c webapp/rollup.config.js",
     "lib": "node build/build-parser.js && rollup -c src/rollup.config.js && npm test",
-    "test": "node test/test.js && npm run test_cli",
-    "test_cli": "node dist/nomnoml-cli.js test/import-test.nomnoml test/output.node-test.svg"
+    "test": "node test/index.js && npm run test_cli",
+    "test_cli": "rm -f test/output.svg && node dist/nomnoml-cli.js test/import-test.nomnoml test/output.svg"
   },
   "repository": {
     "type": "git",

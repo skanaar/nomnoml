@@ -3,20 +3,10 @@
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <title>test nomnoml</title>
-  <link rel="shortcut icon" type="image/png" href="favicon.png">
+  <link rel="shortcut icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAOwgAADsIBFShKgAAAABp0RVh0U29mdHdhcmUAUGFpbnQuTkVUIHYzLjUuMTAw9HKhAAAAcUlEQVQ4T2OgGZgxY8b/tLQ0DAyVJgxAitEBUQbMyMv735+SAlaMDogyAKQZRIMUo2NnZ2fiDUAHVVVVuDWDNOUBTUfHUGkwAAUqlIkJQIovr1yJgulvADoO19Eh3gBCYOASFQxQxQB0TFSiogNgYAAA2pPVp9Ngpg4AAAAASUVORK5CYII=">
   <style>
     body { background-color: #fdf6e3; padding: 0; margin: 10px; overflow-y: scroll }
-    .success, .failure, .ignored { margin: 0px; padding: 1px 5px; color: #eee; cursor: pointer; }
-    .success:hover, .failure:hover { background: rgba(0,0,0,0.1) }
-    #testreport { font-size: 13px; font-family: Monaco, "Lucida Console", monospace }
     h1 { color: #657b83; font-size: 20px; font-family: Monaco, "Lucida Console", monospace }
-    .success { color: #5e7d00 }
-    .failure { color: #b03911 }
-    .ignored { color: #bababa }
-    .success::before { content: '✓ ' }
-    .failure::before { content: '✗ ' }
-    .ignored::before { content: '- ' }
-    .details { margin: 1px 5px 5px 35px; color: #b03911 }
 
     svg, img { height: 280px; max-width: 400px; }
     canvas { max-height: 280px; }
@@ -33,6 +23,19 @@
       font-size: 12px;
       margin: 10px 10px 5px 10px;
     }
+  </style>
+  <style TestSuite>
+    .testsuite { font-size: 13px; margin: 10px; font-family: Monaco, "Lucida Console", monospace }
+    .testsuite summary { color: #657b83; padding: 5px; background: #0001; }
+    .success, .failure, .ignored { margin: 0px; padding: 1px 5px; color: #eee; cursor: pointer; }
+    .success:hover, .failure:hover { background: rgba(0,0,0,0.1) }
+    .success { color: #5e7d00 }
+    .failure { color: #b03911 }
+    .ignored { color: #bababa }
+    .success::before { content: '✓ ' }
+    .failure::before { content: '✗ ' }
+    .ignored::before { content: '- ' }
+    .details { margin: 1px 5px 5px 35px; color: #b03911 }
   </style>
 </head>
 
@@ -286,31 +289,24 @@
 
   <div class=testcase>
     <h1>CLI output</h1>
-    <img src="output.node-test.svg">
+    <img src="output.svg">
   </div>
-
-  <div class=testcase>
-    <h1>Distribution bundle</h1>
-    <iframe src="standalone.usecase.html" height=270></iframe>
-  </div>
-
-
-  <div id=testreport></div>
-
 
   <script src="../node_modules/graphre/dist/graphre.js"></script>
   <script src="../dist/nomnoml.js"></script>
   <script>
     function require(id) {
       return {
-        './skanaar.testsuite.js': TestSuite,
+        './TestSuite.js': TestSuite,
         '../dist/nomnoml.js': nomnoml
       }[id]
     }
     var module = {}
   </script>
-  <script src="skanaar.testsuite.js"></script>
-  <script src="nomnoml.spec.js"></script>
+  <script src="TestSuite.js"></script>
+  <script src="test.misc.js"></script>
+  <script src="test.parser.js"></script>
+  <script src="test.layout.js"></script>
 
   <script>
     function mountNomnoml() {
