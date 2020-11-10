@@ -43,9 +43,33 @@ suite.test('skanaar.testsuite.assert', function(){
     TestSuite.assertThrows(() => TestSuite.assert(true))
 })
 
-suite.test('skanaar.indexBy', function(){
+suite.test('util range', function () {
+    assertEqual(nomnoml.skanaar.range([0, 1], 5), [0, 0.25, 0.5, 0.75, 1])
+})
+suite.test('util sum', function () {
+    assertEqual(nomnoml.skanaar.sum([[0], [4], [17]], e => e[0]), 21)
+    assertEqual(nomnoml.skanaar.sum([[0], [4], [17]], e => e[0]), 21)
+})
+suite.test('util find', function () {
+    assertEqual(nomnoml.skanaar.find([{a:0}, {a:4, needle: true}, {a:17}], e => e.a == 4), { a:4, needle: true })
+})
+suite.test('util last', function () {
+    assertEqual(nomnoml.skanaar.last([{a:0}, {a:4}, {a:17, needle: true}]), { a:17, needle: true })
+})
+suite.test('util hasSubstring', function () {
+    assert(nomnoml.skanaar.hasSubstring("xyz abc", 'xyz'), '=', true)
+    assert(nomnoml.skanaar.hasSubstring("1 xyz 0", 'xyz'), '=', true)
+    assert(nomnoml.skanaar.hasSubstring("abc xyz", 'xyz'), '=', true)
+})
+suite.test('util merged', function () {
+    assertEqual(nomnoml.skanaar.merged({a:4, b: 'x'}, {a:17, c: true}), { a:17, b: 'x', c: true })
+})
+suite.test('util indexBy', function(){
     assertEqual(nomnoml.skanaar.indexBy([], 'name'), {})
     assertEqual(nomnoml.skanaar.indexBy([{name:'apa'}], 'name'), {apa:{name:'apa'}})
+})
+suite.test('util uniqueBy', function () {
+    assertEqual(nomnoml.skanaar.uniqueBy([{a:4, b:'x'}, {a:17, c:'y'}, { a:4, d:'z' }], 'a'), [{ a:4, b:'x' }, {a:17, c:'y'}])
 })
 
 suite.test('processImports resolves shallow imports', function(){
