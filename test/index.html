@@ -5,8 +5,8 @@
   <title>test nomnoml</title>
   <link rel="shortcut icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAOwgAADsIBFShKgAAAABp0RVh0U29mdHdhcmUAUGFpbnQuTkVUIHYzLjUuMTAw9HKhAAAAcUlEQVQ4T2OgGZgxY8b/tLQ0DAyVJgxAitEBUQbMyMv735+SAlaMDogyAKQZRIMUo2NnZ2fiDUAHVVVVuDWDNOUBTUfHUGkwAAUqlIkJQIovr1yJgulvADoO19Eh3gBCYOASFQxQxQB0TFSiogNgYAAA2pPVp9Ngpg4AAAAASUVORK5CYII=">
   <style>
-    body { background-color: #fdf6e3; padding: 0; margin: 10px; overflow-y: scroll }
-    h1 { color: #657b83; font-size: 20px; font-family: Monaco, "Lucida Console", monospace }
+    body { background-color: #fdf6e3; padding: 0; margin: 10px 10px 100px 10px; overflow-y: scroll }
+    h1 { font-size: 20px; font-family: Monaco, "Lucida Console", monospace }
 
     svg, img { height: 280px; max-width: 400px; }
     canvas { max-height: 280px; }
@@ -23,6 +23,9 @@
       font-size: 12px;
       margin: 10px 10px 5px 10px;
     }
+    .crashed { background: red; }
+    .crashed h1 { color: #fff }
+    .crashed canvas { width: 20px; }
   </style>
   <style TestSuite>
     .testsuite { font-size: 13px; margin: 10px; font-family: Monaco, "Lucida Console", monospace }
@@ -78,6 +81,11 @@
   </div>
 
   <div class=testcase>
+    <h1>CLI output</h1>
+    <img src="output.svg">
+  </div>
+
+  <div class=testcase>
     <h1>Built in styles</h1>
     <div nomnoml=canvas>
       <script type="text/vnd.nomnoml">
@@ -88,12 +96,15 @@
 [hidden] -- [<label> label]
 [hidden] - [<instance> instance]
 [<abstract> abstract] <:-- [<instance> instance]
+[<table>table|a|b] -- [abstract]
 [<package> package] <- [<frame> frame]
-[<database> database] <:- [<start> start]
+[<database> database|disk] <:- [<start> start]
+[start] -/- [<usecase> usecase]
 [<end> end] -/- [<state> state]
+[state] - [<actor> actor|subtitle]
 [<choice> choice] <-o [<input> input]
 [<sender> sender] <-+ [<receiver> receiver]
-[<actor> actor] <-> [<usecase> usecase]
+[receiver] +-+ [<transceiver>transceiver]
       </script>
     </div>
   </div>
@@ -157,9 +168,10 @@
   </div>
 
   <div class=testcase>
-    <h1>Ranker config</h1>
+    <h1>Ranker</h1>
     <div nomnoml=canvas>
       <script type="text/vnd.nomnoml">
+#padding: 4
 #ranker: longest-path
 [a] -> [b]
 [a] -> [c]
@@ -169,9 +181,10 @@
   </div>
 
   <div class=testcase>
-    <h1>Gravity config</h1>
+    <h1>Gravity</h1>
     <div nomnoml=canvas>
       <script type="text/vnd.nomnoml">
+#padding: 4
 #gravity: 2
 [a] -> [b]
 [a] _> [c]
@@ -181,10 +194,21 @@
   </div>
 
   <div class=testcase>
-    <h1>Edge linebreak, background</h1>
+    <h1>Weightless</h1>
+    <div nomnoml=canvas>
+      <script type="text/vnd.nomnoml">
+#direction: right
+[a] _> [c]
+      </script>
+    </div>
+  </div>
+
+  <div class=testcase>
+    <h1>Edge linebreak,<br/>background</h1>
     <div nomnoml=canvas>
       <script type="text/vnd.nomnoml">
 #background: #aaa
+#gutter: 1
 #stroke: #eee8d5
 #fill: #aaa
 [Left] left`association <-> right`association [Right]
@@ -206,14 +230,14 @@
     <div nomnoml=canvas>
       <script type="text/vnd.nomnoml">
 #direction: right
-#spacing: 60
+#spacing: 40
 #edgeMargin: -5
-[Left] left - right [C1]
-[Left] left - right [C2]
-[Left] left - right [C3]
-[C1] left - right [Right]
-[C2] left - right [Right]
-[C3] left - right [Right]
+[A] L - R [C1]
+[A] L - R [C2]
+[A] L - R [C3]
+[C1] L - R [B]
+[C2] L - R [B]
+[C3] L - R [B]
       </script>
     </div>
   </div>
@@ -222,6 +246,10 @@
     <h1>Graph size</h1>
     <div nomnoml=canvas>
       <script type="text/vnd.nomnoml">
+#spacing: 15
+#gutter: 1
+#padding: 3
+#background: #aaa4
 [a] - [foo]
 [foo] - [b]
 [a] - [bar]
@@ -262,7 +290,7 @@
   </div>
 
   <div class=testcase>
-    <h1>Text heuristic large font</h1>
+    <h1>Text heuristic<br/>large font</h1>
     <div nomnoml=svg>
       <script type="text/vnd.nomnoml">
 #zoom: 0.5
@@ -278,18 +306,13 @@
     </div>
   </div>
   
-  <div class=testcase>
+  <div class=testcase >
     <h1>long text</h1>
-    <div nomnoml=svg>
+    <div nomnoml=svg style="transform: rotate(90deg) scale(0.7); max-width: 100px; margin: -100px 0;">
       <script type="text/vnd.nomnoml">
-[First, Nomnoml is an amazing piece of software. So with that being said, thank you all for creating something so epic. ]
+[First, Nomnoml is an amazing piece of software. Thank you all for creating something so epic. ]
       </script>
     </div>
-  </div>
-
-  <div class=testcase>
-    <h1>CLI output</h1>
-    <img src="output.svg">
   </div>
 
   <script src="../node_modules/graphre/dist/graphre.js"></script>
@@ -317,12 +340,14 @@
         mountSvg(el.parentElement, el.innerText)
 
       function mountCanvas(host, source){
-        nomnoml.draw(host.appendChild(document.createElement('canvas')), source)
+        try { nomnoml.draw(host.appendChild(document.createElement('canvas')), source) }
+        catch (e) { host.parentElement.classList.add('crashed') }
       }
 
       function mountSvg(host, source){
         var canvas = host.attributes['text-measure-canvas']
-        host.innerHTML = nomnoml.renderSvg(source, canvas ? document : undefined)
+        try { host.innerHTML = nomnoml.renderSvg(source, canvas ? document : undefined) }
+        catch (e) { host.parentElement.classList.add('crashed') }
       }
     }
 

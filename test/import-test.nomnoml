@@ -1,18 +1,10 @@
-#title: import-test
-#direction: right
-#import: box.style.nomnoml
-
-[<frame>frame|[some class]]
-[<package>package|[some class]]
-[<box>box]
-[class|items: Object\[\]] - [<hidden> hidden]
-[hidden] -- [<label> label]
-[hidden] - [<instance> instance]
-[<abstract> abstract] <:-- [<instance> instance]
-[<note> note] -- [<reference> reference]
-[<package> package] <- [<frame> frame]
-[<database> database] <:- [<start> start]
-[<end> end] -/- [<state> state]
-[<choice> choice] <-o [<input> input]
-[<sender> sender] <-+ [<receiver> receiver]
-[<actor> actor] <-> [<usecase> usecase]
+#import: importee.nomnoml
+[Pirate|
+  [a]--[b]
+  [a]-:>[c]
+]
+[<abstract>Marauder]<:--[Pirate]
+[Pirate] - 0..7[<hello>Arrrrrr]
+[<database>db]->[Pirate]
+[db]->[rum]
+[Pirate]-> *[rum]

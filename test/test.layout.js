@@ -173,4 +173,8 @@ suite.test('weightless relations with _> edges', function() {
     assert(directive.height, '=', weightless.height)
 })
 
+suite.test('weightless relations horizontally', function() {
+    parseAndLayout('#direction: right\n[a]_[b]')
+})
+
 suite.report()
