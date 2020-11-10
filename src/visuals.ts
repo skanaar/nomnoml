@@ -342,9 +342,9 @@ export var visualizers: { [key in Visual]: Visualizer } = {
   transceiver : function (node, x, y, config, g) {
       g.circuit([
         {x: x-config.padding, y: y},
-        {x: x+node.width, y: y},
-        {x: x+node.width+config.padding, y: y+node.height/2},
-        {x: x+node.width, y: y+node.height},
+        {x: x+node.width-config.padding, y: y},
+        {x: x+node.width, y: y+node.height/2},
+        {x: x+node.width-config.padding, y: y+node.height},
         {x: x-config.padding, y: y+node.height},
         {x: x, y: y+node.height/2}
       ]).fillAndStroke()
