@@ -1972,6 +1972,7 @@
 
     exports.Classifier = Classifier;
     exports.Compartment = Compartment;
+    exports.ImportDepthError = ImportDepthError;
     exports.Relation = Relation;
     exports.compileFile = compileFile;
     exports.draw = draw;
