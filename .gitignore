@@ -1,14 +1,14 @@
 node_modules/
 
 commercial/
-additionals.js
 nomnoml.sublime-project
 nomnoml.sublime-workspace
 dist/nomnoml.compiled.js
+dist/nomnoml-core-parser.js
 dist/webapp.js
 deploy.sh
 
 cache/
 output.*
 
-dist/nomnoml-core-parser.js
+.vercel
