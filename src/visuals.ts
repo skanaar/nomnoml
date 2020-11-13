@@ -35,7 +35,7 @@ export var styles: { [key: string]: Style } = {
   HIDDEN:      buildStyle({ visual:'hidden', empty:true }, {}),
   INPUT:       buildStyle({ visual:'input' }, { center:true }),
   INSTANCE:    buildStyle({ visual:'class' }, { center:true, underline:true }),
-  LABEL:       buildStyle({ visual:'none' }, {}),
+  LABEL:       buildStyle({ visual:'none' }, { center:true }),
   NOTE:        buildStyle({ visual:'note' }, {}),
   PACKAGE:     buildStyle({ visual:'package' }, {}),
   RECEIVER:    buildStyle({ visual:'receiver' }, {}),
