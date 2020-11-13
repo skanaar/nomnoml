@@ -51,9 +51,14 @@ export function render(graphics: Graphics, config: Config, compartment: Compartm
 			var dash = Math.max(4, 2*config.lineWidth)
 			g.setLineDash([dash, dash])
 		}
-		var drawNode = visualizers[style.visual] || visualizers.class
 		g.setData('name', node.name)
+		var drawNode = visualizers[style.visual] || visualizers.class
 		drawNode(node, x, y, config, g)
+		g.translate(x, y)
+		for(var divider of node.dividers) {
+			g.path(divider).stroke()
+		}
+		g.translate(-x, -y)
 		g.setLineDash([])
 
 		g.save()
@@ -68,9 +73,6 @@ export function render(graphics: Graphics, config: Config, compartment: Compartm
 			renderCompartment(part, style.stroke, textStyle, level+1)
 			g.restore()
 		})
-		for(var divider of node.dividers) {
-			g.path(divider).stroke()
-		}
 		
 		g.restore()
 	}
