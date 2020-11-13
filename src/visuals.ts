@@ -130,6 +130,7 @@ export var layouters: { [key in Visual]: NodeLayouter } = {
   frame: function (config: Config, clas: Classifier) {
     var w = clas.compartments[0].width
     var h = clas.compartments[0].height
+    clas.compartments[0].width += h/2
     box(config, clas)
     if (clas.dividers.length) clas.dividers.shift()
     clas.dividers.unshift([
