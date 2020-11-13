@@ -42,12 +42,14 @@ export function bootstrap(CodeMirror: CodeMirror) {
 
     var sources = document.querySelectorAll('[append-nomnoml-preview]')
     for(var i=0; i<sources.length; i++) {
-      var srcEl = sources[i]
-      var src = nomnoml.processImports(unescapeHtml(srcEl.innerHTML), (key: string) => files[key])
-      var svg = nomnoml.renderSvg(src, document)
-      var div = document.createElement('div')
-      div.innerHTML = svg
-      srcEl.append(div)
+      try {
+        var srcEl = sources[i]
+        var src = nomnoml.processImports(unescapeHtml(srcEl.innerHTML), (key: string) => files[key])
+        var svg = nomnoml.renderSvg(src, document)
+        var div = document.createElement('div')
+        div.innerHTML = svg
+        srcEl.append(div)
+      } catch(e) {}
     }
   }
 
