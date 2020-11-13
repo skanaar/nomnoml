@@ -43,6 +43,7 @@ export var styles: { [key: string]: Style } = {
   SENDER:      buildStyle({ visual:'sender' }, {}),
   START:       buildStyle({ visual:'start', empty:true }, {}),
   STATE:       buildStyle({ visual:'roundrect' }, { center:true }),
+  SYNC:        buildStyle({ visual:'sync' }, { center:true }),
   TABLE:       buildStyle({ visual:'table' }, { center:true, bold:true }),
   TRANSCEIVER: buildStyle({ visual:'transceiver' }, {}),
   USECASE:     buildStyle({ visual:'ellipse' }, { center:true }, { center: true }),
@@ -174,6 +175,17 @@ export var layouters: { [key in Visual]: NodeLayouter } = {
   roundrect: box,
   sender: box,
   start: icon,
+  sync: function (config: Config, clas: Classifier) {
+    clas.dividers = []
+    clas.compartments = []
+    if (config.direction == 'LR') {
+      clas.width = config.lineWidth * 3
+      clas.height = config.fontSize * 5
+    } else {
+      clas.width = config.fontSize * 5
+      clas.height = config.lineWidth * 3
+    }
+  },
   table: function (config: Config, clas: Classifier) {
     if (clas.compartments.length == 1) {
       box(config, clas)
@@ -336,6 +348,10 @@ export var visualizers: { [key in Visual]: Visualizer } = {
   start : function (node, x, y, config, g) {
     g.fillStyle(config.stroke)
     g.circle({ x:node.x, y:y+node.height/2 }, node.height/2.5).fill()
+  },
+  sync : function (node, x, y, config, g) {
+    g.fillStyle(config.stroke)
+    g.rect(x, y, node.width, node.height).fillAndStroke()
   },
   table : function (node, x, y, config, g) {
     g.rect(x, y, node.width, node.height).fillAndStroke()

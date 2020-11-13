@@ -57,6 +57,7 @@ export type Visual =
   'roundrect'|
   'sender'|
   'start'|
+  'sync'|
   'table'|
   'transceiver'
   

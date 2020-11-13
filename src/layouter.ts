@@ -29,7 +29,8 @@ export function layout(measurer: Measurer, config: Config, ast: Compartment): Co
 			return
 		}
 
-		c.nodes.forEach(layoutClassifier)
+		var styledConfig = { ...config, direction: style.direction ?? config.direction }
+		c.nodes.forEach(e => layoutClassifier(e, styledConfig))
 
 		var g = new graphlib.Graph<GraphLabel, GraphNode, EdgeLabel & { id: number }>()
 		g.setGraph({
@@ -141,7 +142,7 @@ export function layout(measurer: Measurer, config: Config, ast: Compartment): Co
 	
 	}
 	
-	function layoutClassifier(clas: Classifier): void {
+	function layoutClassifier(clas: Classifier, config: Config): void {
 		var style = config.styles[clas.type] || styles.CLASS
 		clas.compartments.forEach(function(co,i){ layoutCompartment(co, i, style) })
 		layouters[style.visual](config, clas)

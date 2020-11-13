@@ -105,7 +105,7 @@
         HIDDEN: buildStyle({ visual: 'hidden', empty: true }, {}),
         INPUT: buildStyle({ visual: 'input' }, { center: true }),
         INSTANCE: buildStyle({ visual: 'class' }, { center: true, underline: true }),
-        LABEL: buildStyle({ visual: 'none' }, {}),
+        LABEL: buildStyle({ visual: 'none' }, { center: true }),
         NOTE: buildStyle({ visual: 'note' }, {}),
         PACKAGE: buildStyle({ visual: 'package' }, {}),
         RECEIVER: buildStyle({ visual: 'receiver' }, {}),
@@ -113,6 +113,7 @@
         SENDER: buildStyle({ visual: 'sender' }, {}),
         START: buildStyle({ visual: 'start', empty: true }, {}),
         STATE: buildStyle({ visual: 'roundrect' }, { center: true }),
+        SYNC: buildStyle({ visual: 'sync' }, { center: true }),
         TABLE: buildStyle({ visual: 'table' }, { center: true, bold: true }),
         TRANSCEIVER: buildStyle({ visual: 'transceiver' }, {}),
         USECASE: buildStyle({ visual: 'ellipse' }, { center: true }, { center: true }),
@@ -197,6 +198,7 @@
         frame: function (config, clas) {
             var w = clas.compartments[0].width;
             var h = clas.compartments[0].height;
+            clas.compartments[0].width += h / 2;
             box(config, clas);
             if (clas.dividers.length)
                 clas.dividers.shift();
@@ -241,6 +243,18 @@
         roundrect: box,
         sender: box,
         start: icon,
+        sync: function (config, clas) {
+            clas.dividers = [];
+            clas.compartments = [];
+            if (config.direction == 'LR') {
+                clas.width = config.lineWidth * 3;
+                clas.height = config.fontSize * 5;
+            }
+            else {
+                clas.width = config.fontSize * 5;
+                clas.height = config.lineWidth * 3;
+            }
+        },
         table: function (config, clas) {
             if (clas.compartments.length == 1) {
                 box(config, clas);
@@ -406,6 +420,10 @@
             g.fillStyle(config.stroke);
             g.circle({ x: node.x, y: y + node.height / 2 }, node.height / 2.5).fill();
         },
+        sync: function (node, x, y, config, g) {
+            g.fillStyle(config.stroke);
+            g.rect(x, y, node.width, node.height).fillAndStroke();
+        },
         table: function (node, x, y, config, g) {
             g.rect(x, y, node.width, node.height).fillAndStroke();
         },
@@ -432,7 +450,7 @@
             };
         }
         function layoutCompartment(c, compartmentIndex, style) {
-            var _a;
+            var _a, _b;
             var textSize = measureLines(c.lines, compartmentIndex ? 'normal' : 'bold');
             if (!c.nodes.length && !c.relations.length) {
                 c.width = textSize.width;
@@ -440,7 +458,8 @@
                 c.offset = { x: config.padding, y: config.padding };
                 return;
             }
-            c.nodes.forEach(layoutClassifier);
+            var styledConfig = Object.assign(Object.assign({}, config), { direction: (_a = style.direction) !== null && _a !== void 0 ? _a : config.direction });
+            c.nodes.forEach(e => layoutClassifier(e, styledConfig));
             var g = new graphre.graphlib.Graph();
             g.setGraph({
                 rankdir: style.direction || config.direction,
@@ -457,7 +476,7 @@
                 if (r.assoc.indexOf('_') > -1) {
                     g.setEdge(r.start, r.end, { id: r.id, minlen: 0 });
                 }
-                else if (((_a = config.gravity) !== null && _a !== void 0 ? _a : 1) != 1) {
+                else if (((_b = config.gravity) !== null && _b !== void 0 ? _b : 1) != 1) {
                     g.setEdge(r.start, r.end, { id: r.id, minlen: config.gravity });
                 }
                 else {
@@ -546,7 +565,7 @@
             }
             return quadrant;
         }
-        function layoutClassifier(clas) {
+        function layoutClassifier(clas, config) {
             var style = config.styles[clas.type] || styles.CLASS;
             clas.compartments.forEach(function (co, i) { layoutCompartment(co, i, style); });
             layouters[style.visual](config, clas);
@@ -1404,9 +1423,14 @@
                 var dash = Math.max(4, 2 * config.lineWidth);
                 g.setLineDash([dash, dash]);
             }
-            var drawNode = visualizers[style.visual] || visualizers.class;
             g.setData('name', node.name);
+            var drawNode = visualizers[style.visual] || visualizers.class;
             drawNode(node, x, y, config, g);
+            g.translate(x, y);
+            for (var divider of node.dividers) {
+                g.path(divider).stroke();
+            }
+            g.translate(-x, -y);
             g.setLineDash([]);
             g.save();
             g.translate(x, y);
@@ -1420,9 +1444,6 @@
                 renderCompartment(part, style.stroke, textStyle, level + 1);
                 g.restore();
             });
-            for (var divider of node.dividers) {
-                g.path(divider).stroke();
-            }
             g.restore();
         }
         function strokePath(p) {

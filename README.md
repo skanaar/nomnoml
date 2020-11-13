@@ -106,6 +106,7 @@ This is how the Decorator pattern looks like in nomnoml syntax:
     [<end> name]
     [<state> name]
     [<choice> name]
+    [<sync> name]
     [<input> name]
     [<sender> name]
     [<receiver> name]
