@@ -68,10 +68,6 @@ export function FileMenu(props: { app: App }) {
     a({ className: "btn", href: "/", onClick: prevent(() => props.app.saveAs()) },
         el(Icon, { shape: document_add }), 'Save to local file...',
     ),
-    
-    el('p', {}, 'Import files with ', el('code', {}, '#import: file')),
-    
-    el('p', {}, 'Create folders with ', el('code', {}, '/'),' in filename'),
 
     h2({}, 'Local files'),
 
@@ -79,6 +75,12 @@ export function FileMenu(props: { app: App }) {
         a({ href: "#" }, el(Icon, { shape: home_outline }), 'Home'),
     ),
 
-    entries.map(e => (e.isDir ? makeDirEntry(e.name) : makeFileEntry(e.name, e.entry)))
+    entries.map(e => (e.isDir ? makeDirEntry(e.name) : makeFileEntry(e.name, e.entry))),
+    
+    h2({}, ' '),
+    
+    el('p', {}, 'Import files with ', el('code', {}, '#import: file')),
+    
+    el('p', {}, 'Create folders with ', el('code', {}, '/'),' in filename')
   )
 }
