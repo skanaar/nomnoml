@@ -102,7 +102,8 @@
 [start] -/- [<usecase> usecase]
 [<end> end] -/- [<state> state]
 [state] - [<actor> actor|subtitle]
-[<choice> choice] <-o [<input> input]
+[<choice> choice] - [<sync>sync]
+[sync] - [<input> input]
 [<sender> sender] <-+ [<receiver> receiver]
 [receiver] +-+ [<transceiver>transceiver]
       </script>
