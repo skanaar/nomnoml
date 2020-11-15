@@ -72,7 +72,6 @@ export interface Style {
   title: TextStyle
   body: TextStyle
   dashed: boolean
-  empty: boolean
   fill: string|undefined
   stroke: string|undefined
   visual: Visual

@@ -66,7 +66,6 @@ export function render(graphics: Graphics, config: Config, compartment: Compartm
 
 		node.compartments.forEach(function (part: Compartment, i: number){
 			var textStyle = i == 0 ? style.title : style.body;
-			if (style.empty) return
 			g.save()
 			g.translate(part.x, part.y)
 			setFont(config, textStyle.bold ? 'bold' : 'normal', textStyle.italic ? 'italic' : undefined)

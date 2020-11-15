@@ -93,7 +93,6 @@ export function parse(source: string): ParsedDiagram {
 				center: contains(bodyDef, 'center'),
 			},
 			dashed: contains(styleDef, 'dashed'),
-			empty: contains(styleDef, 'empty'),
 			fill: last(styleDef.match('fill=([^ ]*)') || []),
 			stroke: last(styleDef.match('stroke=([^ ]*)') || []),
 			visual: (last(styleDef.match('visual=([^ ]*)') || []) || 'class') as Visual,

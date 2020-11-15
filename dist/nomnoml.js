@@ -87,7 +87,6 @@
                 center: body.center || false,
             },
             dashed: conf.dashed || false,
-            empty: conf.empty || false,
             fill: conf.fill || undefined,
             stroke: conf.stroke || undefined,
             visual: conf.visual || 'class',
@@ -100,9 +99,9 @@
         CHOICE: buildStyle({ visual: 'rhomb' }, { center: true }, { center: true }),
         CLASS: buildStyle({ visual: 'class' }, { center: true, bold: true }),
         DATABASE: buildStyle({ visual: 'database' }, { center: true, bold: true }, { center: true }),
-        END: buildStyle({ visual: 'end', empty: true }, {}),
+        END: buildStyle({ visual: 'end' }, {}),
         FRAME: buildStyle({ visual: 'frame' }, {}),
-        HIDDEN: buildStyle({ visual: 'hidden', empty: true }, {}),
+        HIDDEN: buildStyle({ visual: 'hidden' }, {}),
         INPUT: buildStyle({ visual: 'input' }, { center: true }),
         INSTANCE: buildStyle({ visual: 'class' }, { center: true, underline: true }),
         LABEL: buildStyle({ visual: 'none' }, { center: true }),
@@ -111,7 +110,7 @@
         RECEIVER: buildStyle({ visual: 'receiver' }, {}),
         REFERENCE: buildStyle({ visual: 'class', dashed: true }, { center: true }),
         SENDER: buildStyle({ visual: 'sender' }, {}),
-        START: buildStyle({ visual: 'start', empty: true }, {}),
+        START: buildStyle({ visual: 'start' }, {}),
         STATE: buildStyle({ visual: 'roundrect' }, { center: true }),
         SYNC: buildStyle({ visual: 'sync' }, { center: true }),
         TABLE: buildStyle({ visual: 'table' }, { center: true, bold: true }),
@@ -1276,7 +1275,6 @@
                     center: contains(bodyDef, 'center'),
                 },
                 dashed: contains(styleDef, 'dashed'),
-                empty: contains(styleDef, 'empty'),
                 fill: last(styleDef.match('fill=([^ ]*)') || []),
                 stroke: last(styleDef.match('stroke=([^ ]*)') || []),
                 visual: (last(styleDef.match('visual=([^ ]*)') || []) || 'class'),
@@ -1436,8 +1434,6 @@
             g.translate(x, y);
             node.compartments.forEach(function (part, i) {
                 var textStyle = i == 0 ? style.title : style.body;
-                if (style.empty)
-                    return;
                 g.save();
                 g.translate(part.x, part.y);
                 setFont(config, textStyle.bold ? 'bold' : 'normal', textStyle.italic ? 'italic' : undefined);
