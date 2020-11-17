@@ -153,19 +153,22 @@ export class App {
     }
   }
 
-  saveAs() {
-    var name = prompt('Name your diagram')
+  async saveAs(defaultName: string = ''): Promise<'success'|'failure'> {
+    var name = prompt('Name your diagram', defaultName)
     var source = this.currentSource()
     if (name) {
-      this.filesystem.storage.files().then(files => {
+      return this.filesystem.storage.files().then(files => {
         if (files.some((e: FileEntry) => e.name === name)) {
           alert('A file named '+name+' already exists.')
+          return 'failure'
         } else {
           this.filesystem.moveToFileStorage(name, source)
           location.href = '#file/' + encodeURIComponent(name)
+          return 'success'
         }
       })
     }
+    return 'failure'
   }
 
   exitViewMode(){

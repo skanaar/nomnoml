@@ -2,7 +2,7 @@ import { App } from "./App"
 import { FileEntry } from "./FileSystem"
 import { Icon } from "./Icon.comp"
 import { a, div, el, h2, input, label, prevent } from "./react-util"
-import { document_add, folder, home_outline, image_outline, trash } from "./typicons"
+import { document_add, folder, home_outline, image_outline, pencil, trash } from "./typicons"
 
 export function FileMenu(props: { app: App, files: FileEntry[], isLoaded: boolean }) {
   var filesystem = props.app.filesystem
@@ -39,11 +39,22 @@ export function FileMenu(props: { app: App, files: FileEntry[], isLoaded: boolea
     props.app.handleOpeningFiles(files)
   }
   
+  async function rename(entry: FileEntry) {
+    var status = await props.app.saveAs(entry.name)
+    if (status == 'success') {
+      filesystem.discard(entry)
+    }
+  }
+  
   function makeFileEntry(name: string, entry: FileEntry) {
     var activeness = isActive(entry) ? 'active ' : ''
     var indention = (name === entry.name) ? '' : 'indented'
-    return div({ key: entry.name, className: 'file-entry ' + activeness + indention },
+    return div(
+      { key: entry.name, className: 'file-entry ' + activeness + indention },
       a({ href: itemPath(entry) }, name),
+      isActive(entry) && a({ onClick: prevent(() =>rename(entry)), title: "Rename this diagram" },
+          el(Icon, { shape: pencil })
+      ),
       a({ onClick: prevent(() =>discard(entry)), title: "Discard this diagram" },
           el(Icon, { shape: trash })
       )
