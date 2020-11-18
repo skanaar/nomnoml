@@ -3,6 +3,7 @@ import { nodeResolve } from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import typescript from '@rollup/plugin-typescript';
 import ignore from "rollup-plugin-ignore";
+import gitVersion from 'rollup-plugin-git-version';
 
 export default {
   input: 'webapp/index.ts',
@@ -19,6 +20,7 @@ export default {
   plugins: [
     ignore(["fs", "path"]),
     typescript({ noEmit: false }),
+    gitVersion(),
     nodeResolve({ preferBuiltins: true }),
     commonjs({ include: ['node_modules/**', 'dist/**'] }),
     terser({ output: { comments: false } })

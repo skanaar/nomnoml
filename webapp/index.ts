@@ -16,6 +16,9 @@ export { App } from "./App"
 
 export var app: App;
 
+// @ts-ignore
+export { version } from "../package.json";
+
 export function bootstrap(CodeMirror: CodeMirror) {
   app = new App(CodeMirror)
   var elem = (query: string) => document.querySelector(query)
