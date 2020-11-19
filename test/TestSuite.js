@@ -1,20 +1,12 @@
 function TestSuite(suiteName, reportSelector) {
 	var isBrowser = typeof document == 'object'
-	var results = []
-	var tests = {}
-	var suite = { tests, results, test, node_test, ignore_test, report }
+	var suite = { tests:{}, promises:[], results:[], test, node_test, ignore_test, report }
 	TestSuite.suites = TestSuite.suites || {}
 	TestSuite.suites[suiteName] = suite
 
 	function test(name, test) {
 		suite.tests[name] = test
-		try {
-			test()
-			results.push({ name: name, status: 'success', error: false })
-		}
-		catch(e) {
-			results.push({ name: name, status: 'failure', error: e })
-		}
+		suite.promises.push(TestSuite.evaluateTestAsync(name, test))
 	}
 
 	function node_test(name, fn) {
@@ -24,15 +16,18 @@ function TestSuite(suiteName, reportSelector) {
 	
 	function ignore_test(name, test) {
 		suite.tests[name] = test
-		results.push({ name: name, status: 'ignored', error: false })
+		suite.promises.push(Promise.resolve({ name: name, status: 'ignored', error: false }))
 	}
 
 	function report() {
-		if(isBrowser) report_html()
-		else report_console()
+		Promise.all(suite.promises).then(function (results) {
+			suite.results = results
+			if(isBrowser) report_html(results)
+			else report_console(results)
+		})
 	}
 
-	function report_html() {
+	function report_html(results) {
 		function esc(str) {
 			return str.toString()
 				.split('&').join('&amp;')
@@ -59,7 +54,10 @@ function TestSuite(suiteName, reportSelector) {
 		}
 	}
 
-	function report_console() {
+	function report_console(results) {
+		if (TestSuite.verbose) {
+			results.forEach(function (e) { console.log(e.status, ' ', e.name) })
+		}
 		var failures = results.filter(e => e.status == 'failure')
 		failures.forEach(function (e){
 			console.log('\x1b[31m%s\x1b[0m', e.name)
@@ -72,9 +70,25 @@ function TestSuite(suiteName, reportSelector) {
 	return suite
 }
 
-TestSuite.run = function (suite, test) {
-	try { TestSuite.suites[suite].tests[test]() }
-	catch(e) { console.log(name + ' failed ', e) }
+TestSuite.evaluateTestAsync = function (name, test) {
+	try {
+		var output = test()
+		if (output && 'function' == typeof output.then) {
+			return output
+				.then(() => ({ name: name, status: 'success' }))
+				.catch((e) => ({ name: name, status: 'failure', error: e }))
+		} else {
+			return Promise.resolve({ name: name, status: 'success' })
+		}
+	}
+	catch(e) {
+		return Promise.resolve({ name: name, status: 'failure', error: e })
+	}
+}
+
+TestSuite.run = function (suite, testname) {
+	var test = TestSuite.suites[suite].tests[testname]
+	TestSuite.evaluateTestAsync(testname, test).then(res => console.log(res))
 }
 
 TestSuite.isEqual = function (a, b) {
@@ -123,5 +137,7 @@ TestSuite.assert = function (a, operator, b) {
 TestSuite.assertEqual = function (a, b) {
 	TestSuite.assert(a, '=', b)
 }
+
+TestSuite.verbose = false
 
 module.exports = TestSuite

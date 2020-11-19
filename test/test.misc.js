@@ -1,4 +1,10 @@
-var { skanaar, processImports, ImportDepthError, renderSvg } = require('../dist/nomnoml.js')
+var {
+    skanaar,
+    processImports,
+    processAsyncImports,
+    ImportDepthError,
+    renderSvg
+} = require('../dist/nomnoml.js')
 var TestSuite = require('./TestSuite.js')
 
 var suite = TestSuite('Misc')
@@ -94,23 +100,22 @@ suite.test('processImports throw on recursive imports', function(){
     TestSuite.assert(() => processImports('#import: root', (key) => '#import: root'), 'throws', ImportDepthError)
 })
 
-suite.test('processImports resolves deep imports', function(){
-    var mockFiles = {
-        root: `
+var mockFiles = {
+    root: `
 A
 #import: file1
 B
 #import: file2
 C`,
-        file1: `
+    file1: `
 X
 #import: file3
 Y`,
-        file2: 'Q',
-        file3: 'W'
-    }
-    var output = processImports(mockFiles['root'], (key) => mockFiles[key])
-    assert(output, '=', `
+    file2: 'Q',
+    file3: 'W'
+}
+
+var mockResult = `
 A
 
 X
@@ -118,7 +123,23 @@ W
 Y
 B
 Q
-C`)
+C`
+
+suite.test('processImports resolves deep imports', function(){
+    var output = processImports(mockFiles['root'], (key) => mockFiles[key])
+    assert(output, '=', mockResult)
+})
+
+suite.test('processAsyncImports resolves deep imports', async function(){
+    var delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+    var output = await processAsyncImports(mockFiles['root'], (key) => delay(1).then(() => mockFiles[key]))
+    assert(output, '=', mockResult)
+})
+
+suite.node_test('processAsyncImports via file system', async function () {
+    var fs = require('fs')
+    var output = await processAsyncImports(fs.readFileSync('test/import-test.nomnoml', 'utf-8'), (key) => fs.promises.readFile('test/'+key, 'utf-8'))
+    fs.writeFileSync('test/output.async.svg', output)
 })
 
 suite.test('escape [data-name] attribute value in SVG', function() {
