@@ -20,6 +20,10 @@ export class FileSystem {
   activeFile: FileEntry = { name: '', date: '1970-01-01', backingStore: 'url' }
   storage: GraphStore = new StoreDefaultBuffer()
 
+  finishedInsertingFiles() {
+    this.signals.trigger('updated')
+  }
+
   async moveToFileStorage(name: string, source: string) {
     var fileStore = new StoreLocal(name)
     fileStore.insert(source)

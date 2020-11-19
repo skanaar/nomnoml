@@ -7,14 +7,15 @@ import gitVersion from 'rollup-plugin-git-version';
 
 export default {
   input: 'webapp/index.ts',
-  external: ['react', 'react-dom'],
+  external: ['react', 'react-dom', 'jszip'],
   output: {
     file: 'dist/webapp.js',
     format: 'umd',
     name: 'WebApp',
     globals: {
       'react': 'React',
-      'react-dom': 'ReactDOM'
+      'react-dom': 'ReactDOM',
+      'jszip': 'JSZip'
     },
   },
   plugins: [
