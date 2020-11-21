@@ -61,7 +61,7 @@ export class App {
       await this.filesystem.configureByRoute(location.hash)
       try {
         var source = await this.filesystem.storage.read()
-        this.editor.setValue(source || '')
+        this.editor.setValue(source || this.defaultSource)
         this.sourceChanged()
       } catch(e) { console.log(e) }
     }
