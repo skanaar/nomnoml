@@ -45,7 +45,7 @@ export function GraphicsSvg(globalStyle: string, document?: HTMLDocument): ISvgG
 	var states = [initialState]
 	var elements: Element[] = []
 
-	var measurementCanvas: HTMLCanvasElement = document ? document.createElement('canvas') : null;
+	var measurementCanvas: HTMLCanvasElement|null = document ? document.createElement('canvas') : null;
 	var ctx = measurementCanvas ? measurementCanvas.getContext('2d') : null
 
 	class Element {
@@ -56,7 +56,7 @@ export function GraphicsSvg(globalStyle: string, document?: HTMLDocument): ISvgG
 		}
 		name: string
 		attr: any
-		content: string
+		content: string|undefined
 		stroke(){
 			var base = this.attr.style || ''
 			this.attr.style = base +
@@ -112,9 +112,7 @@ export function GraphicsSvg(globalStyle: string, document?: HTMLDocument): ISvgG
 
 	function last<T>(list: T[]): T { return list[list.length-1] }
 
-	function tracePath(path: Vector[], offset?: Vector, s?: number): Chainable {
-		s = s === undefined ? 1 : s
-		offset = offset || {x:0, y:0}
+	function tracePath(path: Vector[], offset: Vector = {x:0, y:0}, s: number = 1): Chainable {
 		var d = path.map(function (e, i){
 			return (i ? 'L' : 'M') + tX(offset.x + s*e.x) + ' ' + tY(offset.y + s*e.y)
 		}).join(' ')

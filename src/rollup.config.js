@@ -20,6 +20,7 @@ export default {
       noUnusedLocals: true,
       noImplicitAny: true,
       noUnusedLocals: true,
+      strictNullChecks: true,
       removeComments: true,
       moduleResolution: 'node'
     }),

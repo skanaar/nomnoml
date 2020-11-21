@@ -12,7 +12,7 @@ export function layout(measurer: Measurer, config: Config, ast: Compartment): Co
 	function measureLines(lines: string[], fontWeight: 'normal'|'bold'){
 		if (!lines.length)
 			return { width: 0, height: config.padding }
-		measurer.setFont(config, fontWeight, 'normal')
+		measurer.setFont(config, fontWeight, null)
 		return {
 			width: Math.round(Math.max(...lines.map(measurer.textWidth)) + 2*config.padding),
 			height: Math.round(measurer.textHeight() * lines.length + 2*config.padding)
@@ -62,8 +62,8 @@ export function layout(measurer: Measurer, config: Config, ast: Compartment): Co
 		var nodes = indexBy(c.nodes, 'name')
 		g.nodes().forEach(function(name: string) {
 			var node = g.node(name)
-			nodes[name].x = node.x
-			nodes[name].y = node.y
+			nodes[name].x = node.x!
+			nodes[name].y = node.y!
 		})
 		var left = 0
 		var right = 0
@@ -74,20 +74,20 @@ export function layout(measurer: Measurer, config: Config, ast: Compartment): Co
 			var start = nodes[edgeObj.v]
 			var end = nodes[edgeObj.w]
 			var rel = rels[edge.id]
-			rel.path = [start, ...edge.points, end].map(toPoint)
+			rel.path = [start, ...edge.points!, end].map(toPoint)
 			
 			var startP = rel.path[1];
 			var endP = rel.path[rel.path.length - 2];
 			layoutLabel(rel.startLabel, startP, adjustQuadrant(quadrant(startP, start, 4), start, end));
 			layoutLabel(rel.endLabel, endP, adjustQuadrant(quadrant(endP, end, 2), end, start));
-			left = Math.min(left, rel.startLabel.x, rel.endLabel.x, ...edge.points.map(e => e.x), ...edge.points.map(e => e.x))
-			right = Math.max(right, rel.startLabel.x + rel.startLabel.width, rel.endLabel.x + rel.endLabel.width, ...edge.points.map(e => e.x))
-			top = Math.min(top, rel.startLabel.y, rel.endLabel.y, ...edge.points.map(e => e.y))
-			bottom = Math.max(bottom, rel.startLabel.y + rel.startLabel.height, rel.endLabel.y + rel.endLabel.height, ...edge.points.map(e => e.y))
+			left = Math.min(left, rel.startLabel.x!, rel.endLabel.x!, ...edge.points!.map(e => e.x), ...edge.points!.map(e => e.x))
+			right = Math.max(right, rel.startLabel.x! + rel.startLabel.width!, rel.endLabel.x! + rel.endLabel.width!, ...edge.points!.map(e => e.x))
+			top = Math.min(top, rel.startLabel.y!, rel.endLabel.y!, ...edge.points!.map(e => e.y))
+			bottom = Math.max(bottom, rel.startLabel.y! + rel.startLabel.height!, rel.endLabel.y! + rel.endLabel.height!, ...edge.points!.map(e => e.y))
 		})
 		var graph = g.graph()
-		var width = Math.max(graph.width, right - left)
-		var height = Math.max(graph.height, bottom - top)
+		var width = Math.max(graph.width!, right - left)
+		var height = Math.max(graph.height!, bottom - top)
 		var graphHeight = height ? height + 2*config.gutter : 0
 		var graphWidth = width ? width + 2*config.gutter : 0
 

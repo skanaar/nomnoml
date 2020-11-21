@@ -97,8 +97,8 @@ export class StoreUrl implements GraphStore {
   }
   async read(): Promise<string> { return this.source }
   async insert(source: string): Promise<void> { }
-  async save(source: string): Promise<void> { return null }
-  async clear(): Promise<void> { return null }
+  async save(source: string): Promise<void> { }
+  async clear(): Promise<void> { }
 }
 
 export class StoreLocal implements GraphStore {

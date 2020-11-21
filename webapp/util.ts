@@ -15,9 +15,9 @@ export function unescapeHtml(str: string): string {
 }
 
 export function throttle(func: Function, wait: number, options: { leading?: boolean, trailing?: boolean } = {}) {
-  var timeout: NodeJS.Timeout;
+  var timeout: NodeJS.Timeout|null;
   var context: any;
-  var args: IArguments;
+  var args: IArguments|null;
   var result: any;
   var previous = 0;
 
@@ -50,7 +50,7 @@ export function throttle(func: Function, wait: number, options: { leading?: bool
 }
 
 export function debounce(func: Function, wait: number, immediate: boolean = false) {
-  var timeout: NodeJS.Timeout;
+  var timeout: NodeJS.Timeout|null;
   var result: any;
 
   function later(context: any, args: any[]) {

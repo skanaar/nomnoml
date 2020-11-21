@@ -5,14 +5,14 @@ import { Vec, diff, normalize, add, mult, rot } from "./vector"
 import { buildStyle, styles, visualizers } from "./visuals"
 
 interface SetFont {
-  (config: Config, isBold: string, isItalic?: string): void
+  (config: Config, isBold: string, isItalic: string|null): void
 }
 
 export function render(graphics: Graphics, config: Config, compartment: Compartment, setFont: SetFont){
 
 	var g = graphics
 
-	function renderCompartment(compartment: Compartment, color: string, style: TextStyle, level: number){
+	function renderCompartment(compartment: Compartment, color: string|undefined, style: TextStyle, level: number){
 		g.save()
 		g.translate(compartment.offset.x, compartment.offset.y)
 		g.fillStyle(color || config.stroke)
@@ -68,7 +68,7 @@ export function render(graphics: Graphics, config: Config, compartment: Compartm
 			var textStyle = i == 0 ? style.title : style.body;
 			g.save()
 			g.translate(part.x, part.y)
-			setFont(config, textStyle.bold ? 'bold' : 'normal', textStyle.italic ? 'italic' : undefined)
+			setFont(config, textStyle.bold ? 'bold' : 'normal', textStyle.italic ? 'italic' : null)
 			renderCompartment(part, style.stroke, textStyle, level+1)
 			g.restore()
 		})
@@ -98,16 +98,16 @@ export function render(graphics: Graphics, config: Config, compartment: Compartm
 		if (!label || !label.text) return
 		var fontSize = config.fontSize
 		var lines = label.text.split('`')
-		lines.forEach((l, i) => g.fillText(l, label.x, label.y + fontSize*(i+1)))
+		lines.forEach((l, i) => g.fillText(l, label.x!, label.y! + fontSize*(i+1)))
 	}
 
 	function renderRelation(r: Relation){
-		var start = r.path[1]
-		var end = r.path[r.path.length-2]
-		var path = r.path.slice(1, -1)
+		var start = r.path![1]
+		var end = r.path![r.path!.length-2]
+		var path = r.path!.slice(1, -1)
 		
 		g.fillStyle(config.stroke)
-		setFont(config, 'normal')
+		setFont(config, 'normal', null)
 
 		renderLabel(r.startLabel)
 		renderLabel(r.endLabel)
@@ -175,7 +175,7 @@ export function render(graphics: Graphics, config: Config, compartment: Compartm
 	g.save()
 	g.scale(config.zoom, config.zoom)
 	setBackground()
-	setFont(config, 'bold')
+	setFont(config, 'bold', null)
 	g.lineWidth(config.lineWidth)
 	g.lineJoin('round')
 	g.lineCap('round')

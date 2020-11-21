@@ -6,7 +6,7 @@ interface ICanvasGraphics extends Graphics {
 }
 
 export function GraphicsCanvas(canvas: HTMLCanvasElement, callbacks?: any): ICanvasGraphics {
-	var ctx = canvas.getContext('2d');
+	var ctx = canvas.getContext('2d')!;
 	var mousePos = { x: 0, y: 0 }
 	var twopi = 2*3.1416
 

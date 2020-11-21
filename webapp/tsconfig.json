@@ -4,6 +4,7 @@
     "target": "es5",
     "noEmit": true,
     "noImplicitAny": true,
+    "strictNullChecks": true,
     "removeComments": true,
     "moduleResolution": "node"
   },

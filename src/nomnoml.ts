@@ -1,4 +1,4 @@
-import { Config, Measurer } from "./domain"
+import type { Config, Measurer } from "./domain"
 import { Graphics } from "./Graphics";
 import { layout } from "./layouter";
 import { parse } from "./parser";
@@ -13,20 +13,20 @@ function fitCanvasSize(canvas: HTMLCanvasElement, rect: Rect, zoom: number) {
   canvas.height = rect.height * zoom;
 }
 
-function Measurer(config: Config, graphics: Graphics) {
+function createMeasurer(config: Config, graphics: Graphics): Measurer {
   return {
-    setFont(conf: Config, bold: 'bold'|'normal', ital:'italic'|undefined): void {
-      graphics.setFont(conf.font, bold, ital, config.fontSize)
+    setFont(conf: Config, bold: 'bold'|'normal', ital:'italic'|null): void {
+      graphics.setFont(conf.font, bold, ital ?? null, config.fontSize)
     },
     textWidth: function (s: string): number { return graphics.measureText(s).width },
     textHeight: function (): number { return config.leading * config.fontSize }
   }
 };
 
-function parseAndRender(code: string, graphics: Graphics, canvas: HTMLCanvasElement, scale: number) {
+function parseAndRender(code: string, graphics: Graphics, canvas: HTMLCanvasElement|null, scale: number) {
   var parsedDiagram = parse(code)
   var config = parsedDiagram.config
-  var measurer = Measurer(config, graphics)
+  var measurer = createMeasurer(config, graphics)
   var graphLayout = layout(measurer, config, parsedDiagram.root)
   if (canvas) { fitCanvasSize(canvas, graphLayout, config.zoom * scale) }
   config.zoom *= scale

@@ -467,7 +467,7 @@
         function measureLines(lines, fontWeight) {
             if (!lines.length)
                 return { width: 0, height: config.padding };
-            measurer.setFont(config, fontWeight, 'normal');
+            measurer.setFont(config, fontWeight, null);
             return {
                 width: Math.round(Math.max(...lines.map(measurer.textWidth)) + 2 * config.padding),
                 height: Math.round(measurer.textHeight() * lines.length + 2 * config.padding)
@@ -1461,7 +1461,7 @@
                 var textStyle = i == 0 ? style.title : style.body;
                 g.save();
                 g.translate(part.x, part.y);
-                setFont(config, textStyle.bold ? 'bold' : 'normal', textStyle.italic ? 'italic' : undefined);
+                setFont(config, textStyle.bold ? 'bold' : 'normal', textStyle.italic ? 'italic' : null);
                 renderCompartment(part, style.stroke, textStyle, level + 1);
                 g.restore();
             });
@@ -1494,7 +1494,7 @@
             var end = r.path[r.path.length - 2];
             var path = r.path.slice(1, -1);
             g.fillStyle(config.stroke);
-            setFont(config, 'normal');
+            setFont(config, 'normal', null);
             renderLabel(r.startLabel);
             renderLabel(r.endLabel);
             if (r.assoc !== '-/-' && r.assoc !== '_/_') {
@@ -1554,7 +1554,7 @@
         g.save();
         g.scale(config.zoom, config.zoom);
         setBackground();
-        setFont(config, 'bold');
+        setFont(config, 'bold', null);
         g.lineWidth(config.lineWidth);
         g.lineJoin('round');
         g.lineCap('round');
@@ -1781,9 +1781,7 @@
             return undefined;
         }
         function last(list) { return list[list.length - 1]; }
-        function tracePath(path, offset, s) {
-            s = s === undefined ? 1 : s;
-            offset = offset || { x: 0, y: 0 };
+        function tracePath(path, offset = { x: 0, y: 0 }, s = 1) {
             var d = path.map(function (e, i) {
                 return (i ? 'L' : 'M') + tX(offset.x + s * e.x) + ' ' + tY(offset.y + s * e.y);
             }).join(' ');
@@ -1946,10 +1944,10 @@
         canvas.width = rect.width * zoom;
         canvas.height = rect.height * zoom;
     }
-    function Measurer(config, graphics) {
+    function createMeasurer(config, graphics) {
         return {
             setFont(conf, bold, ital) {
-                graphics.setFont(conf.font, bold, ital, config.fontSize);
+                graphics.setFont(conf.font, bold, ital !== null && ital !== void 0 ? ital : null, config.fontSize);
             },
             textWidth: function (s) { return graphics.measureText(s).width; },
             textHeight: function () { return config.leading * config.fontSize; }
@@ -1958,7 +1956,7 @@
     function parseAndRender(code, graphics, canvas, scale) {
         var parsedDiagram = parse(code);
         var config = parsedDiagram.config;
-        var measurer = Measurer(config, graphics);
+        var measurer = createMeasurer(config, graphics);
         var graphLayout = layout(measurer, config, parsedDiagram.root);
         if (canvas) {
             fitCanvasSize(canvas, graphLayout, config.zoom * scale);

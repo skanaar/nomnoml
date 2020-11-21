@@ -27,7 +27,7 @@ export interface Config {
 }
 
 export interface Measurer {
-    setFont(config: Config, isBold: 'bold'|'normal', isItalic:'italic'|'normal'): void
+    setFont(config: Config, isBold: 'bold'|'normal', isItalic:'italic'|null): void
     textWidth(text: string): number
     textHeight(): number
 }
