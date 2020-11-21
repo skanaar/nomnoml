@@ -4,7 +4,7 @@ import { div, el, span } from "./react-util"
 
 export function TerminalBanners(props: { app: App }) {
 
-  var [error, setError] = useState(null)
+  var [error, setError] = useState<{ title: string, details: string}|null>(null)
   function onError(err: Error) {
       setError(err ? { title: 'Compile error', details: err.message } : null)
   }

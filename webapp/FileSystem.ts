@@ -8,13 +8,6 @@ export interface FileEntry {
   backingStore: StoreKind
 }
 
-export interface GraphStorage {
-  read(): string
-  save(src: string): void
-  clear(): void
-  kind: StoreKind
-}
-
 export class FileSystem {
   signals: Observable = new Observable()
   activeFile: FileEntry = { name: '', date: '1970-01-01', backingStore: 'url' }
@@ -68,7 +61,7 @@ function fileEntry(name: string, backingStore: StoreKind): FileEntry {
 
 interface GraphStore {
   files(): Promise<FileEntry[]>
-  read(): Promise<string>
+  read(): Promise<string|undefined>
   insert(src: string): Promise<void>
   save(src: string): Promise<void>
   clear(): Promise<void>
@@ -81,7 +74,7 @@ export class StoreDefaultBuffer implements GraphStore {
   async files(): Promise<FileEntry[]> {
     return JSON.parse(localStorage['nomnoml.file_index'] || '[]') as FileEntry[]
   }
-  async read(): Promise<string> { return localStorage[this.storageKey] }
+  async read(): Promise<string|undefined> { return localStorage[this.storageKey] }
   async insert(source: string): Promise<void> { }
   async save(source: string): Promise<void> {
     localStorage[this.storageKey] = source
@@ -95,7 +88,7 @@ export class StoreUrl implements GraphStore {
   async files(): Promise<FileEntry[]> {
     return JSON.parse(localStorage['nomnoml.file_index'] || '[]') as FileEntry[]
   }
-  async read(): Promise<string> { return this.source }
+  async read(): Promise<string|undefined> { return this.source }
   async insert(source: string): Promise<void> { }
   async save(source: string): Promise<void> { }
   async clear(): Promise<void> { }
@@ -110,7 +103,7 @@ export class StoreLocal implements GraphStore {
   async files(): Promise<FileEntry[]> {
     return JSON.parse(localStorage['nomnoml.file_index'] || '[]') as FileEntry[]
   }
-  async read(): Promise<string> {
+  async read(): Promise<string|undefined> {
     return localStorage[this.storageKey]
   }
   async insert(source: string): Promise<void> {

@@ -21,7 +21,7 @@ export { version } from "../package.json";
 
 export function bootstrap(CodeMirror: CodeMirror) {
   app = new App(CodeMirror)
-  var elem = (query: string) => document.querySelector(query)
+  var elem = (query: string) => document.querySelector(query)!
   render()
   renderFileMenu()
 
@@ -46,7 +46,7 @@ export function bootstrap(CodeMirror: CodeMirror) {
     var files: Record<string, string> = {}
     var includes = document.querySelectorAll('[publish-as-file]')
     for(var i=0; i<includes.length; i++) {
-      var name = includes[i].attributes.getNamedItem('publish-as-file').value
+      var name = includes[i].attributes.getNamedItem('publish-as-file')?.value!
       files[name] = unescapeHtml(includes[i].innerHTML)
     }
 

@@ -12,17 +12,17 @@ export function FileMenu(props: { app: App, files: FileEntry[], isLoaded: boolea
   var filesystem = props.app.filesystem
   var isLocalFile = filesystem.storage.kind === 'local_file'
   var isAtHome = filesystem.storage.kind === 'local_default'
-  var entries: Array<{ isDir: boolean, name: string, entry: FileEntry }> = []
+  var entries: Array<{ isDir: boolean, name: string, entry?: FileEntry }> = []
   var currentDir = null
   for(var entry of props.files) {
     var path = entry.name.split('/')
-    var name = path.pop()
+    var name = path.pop()!
     var dir = path.join('/')
     if (currentDir != dir && dir !== '') {
       currentDir = dir
-      entries.push({ isDir: true, name: dir, entry: null })
+      entries.push({ isDir: true, name: dir })
     }
-    entries.push({ isDir: false, name, entry })
+    entries.push({ isDir: false, name: name, entry })
   }
 
   function isActive(item: FileEntry): boolean {
@@ -39,7 +39,7 @@ export function FileMenu(props: { app: App, files: FileEntry[], isLoaded: boolea
   }
 
   function loadSvg(e: Event) {
-    var files = (e.target as HTMLInputElement).files
+    var files = (e.target as HTMLInputElement).files!
     props.app.handleOpeningFiles(files)
   }
   
@@ -65,10 +65,13 @@ export function FileMenu(props: { app: App, files: FileEntry[], isLoaded: boolea
   }
   
   async function importArchive(e: Event) {
-    var fileInputElement = (e.target as HTMLInputElement)
-    var file = fileInputElement.files[0]
+    var fileInputElement = (e.target as HTMLInputElement)!
+    var file = fileInputElement.files![0]
     var archiveName = file.name.replace(/\.zip$/, '')
     var folder = prompt('Specify folder name to import files into.\nLeave empty to load into root.', archiveName)
+    if (folder == null) {
+      return
+    }
     folder = folder.trim() ? (folder.replace(/\/$/, '') + '/') : ''
     var files = await filesystem.storage.files()
     var zip = await JSZip.loadAsync(file)
@@ -143,7 +146,7 @@ export function FileMenu(props: { app: App, files: FileEntry[], isLoaded: boolea
       a({ href: "#" }, el(Icon, { shape: home_outline }), 'Home'),
     ),
 
-    entries.map(e => (e.isDir ? makeDirEntry(e.name) : makeFileEntry(e.name, e.entry))),
+    entries.map(e => (e.isDir ? makeDirEntry(e.name) : makeFileEntry(e.name, e.entry!))),
     
     h2({}, ' '),
     

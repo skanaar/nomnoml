@@ -12,7 +12,7 @@ export class Route {
         path: Route.urlDecode(hash.substr(slashIndex+1))
       }
     }
-    return { context: null, path: null }
+    return { context: '', path: '' }
   }
 
   // Adapted from http://meyerweb.com/eric/tools/dencoder/

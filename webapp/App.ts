@@ -37,8 +37,8 @@ export class App {
     })
 
     this.editor.on('drop', (cm: any, dragEvent: DragEvent) => {
-      var files = dragEvent.dataTransfer.files
-      if (files[0].type == 'image/svg+xml') {
+      var files = dragEvent.dataTransfer?.files
+      if (files && files[0].type == 'image/svg+xml') {
         dragEvent.preventDefault()
         this.handleOpeningFiles(files)
       }
@@ -47,14 +47,14 @@ export class App {
     var editorElement = this.editor.getWrapperElement()
 
     this.filesystem = new FileSystem()
-    var devenv = new DevEnv(editorElement, lineMarker, lineNumbers)
-    this.panner = new CanvasPanner(canvasPanner, () => this.sourceChanged())
+    var devenv = new DevEnv(editorElement, lineMarker!, lineNumbers!)
+    this.panner = new CanvasPanner(canvasPanner!, () => this.sourceChanged())
     this.downloader = new DownloadLinks(canvasElement)
-    new HoverMarker('canvas-mode', body, [canvasPanner])
+    new HoverMarker('canvas-mode', body!, [canvasPanner!])
 
     this.defaultSource = (document.getElementById('defaultGraph') || { innerHTML: '' }).innerHTML
 
-    var lastValidSource: string = null
+    var lastValidSource: string|null = null
 
     var reloadStorage = async () => {
       lastValidSource = null
@@ -70,14 +70,14 @@ export class App {
     window.addEventListener('resize', throttle(() => this.sourceChanged(), 750, {leading: true}))
     this.editor.on('changes', debounce(() => this.sourceChanged(), 300))
     
-    async function loadFile(key: string): Promise<string> {
+    async function lenientLoadFile(key: string): Promise<string> {
       var storage = new StoreLocal(key)
-      return storage.read()
+      return (await storage.read()) ?? ''
     }
     
     function safelyProcessSource(source: string) {
       try {
-        return nomnoml.processAsyncImports(source, loadFile)
+        return nomnoml.processAsyncImports(source, lenientLoadFile)
       } catch(e) {
         if (e instanceof nomnoml.ImportDepthError) {
           return 'Error: too many imports'
@@ -121,7 +121,7 @@ export class App {
       return
     }
     var code = svgNodes.getElementsByTagName('desc')[0].childNodes[0].nodeValue
-    code = unescapeHtml(code)
+    code = unescapeHtml(code || '')
     this.editor.setValue(code)
   }
 
@@ -141,9 +141,9 @@ export class App {
     var sidebars = ['about', 'reference', 'export', 'files']
     for(var key of sidebars){
       if (id !== key)
-        document.getElementById(key).classList.remove('visible')
+        document.getElementById(key)?.classList.remove('visible')
     }
-    document.getElementById(id).classList.toggle('visible')
+    document.getElementById(id)?.classList.toggle('visible')
   }
 
   discardCurrentGraph(){
@@ -154,7 +154,7 @@ export class App {
   }
 
   async saveAs(defaultName: string = ''): Promise<'success'|'failure'> {
-    var name = prompt('Name your diagram', defaultName)
+    var name = prompt('Name your diagram', defaultName) ?? defaultName
     var source = this.currentSource()
     if (name) {
       return this.filesystem.storage.files().then(files => {
