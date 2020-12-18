@@ -4,7 +4,7 @@ To start contributing you will need to fork the repo on github and clone it firs
 
 ## Building
 
-Running `npm run build` will run compile the nomnoml library, the webapp and run all tests.
+Running `npm run build` will compile the nomnoml library, the webapp and run all tests.
 
 ## Testing
 

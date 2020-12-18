@@ -1,21 +1,16 @@
-nomnoml [![npm version](https://badge.fury.io/js/nomnoml.svg)](https://badge.fury.io/js/nomnoml) [![Known Vulnerabilities](https://snyk.io/test/npm/nomnoml/badge.svg)](https://snyk.io/test/npm/nomnoml)
+nomnoml 
+[![npm version](https://badge.fury.io/js/nomnoml.svg)](https://badge.fury.io/js/nomnoml) 
+[![Known Vulnerabilities](https://snyk.io/test/npm/nomnoml/badge.svg)](https://snyk.io/test/npm/nomnoml) 
+[![web site](https://img.shields.io/badge/web-nomnoml.com-brightgreen)](https://www.nomnoml.com)
 =======
 
 Hello, this is [nomnoml](http://www.nomnoml.com), a tool for drawing UML diagrams based on a simple syntax. It tries to keep its syntax visually as close as possible to the generated UML diagram without resorting to ASCII drawings.
 
-Created by [Daniel Kallin](https://github.com/skanaar) and a cadre of [contributors](https://github.com/skanaar/nomnoml/graphs/contributors).
-
-### Nomnoml was made possible by these cool projects
-
-- [jison](http://zaach.github.io/jison/)
-- [dagre](https://github.com/cpettitt/dagre)
-- [typicons](http://typicons.com/)
-- [codemirror](https://codemirror.net/)
-- [solarized](http://ethanschoonover.com/solarized)
+Created by [Daniel Kallin](https://github.com/skanaar) with help from a group of [contributors](https://github.com/skanaar/nomnoml/graphs/contributors).
 
 ## Library
 
-The [nomnoml](https://www.nomnoml.com) standalone javascript library can be used to render diagrams on your own web page. The only dependency is [graphre](https://github.com/skanaar/graphre). Install it using either *npm* or good old script inclusion.
+The [nomnoml](https://www.nomnoml.com) javascript library can render diagrams on your web page. The only dependency is [graphre](https://github.com/skanaar/graphre). Install nomnoml using either *npm* or good old script inclusion.
 
 ## SVG output in NodeJS
 
@@ -45,7 +40,7 @@ console.log(nomnoml.renderSvg(src));
 
 ## Command Line Interface
 
-`npx nomnoml` exposes the SVG renderer with a command line interface. This mode also supports the `#import: <filename>` directive which allow you to separate complex diagrams into multiple files.
+`npx nomnoml` exposes the SVG renderer with a command-line interface. This mode also supports the `#import: <filename>` directive for dividing complex diagrams into multiple files.
 
 ```
 npx nomnoml input-file.noml
@@ -53,15 +48,11 @@ npx nomnoml input-file.noml
 
 ## Web application
 
-The [nomnoml](http://www.nomnoml.com) web application is a simple editor with a live preview. It is purely client side and changes are saved to the browser's _localStorage_, so your diagram should be here the next time, (but no guarantees).
-
-### Interaction
-
-The canvas can be panned and zoomed by dragging and scrolling in the right hand third of the canvas. Downloaded image files will be given the filename in the `#title` directive.
+The [nomnoml](http://www.nomnoml.com) web application is a simple editor with a live preview. It is purely client-side and uses your browser's _localStorage_, so your diagram should be here the next time you visit (but no guarantees).
 
 ### Example
 
-This is how the Decorator pattern looks like in nomnoml syntax:
+This is how the Decorator pattern can look in nomnoml syntax:
 
     [<frame>Decorator pattern|
       [<abstract>Component||+ operation()]
@@ -187,7 +178,7 @@ Key/value pairs
     visual=table
     visual=transceiver
 
-Style title and text body
+Style title and text body with a comma separated list of text modifiers
 
     title=left,italic,bold
     body=center,italic,bold
@@ -202,4 +193,4 @@ Text modifiers
 
 ## Contributing
 
-If you want to contribute to the project more info is available in [CONTRIBUTING.md](CONTRIBUTING.md).
+If you want to contribute to the project, more info is available in [CONTRIBUTING.md](CONTRIBUTING.md).
