@@ -1,7 +1,7 @@
 FROM node:15.5.1-alpine3.12 AS builder
 ENV NOMNOML_VERSION 1.3.1
+RUN apk add bash
 WORKDIR /app
-RUN cat /etc/apk/repositories | sed -e "s/dl-cdn.alpinelinux.org/mirrors.aliyun.com/" | tee /etc/apk/repositories && apk add bash
 SHELL ["/bin/bash", "-c"]
 RUN wget https://github.com/skanaar/nomnoml/archive/v${NOMNOML_VERSION}.tar.gz -O ${NOMNOML_VERSION}.tar.gz && \
     tar zxvf ${NOMNOML_VERSION}.tar.gz && rm -rf ${NOMNOML_VERSION}.tar.gz && \
