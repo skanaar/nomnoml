@@ -17,4 +17,4 @@ COPY --from=builder /app/nomnoml-${NOMNOML_VERSION}/img/         ./img/
 COPY --from=builder /app/nomnoml-${NOMNOML_VERSION}/index.html .
 COPY --from=builder /app/nomnoml-${NOMNOML_VERSION}/nomnoml.css .
 COPY --from=builder /app/nomnoml-${NOMNOML_VERSION}/favicon.png .
-RUN cat index.html | sed -e "s/<script src=\"additionals.js\"><\/script>//" | tee index.html
+RUN touch additionals.js
