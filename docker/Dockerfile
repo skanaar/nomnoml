@@ -14,5 +14,7 @@ WORKDIR /usr/share/nginx/html
 COPY --from=builder /app/nomnoml-${NOMNOML_VERSION}/dist/      ./dist/
 COPY --from=builder /app/nomnoml-${NOMNOML_VERSION}/codemirror/  ./codemirror/
 COPY --from=builder /app/nomnoml-${NOMNOML_VERSION}/img/         ./img/
-COPY --from=builder /app/nomnoml-${NOMNOML_VERSION}/favicon.png /app/nomnoml-${NOMNOML_VERSION}/index.html /app/nomnoml-${NOMNOML_VERSION}/nomnoml.css .
+COPY --from=builder /app/nomnoml-${NOMNOML_VERSION}/index.html .
+COPY --from=builder /app/nomnoml-${NOMNOML_VERSION}/nomnoml.css .
+COPY --from=builder /app/nomnoml-${NOMNOML_VERSION}/favicon.png .
 RUN cat index.html | sed -e "s/<script src=\"additionals.js\"><\/script>//" | tee index.html
