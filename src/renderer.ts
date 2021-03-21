@@ -1,7 +1,8 @@
 import { Classifier, Compartment, Config, Relation, RelationLabel, TextStyle } from "./domain"
 import { Graphics } from "./Graphics"
+import { drawTerminators, getPath } from "./terminators"
 import { hasSubstring, last } from "./util"
-import { Vec, diff, normalize, add, mult, rot } from "./vector"
+import { Vec } from "./vector"
 import { buildStyle, styles, visualizers } from "./visuals"
 
 interface SetFont {
@@ -92,9 +93,7 @@ export function render(graphics: Graphics, config: Config, compartment: Compartm
 			g.path(p).stroke()
 	}
 
-	var empty = false, filled = true, diamond = true
-
-		function renderLabel(label: RelationLabel){
+	function renderLabel(label: RelationLabel){
 		if (!label || !label.text) return
 		var fontSize = config.fontSize
 		var lines = label.text.split('`')
@@ -102,9 +101,7 @@ export function render(graphics: Graphics, config: Config, compartment: Compartm
 	}
 
 	function renderRelation(r: Relation){
-		var start = r.path![1]
-		var end = r.path![r.path!.length-2]
-		var path = r.path!.slice(1, -1)
+		var path = getPath(config, r)
 		
 		g.fillStyle(config.stroke)
 		setFont(config, 'normal', null)
@@ -122,40 +119,8 @@ export function render(graphics: Graphics, config: Config, compartment: Compartm
 			else
 				strokePath(path)
 		}
-
-		function drawArrowEnd(id: string, path: Vec[], end: Vec){
-			if (id === '>' || id === '<')
-				drawArrow(path, filled, end, false)
-			else if (id === ':>' || id === '<:')
-				drawArrow(path, empty, end, false)
-			else if (id === '+')
-				drawArrow(path, filled, end, diamond)
-			else if (id === 'o')
-				drawArrow(path, empty, end, diamond)
-		}
-
-		var tokens = r.assoc.split(/[-_]/)
-		drawArrowEnd(last(tokens), path, end)
-		drawArrowEnd(tokens[0], path.reverse(), start)
-	}
-
-	function drawArrow(path: Array<Vec>, isOpen: boolean, arrowPoint: Vec, diamond: boolean){
-		var size = config.spacing * config.arrowSize / 30
-		var v = diff(path[path.length-2], last(path))
-		var nv = normalize(v)
-		function getArrowBase(s: number){ return add(arrowPoint, mult(nv, s*size)) }
-		var arrowBase = getArrowBase(diamond ? 7 : 10)
-		var t = rot(nv)
-		var arrowButt = (diamond) ? getArrowBase(14)
-				: (isOpen && !config.fillArrows) ? getArrowBase(5) : arrowBase
-		var arrow = [
-			add(arrowBase, mult(t, 4*size)),
-			arrowButt,
-			add(arrowBase, mult(t, -4*size)),
-			arrowPoint
-		]
-		g.fillStyle(isOpen ? config.stroke : config.fill[0])
-		g.circuit(arrow).fillAndStroke()
+		
+		drawTerminators(g, config, r)
 	}
 
 	function snapToPixels(){

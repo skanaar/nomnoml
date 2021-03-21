@@ -727,7 +727,7 @@
     break;
     case 13:
 
-               var t = $$[$0-1].trim().replace(/\\(\[|\]|\|)/g, '$'+'1').match('^(.*?)([<:o+]*[-_]/?[-_]*[:o+>]*)(.*)$');
+               var t = $$[$0-1].trim().replace(/\\(\[|\]|\|)/g, '$'+'1').match('^(.*?)([)<:o+(]*[-_]/?[-_]*[):o+>(]*)(.*)$');
                if (!t) {
                  throw new Error('line '+_$[$0].first_line+': Classifiers must be separated by a relation or a line break')
                }
@@ -784,8 +784,7 @@
         } else {
             this.parseError = Object.getPrototypeOf(this).parseError;
         }
-        
-            var lex = function () {
+        var lex = function () {
                 var token;
                 token = lexer.lex() || EOF;
                 if (typeof token !== 'number') {
@@ -1406,6 +1405,112 @@
     function normalize(v) { return mult(v, 1 / mag(v)); }
     function rot(a) { return { x: a.y, y: -a.x }; }
 
+    const empty = false;
+    const filled = true;
+    function getPath(config, r) {
+        var path = r.path.slice(1, -1);
+        var endDir = normalize(diff(path[path.length - 2], last(path)));
+        var startDir = normalize(diff(path[1], path[0]));
+        var size = config.spacing * config.arrowSize / 30;
+        var A = 0;
+        var Ω = path.length - 1;
+        var copy = path.map(p => ({ x: p.x, y: p.y }));
+        var tokens = r.assoc.split(/[-_]/);
+        copy[A] = add(copy[A], mult(startDir, size * terminatorSize(tokens[0])));
+        copy[Ω] = add(copy[Ω], mult(endDir, size * terminatorSize(last(tokens))));
+        return copy;
+    }
+    function terminatorSize(id) {
+        if (id === '>' || id === '<')
+            return 5;
+        if (id === ':>' || id === '<:')
+            return 10;
+        if (id === '+')
+            return 14;
+        if (id === 'o')
+            return 14;
+        if (id === '(' || id === ')')
+            return 11;
+        if (id === '(o' || id === 'o)')
+            return 11;
+        if (id === '>o' || id === 'o<')
+            return 15;
+        return 0;
+    }
+    function drawTerminators(g, config, r) {
+        var start = r.path[1];
+        var end = r.path[r.path.length - 2];
+        var path = r.path.slice(1, -1);
+        var tokens = r.assoc.split(/[-_]/);
+        drawArrowEnd(last(tokens), path, end);
+        drawArrowEnd(tokens[0], path.reverse(), start);
+        function drawArrowEnd(id, path, end) {
+            var dir = normalize(diff(path[path.length - 2], last(path)));
+            var size = config.spacing * config.arrowSize / 30;
+            if (id === '>' || id === '<')
+                drawArrow(dir, size, filled, end);
+            else if (id === ':>' || id === '<:')
+                drawArrow(dir, size, empty, end);
+            else if (id === '+')
+                drawDiamond(dir, size, filled, end);
+            else if (id === 'o')
+                drawDiamond(dir, size, empty, end);
+            else if (id === '(' || id === ')') {
+                drawSocket(dir, size, 11, end);
+                drawStem(dir, size, 5, end);
+            }
+            else if (id === '(o' || id === 'o)') {
+                drawSocket(dir, size, 11, end);
+                drawStem(dir, size, 5, end);
+                drawBall(dir, size, 11, end);
+            }
+            else if (id === '>o' || id === 'o<') {
+                drawArrow(dir, size * 0.75, empty, add(end, mult(dir, size * 10)));
+                drawStem(dir, size, 8, end);
+                drawBall(dir, size, 8, end);
+            }
+        }
+        function drawBall(nv, size, stem, end) {
+            var center = add(end, mult(nv, size * stem));
+            g.fillStyle(config.fill[0]);
+            g.ellipse(center, size * 6, size * 6).fillAndStroke();
+        }
+        function drawStem(nv, size, stem, end) {
+            var center = add(end, mult(nv, size * stem));
+            g.path([center, end]).stroke();
+        }
+        function drawSocket(nv, size, stem, end) {
+            var base = add(end, mult(nv, size * stem));
+            var t = rot(nv);
+            var socket = range([-Math.PI / 2, Math.PI / 2], 12).map(a => add(base, add(mult(nv, -6 * size * Math.cos(a)), mult(t, 6 * size * Math.sin(a)))));
+            g.path(socket).stroke();
+        }
+        function drawArrow(nv, size, isOpen, end) {
+            const x = (s) => add(end, mult(nv, s * size));
+            const y = (s) => mult(rot(nv), s * size);
+            var arrow = [
+                add(x(10), y(4)),
+                x((isOpen && !config.fillArrows) ? 5 : 10),
+                add(x(10), y(-4)),
+                end
+            ];
+            g.fillStyle(isOpen ? config.stroke : config.fill[0]);
+            g.circuit(arrow).fillAndStroke();
+        }
+        function drawDiamond(nv, size, isOpen, end) {
+            const x = (s) => add(end, mult(nv, s * size));
+            const y = (s) => mult(rot(nv), s * size);
+            var arrow = [
+                add(x(7), y(4)),
+                x(14),
+                add(x(7), y(-4)),
+                end
+            ];
+            g.fillStyle(isOpen ? config.stroke : config.fill[0]);
+            g.circuit(arrow).fillAndStroke();
+        }
+    }
+
     function render(graphics, config, compartment, setFont) {
         var g = graphics;
         function renderCompartment(compartment, color, style, level) {
@@ -1481,7 +1586,6 @@
             else
                 g.path(p).stroke();
         }
-        var empty = false, filled = true, diamond = true;
         function renderLabel(label) {
             if (!label || !label.text)
                 return;
@@ -1490,9 +1594,7 @@
             lines.forEach((l, i) => g.fillText(l, label.x, label.y + fontSize * (i + 1)));
         }
         function renderRelation(r) {
-            var start = r.path[1];
-            var end = r.path[r.path.length - 2];
-            var path = r.path.slice(1, -1);
+            var path = getPath(config, r);
             g.fillStyle(config.stroke);
             setFont(config, 'normal', null);
             renderLabel(r.startLabel);
@@ -1507,37 +1609,7 @@
                 else
                     strokePath(path);
             }
-            function drawArrowEnd(id, path, end) {
-                if (id === '>' || id === '<')
-                    drawArrow(path, filled, end, false);
-                else if (id === ':>' || id === '<:')
-                    drawArrow(path, empty, end, false);
-                else if (id === '+')
-                    drawArrow(path, filled, end, diamond);
-                else if (id === 'o')
-                    drawArrow(path, empty, end, diamond);
-            }
-            var tokens = r.assoc.split(/[-_]/);
-            drawArrowEnd(last(tokens), path, end);
-            drawArrowEnd(tokens[0], path.reverse(), start);
-        }
-        function drawArrow(path, isOpen, arrowPoint, diamond) {
-            var size = config.spacing * config.arrowSize / 30;
-            var v = diff(path[path.length - 2], last(path));
-            var nv = normalize(v);
-            function getArrowBase(s) { return add(arrowPoint, mult(nv, s * size)); }
-            var arrowBase = getArrowBase(diamond ? 7 : 10);
-            var t = rot(nv);
-            var arrowButt = (diamond) ? getArrowBase(14)
-                : (isOpen && !config.fillArrows) ? getArrowBase(5) : arrowBase;
-            var arrow = [
-                add(arrowBase, mult(t, 4 * size)),
-                arrowButt,
-                add(arrowBase, mult(t, -4 * size)),
-                arrowPoint
-            ];
-            g.fillStyle(isOpen ? config.stroke : config.fill[0]);
-            g.circuit(arrow).fillAndStroke();
+            drawTerminators(g, config, r);
         }
         function snapToPixels() {
             if (config.lineWidth % 2 === 1)

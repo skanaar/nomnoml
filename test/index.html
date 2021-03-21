@@ -195,7 +195,45 @@
   </div>
 
   <div class=testcase>
-    <h1>Weightless</h1>
+    <h1>Associations</h1>
+    <div nomnoml=canvas>
+      <script type="text/vnd.nomnoml">
+#direction: right
+[a] --> [depend]
+[b] -:> [impl]
+[c] +-> [compose]
+[d] o-> [aggr]
+      </script>
+    </div>
+  </div>
+
+  <div class=testcase>
+    <h1>Associations sockets</h1>
+    <div nomnoml=canvas>
+      <script type="text/vnd.nomnoml">
+#direction: right
+[e] (-->o [req]
+[f] -->o [dep]
+[g] -(o [ball-socket]
+      </script>
+    </div>
+  </div>
+
+  <div class=testcase>
+    <h1>Associations misc</h1>
+    <div nomnoml=canvas>
+      <script type="text/vnd.nomnoml">
+#direction: right
+[i] -- [note]
+[j] -/- [hidden]
+//[k] _> [weightless_edge]
+//[l] __ [weightless_dashed]
+      </script>
+    </div>
+  </div>
+
+  <div class=testcase>
+    <h1>Weightless Right</h1>
     <div nomnoml=canvas>
       <script type="text/vnd.nomnoml">
 #direction: right
@@ -256,6 +294,17 @@
 [a] - [bar]
 [bar] - [b]
 [a] - [b]
+      </script>
+    </div>
+  </div>
+
+  <div class=testcase>
+    <h1>Edge label size</h1>
+    <div nomnoml=canvas>
+      <script type="text/vnd.nomnoml">
+#background: #aaa4
+[a] - long label [c]
+[Long name] -  [d]
       </script>
     </div>
   </div>
