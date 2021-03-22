@@ -130,11 +130,13 @@
         INPUT: buildStyle({ visual: 'input' }, { center: true }),
         INSTANCE: buildStyle({ visual: 'class' }, { center: true, underline: true }),
         LABEL: buildStyle({ visual: 'none' }, { center: true }),
+        LOLLIPOP: buildStyle({ visual: 'lollipop' }, { center: true }),
         NOTE: buildStyle({ visual: 'note' }, {}),
         PACKAGE: buildStyle({ visual: 'package' }, {}),
         RECEIVER: buildStyle({ visual: 'receiver' }, {}),
         REFERENCE: buildStyle({ visual: 'class', dashed: true }, { center: true }),
         SENDER: buildStyle({ visual: 'sender' }, {}),
+        SOCKET: buildStyle({ visual: 'socket' }, {}),
         START: buildStyle({ visual: 'start' }, {}),
         STATE: buildStyle({ visual: 'roundrect' }, { center: true }),
         SYNC: buildStyle({ visual: 'sync' }, { center: true }),
@@ -161,6 +163,23 @@
         clas.compartments = [];
         clas.width = config.fontSize * 2.5;
         clas.height = config.fontSize * 2.5;
+    }
+    function labelledIcon(config, clas) {
+        clas.width = config.fontSize * 1.5;
+        clas.height = config.fontSize * 1.5;
+        clas.dividers = [];
+        var y = (config.direction == 'LR') ? clas.height - config.padding : -clas.height / 2;
+        for (var comp of clas.compartments) {
+            if (config.direction == 'LR') {
+                comp.x = clas.width / 2 - comp.width / 2;
+                comp.y = y;
+            }
+            else {
+                comp.x = clas.width / 2 + config.padding / 2;
+                comp.y = y;
+            }
+            y += comp.height;
+        }
     }
     var layouters = {
         actor: function (config, clas) {
@@ -240,6 +259,7 @@
             clas.height = 1;
         },
         input: box,
+        lollipop: labelledIcon,
         none: box,
         note: box,
         package: box,
@@ -266,6 +286,7 @@
         },
         roundrect: box,
         sender: box,
+        socket: labelledIcon,
         start: icon,
         sync: function (config, clas) {
             clas.dividers = [];
@@ -382,6 +403,9 @@
                 { x: x, y: y + node.height }
             ]).fillAndStroke();
         },
+        lollipop: function (node, x, y, config, g) {
+            g.circle({ x: node.x, y: y + node.height / 2 }, node.height / 2.5).fillAndStroke();
+        },
         none: function (node, x, y, config, g) {
         },
         note: function (node, x, y, config, g) {
@@ -439,6 +463,11 @@
                 { x: x + node.width - config.padding, y: y + node.height },
                 { x: x, y: y + node.height }
             ]).fillAndStroke();
+        },
+        socket: function (node, x, y, config, g) {
+            var from = config.direction === 'TB' ? Math.PI : Math.PI / 2;
+            var to = config.direction === 'TB' ? 2 * Math.PI : -Math.PI / 2;
+            g.ellipse({ x: node.x, y: node.y }, node.width, node.height, from, to).stroke();
         },
         start: function (node, x, y, config, g) {
             g.fillStyle(config.stroke);
@@ -1318,7 +1347,7 @@
                 arrowSize: +d.arrowSize || 1,
                 bendSize: +d.bendSize || 0.3,
                 direction: directionToDagre(d.direction),
-                gutter: +d.gutter || 5,
+                gutter: +d.gutter || 20,
                 edgeMargin: (+d.edgeMargin) || 0,
                 gravity: +((_a = d.gravity) !== null && _a !== void 0 ? _a : 1),
                 edges: d.edges == 'hard' ? 'hard' : 'rounded',
@@ -1875,12 +1904,10 @@
             circle: function (p, r) {
                 return newElement('circle', { r: r, cx: tX(p.x), cy: tY(p.y) });
             },
-            ellipse: function (center, w, h, start, stop) {
-                if (stop) {
-                    var y = tY(center.y);
-                    return newElement('path', { d: 'M' + tX(center.x - w / 2) + ' ' + y +
-                            'A' + w / 2 + ' ' + h / 2 + ' 0 1 0 ' + tX(center.x + w / 2) + ' ' + y
-                    });
+            ellipse: function (center, w, h, start = 0, stop = 0) {
+                if (start || stop) {
+                    var path = range([start, stop], 64).map(a => add(center, { x: Math.cos(a) * w / 2, y: Math.sin(a) * h / 2 }));
+                    return tracePath(path);
                 }
                 else {
                     return newElement('ellipse', { cx: tX(center.x), cy: tY(center.y), rx: w / 2, ry: h / 2 });

@@ -1,5 +1,6 @@
 import { Chainable, Graphics, Vector } from "./Graphics"
-import { sum } from "./util"
+import { range, sum } from "./util"
+import { add, mult } from "./vector"
 
 interface SvgState {
 	x: number
@@ -136,15 +137,12 @@ export function GraphicsSvg(globalStyle: string, document?: HTMLDocument): ISvgG
 		circle: function (p: Vector, r: number){
 			return newElement('circle', {r: r, cx: tX(p.x), cy: tY(p.y)})
 		},
-		ellipse: function (center, w, h, start, stop){
-			if (stop) {
-				// This code does not render a general partial ellipse. It only
-				// renders the bottom half of an ellipse. Useful for database visuals.
-				var y = tY(center.y)
-				return newElement('path', { d:
-					'M' + tX(center.x - w/2) + ' ' + y +
-					'A' + w/2 + ' ' + h/2 + ' 0 1 0 ' + tX(center.x + w/2) + ' ' + y
-				})
+		ellipse: function (center, w, h, start = 0, stop = 0){
+			if (start || stop) {
+				var path = range([start, stop], 64).map(a =>
+					add(center, { x: Math.cos(a) * w/2, y: Math.sin(a) * h/2 })
+				)
+				return tracePath(path)
 			} else {
 				return newElement('ellipse',
 				{ cx: tX(center.x), cy: tY(center.y), rx: w/2, ry: h/2 })

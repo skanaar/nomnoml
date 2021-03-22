@@ -56,6 +56,10 @@
 				<pre append-nomnoml-preview>[&lt;package&gt; package|components]</pre>
 				<pre append-nomnoml-preview>[&lt;frame&gt; frame|]</pre>
 
+				<h2>Component diagram types</h2>
+				<pre append-nomnoml-preview>[Component] - [&lt;socket&gt; socket]</pre>
+				<pre append-nomnoml-preview>[&lt;lollipop&gt; lollipop] - [Component]</pre>
+
 				<h2>Flow chart types</h2>
 				<pre append-nomnoml-preview>[&lt;start&gt; start]</pre>
 				<pre append-nomnoml-preview>[&lt;end&gt; end]</pre>
@@ -198,6 +202,11 @@
   [Cylinder]->1[Piston]
   [Cylinder]->2[Valve]
 ]</pre>
+
+				<h3>Engine depends on components</h3>
+				<pre append-nomnoml-preview>[Engine] - [&lt;socket&gt;Tank]
+[Tank] -->o [Big Fuel Tank]
+				</pre>
 
 				<h3>Set font</h3>
 				<pre append-nomnoml-preview>#font: Times

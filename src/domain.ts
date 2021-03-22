@@ -49,6 +49,7 @@ export type Visual =
   'frame'|
   'hidden'|
   'input'|
+  'lollipop'|
   'none'|
   'note'|
   'package'|
@@ -56,6 +57,7 @@ export type Visual =
   'rhomb'|
   'roundrect'|
   'sender'|
+  'socket'|
   'start'|
   'sync'|
   'table'|

@@ -35,11 +35,13 @@ export var styles: { [key: string]: Style } = {
   INPUT:       buildStyle({ visual:'input' }, { center:true }),
   INSTANCE:    buildStyle({ visual:'class' }, { center:true, underline:true }),
   LABEL:       buildStyle({ visual:'none' }, { center:true }),
+  LOLLIPOP:    buildStyle({ visual:'lollipop' }, { center:true }),
   NOTE:        buildStyle({ visual:'note' }, {}),
   PACKAGE:     buildStyle({ visual:'package' }, {}),
   RECEIVER:    buildStyle({ visual:'receiver' }, {}),
   REFERENCE:   buildStyle({ visual:'class', dashed:true }, { center:true }),
   SENDER:      buildStyle({ visual:'sender' }, {}),
+  SOCKET:      buildStyle({ visual:'socket' }, {}),
   START:       buildStyle({ visual:'start' }, {}),
   STATE:       buildStyle({ visual:'roundrect' }, { center:true }),
   SYNC:        buildStyle({ visual:'sync' }, { center:true }),
@@ -68,6 +70,23 @@ function icon(config: Config, clas: Classifier) {
   clas.compartments = []
   clas.width = config.fontSize * 2.5
   clas.height = config.fontSize * 2.5
+}
+
+function labelledIcon(config: Config, clas: Classifier) {
+  clas.width = config.fontSize * 1.5
+  clas.height = config.fontSize * 1.5
+  clas.dividers = []
+  var y = (config.direction == 'LR') ? clas.height - config.padding : -clas.height/2
+  for(var comp of clas.compartments) {
+    if (config.direction == 'LR'){
+      comp.x = clas.width/2 - comp.width/2
+      comp.y = y
+    } else {
+      comp.x = clas.width/2 + config.padding/2
+      comp.y = y
+    }
+    y += comp.height
+  }
 }
 
 export var layouters: { [key in Visual]: NodeLayouter } = {
@@ -147,6 +166,7 @@ export var layouters: { [key in Visual]: NodeLayouter } = {
     clas.height = 1
   },
   input: box,
+  lollipop: labelledIcon,
   none: box,
   note: box,
   package: box,
@@ -173,6 +193,7 @@ export var layouters: { [key in Visual]: NodeLayouter } = {
   },
   roundrect: box,
   sender: box,
+  socket: labelledIcon,
   start: icon,
   sync: function (config: Config, clas: Classifier) {
     clas.dividers = []
@@ -286,6 +307,9 @@ export var visualizers: { [key in Visual]: Visualizer } = {
       {x:x, y:y+node.height}
     ]).fillAndStroke()
   },
+  lollipop : function (node, x, y, config, g) {
+    g.circle({ x:node.x, y:y+node.height/2 }, node.height/2.5).fillAndStroke()
+  },
   none : function (node, x, y, config, g) {
   },
   note : function (node, x, y, config, g) {
@@ -343,6 +367,11 @@ export var visualizers: { [key in Visual]: Visualizer } = {
         {x: x+node.width-config.padding, y: y+node.height},
         {x: x, y: y+node.height}
       ]).fillAndStroke()
+  },
+  socket : function (node, x, y, config, g) {
+    var from = config.direction === 'TB' ? Math.PI : Math.PI/2
+    var to = config.direction === 'TB' ? 2*Math.PI : -Math.PI/2
+    g.ellipse({ x:node.x, y:node.y }, node.width, node.height, from, to).stroke()
   },
   start : function (node, x, y, config, g) {
     g.fillStyle(config.stroke)

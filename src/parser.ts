@@ -111,7 +111,7 @@ export function parse(source: string): ParsedDiagram {
 			arrowSize: +d.arrowSize || 1,
 			bendSize: +d.bendSize || 0.3,
 			direction: directionToDagre(d.direction),
-			gutter: +d.gutter || 5,
+			gutter: +d.gutter || 20,
 			edgeMargin: (+d.edgeMargin) || 0,
 			gravity: +(d.gravity ?? 1),
 			edges: d.edges == 'hard' ? 'hard' : 'rounded',
