@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.4.0] - 2021-05-12
+
+- ball and socket connections for expressing required and provided interfaces
+
 ## [1.3.1] - 2020-11-05
 
 - fix bug where bundles were incompatible with Node 12

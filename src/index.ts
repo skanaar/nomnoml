@@ -6,7 +6,7 @@ export {
   processAsyncImports,
   ImportDepthError 
 } from "./nomnoml"
-export var version = '1.3.1'
+export var version = '1.4.0'
 
 export * as skanaar from "./util";
 export { parse, intermediateParse, transformParseIntoSyntaxTree } from "./parser";

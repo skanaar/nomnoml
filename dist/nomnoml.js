@@ -2137,7 +2137,7 @@
         return processImports(loadFile(rootFileName), loadFile, maxImportDepth);
     }
 
-    var version = '1.3.1';
+    var version = '1.4.0';
 
     exports.Classifier = Classifier;
     exports.Compartment = Compartment;
