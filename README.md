@@ -78,6 +78,9 @@ This is how the Decorator pattern can look in nomnoml syntax:
     +->  composition
     o-   aggregation
     o->  aggregation
+    -o)  ball and socket
+    o<-) ball and socket
+    ->o  ball and socket
     --   note
     -/-  hidden
     _>   weightless edge
@@ -99,7 +102,9 @@ This is how the Decorator pattern can look in nomnoml syntax:
     [<choice> name]
     [<sync> name]
     [<input> name]
+    [<lollipop> lollipop]
     [<sender> name]
+    [<socket> socket]
     [<receiver> name]
     [<transceiver> name]
     [<actor> name]
