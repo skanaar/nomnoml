@@ -28,7 +28,7 @@ export class CanvasPanner {
       element.style.width = '33%'
     }
 
-    var magnify = (e: MouseWheelEvent) => {
+    var magnify = (e: WheelEvent) => {
       this.zoomLevel = Math.min(10, this.zoomLevel - (e.deltaY < 0 ? -1 : 1))
       onChange()
     }

@@ -50,7 +50,7 @@ export function throttle(func: Function, wait: number, options: { leading?: bool
 }
 
 export function debounce(func: Function, wait: number, immediate: boolean = false) {
-  var timeout: NodeJS.Timeout|null;
+  var timeout: any;
   var result: any;
 
   function later(context: any, args: any[]) {
