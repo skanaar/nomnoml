@@ -20,7 +20,12 @@ export default {
   },
   plugins: [
     ignore(["fs", "path"]),
-    typescript({ noEmit: false }),
+    typescript({
+      target: 'es2020',
+      noUnusedLocals: true,
+      noImplicitAny: true,
+      strictNullChecks: true,
+    }),
     gitVersion(),
     nodeResolve({ preferBuiltins: true }),
     commonjs({ include: ['node_modules/**', 'dist/**'] }),

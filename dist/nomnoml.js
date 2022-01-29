@@ -2,7 +2,7 @@
     typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('graphre')) :
     typeof define === 'function' && define.amd ? define(['exports', 'graphre'], factory) :
     (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.nomnoml = {}, global.graphre));
-}(this, (function (exports, graphre) { 'use strict';
+})(this, (function (exports, graphre) { 'use strict';
 
     /*! *****************************************************************************
     Copyright (c) Microsoft Corporation.
@@ -2159,4 +2159,4 @@
 
     Object.defineProperty(exports, '__esModule', { value: true });
 
-})));
+}));

@@ -19,9 +19,7 @@ export default {
       removeComments: true,
       noUnusedLocals: true,
       noImplicitAny: true,
-      noUnusedLocals: true,
       strictNullChecks: true,
-      removeComments: true,
       moduleResolution: 'node'
     }),
     nodeResolve(),

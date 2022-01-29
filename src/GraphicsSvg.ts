@@ -1,6 +1,6 @@
 import { Chainable, Graphics, Vector } from "./Graphics"
 import { range, sum } from "./util"
-import { add, mult } from "./vector"
+import { add } from "./vector"
 
 interface SvgState {
 	x: number
