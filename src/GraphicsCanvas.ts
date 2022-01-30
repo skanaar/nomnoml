@@ -116,8 +116,8 @@ export function GraphicsCanvas(canvas: HTMLCanvasElement, callbacks?: any): ICan
 			ctx.closePath()
 			return chainable
 		},
-		setFont: function (font: string, bold: 'bold'|'normal', ital:'italic'|null, fontSize: number): void {
-			ctx.font = `${bold} ${ital || ''} ${fontSize}pt ${font}, Helvetica, sans-serif`
+		setFont: function (family: string, size: number, weight: 'bold'|'normal', style:'italic'|'normal'): void {
+			ctx.font = `${weight} ${style} ${size}pt ${family}, Helvetica, sans-serif`
 		},
 		fillStyle:   function (s){ ctx.fillStyle = s },
 		strokeStyle: function (s){ ctx.strokeStyle = s },

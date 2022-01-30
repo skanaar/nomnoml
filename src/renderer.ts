@@ -2,14 +2,10 @@ import { Classifier, Compartment, Config, Relation, RelationLabel, TextStyle } f
 import { Graphics } from "./Graphics"
 import { drawTerminators, getPath } from "./terminators"
 import { hasSubstring, last } from "./util"
-import { Vec } from "./vector"
+import { add, Vec } from "./vector"
 import { buildStyle, styles, visualizers } from "./visuals"
 
-interface SetFont {
-  (config: Config, isBold: string, isItalic: string|null): void
-}
-
-export function render(graphics: Graphics, config: Config, compartment: Compartment, setFont: SetFont){
+export function render(graphics: Graphics, config: Config, compartment: Compartment){
 
 	var g = graphics
 
@@ -35,9 +31,11 @@ export function render(graphics: Graphics, config: Config, compartment: Compartm
 				g.lineWidth(config.lineWidth)
 			}
 		})
+		g.save()
 		g.translate(config.gutter, config.gutter)
 		compartment.relations.forEach(function (r){ renderRelation(r) })
 		compartment.nodes.forEach(function (n){ renderNode(n, level) })
+		g.restore()
 		g.restore()
 	}
 
@@ -46,6 +44,7 @@ export function render(graphics: Graphics, config: Config, compartment: Compartm
 		var y = Math.round(node.y-node.height/2)
 		var style = config.styles[node.type] || styles.CLASS
 
+		g.save()
 		g.fillStyle(style.fill || config.fill[level] || last(config.fill))
 		g.strokeStyle(style.stroke || config.stroke)
 		if (style.dashed){
@@ -55,12 +54,10 @@ export function render(graphics: Graphics, config: Config, compartment: Compartm
 		g.setData('name', node.name)
 		var drawNode = visualizers[style.visual] || visualizers.class
 		drawNode(node, x, y, config, g)
-		g.translate(x, y)
 		for(var divider of node.dividers) {
-			g.path(divider).stroke()
+			g.path(divider.map(e => add(e, { x, y }))).stroke()
 		}
-		g.translate(-x, -y)
-		g.setLineDash([])
+		g.restore()
 
 		g.save()
 		g.translate(x, y)
@@ -69,7 +66,7 @@ export function render(graphics: Graphics, config: Config, compartment: Compartm
 			var textStyle = i == 0 ? style.title : style.body;
 			g.save()
 			g.translate(part.x, part.y)
-			setFont(config, textStyle.bold ? 'bold' : 'normal', textStyle.italic ? 'italic' : null)
+			g.setFont(config.font, config.fontSize, textStyle.bold ? 'bold' : 'normal', textStyle.italic ? 'italic' : 'normal')
 			renderCompartment(part, style.stroke, textStyle, level+1)
 			g.restore()
 		})
@@ -104,7 +101,7 @@ export function render(graphics: Graphics, config: Config, compartment: Compartm
 		var path = getPath(config, r)
 		
 		g.fillStyle(config.stroke)
-		setFont(config, 'normal', null)
+		g.setFont(config.font, config.fontSize, 'normal', 'normal')
 
 		renderLabel(r.startLabel)
 		renderLabel(r.endLabel)
@@ -112,9 +109,10 @@ export function render(graphics: Graphics, config: Config, compartment: Compartm
 		if (r.assoc !== '-/-' && r.assoc !== '_/_'){
 			if (hasSubstring(r.assoc, '--') || hasSubstring(r.assoc, '__')){
 				var dash = Math.max(4, 2*config.lineWidth)
+				g.save()
 				g.setLineDash([dash, dash])
 				strokePath(path)
-				g.setLineDash([])
+				g.restore()
 			}
 			else
 				strokePath(path)
@@ -125,7 +123,7 @@ export function render(graphics: Graphics, config: Config, compartment: Compartm
 
 	function snapToPixels(){
 		if (config.lineWidth % 2 === 1)
-			g.translate(0.5, 0.5)
+			g.translate(0.5, 0.5) // TODO remove, Hi Res displays are common
 	}
 	
 	function setBackground() {
@@ -139,13 +137,13 @@ export function render(graphics: Graphics, config: Config, compartment: Compartm
 
 	g.save()
 	g.scale(config.zoom, config.zoom)
+	snapToPixels()
 	setBackground()
-	setFont(config, 'bold', null)
+	g.setFont(config.font, config.fontSize, 'bold', 'normal')
 	g.lineWidth(config.lineWidth)
 	g.lineJoin('round')
 	g.lineCap('round')
 	g.strokeStyle(config.stroke)
-	snapToPixels()
 	renderCompartment(compartment, undefined, buildStyle({}, {}).title, 0)
 	g.restore()
 }

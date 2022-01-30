@@ -15,11 +15,11 @@ function fitCanvasSize(canvas: HTMLCanvasElement, rect: Rect, zoom: number) {
 
 function createMeasurer(config: Config, graphics: Graphics): Measurer {
   return {
-    setFont(conf: Config, bold: 'bold'|'normal', ital:'italic'|null): void {
-      graphics.setFont(conf.font, bold, ital ?? null, config.fontSize)
+    setFont(family: string, size: number, weight: 'bold'|'normal', style:'italic'|'normal'): void {
+      graphics.setFont(family, size, weight, style)
     },
-    textWidth: function (s: string): number { return graphics.measureText(s).width },
-    textHeight: function (): number { return config.leading * config.fontSize }
+    textWidth(s: string): number { return graphics.measureText(s).width },
+    textHeight(): number { return config.leading * config.fontSize }
   }
 };
 
@@ -30,7 +30,7 @@ function parseAndRender(code: string, graphics: Graphics, canvas: HTMLCanvasElem
   var graphLayout = layout(measurer, config, parsedDiagram.root)
   if (canvas) { fitCanvasSize(canvas, graphLayout, config.zoom * scale) }
   config.zoom *= scale
-  render(graphics, config, graphLayout, measurer.setFont)
+  render(graphics, config, graphLayout)
   return { config: config, layout: graphLayout }
 }
 
@@ -39,7 +39,7 @@ export function draw(canvas: HTMLCanvasElement, code: string, scale?: number): {
 }
 
 export function renderSvg(code: string, document?: HTMLDocument): string {
-  var skCanvas = GraphicsSvg('', document)
+  var skCanvas = GraphicsSvg(document)
   var { config, layout } = parseAndRender(code, skCanvas, null, 1)
   return skCanvas.serialize({
     width: layout.width,

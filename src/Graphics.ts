@@ -20,7 +20,7 @@ export interface Graphics {
   rect(x: number, y: number, w: number, h: number): Chainable
   path(points: Vector[]): Chainable
   circuit(path: Vector[], offset?: Vector, s?: number): Chainable
-  setFont(fontFamily: string, bold: 'bold'|'normal', italic: 'italic'|null, fontSize: number): void
+  setFont(family: string, size: number, weight: 'bold'|'normal', style: 'italic'|'normal'): void
   strokeStyle(stroke: string): void
   fillStyle(fill: any): void
   arcTo(x1: number, y1: number, x2: number, y2: number, radius: number): void
@@ -34,7 +34,7 @@ export interface Graphics {
   moveTo(x: number, y: number): void
   restore(): void
   save(): void
-  setData(name: string, value: string): void
+  setData(name: string, value?: string): void
   scale(x: number, y: number): void
   setLineDash(d: number[]): void
   stroke(): void

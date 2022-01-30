@@ -12,7 +12,7 @@ export function layout(measurer: Measurer, config: Config, ast: Compartment): Co
 	function measureLines(lines: string[], fontWeight: 'normal'|'bold'){
 		if (!lines.length)
 			return { width: 0, height: config.padding }
-		measurer.setFont(config, fontWeight, null)
+		measurer.setFont(config.font, config.fontSize, fontWeight, 'normal')
 		return {
 			width: Math.round(Math.max(...lines.map(measurer.textWidth)) + 2*config.padding),
 			height: Math.round(measurer.textHeight() * lines.length + 2*config.padding)

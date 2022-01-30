@@ -496,7 +496,7 @@
         function measureLines(lines, fontWeight) {
             if (!lines.length)
                 return { width: 0, height: config.padding };
-            measurer.setFont(config, fontWeight, null);
+            measurer.setFont(config.font, config.fontSize, fontWeight, 'normal');
             return {
                 width: Math.round(Math.max(...lines.map(measurer.textWidth)) + 2 * config.padding),
                 height: Math.round(measurer.textHeight() * lines.length + 2 * config.padding)
@@ -1540,7 +1540,7 @@
         }
     }
 
-    function render(graphics, config, compartment, setFont) {
+    function render(graphics, config, compartment) {
         var g = graphics;
         function renderCompartment(compartment, color, style, level) {
             g.save();
@@ -1565,15 +1565,18 @@
                     g.lineWidth(config.lineWidth);
                 }
             });
+            g.save();
             g.translate(config.gutter, config.gutter);
             compartment.relations.forEach(function (r) { renderRelation(r); });
             compartment.nodes.forEach(function (n) { renderNode(n, level); });
+            g.restore();
             g.restore();
         }
         function renderNode(node, level) {
             var x = Math.round(node.x - node.width / 2);
             var y = Math.round(node.y - node.height / 2);
             var style = config.styles[node.type] || styles.CLASS;
+            g.save();
             g.fillStyle(style.fill || config.fill[level] || last(config.fill));
             g.strokeStyle(style.stroke || config.stroke);
             if (style.dashed) {
@@ -1583,19 +1586,17 @@
             g.setData('name', node.name);
             var drawNode = visualizers[style.visual] || visualizers.class;
             drawNode(node, x, y, config, g);
-            g.translate(x, y);
             for (var divider of node.dividers) {
-                g.path(divider).stroke();
+                g.path(divider.map(e => add(e, { x, y }))).stroke();
             }
-            g.translate(-x, -y);
-            g.setLineDash([]);
+            g.restore();
             g.save();
             g.translate(x, y);
             node.compartments.forEach(function (part, i) {
                 var textStyle = i == 0 ? style.title : style.body;
                 g.save();
                 g.translate(part.x, part.y);
-                setFont(config, textStyle.bold ? 'bold' : 'normal', textStyle.italic ? 'italic' : null);
+                g.setFont(config.font, config.fontSize, textStyle.bold ? 'bold' : 'normal', textStyle.italic ? 'italic' : 'normal');
                 renderCompartment(part, style.stroke, textStyle, level + 1);
                 g.restore();
             });
@@ -1625,15 +1626,16 @@
         function renderRelation(r) {
             var path = getPath(config, r);
             g.fillStyle(config.stroke);
-            setFont(config, 'normal', null);
+            g.setFont(config.font, config.fontSize, 'normal', 'normal');
             renderLabel(r.startLabel);
             renderLabel(r.endLabel);
             if (r.assoc !== '-/-' && r.assoc !== '_/_') {
                 if (hasSubstring(r.assoc, '--') || hasSubstring(r.assoc, '__')) {
                     var dash = Math.max(4, 2 * config.lineWidth);
+                    g.save();
                     g.setLineDash([dash, dash]);
                     strokePath(path);
-                    g.setLineDash([]);
+                    g.restore();
                 }
                 else
                     strokePath(path);
@@ -1654,13 +1656,13 @@
         }
         g.save();
         g.scale(config.zoom, config.zoom);
+        snapToPixels();
         setBackground();
-        setFont(config, 'bold', null);
+        g.setFont(config.font, config.fontSize, 'bold', 'normal');
         g.lineWidth(config.lineWidth);
         g.lineJoin('round');
         g.lineCap('round');
         g.strokeStyle(config.stroke);
-        snapToPixels();
         renderCompartment(compartment, undefined, buildStyle({}, {}).title, 0);
         g.restore();
     }
@@ -1774,8 +1776,8 @@
                 ctx.closePath();
                 return chainable;
             },
-            setFont: function (font, bold, ital, fontSize) {
-                ctx.font = `${bold} ${ital || ''} ${fontSize}pt ${font}, Helvetica, sans-serif`;
+            setFont: function (family, size, weight, style) {
+                ctx.font = `${weight} ${style} ${size}pt ${family}, Helvetica, sans-serif`;
             },
             fillStyle: function (s) { ctx.fillStyle = s; },
             strokeStyle: function (s) { ctx.strokeStyle = s; },
@@ -1799,7 +1801,16 @@
         };
     }
 
+    function toAttrString(obj) {
+        return Object
+            .entries(obj)
+            .filter(([_, val]) => val !== undefined)
+            .map(([key, val]) => `${key}="${xmlEncode(val)}"`)
+            .join(' ');
+    }
     function xmlEncode(str) {
+        if ('number' === typeof str)
+            return str.toFixed(1);
         return (str !== null && str !== void 0 ? str : '').toString()
             .replace(/&/g, '&amp;')
             .replace(/</g, '&lt;')
@@ -1808,93 +1819,86 @@
             .replace(/'/g, '&apos;');
     }
     var charWidths = { "0": 10, "1": 10, "2": 10, "3": 10, "4": 10, "5": 10, "6": 10, "7": 10, "8": 10, "9": 10, " ": 5, "!": 5, "\"": 6, "#": 10, "$": 10, "%": 15, "&": 11, "'": 4, "(": 6, ")": 6, "*": 7, "+": 10, ",": 5, "-": 6, ".": 5, "/": 5, ":": 5, ";": 5, "<": 10, "=": 10, ">": 10, "?": 10, "@": 17, "A": 11, "B": 11, "C": 12, "D": 12, "E": 11, "F": 10, "G": 13, "H": 12, "I": 5, "J": 9, "K": 11, "L": 10, "M": 14, "N": 12, "O": 13, "P": 11, "Q": 13, "R": 12, "S": 11, "T": 10, "U": 12, "V": 11, "W": 16, "X": 11, "Y": 11, "Z": 10, "[": 5, "\\": 5, "]": 5, "^": 8, "_": 10, "`": 6, "a": 10, "b": 10, "c": 9, "d": 10, "e": 10, "f": 5, "g": 10, "h": 10, "i": 4, "j": 4, "k": 9, "l": 4, "m": 14, "n": 10, "o": 10, "p": 10, "q": 10, "r": 6, "s": 9, "t": 5, "u": 10, "v": 9, "w": 12, "x": 9, "y": 9, "z": 9, "{": 6, "|": 5, "}": 6, "~": 10 };
-    function GraphicsSvg(globalStyle, document) {
+    function GraphicsSvg(document) {
         var initialState = {
-            x: 0,
-            y: 0,
-            stroke: 'none',
-            strokeWidth: 1,
-            dashArray: 'none',
-            fill: 'none',
-            textAlign: 'left',
-            font: 'Helvetica, Arial, sans-serif',
-            fontSize: 12,
-            attributes: {}
+            stroke: undefined,
+            'stroke-width': 1,
+            'stroke-dasharray': undefined,
+            'stroke-linecap': undefined,
+            'stroke-linejoin': undefined,
+            'text-align': 'left',
+            font: '12pt Helvetica, Arial, sans-serif',
+            'font-size': '12pt',
         };
-        var states = [initialState];
-        var elements = [];
         var measurementCanvas = document ? document.createElement('canvas') : null;
         var ctx = measurementCanvas ? measurementCanvas.getContext('2d') : null;
         class Element {
-            constructor(name, attr, content) {
+            constructor(name, attr, parent, text) {
                 this.name = name;
                 this.attr = attr;
-                this.content = content || undefined;
+                this.parent = parent;
+                this.children = [];
+                this.text = text || undefined;
             }
             stroke() {
-                var base = this.attr.style || '';
-                this.attr.style = base +
-                    'stroke:' + lastDefined('stroke') +
-                    ';fill:none' +
-                    ';stroke-dasharray:' + lastDefined('dashArray') +
-                    ';stroke-width:' + lastDefined('strokeWidth') + ';';
+                this.attr.fill = 'none';
                 return this;
             }
             fill() {
-                var base = this.attr.style || '';
-                this.attr.style = base + 'stroke:none; fill:' + lastDefined('fill') + ';';
+                this.attr.stroke = 'none';
                 return this;
             }
             fillAndStroke() {
-                var base = this.attr.style || '';
-                this.attr.style = base +
-                    'stroke:' + lastDefined('stroke') +
-                    ';fill:' + lastDefined('fill') +
-                    ';stroke-dasharray:' + lastDefined('dashArray') +
-                    ';stroke-width:' + lastDefined('strokeWidth') + ';';
                 return this;
             }
+            serialize() {
+                var _a;
+                const attrs = toAttrString(this.attr);
+                const data = toAttrString((_a = getDefined(this.parent, e => e.data)) !== null && _a !== void 0 ? _a : {});
+                const content = this.children.map(o => o.serialize()).join('\n');
+                if (this.name === 'text')
+                    return `<text ${data} ${attrs}>${xmlEncode(this.text)}</text>`;
+                else if (this.children.length === 0)
+                    return `<${this.name} ${data} ${attrs}></${this.name}>`;
+                else
+                    return `<${this.name} ${data} ${attrs}>
+	${content.replace(/\n/g, '\n\t')}
+</${this.name}>`;
+            }
         }
-        function State(dx, dy) {
-            return {
-                x: dx,
-                y: dy,
-                stroke: null,
-                strokeWidth: null,
-                fill: null,
-                textAlign: null,
-                dashArray: 'none',
-                font: null,
-                fontSize: null,
-                attributes: null
-            };
+        function getDefined(group, getter) {
+            var _a, _b;
+            if (!group)
+                return getter(syntheticRoot);
+            return (_b = (_a = getter(group)) !== null && _a !== void 0 ? _a : getDefined(group.parent, getter)) !== null && _b !== void 0 ? _b : getter(syntheticRoot);
         }
-        function trans(coord, axis) {
-            states.forEach(function (t) { coord += t[axis]; });
-            return coord;
+        class GroupElement extends Element {
+            constructor(parent) {
+                super('g', {}, parent);
+            }
         }
-        function tX(coord) { return Math.round(10 * trans(coord, 'x')) / 10; }
-        function tY(coord) { return Math.round(10 * trans(coord, 'y')) / 10; }
-        function lastDefined(property) {
-            for (var i = states.length - 1; i >= 0; i--)
-                if (states[i][property])
-                    return states[i][property];
-            return undefined;
-        }
-        function last(list) { return list[list.length - 1]; }
+        const syntheticRoot = new GroupElement({});
+        syntheticRoot.attr = initialState;
+        var root = new Element('svg', {
+            version: '1.1',
+            baseProfile: 'full',
+            xmlns: 'http://www.w3.org/2000/svg',
+            'xmlns:xlink': 'http://www.w3.org/1999/xlink',
+            'xmlns:ev': 'http://www.w3.org/2001/xml-events',
+        }, undefined);
+        var current = new GroupElement(root);
+        current.attr = initialState;
+        root.children.push(current);
+        var inPathBuilderMode = false;
         function tracePath(path, offset = { x: 0, y: 0 }, s = 1) {
             var d = path.map(function (e, i) {
-                return (i ? 'L' : 'M') + tX(offset.x + s * e.x) + ' ' + tY(offset.y + s * e.y);
+                return (i ? 'L' : 'M') + (offset.x + s * e.x).toFixed(1) + ' ' + (offset.y + s * e.y).toFixed(1);
             }).join(' ');
-            return newElement('path', { d: d });
+            return el('path', { d: d });
         }
-        function newElement(type, attr, content) {
-            var element = new Element(type, attr, content);
-            var extraData = lastDefined('attributes');
-            for (var key in extraData) {
-                element.attr['data-' + key] = extraData[key];
-            }
-            elements.push(element);
+        function el(type, attr, text) {
+            var element = new Element(type, attr, current, text);
+            current.children.push(element);
             return element;
         }
         return {
@@ -1902,7 +1906,7 @@
             height: function () { return 0; },
             clear: function () { },
             circle: function (p, r) {
-                return newElement('circle', { r: r, cx: tX(p.x), cy: tY(p.y) });
+                return el('circle', { r: r, cx: p.x, cy: p.y });
             },
             ellipse: function (center, w, h, start = 0, stop = 0) {
                 if (start || stop) {
@@ -1910,17 +1914,17 @@
                     return tracePath(path);
                 }
                 else {
-                    return newElement('ellipse', { cx: tX(center.x), cy: tY(center.y), rx: w / 2, ry: h / 2 });
+                    return el('ellipse', { cx: center.x, cy: center.y, rx: w / 2, ry: h / 2 });
                 }
             },
-            arc: function (x, y, r) {
-                return newElement('ellipse', { cx: tX(x), cy: tY(y), rx: r, ry: r });
+            arc: function (cx, cy, r) {
+                return el('ellipse', { cx, cy, rx: r, ry: r });
             },
-            roundRect: function (x, y, w, h, r) {
-                return newElement('rect', { x: tX(x), y: tY(y), rx: r, ry: r, height: h, width: w });
+            roundRect: function (x, y, width, height, r) {
+                return el('rect', { x, y, rx: r, ry: r, height, width });
             },
-            rect: function (x, y, w, h) {
-                return newElement('rect', { x: tX(x), y: tY(y), height: h, width: w });
+            rect: function (x, y, width, height) {
+                return el('rect', { x, y, height, width });
             },
             path: tracePath,
             circuit: function (path, offset, s) {
@@ -1928,102 +1932,110 @@
                 element.attr.d += ' Z';
                 return element;
             },
-            setFont: function (font, bold, ital, fontSize) {
-                var font = `${bold} ${ital || ''} ${fontSize}pt ${font}, Helvetica, sans-serif`;
-                last(states).font = font;
-                last(states).fontSize = fontSize;
+            setFont: function (family, size, weight, style) {
+                current.attr['font-family'] = family;
+                current.attr['font-size'] = size + 'pt';
+                current.attr['font-weight'] = weight;
+                current.attr['font-style'] = style;
             },
             strokeStyle: function (stroke) {
-                last(states).stroke = stroke;
+                current.attr.stroke = stroke;
             },
             fillStyle: function (fill) {
-                last(states).fill = fill;
+                current.attr.fill = fill;
             },
             arcTo: function (x1, y1, x2, y2) {
-                last(elements).attr.d += ('L' + tX(x1) + ' ' + tY(y1) + ' L' + tX(x2) + ' ' + tY(y2) + ' ');
+                if (inPathBuilderMode)
+                    last(current.children).attr.d += ('L' + x1 + ' ' + y1 + ' L' + x2 + ' ' + y2 + ' ');
+                else
+                    throw new Error('can only be called after .beginPath()');
             },
             beginPath: function () {
-                return newElement('path', { d: '' });
+                inPathBuilderMode = true;
+                return el('path', { d: '' });
             },
             fillText: function (text, x, y) {
-                var attr = { x: tX(x), y: tY(y), style: 'fill: ' + last(states).fill + ';' };
-                var font = lastDefined('font');
-                if (font) {
-                    attr.style += 'font:' + font + ';';
-                }
-                if (lastDefined('textAlign') === 'center') {
-                    attr.style += 'text-anchor: middle;';
-                }
-                return newElement('text', attr, text);
+                return el('text', {
+                    x,
+                    y,
+                    stroke: 'none',
+                    font: undefined, style: undefined,
+                    'text-anchor': getDefined(current, e => e.attr['text-align']) === 'center' ? 'middle' : undefined
+                }, text);
             },
-            lineCap: function (cap) { globalStyle += ';stroke-linecap:' + cap; },
-            lineJoin: function (join) { globalStyle += ';stroke-linejoin:' + join; },
+            lineCap: function (cap) { current.attr['stroke-linecap'] = cap; },
+            lineJoin: function (join) { current.attr['stroke-linejoin'] = join; },
             lineTo: function (x, y) {
-                last(elements).attr.d += ('L' + tX(x) + ' ' + tY(y) + ' ');
-                return last(elements);
+                if (inPathBuilderMode)
+                    last(current.children).attr.d += ('L' + (x).toFixed(1) + ' ' + (y).toFixed(1) + ' ');
+                else
+                    throw new Error('can only be called after .beginPath()');
+                return current;
             },
             lineWidth: function (w) {
-                last(states).strokeWidth = w;
+                current.attr['stroke-width'] = w;
             },
             measureText: function (s) {
                 if (ctx) {
-                    ctx.font = lastDefined('font') || 'normal 12pt Helvetica';
+                    if (current)
+                        ctx.font = `${getDefined(current, e => e.attr["font-weight"])} ${getDefined(current, e => e.attr["font-style"])} ${getDefined(current, e => e.attr["font-size"])} ${getDefined(current, e => e.attr["font-family"])}`;
+                    else
+                        ctx.font = `${initialState["font-weight"]} ${initialState["font-style"]} ${initialState["font-size"]} ${initialState["font-family"]}`;
                     return ctx.measureText(s);
                 }
                 else {
                     return {
                         width: sum(s, function (c) {
-                            var scale = lastDefined('fontSize') / 12;
-                            if (charWidths[c]) {
-                                return charWidths[c] * scale;
-                            }
-                            return 16 * scale;
+                            var _a, _b;
+                            const size = (_a = getDefined(current, e => e.attr['font-size'])) !== null && _a !== void 0 ? _a : 12;
+                            var scale = parseInt(size.toString()) / 12;
+                            return ((_b = charWidths[c]) !== null && _b !== void 0 ? _b : 16) * scale;
                         })
                     };
                 }
             },
             moveTo: function (x, y) {
-                last(elements).attr.d += ('M' + tX(x) + ' ' + tY(y) + ' ');
+                if (inPathBuilderMode)
+                    last(current.children).attr.d += ('M' + (x).toFixed(1) + ' ' + (y).toFixed(1) + ' ');
+                else
+                    throw new Error('can only be called after .beginPath()');
             },
             restore: function () {
-                states.pop();
+                if (current.parent)
+                    current = current.parent;
             },
             save: function () {
-                states.push(State(0, 0));
+                var node = new GroupElement(current);
+                current.children.push(node);
+                current = node;
             },
             setData: function (name, value) {
-                lastDefined('attributes')[name] = value;
+                var _a;
+                current.data = (_a = current.data) !== null && _a !== void 0 ? _a : {};
+                current.data['data-' + name] = value;
             },
             scale: function () { },
             setLineDash: function (d) {
-                last(states).dashArray = (d.length === 0) ? 'none' : d[0] + ' ' + d[1];
+                current.attr['stroke-dasharray'] = (d.length === 0) ? 'none' : d[0] + ' ' + d[1];
             },
             stroke: function () {
-                last(elements).stroke();
+                inPathBuilderMode = false;
+                last(current.children).stroke();
             },
             textAlign: function (a) {
-                last(states).textAlign = a;
+                current.attr['text-align'] = a;
             },
             translate: function (dx, dy) {
-                last(states).x += dx;
-                last(states).y += dy;
+                current.attr.transform = `translate(${dx}, ${dy})`;
             },
             serialize: function (size, desc, title) {
-                function toAttr(obj) {
-                    return Object.keys(obj).map(key => `${key}="${xmlEncode(obj[key])}"`).join(' ');
-                }
-                function toHtml(e) {
-                    return `<${e.name} ${toAttr(e.attr)}>${xmlEncode(e.content)}</${e.name}>`;
-                }
-                var elementsToSerialize = elements;
                 if (desc) {
-                    elementsToSerialize.unshift(new Element('desc', {}, desc));
+                    root.children.unshift(new Element('desc', {}, undefined, desc));
                 }
                 if (title) {
-                    elementsToSerialize.unshift(new Element('title', {}, title));
+                    root.children.unshift(new Element('title', {}, undefined, title));
                 }
-                var innerSvg = elementsToSerialize.map(toHtml).join('\n  ');
-                var attrs = {
+                root.attr = {
                     version: '1.1',
                     baseProfile: 'full',
                     width: size.width,
@@ -2032,9 +2044,8 @@
                     xmlns: 'http://www.w3.org/2000/svg',
                     'xmlns:xlink': 'http://www.w3.org/1999/xlink',
                     'xmlns:ev': 'http://www.w3.org/2001/xml-events',
-                    style: 'font:' + lastDefined('font') + ';' + globalStyle,
                 };
-                return '<svg ' + toAttr(attrs) + '>\n  ' + innerSvg + '\n</svg>';
+                return root.serialize();
             }
         };
     }
@@ -2045,11 +2056,11 @@
     }
     function createMeasurer(config, graphics) {
         return {
-            setFont(conf, bold, ital) {
-                graphics.setFont(conf.font, bold, ital !== null && ital !== void 0 ? ital : null, config.fontSize);
+            setFont(family, size, weight, style) {
+                graphics.setFont(family, size, weight, style);
             },
-            textWidth: function (s) { return graphics.measureText(s).width; },
-            textHeight: function () { return config.leading * config.fontSize; }
+            textWidth(s) { return graphics.measureText(s).width; },
+            textHeight() { return config.leading * config.fontSize; }
         };
     }
     function parseAndRender(code, graphics, canvas, scale) {
@@ -2061,14 +2072,14 @@
             fitCanvasSize(canvas, graphLayout, config.zoom * scale);
         }
         config.zoom *= scale;
-        render(graphics, config, graphLayout, measurer.setFont);
+        render(graphics, config, graphLayout);
         return { config: config, layout: graphLayout };
     }
     function draw(canvas, code, scale) {
         return parseAndRender(code, GraphicsCanvas(canvas), canvas, scale || 1);
     }
     function renderSvg(code, document) {
-        var skCanvas = GraphicsSvg('', document);
+        var skCanvas = GraphicsSvg(document);
         var { config, layout } = parseAndRender(code, skCanvas, null, 1);
         return skCanvas.serialize({
             width: layout.width,
