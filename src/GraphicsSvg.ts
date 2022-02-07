@@ -72,6 +72,7 @@ export function GraphicsSvg(document?: HTMLDocument): ISvgGraphics {
 		parent: GroupElement|undefined
 		children: Element[]
 		text: string|undefined
+		elideEmpty = false
 		stroke(){
 			this.attr.fill = 'none'
 			return this
@@ -83,16 +84,19 @@ export function GraphicsSvg(document?: HTMLDocument): ISvgGraphics {
 		fillAndStroke(){
 			return this
 		}
+		group() {
+			return this.parent
+		}
 		serialize(): string {
-			const attrs = toAttrString(this.attr)
-			const data = toAttrString(getDefined(this.parent, e => e.data) ?? {})
+			const data = getDefined(this.group(), e => e.data) ?? {}
+			const attrs = toAttrString({ ...this.attr, ...data })
 			const content = this.children.map(o => o.serialize()).join('\n')
 			if (this.name === 'text')
-				return `<text ${data} ${attrs}>${xmlEncode(this.text)}</text>`
+				return `<text ${attrs}>${xmlEncode(this.text)}</text>`
 			else if (this.children.length === 0)
-				return `<${this.name} ${data} ${attrs}></${this.name}>`
+				return this.elideEmpty ? '' : `<${this.name} ${attrs}></${this.name}>`
 			else
-				return `<${this.name} ${data} ${attrs}>
+				return `<${this.name} ${attrs}>
 	${content.replace(/\n/g, '\n\t')}
 </${this.name}>`
 		}
@@ -107,8 +111,12 @@ export function GraphicsSvg(document?: HTMLDocument): ISvgGraphics {
 		constructor(parent: GroupElement) {
 			super('g', {}, parent)
 		}
+		elideEmpty = true
 		attr: SvgAttr
 		data: Record<string, string>
+		group() {
+			return this
+		}
 	}
 	
 	const syntheticRoot = new GroupElement({} as GroupElement)

@@ -45,13 +45,15 @@ export function render(graphics: Graphics, config: Config, compartment: Compartm
 		var style = config.styles[node.type] || styles.CLASS
 
 		g.save()
+		g.setData('name', node.name)
+
+		g.save()
 		g.fillStyle(style.fill || config.fill[level] || last(config.fill))
 		g.strokeStyle(style.stroke || config.stroke)
 		if (style.dashed){
 			var dash = Math.max(4, 2*config.lineWidth)
 			g.setLineDash([dash, dash])
 		}
-		g.setData('name', node.name)
 		var drawNode = visualizers[style.visual] || visualizers.class
 		drawNode(node, x, y, config, g)
 		for(var divider of node.dividers) {
@@ -59,18 +61,15 @@ export function render(graphics: Graphics, config: Config, compartment: Compartm
 		}
 		g.restore()
 
-		g.save()
-		g.translate(x, y)
-
 		node.compartments.forEach(function (part: Compartment, i: number){
 			var textStyle = i == 0 ? style.title : style.body;
 			g.save()
-			g.translate(part.x, part.y)
+			g.translate(x + part.x, y + part.y)
 			g.setFont(config.font, config.fontSize, textStyle.bold ? 'bold' : 'normal', textStyle.italic ? 'italic' : 'normal')
 			renderCompartment(part, style.stroke, textStyle, level+1)
 			g.restore()
 		})
-		
+
 		g.restore()
 	}
 

@@ -1577,25 +1577,24 @@
             var y = Math.round(node.y - node.height / 2);
             var style = config.styles[node.type] || styles.CLASS;
             g.save();
+            g.setData('name', node.name);
+            g.save();
             g.fillStyle(style.fill || config.fill[level] || last(config.fill));
             g.strokeStyle(style.stroke || config.stroke);
             if (style.dashed) {
                 var dash = Math.max(4, 2 * config.lineWidth);
                 g.setLineDash([dash, dash]);
             }
-            g.setData('name', node.name);
             var drawNode = visualizers[style.visual] || visualizers.class;
             drawNode(node, x, y, config, g);
             for (var divider of node.dividers) {
                 g.path(divider.map(e => add(e, { x, y }))).stroke();
             }
             g.restore();
-            g.save();
-            g.translate(x, y);
             node.compartments.forEach(function (part, i) {
                 var textStyle = i == 0 ? style.title : style.body;
                 g.save();
-                g.translate(part.x, part.y);
+                g.translate(x + part.x, y + part.y);
                 g.setFont(config.font, config.fontSize, textStyle.bold ? 'bold' : 'normal', textStyle.italic ? 'italic' : 'normal');
                 renderCompartment(part, style.stroke, textStyle, level + 1);
                 g.restore();
@@ -1834,6 +1833,7 @@
         var ctx = measurementCanvas ? measurementCanvas.getContext('2d') : null;
         class Element {
             constructor(name, attr, parent, text) {
+                this.elideEmpty = false;
                 this.name = name;
                 this.attr = attr;
                 this.parent = parent;
@@ -1851,17 +1851,20 @@
             fillAndStroke() {
                 return this;
             }
+            group() {
+                return this.parent;
+            }
             serialize() {
                 var _a;
-                const attrs = toAttrString(this.attr);
-                const data = toAttrString((_a = getDefined(this.parent, e => e.data)) !== null && _a !== void 0 ? _a : {});
+                const data = (_a = getDefined(this.group(), e => e.data)) !== null && _a !== void 0 ? _a : {};
+                const attrs = toAttrString(Object.assign(Object.assign({}, this.attr), data));
                 const content = this.children.map(o => o.serialize()).join('\n');
                 if (this.name === 'text')
-                    return `<text ${data} ${attrs}>${xmlEncode(this.text)}</text>`;
+                    return `<text ${attrs}>${xmlEncode(this.text)}</text>`;
                 else if (this.children.length === 0)
-                    return `<${this.name} ${data} ${attrs}></${this.name}>`;
+                    return this.elideEmpty ? '' : `<${this.name} ${attrs}></${this.name}>`;
                 else
-                    return `<${this.name} ${data} ${attrs}>
+                    return `<${this.name} ${attrs}>
 	${content.replace(/\n/g, '\n\t')}
 </${this.name}>`;
             }
@@ -1875,6 +1878,10 @@
         class GroupElement extends Element {
             constructor(parent) {
                 super('g', {}, parent);
+                this.elideEmpty = true;
+            }
+            group() {
+                return this;
             }
         }
         const syntheticRoot = new GroupElement({});
