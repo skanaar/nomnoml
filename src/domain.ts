@@ -1,5 +1,5 @@
-import { Ranker } from "graphre/decl/types"
-import { Graphics } from "./Graphics"
+import { Ranker } from 'graphre/decl/types'
+import { Graphics } from './Graphics'
 
 export interface Config {
   padding: number
@@ -17,7 +17,7 @@ export interface Config {
   edgeMargin: number
   gravity: number
   spacing: number
-  direction: 'TB'|'LR'
+  direction: 'TB' | 'LR'
   fillArrows: boolean
   arrowSize: number
   bendSize: number
@@ -27,9 +27,9 @@ export interface Config {
 }
 
 export interface Measurer {
-    setFont(family: string, size: number, weight: 'bold'|'normal', style:'italic'|'normal'): void
-    textWidth(text: string): number
-    textHeight(): number
+  setFont(family: string, size: number, weight: 'bold' | 'normal', style: 'italic' | 'normal'): void
+  textWidth(text: string): number
+  textHeight(): number
 }
 
 export interface Visualizer {
@@ -40,29 +40,29 @@ export interface NodeLayouter {
   (config: Config, node: Classifier): void
 }
 
-export type Visual = 
-  'actor'|
-  'class'|
-  'database'|
-  'ellipse'|
-  'end'|
-  'frame'|
-  'hidden'|
-  'input'|
-  'lollipop'|
-  'none'|
-  'note'|
-  'package'|
-  'receiver'|
-  'rhomb'|
-  'roundrect'|
-  'sender'|
-  'socket'|
-  'start'|
-  'sync'|
-  'table'|
-  'transceiver'
-  
+export type Visual =
+  | 'actor'
+  | 'class'
+  | 'database'
+  | 'ellipse'
+  | 'end'
+  | 'frame'
+  | 'hidden'
+  | 'input'
+  | 'lollipop'
+  | 'none'
+  | 'note'
+  | 'package'
+  | 'receiver'
+  | 'rhomb'
+  | 'roundrect'
+  | 'sender'
+  | 'socket'
+  | 'start'
+  | 'sync'
+  | 'table'
+  | 'transceiver'
+
 export interface TextStyle {
   bold: boolean
   underline: boolean
@@ -74,10 +74,10 @@ export interface Style {
   title: TextStyle
   body: TextStyle
   dashed: boolean
-  fill: string|undefined
-  stroke: string|undefined
+  fill: string | undefined
+  stroke: string | undefined
   visual: Visual
-  direction: 'TB'|'LR'|undefined
+  direction: 'TB' | 'LR' | undefined
 }
 
 export class Compartment {
@@ -85,12 +85,8 @@ export class Compartment {
   y: number
   width: number
   height: number
-  offset: { x: number, y: number }
-  constructor(
-    public lines: string[], 
-    public nodes: Classifier[], 
-    public relations: Relation[]
-  ){}
+  offset: { x: number; y: number }
+  constructor(public lines: string[], public nodes: Classifier[], public relations: Relation[]) {}
 }
 
 export interface RelationLabel {
@@ -103,7 +99,7 @@ export interface RelationLabel {
 
 export class Relation {
   id: number
-  path?: { x: number, y: number }[]
+  path?: { x: number; y: number }[]
   start: string
   end: string
   startLabel: RelationLabel
@@ -118,12 +114,8 @@ export class Classifier {
   height: number
   layoutWidth: number
   layoutHeight: number
-  dividers: { x: number, y: number }[][]
-  constructor(
-    public type: string,
-    public name: string,
-    public compartments: Compartment[]
-  ){
+  dividers: { x: number; y: number }[][]
+  constructor(public type: string, public name: string, public compartments: Compartment[]) {
     this.dividers = []
   }
 }

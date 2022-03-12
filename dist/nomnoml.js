@@ -32,13 +32,13 @@
     function range([min, max], count) {
         var output = [];
         for (var i = 0; i < count; i++)
-            output.push(min + (max - min) * i / (count - 1));
+            output.push(min + ((max - min) * i) / (count - 1));
         return output;
     }
     function sum(list, transform) {
-        for (var i = 0, summation = 0, len = list.length; i < len; i++)
-            summation += transform(list[i]);
-        return summation;
+        for (var i = 0, sum = 0, len = list.length; i < len; i++)
+            sum += transform(list[i]);
+        return sum;
     }
     function find(list, predicate) {
         for (var i = 0; i < list.length; i++)
@@ -145,8 +145,8 @@
         USECASE: buildStyle({ visual: 'ellipse' }, { center: true }, { center: true }),
     };
     function box(config, clas) {
-        clas.width = Math.max(...clas.compartments.map(e => e.width));
-        clas.height = sum(clas.compartments, e => e.height);
+        clas.width = Math.max(...clas.compartments.map((e) => e.width));
+        clas.height = sum(clas.compartments, (e) => e.height);
         clas.dividers = [];
         var y = 0;
         for (var comp of clas.compartments) {
@@ -155,7 +155,10 @@
             comp.width = clas.width;
             y += comp.height;
             if (comp != last(clas.compartments))
-                clas.dividers.push([{ x: 0, y: y }, { x: clas.width, y: y }]);
+                clas.dividers.push([
+                    { x: 0, y: y },
+                    { x: clas.width, y: y },
+                ]);
         }
     }
     function icon(config, clas) {
@@ -168,7 +171,7 @@
         clas.width = config.fontSize * 1.5;
         clas.height = config.fontSize * 1.5;
         clas.dividers = [];
-        var y = (config.direction == 'LR') ? clas.height - config.padding : -clas.height / 2;
+        var y = config.direction == 'LR' ? clas.height - config.padding : -clas.height / 2;
         for (var comp of clas.compartments) {
             if (config.direction == 'LR') {
                 comp.x = clas.width / 2 - comp.width / 2;
@@ -183,8 +186,8 @@
     }
     var layouters = {
         actor: function (config, clas) {
-            clas.width = Math.max(config.padding * 2, ...clas.compartments.map(e => e.width));
-            clas.height = config.padding * 3 + sum(clas.compartments, e => e.height);
+            clas.width = Math.max(config.padding * 2, ...clas.compartments.map((e) => e.width));
+            clas.height = config.padding * 3 + sum(clas.compartments, (e) => e.height);
             clas.dividers = [];
             var y = config.padding * 3;
             for (var comp of clas.compartments) {
@@ -193,13 +196,16 @@
                 comp.width = clas.width;
                 y += comp.height;
                 if (comp != last(clas.compartments))
-                    clas.dividers.push([{ x: config.padding, y: y }, { x: clas.width - config.padding, y: y }]);
+                    clas.dividers.push([
+                        { x: config.padding, y: y },
+                        { x: clas.width - config.padding, y: y },
+                    ]);
             }
         },
         class: box,
         database: function (config, clas) {
-            clas.width = Math.max(...clas.compartments.map(e => e.width));
-            clas.height = sum(clas.compartments, e => e.height) + config.padding * 2;
+            clas.width = Math.max(...clas.compartments.map((e) => e.width));
+            clas.height = sum(clas.compartments, (e) => e.height) + config.padding * 2;
             clas.dividers = [];
             var y = config.padding * 1.5;
             for (var comp of clas.compartments) {
@@ -208,7 +214,7 @@
                 comp.width = clas.width;
                 y += comp.height;
                 if (comp != last(clas.compartments)) {
-                    var path = range([0, Math.PI], 16).map(a => ({
+                    var path = range([0, Math.PI], 16).map((a) => ({
                         x: clas.width * 0.5 * (1 - Math.cos(a)),
                         y: y + config.padding * (0.75 * Math.sin(a) - 0.5),
                     }));
@@ -217,8 +223,8 @@
             }
         },
         ellipse: function (config, clas) {
-            var width = Math.max(...clas.compartments.map(e => e.width));
-            var height = sum(clas.compartments, e => e.height);
+            var width = Math.max(...clas.compartments.map((e) => e.width));
+            var height = sum(clas.compartments, (e) => e.height);
             clas.width = width * 1.25;
             clas.height = height * 1.25;
             clas.dividers = [];
@@ -233,7 +239,7 @@
                 if (comp != last(clas.compartments))
                     clas.dividers.push([
                         { x: clas.width / 2 + rimPos(y) - 1, y: y },
-                        { x: clas.width / 2 - rimPos(y) + 1, y: y }
+                        { x: clas.width / 2 - rimPos(y) + 1, y: y },
                     ]);
             }
         },
@@ -249,7 +255,7 @@
                 { x: 0, y: h },
                 { x: w - h / 4, y: h },
                 { x: w + h / 4, y: h / 2 },
-                { x: w + h / 4, y: 0 }
+                { x: w + h / 4, y: 0 },
             ]);
         },
         hidden: function (config, clas) {
@@ -265,8 +271,8 @@
         package: box,
         receiver: box,
         rhomb: function (config, clas) {
-            var width = Math.max(...clas.compartments.map(e => e.width));
-            var height = sum(clas.compartments, e => e.height);
+            var width = Math.max(...clas.compartments.map((e) => e.width));
+            var height = sum(clas.compartments, (e) => e.height);
             clas.width = width * 1.5;
             clas.height = height * 1.5;
             clas.dividers = [];
@@ -279,8 +285,14 @@
                 var slope = clas.width / clas.height;
                 if (comp != last(clas.compartments))
                     clas.dividers.push([
-                        { x: clas.width / 2 + (y < clas.height / 2 ? y * slope : (clas.height - y) * slope), y: y },
-                        { x: clas.width / 2 - (y < clas.height / 2 ? y * slope : (clas.height - y) * slope), y: y }
+                        {
+                            x: clas.width / 2 + (y < clas.height / 2 ? y * slope : (clas.height - y) * slope),
+                            y: y,
+                        },
+                        {
+                            x: clas.width / 2 - (y < clas.height / 2 ? y * slope : (clas.height - y) * slope),
+                            y: y,
+                        },
                     ]);
             }
         },
@@ -329,15 +341,24 @@
                 }
             }
             var header = clas.compartments[0];
-            var cellW = Math.max(header.width / rows[0].length, ...gridcells.map(e => e.width));
-            var cellH = Math.max(...gridcells.map(e => e.height));
+            var cellW = Math.max(header.width / rows[0].length, ...gridcells.map((e) => e.width));
+            var cellH = Math.max(...gridcells.map((e) => e.height));
             clas.width = cellW * rows[0].length;
             clas.height = header.height + cellH * rows.length;
             var hh = header.height;
             clas.dividers = [
-                [{ x: 0, y: header.height }, { x: 0, y: header.height }],
-                ...rows.map((e, i) => [{ x: 0, y: hh + i * cellH }, { x: clas.width, y: hh + i * cellH }]),
-                ...rows[0].map((e, i) => [{ x: (i + 1) * cellW, y: hh }, { x: (i + 1) * cellW, y: clas.height }]),
+                [
+                    { x: 0, y: header.height },
+                    { x: 0, y: header.height },
+                ],
+                ...rows.map((e, i) => [
+                    { x: 0, y: hh + i * cellH },
+                    { x: clas.width, y: hh + i * cellH },
+                ]),
+                ...rows[0].map((e, i) => [
+                    { x: (i + 1) * cellW, y: hh },
+                    { x: (i + 1) * cellW, y: clas.height },
+                ]),
             ];
             header.x = 0;
             header.y = 0;
@@ -359,11 +380,19 @@
             var yp = y + a * 4;
             var faceCenter = { x: node.x, y: yp - a };
             g.circle(faceCenter, a).fillAndStroke();
-            g.path([{ x: node.x, y: yp }, { x: node.x, y: yp + 2 * a }]).stroke();
-            g.path([{ x: node.x - a, y: yp + a }, { x: node.x + a, y: yp + a }]).stroke();
-            g.path([{ x: node.x - a, y: yp + a + config.padding },
+            g.path([
+                { x: node.x, y: yp },
+                { x: node.x, y: yp + 2 * a },
+            ]).stroke();
+            g.path([
+                { x: node.x - a, y: yp + a },
+                { x: node.x + a, y: yp + a },
+            ]).stroke();
+            g.path([
+                { x: node.x - a, y: yp + a + config.padding },
                 { x: node.x, y: yp + config.padding },
-                { x: node.x + a, y: yp + a + config.padding }]).stroke();
+                { x: node.x + a, y: yp + a + config.padding },
+            ]).stroke();
         },
         class: function (node, x, y, config, g) {
             g.rect(x, y, node.width, node.height).fillAndStroke();
@@ -373,14 +402,16 @@
             var cy = y - pad / 2;
             var pi = 3.1416;
             g.rect(x, y + pad, node.width, node.height - pad * 1.5).fill();
-            g.path([{ x: x, y: cy + pad * 1.5 }, { x: x, y: cy - pad * 0.5 + node.height }]).stroke();
+            g.path([
+                { x: x, y: cy + pad * 1.5 },
+                { x: x, y: cy - pad * 0.5 + node.height },
+            ]).stroke();
             g.path([
                 { x: x + node.width, y: cy + pad * 1.5 },
-                { x: x + node.width, y: cy - pad * 0.5 + node.height }
+                { x: x + node.width, y: cy - pad * 0.5 + node.height },
             ]).stroke();
             g.ellipse({ x: node.x, y: cy + pad * 1.5 }, node.width, pad * 1.5).fillAndStroke();
-            g.ellipse({ x: node.x, y: cy - pad * 0.5 + node.height }, node.width, pad * 1.5, 0, pi)
-                .fillAndStroke();
+            g.ellipse({ x: node.x, y: cy - pad * 0.5 + node.height }, node.width, pad * 1.5, 0, pi).fillAndStroke();
         },
         ellipse: function (node, x, y, config, g) {
             g.ellipse({ x: node.x, y: node.y }, node.width, node.height).fillAndStroke();
@@ -393,21 +424,19 @@
         frame: function (node, x, y, config, g) {
             g.rect(x, y, node.width, node.height).fillAndStroke();
         },
-        hidden: function (node, x, y, config, g) {
-        },
+        hidden: function (node, x, y, config, g) { },
         input: function (node, x, y, config, g) {
             g.circuit([
                 { x: x + config.padding, y: y },
                 { x: x + node.width, y: y },
                 { x: x + node.width - config.padding, y: y + node.height },
-                { x: x, y: y + node.height }
+                { x: x, y: y + node.height },
             ]).fillAndStroke();
         },
         lollipop: function (node, x, y, config, g) {
             g.circle({ x: node.x, y: y + node.height / 2 }, node.height / 2.5).fillAndStroke();
         },
-        none: function (node, x, y, config, g) {
-        },
+        none: function (node, x, y, config, g) { },
         note: function (node, x, y, config, g) {
             g.circuit([
                 { x: x, y: y },
@@ -415,12 +444,12 @@
                 { x: x + node.width, y: y + config.padding },
                 { x: x + node.width, y: y + node.height },
                 { x: x, y: y + node.height },
-                { x: x, y: y }
+                { x: x, y: y },
             ]).fillAndStroke();
             g.path([
                 { x: x + node.width - config.padding, y: y },
                 { x: x + node.width - config.padding, y: y + config.padding },
-                { x: x + node.width, y: y + config.padding }
+                { x: x + node.width, y: y + config.padding },
             ]).stroke();
         },
         package: function (node, x, y, config, g) {
@@ -431,7 +460,7 @@
                 { x: x, y: y + headHeight },
                 { x: x, y: y },
                 { x: x + w, y: y },
-                { x: x + w, y: y + headHeight }
+                { x: x + w, y: y + headHeight },
             ]).fillAndStroke();
         },
         receiver: function (node, x, y, config, g) {
@@ -448,7 +477,7 @@
                 { x: node.x, y: y },
                 { x: x + node.width, y: node.y },
                 { x: node.x, y: y + node.height },
-                { x: x, y: node.y }
+                { x: x, y: node.y },
             ]).fillAndStroke();
         },
         roundrect: function (node, x, y, config, g) {
@@ -461,7 +490,7 @@
                 { x: x + node.width - config.padding, y: y },
                 { x: x + node.width, y: y + node.height / 2 },
                 { x: x + node.width - config.padding, y: y + node.height },
-                { x: x, y: y + node.height }
+                { x: x, y: y + node.height },
             ]).fillAndStroke();
         },
         socket: function (node, x, y, config, g) {
@@ -487,7 +516,7 @@
                 { x: x + node.width, y: y + node.height / 2 },
                 { x: x + node.width - config.padding, y: y + node.height },
                 { x: x - config.padding, y: y + node.height },
-                { x: x, y: y + node.height / 2 }
+                { x: x, y: y + node.height / 2 },
             ]).fillAndStroke();
         },
     };
@@ -499,7 +528,7 @@
             measurer.setFont(config.font, config.fontSize, fontWeight, 'normal');
             return {
                 width: Math.round(Math.max(...lines.map(measurer.textWidth)) + 2 * config.padding),
-                height: Math.round(measurer.textHeight() * lines.length + 2 * config.padding)
+                height: Math.round(measurer.textHeight() * lines.length + 2 * config.padding),
             };
         }
         function layoutCompartment(c, compartmentIndex, style) {
@@ -512,7 +541,7 @@
                 return;
             }
             var styledConfig = Object.assign(Object.assign({}, config), { direction: (_a = style.direction) !== null && _a !== void 0 ? _a : config.direction });
-            c.nodes.forEach(e => layoutClassifier(e, styledConfig));
+            c.nodes.forEach((e) => layoutClassifier(e, styledConfig));
             var g = new graphre.graphlib.Graph();
             g.setGraph({
                 rankdir: style.direction || config.direction,
@@ -520,7 +549,7 @@
                 edgesep: config.spacing,
                 ranksep: config.spacing,
                 acyclicer: config.acyclicer,
-                ranker: config.ranker
+                ranker: config.ranker,
             });
             for (var e of c.nodes) {
                 g.setNode(e.name, { width: e.layoutWidth, height: e.layoutHeight });
@@ -558,10 +587,10 @@
                 var endP = rel.path[rel.path.length - 2];
                 layoutLabel(rel.startLabel, startP, adjustQuadrant(quadrant(startP, start, 4), start, end));
                 layoutLabel(rel.endLabel, endP, adjustQuadrant(quadrant(endP, end, 2), end, start));
-                left = Math.min(left, rel.startLabel.x, rel.endLabel.x, ...edge.points.map(e => e.x), ...edge.points.map(e => e.x));
-                right = Math.max(right, rel.startLabel.x + rel.startLabel.width, rel.endLabel.x + rel.endLabel.width, ...edge.points.map(e => e.x));
-                top = Math.min(top, rel.startLabel.y, rel.endLabel.y, ...edge.points.map(e => e.y));
-                bottom = Math.max(bottom, rel.startLabel.y + rel.startLabel.height, rel.endLabel.y + rel.endLabel.height, ...edge.points.map(e => e.y));
+                left = Math.min(left, rel.startLabel.x, rel.endLabel.x, ...edge.points.map((e) => e.x), ...edge.points.map((e) => e.x));
+                right = Math.max(right, rel.startLabel.x + rel.startLabel.width, rel.endLabel.x + rel.endLabel.width, ...edge.points.map((e) => e.x));
+                top = Math.min(top, rel.startLabel.y, rel.endLabel.y, ...edge.points.map((e) => e.y));
+                bottom = Math.max(bottom, rel.startLabel.y + rel.startLabel.height, rel.endLabel.y + rel.endLabel.height, ...edge.points.map((e) => e.y));
             });
             var graph = g.graph();
             var width = Math.max(graph.width, right - left);
@@ -585,10 +614,12 @@
             else {
                 var fontSize = config.fontSize;
                 var lines = label.text.split('`');
-                label.width = Math.max(...lines.map(function (l) { return measurer.textWidth(l); })),
-                    label.height = fontSize * lines.length;
-                label.x = point.x + ((quadrant == 1 || quadrant == 4) ? config.padding : -label.width - config.padding),
-                    label.y = point.y + ((quadrant == 3 || quadrant == 4) ? config.padding : -label.height - config.padding);
+                label.width = Math.max(...lines.map((l) => measurer.textWidth(l)));
+                label.height = fontSize * lines.length;
+                label.x =
+                    point.x + (quadrant == 1 || quadrant == 4 ? config.padding : -label.width - config.padding);
+                label.y =
+                    point.y + (quadrant == 3 || quadrant == 4 ? config.padding : -label.height - config.padding);
             }
         }
         function quadrant(point, node, fallback) {
@@ -603,13 +634,11 @@
             return fallback;
         }
         function adjustQuadrant(quadrant, point, opposite) {
-            if ((opposite.x == point.x) || (opposite.y == point.y))
+            if (opposite.x == point.x || opposite.y == point.y)
                 return quadrant;
             var flipHorizontally = [4, 3, 2, 1];
             var flipVertically = [2, 1, 4, 3];
-            var oppositeQuadrant = (opposite.y < point.y) ?
-                ((opposite.x < point.x) ? 2 : 1) :
-                ((opposite.x < point.x) ? 3 : 4);
+            var oppositeQuadrant = opposite.y < point.y ? (opposite.x < point.x ? 2 : 1) : opposite.x < point.x ? 3 : 4;
             if (oppositeQuadrant === quadrant) {
                 if (config.direction === 'LR')
                     return flipHorizontally[quadrant - 1];
@@ -620,7 +649,9 @@
         }
         function layoutClassifier(clas, config) {
             var style = config.styles[clas.type] || styles.CLASS;
-            clas.compartments.forEach(function (co, i) { layoutCompartment(co, i, style); });
+            clas.compartments.forEach(function (co, i) {
+                layoutCompartment(co, i, style);
+            });
             layouters[style.visual](config, clas);
             clas.layoutWidth = clas.width + 2 * config.edgeMargin;
             clas.layoutHeight = clas.height + 2 * config.edgeMargin;
@@ -1268,7 +1299,9 @@
             var ok = line[0] !== '#' && line.trim().substring(0, 2) !== '//';
             return ok ? line.trim() : '';
         }
-        function isDirective(line) { return line.text[0] === '#'; }
+        function isDirective(line) {
+            return line.text[0] === '#';
+        }
         var lines = source.split('\n').map(function (s, i) {
             return { text: s, index: i };
         });
@@ -1283,17 +1316,17 @@
                 throw new Error('line ' + (line.index + 1) + ': Malformed directive');
             }
         });
-        var pureDiagramCode = lines.map(e => onlyCompilables(e.text)).join('\n');
+        var pureDiagramCode = lines.map((e) => onlyCompilables(e.text)).join('\n');
         if (pureDiagramCode == '') {
             return {
                 root: new Compartment([], [], []),
-                config: getConfig(directives)
+                config: getConfig(directives),
             };
         }
         var parseTree = intermediateParse(pureDiagramCode);
         return {
             root: transformParseIntoSyntaxTree(parseTree),
-            config: getConfig(directives)
+            config: getConfig(directives),
         };
         function directionToDagre(word) {
             if (word == 'down')
@@ -1348,24 +1381,24 @@
                 bendSize: +d.bendSize || 0.3,
                 direction: directionToDagre(d.direction),
                 gutter: +d.gutter || 20,
-                edgeMargin: (+d.edgeMargin) || 0,
+                edgeMargin: +d.edgeMargin || 0,
                 gravity: +((_a = d.gravity) !== null && _a !== void 0 ? _a : 1),
                 edges: d.edges == 'hard' ? 'hard' : 'rounded',
                 fill: (d.fill || '#eee8d5;#fdf6e3;#eee8d5;#fdf6e3').split(';'),
                 background: d.background || 'transparent',
                 fillArrows: d.fillArrows === 'true',
                 font: d.font || 'Helvetica',
-                fontSize: (+d.fontSize) || 12,
-                leading: (+d.leading) || 1.25,
-                lineWidth: (+d.lineWidth) || 3,
-                padding: (+d.padding) || 8,
-                spacing: (+d.spacing) || 40,
+                fontSize: +d.fontSize || 12,
+                leading: +d.leading || 1.25,
+                lineWidth: +d.lineWidth || 3,
+                padding: +d.padding || 8,
+                spacing: +d.spacing || 40,
                 stroke: d.stroke || '#33322E',
                 title: d.title || '',
                 zoom: +d.zoom || 1,
                 acyclicer: d.acyclicer === 'greedy' ? 'greedy' : undefined,
                 ranker: parseRanker(d.ranker),
-                styles: merged(styles, userStyles)
+                styles: merged(styles, userStyles),
             };
         }
     }
@@ -1396,7 +1429,7 @@
                         start: p.start.parts[0][0],
                         end: p.end.parts[0][0],
                         startLabel: { text: p.startLabel },
-                        endLabel: { text: p.endLabel }
+                        endLabel: { text: p.endLabel },
                     });
                 }
                 if (isAstClassifier(p)) {
@@ -1427,12 +1460,24 @@
         return transformCompartment(entity);
     }
 
-    function add(a, b) { return { x: a.x + b.x, y: a.y + b.y }; }
-    function diff(a, b) { return { x: a.x - b.x, y: a.y - b.y }; }
-    function mult(v, factor) { return { x: factor * v.x, y: factor * v.y }; }
-    function mag(v) { return Math.sqrt(v.x * v.x + v.y * v.y); }
-    function normalize(v) { return mult(v, 1 / mag(v)); }
-    function rot(a) { return { x: a.y, y: -a.x }; }
+    function add(a, b) {
+        return { x: a.x + b.x, y: a.y + b.y };
+    }
+    function diff(a, b) {
+        return { x: a.x - b.x, y: a.y - b.y };
+    }
+    function mult(v, factor) {
+        return { x: factor * v.x, y: factor * v.y };
+    }
+    function mag(v) {
+        return Math.sqrt(v.x * v.x + v.y * v.y);
+    }
+    function normalize(v) {
+        return mult(v, 1 / mag(v));
+    }
+    function rot(a) {
+        return { x: a.y, y: -a.x };
+    }
 
     const empty = false;
     const filled = true;
@@ -1440,10 +1485,10 @@
         var path = r.path.slice(1, -1);
         var endDir = normalize(diff(path[path.length - 2], last(path)));
         var startDir = normalize(diff(path[1], path[0]));
-        var size = config.spacing * config.arrowSize / 30;
+        var size = (config.spacing * config.arrowSize) / 30;
         var A = 0;
         var Ω = path.length - 1;
-        var copy = path.map(p => ({ x: p.x, y: p.y }));
+        var copy = path.map((p) => ({ x: p.x, y: p.y }));
         var tokens = r.assoc.split(/[-_]/);
         copy[A] = add(copy[A], mult(startDir, size * terminatorSize(tokens[0])));
         copy[Ω] = add(copy[Ω], mult(endDir, size * terminatorSize(last(tokens))));
@@ -1475,7 +1520,7 @@
         drawArrowEnd(tokens[0], path.reverse(), start);
         function drawArrowEnd(id, path, end) {
             var dir = normalize(diff(path[path.length - 2], last(path)));
-            var size = config.spacing * config.arrowSize / 30;
+            var size = (config.spacing * config.arrowSize) / 30;
             if (id === '>' || id === '<')
                 drawArrow(dir, size, filled, end);
             else if (id === ':>' || id === '<:')
@@ -1511,30 +1556,20 @@
         function drawSocket(nv, size, stem, end) {
             var base = add(end, mult(nv, size * stem));
             var t = rot(nv);
-            var socket = range([-Math.PI / 2, Math.PI / 2], 12).map(a => add(base, add(mult(nv, -6 * size * Math.cos(a)), mult(t, 6 * size * Math.sin(a)))));
+            var socket = range([-Math.PI / 2, Math.PI / 2], 12).map((a) => add(base, add(mult(nv, -6 * size * Math.cos(a)), mult(t, 6 * size * Math.sin(a)))));
             g.path(socket).stroke();
         }
         function drawArrow(nv, size, isOpen, end) {
             const x = (s) => add(end, mult(nv, s * size));
             const y = (s) => mult(rot(nv), s * size);
-            var arrow = [
-                add(x(10), y(4)),
-                x((isOpen && !config.fillArrows) ? 5 : 10),
-                add(x(10), y(-4)),
-                end
-            ];
+            var arrow = [add(x(10), y(4)), x(isOpen && !config.fillArrows ? 5 : 10), add(x(10), y(-4)), end];
             g.fillStyle(isOpen ? config.stroke : config.fill[0]);
             g.circuit(arrow).fillAndStroke();
         }
         function drawDiamond(nv, size, isOpen, end) {
             const x = (s) => add(end, mult(nv, s * size));
             const y = (s) => mult(rot(nv), s * size);
-            var arrow = [
-                add(x(7), y(4)),
-                x(14),
-                add(x(7), y(-4)),
-                end
-            ];
+            var arrow = [add(x(7), y(4)), x(14), add(x(7), y(-4)), end];
             g.fillStyle(isOpen ? config.stroke : config.fill[0]);
             g.circuit(arrow).fillAndStroke();
         }
@@ -1557,18 +1592,28 @@
                     var w = g.measureText(text).width;
                     y += Math.round(config.fontSize * 0.2) + 0.5;
                     if (style.center) {
-                        g.path([{ x: x - w / 2, y: y }, { x: x + w / 2, y: y }]).stroke();
+                        g.path([
+                            { x: x - w / 2, y: y },
+                            { x: x + w / 2, y: y },
+                        ]).stroke();
                     }
                     else {
-                        g.path([{ x: x, y: y }, { x: x + w, y: y }]).stroke();
+                        g.path([
+                            { x: x, y: y },
+                            { x: x + w, y: y },
+                        ]).stroke();
                     }
                     g.lineWidth(config.lineWidth);
                 }
             });
             g.save();
             g.translate(config.gutter, config.gutter);
-            compartment.relations.forEach(function (r) { renderRelation(r); });
-            compartment.nodes.forEach(function (n) { renderNode(n, level); });
+            compartment.relations.forEach(function (r) {
+                renderRelation(r);
+            });
+            compartment.nodes.forEach(function (n) {
+                renderNode(n, level);
+            });
             g.restore();
             g.restore();
         }
@@ -1588,7 +1633,7 @@
             var drawNode = visualizers[style.visual] || visualizers.class;
             drawNode(node, x, y, config, g);
             for (var divider of node.dividers) {
-                g.path(divider.map(e => add(e, { x, y }))).stroke();
+                g.path(divider.map((e) => add(e, { x, y }))).stroke();
             }
             g.restore();
             node.compartments.forEach(function (part, i) {
@@ -1674,7 +1719,7 @@
             var e = canvas;
             return {
                 x: event.clientX - e.getBoundingClientRect().left - e.clientLeft + e.scrollLeft,
-                y: event.clientY - e.getBoundingClientRect().top - e.clientTop + e.scrollTop
+                y: event.clientY - e.getBoundingClientRect().top - e.clientTop + e.scrollTop,
             };
         }
         if (callbacks) {
@@ -1705,7 +1750,7 @@
                 ctx.fill();
                 ctx.stroke();
                 return chainable;
-            }
+            },
         };
         function tracePath(path, offset, s) {
             s = s === undefined ? 1 : s;
@@ -1717,9 +1762,15 @@
             return chainable;
         }
         return {
-            mousePos: function () { return mousePos; },
-            width: function () { return canvas.width; },
-            height: function () { return canvas.height; },
+            mousePos: function () {
+                return mousePos;
+            },
+            width: function () {
+                return canvas.width;
+            },
+            height: function () {
+                return canvas.height;
+            },
             clear: function () {
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
             },
@@ -1778,31 +1829,66 @@
             setFont: function (family, size, weight, style) {
                 ctx.font = `${weight} ${style} ${size}pt ${family}, Helvetica, sans-serif`;
             },
-            fillStyle: function (s) { ctx.fillStyle = s; },
-            strokeStyle: function (s) { ctx.strokeStyle = s; },
-            textAlign: function (a) { ctx.textAlign = a; },
-            lineCap: function (cap) { ctx.lineCap = cap; },
-            lineJoin: function (join) { ctx.lineJoin = join; },
-            lineWidth: function (w) { ctx.lineWidth = w; },
-            arcTo: function () { return ctx.arcTo.apply(ctx, arguments); },
-            beginPath: function () { return ctx.beginPath.apply(ctx, arguments); },
-            fillText: function () { return ctx.fillText.apply(ctx, arguments); },
-            lineTo: function () { return ctx.lineTo.apply(ctx, arguments); },
-            measureText: function () { return ctx.measureText.apply(ctx, arguments); },
-            moveTo: function () { return ctx.moveTo.apply(ctx, arguments); },
-            restore: function () { return ctx.restore.apply(ctx, arguments); },
+            fillStyle: function (s) {
+                ctx.fillStyle = s;
+            },
+            strokeStyle: function (s) {
+                ctx.strokeStyle = s;
+            },
+            textAlign: function (a) {
+                ctx.textAlign = a;
+            },
+            lineCap: function (cap) {
+                ctx.lineCap = cap;
+            },
+            lineJoin: function (join) {
+                ctx.lineJoin = join;
+            },
+            lineWidth: function (w) {
+                ctx.lineWidth = w;
+            },
+            arcTo: function () {
+                return ctx.arcTo.apply(ctx, arguments);
+            },
+            beginPath: function () {
+                return ctx.beginPath.apply(ctx, arguments);
+            },
+            fillText: function () {
+                return ctx.fillText.apply(ctx, arguments);
+            },
+            lineTo: function () {
+                return ctx.lineTo.apply(ctx, arguments);
+            },
+            measureText: function () {
+                return ctx.measureText.apply(ctx, arguments);
+            },
+            moveTo: function () {
+                return ctx.moveTo.apply(ctx, arguments);
+            },
+            restore: function () {
+                return ctx.restore.apply(ctx, arguments);
+            },
             setData: function (name, value) { },
-            save: function () { return ctx.save.apply(ctx, arguments); },
-            scale: function () { return ctx.scale.apply(ctx, arguments); },
-            setLineDash: function () { return ctx.setLineDash.apply(ctx, arguments); },
-            stroke: function () { return ctx.stroke.apply(ctx, arguments); },
-            translate: function () { return ctx.translate.apply(ctx, arguments); }
+            save: function () {
+                return ctx.save.apply(ctx, arguments);
+            },
+            scale: function () {
+                return ctx.scale.apply(ctx, arguments);
+            },
+            setLineDash: function () {
+                return ctx.setLineDash.apply(ctx, arguments);
+            },
+            stroke: function () {
+                return ctx.stroke.apply(ctx, arguments);
+            },
+            translate: function () {
+                return ctx.translate.apply(ctx, arguments);
+            },
         };
     }
 
     function toAttrString(obj) {
-        return Object
-            .entries(obj)
+        return Object.entries(obj)
             .filter(([_, val]) => val !== undefined)
             .map(([key, val]) => `${key}="${xmlEncode(val)}"`)
             .join(' ');
@@ -1810,7 +1896,8 @@
     function xmlEncode(str) {
         if ('number' === typeof str)
             return str.toFixed(1);
-        return (str !== null && str !== void 0 ? str : '').toString()
+        return (str !== null && str !== void 0 ? str : '')
+            .toString()
             .replace(/&/g, '&amp;')
             .replace(/</g, '&lt;')
             .replace(/>/g, '&gt;')
@@ -1829,7 +1916,9 @@
             font: '12pt Helvetica, Arial, sans-serif',
             'font-size': '12pt',
         };
-        var measurementCanvas = document ? document.createElement('canvas') : null;
+        var measurementCanvas = document
+            ? document.createElement('canvas')
+            : null;
         var ctx = measurementCanvas ? measurementCanvas.getContext('2d') : null;
         class Element {
             constructor(name, attr, parent, text) {
@@ -1856,9 +1945,9 @@
             }
             serialize() {
                 var _a;
-                const data = (_a = getDefined(this.group(), e => e.data)) !== null && _a !== void 0 ? _a : {};
+                const data = (_a = getDefined(this.group(), (e) => e.data)) !== null && _a !== void 0 ? _a : {};
                 const attrs = toAttrString(Object.assign(Object.assign({}, this.attr), data));
-                const content = this.children.map(o => o.serialize()).join('\n');
+                const content = this.children.map((o) => o.serialize()).join('\n');
                 if (this.name === 'text')
                     return `<text ${attrs}>${xmlEncode(this.text)}</text>`;
                 else if (this.children.length === 0)
@@ -1898,9 +1987,11 @@
         root.children.push(current);
         var inPathBuilderMode = false;
         function tracePath(path, offset = { x: 0, y: 0 }, s = 1) {
-            var d = path.map(function (e, i) {
-                return (i ? 'L' : 'M') + (offset.x + s * e.x).toFixed(1) + ' ' + (offset.y + s * e.y).toFixed(1);
-            }).join(' ');
+            var d = path
+                .map(function (e, i) {
+                return ((i ? 'L' : 'M') + (offset.x + s * e.x).toFixed(1) + ' ' + (offset.y + s * e.y).toFixed(1));
+            })
+                .join(' ');
             return el('path', { d: d });
         }
         function el(type, attr, text) {
@@ -1909,15 +2000,19 @@
             return element;
         }
         return {
-            width: function () { return 0; },
-            height: function () { return 0; },
+            width: function () {
+                return 0;
+            },
+            height: function () {
+                return 0;
+            },
             clear: function () { },
             circle: function (p, r) {
                 return el('circle', { r: r, cx: p.x, cy: p.y });
             },
             ellipse: function (center, w, h, start = 0, stop = 0) {
                 if (start || stop) {
-                    var path = range([start, stop], 64).map(a => add(center, { x: Math.cos(a) * w / 2, y: Math.sin(a) * h / 2 }));
+                    var path = range([start, stop], 64).map((a) => add(center, { x: (Math.cos(a) * w) / 2, y: (Math.sin(a) * h) / 2 }));
                     return tracePath(path);
                 }
                 else {
@@ -1953,7 +2048,7 @@
             },
             arcTo: function (x1, y1, x2, y2) {
                 if (inPathBuilderMode)
-                    last(current.children).attr.d += ('L' + x1 + ' ' + y1 + ' L' + x2 + ' ' + y2 + ' ');
+                    last(current.children).attr.d += 'L' + x1 + ' ' + y1 + ' L' + x2 + ' ' + y2 + ' ';
                 else
                     throw new Error('can only be called after .beginPath()');
             },
@@ -1966,15 +2061,20 @@
                     x,
                     y,
                     stroke: 'none',
-                    font: undefined, style: undefined,
-                    'text-anchor': getDefined(current, e => e.attr['text-align']) === 'center' ? 'middle' : undefined
+                    font: undefined,
+                    style: undefined,
+                    'text-anchor': getDefined(current, (e) => e.attr['text-align']) === 'center' ? 'middle' : undefined,
                 }, text);
             },
-            lineCap: function (cap) { current.attr['stroke-linecap'] = cap; },
-            lineJoin: function (join) { current.attr['stroke-linejoin'] = join; },
+            lineCap: function (cap) {
+                current.attr['stroke-linecap'] = cap;
+            },
+            lineJoin: function (join) {
+                current.attr['stroke-linejoin'] = join;
+            },
             lineTo: function (x, y) {
                 if (inPathBuilderMode)
-                    last(current.children).attr.d += ('L' + (x).toFixed(1) + ' ' + (y).toFixed(1) + ' ');
+                    last(current.children).attr.d += 'L' + x.toFixed(1) + ' ' + y.toFixed(1) + ' ';
                 else
                     throw new Error('can only be called after .beginPath()');
                 return current;
@@ -1985,25 +2085,25 @@
             measureText: function (s) {
                 if (ctx) {
                     if (current)
-                        ctx.font = `${getDefined(current, e => e.attr["font-weight"])} ${getDefined(current, e => e.attr["font-style"])} ${getDefined(current, e => e.attr["font-size"])} ${getDefined(current, e => e.attr["font-family"])}`;
+                        ctx.font = `${getDefined(current, (e) => e.attr['font-weight'])} ${getDefined(current, (e) => e.attr['font-style'])} ${getDefined(current, (e) => e.attr['font-size'])} ${getDefined(current, (e) => e.attr['font-family'])}`;
                     else
-                        ctx.font = `${initialState["font-weight"]} ${initialState["font-style"]} ${initialState["font-size"]} ${initialState["font-family"]}`;
+                        ctx.font = `${initialState['font-weight']} ${initialState['font-style']} ${initialState['font-size']} ${initialState['font-family']}`;
                     return ctx.measureText(s);
                 }
                 else {
                     return {
                         width: sum(s, function (c) {
                             var _a, _b;
-                            const size = (_a = getDefined(current, e => e.attr['font-size'])) !== null && _a !== void 0 ? _a : 12;
+                            const size = (_a = getDefined(current, (e) => e.attr['font-size'])) !== null && _a !== void 0 ? _a : 12;
                             var scale = parseInt(size.toString()) / 12;
                             return ((_b = charWidths[c]) !== null && _b !== void 0 ? _b : 16) * scale;
-                        })
+                        }),
                     };
                 }
             },
             moveTo: function (x, y) {
                 if (inPathBuilderMode)
-                    last(current.children).attr.d += ('M' + (x).toFixed(1) + ' ' + (y).toFixed(1) + ' ');
+                    last(current.children).attr.d += 'M' + x.toFixed(1) + ' ' + y.toFixed(1) + ' ';
                 else
                     throw new Error('can only be called after .beginPath()');
             },
@@ -2023,7 +2123,7 @@
             },
             scale: function () { },
             setLineDash: function (d) {
-                current.attr['stroke-dasharray'] = (d.length === 0) ? 'none' : d[0] + ' ' + d[1];
+                current.attr['stroke-dasharray'] = d.length === 0 ? 'none' : d[0] + ' ' + d[1];
             },
             stroke: function () {
                 inPathBuilderMode = false;
@@ -2053,7 +2153,7 @@
                     'xmlns:ev': 'http://www.w3.org/2001/xml-events',
                 };
                 return root.serialize();
-            }
+            },
         };
     }
 
@@ -2066,8 +2166,12 @@
             setFont(family, size, weight, style) {
                 graphics.setFont(family, size, weight, style);
             },
-            textWidth(s) { return graphics.measureText(s).width; },
-            textHeight() { return config.leading * config.fontSize; }
+            textWidth(s) {
+                return graphics.measureText(s).width;
+            },
+            textHeight() {
+                return config.leading * config.fontSize;
+            },
         };
     }
     function parseAndRender(code, graphics, canvas, scale) {
@@ -2090,7 +2194,7 @@
         var { config, layout } = parseAndRender(code, skCanvas, null, 1);
         return skCanvas.serialize({
             width: layout.width,
-            height: layout.height
+            height: layout.height,
         }, code, config.title);
     }
     class ImportDepthError extends Error {
@@ -2115,7 +2219,7 @@
             }
             var imports = [];
             source.replace(/#import: *(.*)/g, function (a, file) {
-                var promise = lenientLoadFile(file).then(contents => processAsyncImports(contents, loadFile, maxImportDepth - 1));
+                var promise = lenientLoadFile(file).then((contents) => processAsyncImports(contents, loadFile, maxImportDepth - 1));
                 imports.push({ file, promise });
                 return '';
             });

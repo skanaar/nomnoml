@@ -1,4 +1,7 @@
-export interface Vector { x: number, y: number }
+export interface Vector {
+  x: number
+  y: number
+}
 
 type LineCap = 'butt' | 'round' | 'square'
 type LineJoin = 'bevel' | 'round' | 'miter'
@@ -20,7 +23,7 @@ export interface Graphics {
   rect(x: number, y: number, w: number, h: number): Chainable
   path(points: Vector[]): Chainable
   circuit(path: Vector[], offset?: Vector, s?: number): Chainable
-  setFont(family: string, size: number, weight: 'bold'|'normal', style: 'italic'|'normal'): void
+  setFont(family: string, size: number, weight: 'bold' | 'normal', style: 'italic' | 'normal'): void
   strokeStyle(stroke: string): void
   fillStyle(fill: any): void
   arcTo(x1: number, y1: number, x2: number, y2: number, radius: number): void
@@ -41,4 +44,3 @@ export interface Graphics {
   textAlign(a: string): void
   translate(dx: number, dy: number): void
 }
-
