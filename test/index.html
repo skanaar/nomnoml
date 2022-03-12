@@ -168,6 +168,22 @@
       </script>
     </div>
   </div>
+  
+  <div class=testcase>
+    <h1>Layout bug</h1>
+    <div nomnoml=canvas>
+      <script type="text/vnd.nomnoml">
+#gutter: 1
+#spacing: 20
+#padding: 5
+[quux]
+[foo]-[bar]
+[foo]-[baz]
+[foo]-[quux]
+[quux]-[baz]
+      </script>
+    </div>
+  </div>
 
   <div class=testcase>
     <h1>Ranker</h1>
