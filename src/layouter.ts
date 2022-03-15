@@ -58,7 +58,7 @@ export function layout(measurer: Measurer, config: Config, ast: Compartment): Co
 
     var rels = indexBy(c.relations, 'id')
     var nodes = indexBy(c.nodes, 'name')
-    g.nodes().forEach(function (name: string) {
+    g.nodes().forEach((name: string) => {
       var node = g.node(name)
       nodes[name].x = node.x!
       nodes[name].y = node.y!
@@ -67,7 +67,7 @@ export function layout(measurer: Measurer, config: Config, ast: Compartment): Co
     var right = 0
     var top = 0
     var bottom = 0
-    g.edges().forEach(function (edgeObj) {
+    g.edges().forEach((edgeObj) => {
       var edge = g.edge(edgeObj)
       var start = nodes[edgeObj.v]
       var end = nodes[edgeObj.w]
@@ -158,9 +158,7 @@ export function layout(measurer: Measurer, config: Config, ast: Compartment): Co
 
   function layoutClassifier(clas: Classifier, config: Config): void {
     var style = config.styles[clas.type] || styles.CLASS
-    clas.compartments.forEach(function (co, i) {
-      layoutCompartment(co, i, style)
-    })
+    clas.compartments.forEach((co, i) => layoutCompartment(co, i, style))
     layouters[style.visual](config, clas)
     clas.layoutWidth = clas.width + 2 * config.edgeMargin
     clas.layoutHeight = clas.height + 2 * config.edgeMargin

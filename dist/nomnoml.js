@@ -568,7 +568,7 @@
             graphre.layout(g);
             var rels = indexBy(c.relations, 'id');
             var nodes = indexBy(c.nodes, 'name');
-            g.nodes().forEach(function (name) {
+            g.nodes().forEach((name) => {
                 var node = g.node(name);
                 nodes[name].x = node.x;
                 nodes[name].y = node.y;
@@ -577,7 +577,7 @@
             var right = 0;
             var top = 0;
             var bottom = 0;
-            g.edges().forEach(function (edgeObj) {
+            g.edges().forEach((edgeObj) => {
                 var edge = g.edge(edgeObj);
                 var start = nodes[edgeObj.v];
                 var end = nodes[edgeObj.w];
@@ -649,9 +649,7 @@
         }
         function layoutClassifier(clas, config) {
             var style = config.styles[clas.type] || styles.CLASS;
-            clas.compartments.forEach(function (co, i) {
-                layoutCompartment(co, i, style);
-            });
+            clas.compartments.forEach((co, i) => layoutCompartment(co, i, style));
             layouters[style.visual](config, clas);
             clas.layoutWidth = clas.width + 2 * config.edgeMargin;
             clas.layoutHeight = clas.height + 2 * config.edgeMargin;
@@ -1302,12 +1300,10 @@
         function isDirective(line) {
             return line.text[0] === '#';
         }
-        var lines = source.split('\n').map(function (s, i) {
-            return { text: s, index: i };
-        });
+        var lines = source.split('\n').map((s, i) => ({ text: s, index: i }));
         var pureDirectives = lines.filter(isDirective);
         var directives = {};
-        pureDirectives.forEach(function (line) {
+        pureDirectives.forEach((line) => {
             try {
                 var tokens = line.text.substring(1).split(':');
                 directives[tokens[0].trim()] = tokens[1].trim();
@@ -1417,7 +1413,7 @@
             var lines = [];
             var rawClassifiers = [];
             var relations = [];
-            slots.forEach(function (p) {
+            slots.forEach((p) => {
                 if (typeof p === 'string')
                     lines.push(p);
                 if (isAstRelation(p)) {
@@ -1438,11 +1434,9 @@
             });
             var allClassifiers = rawClassifiers
                 .map(transformClassifier)
-                .sort(function (a, b) {
-                return b.compartments.length - a.compartments.length;
-            });
+                .sort((a, b) => b.compartments.length - a.compartments.length);
             var uniqClassifiers = uniqueBy(allClassifiers, 'name');
-            var uniqRelations = relations.filter(function (a) {
+            var uniqRelations = relations.filter((a) => {
                 for (var b of relations) {
                     if (a === b)
                         return true;
@@ -1581,7 +1575,7 @@
             g.save();
             g.translate(compartment.offset.x, compartment.offset.y);
             g.fillStyle(color || config.stroke);
-            compartment.lines.forEach(function (text, i) {
+            compartment.lines.forEach((text, i) => {
                 g.textAlign(style.center ? 'center' : 'left');
                 var x = style.center ? compartment.width / 2 - config.padding : 0;
                 var y = (0.5 + (i + 0.5) * config.leading) * config.fontSize;
@@ -1608,12 +1602,8 @@
             });
             g.save();
             g.translate(config.gutter, config.gutter);
-            compartment.relations.forEach(function (r) {
-                renderRelation(r);
-            });
-            compartment.nodes.forEach(function (n) {
-                renderNode(n, level);
-            });
+            compartment.relations.forEach((r) => renderRelation(r));
+            compartment.nodes.forEach((n) => renderNode(n, level));
             g.restore();
             g.restore();
         }
@@ -1636,7 +1626,7 @@
                 g.path(divider.map((e) => add(e, { x, y }))).stroke();
             }
             g.restore();
-            node.compartments.forEach(function (part, i) {
+            node.compartments.forEach((part, i) => {
                 var textStyle = i == 0 ? style.title : style.body;
                 g.save();
                 g.translate(x + part.x, y + part.y);
@@ -1988,9 +1978,7 @@
         var inPathBuilderMode = false;
         function tracePath(path, offset = { x: 0, y: 0 }, s = 1) {
             var d = path
-                .map(function (e, i) {
-                return ((i ? 'L' : 'M') + (offset.x + s * e.x).toFixed(1) + ' ' + (offset.y + s * e.y).toFixed(1));
-            })
+                .map((e, i) => (i ? 'L' : 'M') + (offset.x + s * e.x).toFixed(1) + ' ' + (offset.y + s * e.y).toFixed(1))
                 .join(' ');
             return el('path', { d: d });
         }
@@ -2218,7 +2206,7 @@
                 });
             }
             var imports = [];
-            source.replace(/#import: *(.*)/g, function (a, file) {
+            source.replace(/#import: *(.*)/g, (a, file) => {
                 var promise = lenientLoadFile(file).then((contents) => processAsyncImports(contents, loadFile, maxImportDepth - 1));
                 imports.push({ file, promise });
                 return '';
@@ -2227,9 +2215,7 @@
             for (var imp of imports) {
                 imported[imp.file] = yield imp.promise;
             }
-            return source.replace(/#import: *(.*)/g, function (a, file) {
-                return imported[file];
-            });
+            return source.replace(/#import: *(.*)/g, (a, file) => imported[file]);
         });
     }
     function processImports(source, loadFile, maxImportDepth = 10) {
@@ -2244,9 +2230,7 @@
                 return '';
             }
         }
-        return source.replace(/#import: *(.*)/g, function (a, file) {
-            return processImports(lenientLoadFile(file), loadFile, maxImportDepth - 1);
-        });
+        return source.replace(/#import: *(.*)/g, (a, file) => processImports(lenientLoadFile(file), loadFile, maxImportDepth - 1));
     }
     function compileFile(filepath, maxImportDepth) {
         var fs = require('fs');

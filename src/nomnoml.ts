@@ -97,7 +97,7 @@ export async function processAsyncImports(
 
   var imports: { file: string; promise: Promise<string> }[] = []
 
-  source.replace(/#import: *(.*)/g, function (a: any, file: string) {
+  source.replace(/#import: *(.*)/g, (a: any, file: string) => {
     var promise = lenientLoadFile(file).then((contents) =>
       processAsyncImports(contents, loadFile, maxImportDepth - 1)
     )
@@ -110,9 +110,7 @@ export async function processAsyncImports(
     imported[imp.file] = await imp.promise
   }
 
-  return source.replace(/#import: *(.*)/g, function (a: any, file: string) {
-    return imported[file]
-  })
+  return source.replace(/#import: *(.*)/g, (a: any, file: string) => imported[file])
 }
 
 type FileLoader = (filename: string) => string
@@ -134,9 +132,9 @@ export function processImports(
     }
   }
 
-  return source.replace(/#import: *(.*)/g, function (a: any, file: string) {
-    return processImports(lenientLoadFile(file), loadFile, maxImportDepth - 1)
-  })
+  return source.replace(/#import: *(.*)/g, (a: any, file: string) =>
+    processImports(lenientLoadFile(file), loadFile, maxImportDepth - 1)
+  )
 }
 
 export function compileFile(filepath: string, maxImportDepth?: number): string {

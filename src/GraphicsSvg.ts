@@ -149,11 +149,10 @@ export function GraphicsSvg(document?: HTMLDocument): ISvgGraphics {
 
   function tracePath(path: Vector[], offset: Vector = { x: 0, y: 0 }, s: number = 1): Chainable {
     var d = path
-      .map(function (e, i) {
-        return (
+      .map(
+        (e, i) =>
           (i ? 'L' : 'M') + (offset.x + s * e.x).toFixed(1) + ' ' + (offset.y + s * e.y).toFixed(1)
-        )
-      })
+      )
       .join(' ')
     return el('path', { d: d })
   }

@@ -38,12 +38,10 @@ export function parse(source: string): ParsedDiagram {
   function isDirective(line: Line): boolean {
     return line.text[0] === '#'
   }
-  var lines: Line[] = source.split('\n').map(function (s, i) {
-    return { text: s, index: i }
-  })
+  var lines: Line[] = source.split('\n').map((s, i) => ({ text: s, index: i }))
   var pureDirectives = lines.filter(isDirective)
   var directives: { [key: string]: string } = {}
-  pureDirectives.forEach(function (line) {
+  pureDirectives.forEach((line) => {
     try {
       var tokens = line.text.substring(1).split(':')
       directives[tokens[0].trim()] = tokens[1].trim()
@@ -158,7 +156,7 @@ export function transformParseIntoSyntaxTree(entity: AstRoot): Compartment {
     var lines: string[] = []
     var rawClassifiers: AstClassifier[] = []
     var relations: Relation[] = []
-    slots.forEach(function (p: AstSlot) {
+    slots.forEach((p: AstSlot) => {
       if (typeof p === 'string') lines.push(p)
       if (isAstRelation(p)) {
         // is a relation
@@ -179,11 +177,9 @@ export function transformParseIntoSyntaxTree(entity: AstRoot): Compartment {
     })
     var allClassifiers: Classifier[] = rawClassifiers
       .map(transformClassifier)
-      .sort(function (a: Classifier, b: Classifier): number {
-        return b.compartments.length - a.compartments.length
-      })
+      .sort((a: Classifier, b: Classifier): number => b.compartments.length - a.compartments.length)
     var uniqClassifiers = uniqueBy(allClassifiers, 'name')
-    var uniqRelations = relations.filter(function (a) {
+    var uniqRelations = relations.filter((a) => {
       for (var b of relations) {
         if (a === b) return true
         if (b.start == a.start && b.end == a.end) return false

@@ -1,7 +1,5 @@
 function delay(func: Function, wait: number, ...args: any[]) {
-  return setTimeout(function() {
-    return func.apply(null, args);
-  }, wait);
+  return setTimeout(() => func.apply(null, args), wait);
 }
 
 export function unescapeHtml(str: string): string {

@@ -19,12 +19,11 @@ function TestSuite(suiteName, reportSelector) {
 		suite.promises.push(Promise.resolve({ name: name, status: 'ignored', error: false }))
 	}
 
-	function report() {
-		Promise.all(suite.promises).then(function (results) {
-			suite.results = results
-			if(isBrowser) report_html(results)
-			else report_console(results)
-		})
+	async function report() {
+		var results = await Promise.all(suite.promises)
+		suite.results = results
+		if(isBrowser) report_html(results)
+		else report_console(results)
 	}
 
 	function report_html(results) {
@@ -56,13 +55,13 @@ function TestSuite(suiteName, reportSelector) {
 
 	function report_console(results) {
 		if (TestSuite.verbose) {
-			results.forEach(function (e) { console.log(e.status, ' ', e.name) })
+			for (var item of results) console.log(item.status, ' ', item.name)
 		}
 		var failures = results.filter(e => e.status == 'failure')
-		failures.forEach(function (e){
-			console.log('\x1b[31m%s\x1b[0m', e.name)
-			console.log('   ' + e.error)
-		})
+		for (var failure of failures) {
+			console.log('\x1b[31m%s\x1b[0m', failure.name)
+			console.log('   ' + failure.error)
+		}
 		if(failures.length)
 			throw new Error(failures.length + ' test failures')
 	}

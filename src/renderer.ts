@@ -17,7 +17,7 @@ export function render(graphics: Graphics, config: Config, compartment: Compartm
     g.save()
     g.translate(compartment.offset.x, compartment.offset.y)
     g.fillStyle(color || config.stroke)
-    compartment.lines.forEach(function (text, i) {
+    compartment.lines.forEach((text, i) => {
       g.textAlign(style.center ? 'center' : 'left')
       var x = style.center ? compartment.width / 2 - config.padding : 0
       var y = (0.5 + (i + 0.5) * config.leading) * config.fontSize
@@ -43,12 +43,8 @@ export function render(graphics: Graphics, config: Config, compartment: Compartm
     })
     g.save()
     g.translate(config.gutter, config.gutter)
-    compartment.relations.forEach(function (r) {
-      renderRelation(r)
-    })
-    compartment.nodes.forEach(function (n) {
-      renderNode(n, level)
-    })
+    compartment.relations.forEach((r) => renderRelation(r))
+    compartment.nodes.forEach((n) => renderNode(n, level))
     g.restore()
     g.restore()
   }
@@ -75,7 +71,7 @@ export function render(graphics: Graphics, config: Config, compartment: Compartm
     }
     g.restore()
 
-    node.compartments.forEach(function (part: Compartment, i: number) {
+    node.compartments.forEach((part: Compartment, i: number) => {
       var textStyle = i == 0 ? style.title : style.body
       g.save()
       g.translate(x + part.x, y + part.y)
