@@ -1,6 +1,6 @@
 import { Ranker } from 'graphre/decl/types'
 import { Classifier, Compartment, Config, Relation, Style, Visual } from './domain'
-import { hasSubstring, last, merged, uniqueBy } from './util'
+import { hasSubstring, last, uniqueBy } from './util'
 import { styles } from './visuals'
 // @ts-ignore
 import nomnomlCoreParser from '../dist/nomnoml-core-parser'
@@ -64,7 +64,7 @@ export function parse(source: string): ParsedDiagram {
     config: getConfig(directives),
   }
 
-  function directionToDagre(word: any): 'TB' | 'LR' {
+  function directionToDagre(word: string): 'TB' | 'LR' {
     if (word == 'down') return 'TB'
     if (word == 'right') return 'LR'
     else return 'TB'
@@ -132,7 +132,7 @@ export function parse(source: string): ParsedDiagram {
       zoom: +d.zoom || 1,
       acyclicer: d.acyclicer === 'greedy' ? 'greedy' : undefined,
       ranker: parseRanker(d.ranker),
-      styles: merged(styles, userStyles),
+      styles: { ...styles, ...userStyles },
     }
   }
 }

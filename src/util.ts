@@ -19,15 +19,6 @@ export function hasSubstring(haystack: string, needle: string) {
   if (!haystack) return false
   return haystack.indexOf(needle) !== -1
 }
-export function merged(a: any, b: any) {
-  function assign(target: any, data: any) {
-    for (var key in data) target[key] = data[key]
-  }
-  var obj = {}
-  assign(obj, a)
-  assign(obj, b)
-  return obj
-}
 export function indexBy<T>(list: T[], key: keyof T): { [key: string]: T } {
   var obj: { [key: string]: T } = {}
   for (var i = 0; i < list.length; i++) obj[list[i][key] as any] = list[i]

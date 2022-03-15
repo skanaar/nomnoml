@@ -56,16 +56,6 @@
             return false;
         return haystack.indexOf(needle) !== -1;
     }
-    function merged(a, b) {
-        function assign(target, data) {
-            for (var key in data)
-                target[key] = data[key];
-        }
-        var obj = {};
-        assign(obj, a);
-        assign(obj, b);
-        return obj;
-    }
     function indexBy(list, key) {
         var obj = {};
         for (var i = 0; i < list.length; i++)
@@ -92,7 +82,6 @@
         find: find,
         last: last,
         hasSubstring: hasSubstring,
-        merged: merged,
         indexBy: indexBy,
         uniqueBy: uniqueBy
     });
@@ -1394,7 +1383,7 @@
                 zoom: +d.zoom || 1,
                 acyclicer: d.acyclicer === 'greedy' ? 'greedy' : undefined,
                 ranker: parseRanker(d.ranker),
-                styles: merged(styles, userStyles),
+                styles: Object.assign(Object.assign({}, styles), userStyles),
             };
         }
     }

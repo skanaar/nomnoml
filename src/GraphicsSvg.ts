@@ -1,4 +1,4 @@
-import { Chainable, Graphics, Vector } from './Graphics'
+import { Graphics, Vector } from './Graphics'
 import { last, range, sum } from './util'
 import { add } from './vector'
 
@@ -29,7 +29,7 @@ function toAttrString(obj: Record<string, undefined | string | number>): string 
     .join(' ')
 }
 
-function xmlEncode(str: any) {
+function xmlEncode(str: string | undefined | number) {
   if ('number' === typeof str) return str.toFixed(1)
   return (str ?? '')
     .toString()
@@ -147,7 +147,7 @@ export function GraphicsSvg(document?: HTMLDocument): ISvgGraphics {
   root.children.push(current)
   var inPathBuilderMode = false
 
-  function tracePath(path: Vector[], offset: Vector = { x: 0, y: 0 }, s: number = 1): Chainable {
+  function tracePath(path: Vector[], offset: Vector = { x: 0, y: 0 }, s: number = 1): Element {
     var d = path
       .map(
         (e, i) =>
@@ -195,7 +195,7 @@ export function GraphicsSvg(document?: HTMLDocument): ISvgGraphics {
     },
     path: tracePath,
     circuit: function (path, offset, s) {
-      var element = tracePath(path, offset, s) as any
+      var element = tracePath(path, offset, s)
       element.attr.d += ' Z'
       return element
     },

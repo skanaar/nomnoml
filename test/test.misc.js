@@ -66,9 +66,6 @@ suite.test('util hasSubstring', function () {
     assert(skanaar.hasSubstring("1 xyz 0", 'xyz'), '=', true)
     assert(skanaar.hasSubstring("abc xyz", 'xyz'), '=', true)
 })
-suite.test('util merged', function () {
-    assert(skanaar.merged({a:4, b: 'x'}, {a:17, c: true}), '=', { a:17, b: 'x', c: true })
-})
 suite.test('util indexBy', function(){
     assert(skanaar.indexBy([], 'name'), '=', {})
     assert(skanaar.indexBy([{name:'apa'}], 'name'), '=', {apa:{name:'apa'}})

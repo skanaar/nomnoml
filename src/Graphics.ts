@@ -25,7 +25,7 @@ export interface Graphics {
   circuit(path: Vector[], offset?: Vector, s?: number): Chainable
   setFont(family: string, size: number, weight: 'bold' | 'normal', style: 'italic' | 'normal'): void
   strokeStyle(stroke: string): void
-  fillStyle(fill: any): void
+  fillStyle(fill: string): void
   arcTo(x1: number, y1: number, x2: number, y2: number, radius: number): void
   beginPath(): Chainable
   fillText(text: string, x: number, y: number): Chainable

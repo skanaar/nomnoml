@@ -5,7 +5,12 @@ interface ICanvasGraphics extends Graphics {
   mousePos(): Vec
 }
 
-export function GraphicsCanvas(canvas: HTMLCanvasElement, callbacks?: any): ICanvasGraphics {
+type Callbacks = {
+  mousedown(p: Vec): void
+  mouseup(p: Vec): void
+  mousemove(p: Vec): void
+}
+export function GraphicsCanvas(canvas: HTMLCanvasElement, callbacks?: Callbacks): ICanvasGraphics {
   var ctx = canvas.getContext('2d')!
   var mousePos = { x: 0, y: 0 }
   var twopi = 2 * 3.1416
