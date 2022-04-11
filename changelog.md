@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.5.0] - 2022-04-11
+
+- SVG output is generated with a proper element hierarchy
+
 ## [1.4.0] - 2021-05-12
 
 - ball and socket connections for expressing required and provided interfaces
@@ -19,6 +23,7 @@
 - Support Webpack
 
 **Webapp**
+
 - Folders in file system view
 - Always as for filename when saving a #view url graph
 - Improved file system view
@@ -47,17 +52,20 @@
 ## [1.0.0] - 2020-09-11
 
 ## Improved text measurement in SVG documents
+
 - better heuristic for text width when no rendering context is available
 - better text measurement when rendering context is available
 
 ## [0.10.0] - 2020-08-31
 
 ### New features
+
 - Table is a new classifier type that displays its compartments in a uniform grid.
   Set the first row-break with a double pipe `||`.
 - Non-boxy shapes are laid out properly. Ellipses, rhombuses, and cylinders (<usecase>, <choice>, and <database>) no longer intersect awkwardly with the arrows.
 
 ### Bug fixes
+
 - fixed bug where SVG did not support bold text
 - fixed bug where SVG did not track lineWidth in push/pop of graphic state
 

@@ -2232,7 +2232,7 @@
         return processImports(loadFile(rootFileName), loadFile, maxImportDepth);
     }
 
-    var version = '1.4.0';
+    var version = '1.5.0';
 
     exports.Classifier = Classifier;
     exports.Compartment = Compartment;
