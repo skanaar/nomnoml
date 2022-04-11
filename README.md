@@ -1,6 +1,6 @@
-nomnoml 
-[![npm version](https://badge.fury.io/js/nomnoml.svg)](https://badge.fury.io/js/nomnoml) 
-[![Known Vulnerabilities](https://snyk.io/test/npm/nomnoml/badge.svg)](https://snyk.io/test/npm/nomnoml) 
+nomnoml
+[![npm version](https://badge.fury.io/js/nomnoml.svg)](https://badge.fury.io/js/nomnoml)
+[![Known Vulnerabilities](https://snyk.io/test/npm/nomnoml/badge.svg)](https://snyk.io/test/npm/nomnoml)
 [![web site](https://img.shields.io/badge/web-nomnoml.com-brightgreen)](https://www.nomnoml.com)
 =======
 
@@ -10,7 +10,7 @@ Created by [Daniel Kallin](https://github.com/skanaar) with help from a group of
 
 ## Library
 
-The [nomnoml](https://www.nomnoml.com) javascript library can render diagrams on your web page. The only dependency is [graphre](https://github.com/skanaar/graphre). Install nomnoml using either *npm* or good old script inclusion.
+The [nomnoml](https://www.nomnoml.com) javascript library can render diagrams on your web page. The only dependency is [graphre](https://github.com/skanaar/graphre). Install nomnoml using either _npm_ or good old script inclusion.
 
 ## SVG output in NodeJS
 
@@ -19,9 +19,17 @@ npm install nomnoml
 ```
 
 ```js
-var nomnoml = require('nomnoml');
-var src = '[nomnoml] is -> [awesome]';
-console.log(nomnoml.renderSvg(src));
+var nomnoml = require('nomnoml')
+var src = '[nomnoml] is -> [awesome]'
+console.log(nomnoml.renderSvg(src))
+```
+
+In the SVG output the node name is attached to SVG shapes and `<g>` containers with `data-name` attribute. You can use this to implement interactive diagrams.
+
+```js
+document.querySelector('svg').onclick = function (e) {
+  console.log(e.target.closest('g[data-name]')?.attributes['data-name'])
+}
 ```
 
 ## HTML Canvas rendering target
@@ -32,9 +40,9 @@ console.log(nomnoml.renderSvg(src));
 
 <canvas id="target-canvas"></canvas>
 <script>
-    var canvas = document.getElementById('target-canvas');
-    var source = '[nomnoml] is -> [awesome]';
-    nomnoml.draw(canvas, source);
+  var canvas = document.getElementById('target-canvas')
+  var source = '[nomnoml] is -> [awesome]'
+  nomnoml.draw(canvas, source)
 </script>
 ```
 
@@ -187,7 +195,7 @@ Style title and text body with a comma separated list of text modifiers
 
     title=left,italic,bold
     body=center,italic,bold
-    
+
 Text modifiers
 
     bold
