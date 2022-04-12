@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.5.1] - 2022-04-13
+
+- Fix a bug where SVGs did not include their source in the desc tag
+- Fix a bug where table nodes produced invalid SVG
+
 ## [1.5.0] - 2022-04-11
 
 - SVG output is generated with a proper element hierarchy
