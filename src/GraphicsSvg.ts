@@ -98,7 +98,8 @@ export function GraphicsSvg(document?: HTMLDocument): ISvgGraphics {
       const data = getDefined(this.group(), (e) => e.data) ?? {}
       const attrs = toAttrString({ ...this.attr, ...data })
       const content = this.children.map((o) => o.serialize()).join('\n')
-      if (this.name === 'text') return `<text ${attrs}>${xmlEncode(this.text)}</text>`
+      if (this.text && this.children.length === 0)
+        return `<${this.name} ${attrs}>${xmlEncode(this.text)}</${this.name}>`
       else if (this.children.length === 0)
         return this.elideEmpty ? '' : `<${this.name} ${attrs}></${this.name}>`
       else

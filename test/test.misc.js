@@ -181,4 +181,10 @@ suite.test('escape [data-name] attribute value in SVG', function () {
   assert(output, 'includes', 'data-name="&amp;"')
 })
 
+suite.test('SVG export includes nomnoml source in <desc>', function () {
+  var output = renderSvg('[a]->[b]')
+  var desc = output.match('<desc ?>(.*)</desc>')[1]
+  assert(desc.trim(), '=', '[a]-&gt;[b]')
+})
+
 suite.report()

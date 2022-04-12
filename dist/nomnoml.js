@@ -1927,8 +1927,8 @@
                 const data = (_a = getDefined(this.group(), (e) => e.data)) !== null && _a !== void 0 ? _a : {};
                 const attrs = toAttrString(Object.assign(Object.assign({}, this.attr), data));
                 const content = this.children.map((o) => o.serialize()).join('\n');
-                if (this.name === 'text')
-                    return `<text ${attrs}>${xmlEncode(this.text)}</text>`;
+                if (this.text && this.children.length === 0)
+                    return `<${this.name} ${attrs}>${xmlEncode(this.text)}</${this.name}>`;
                 else if (this.children.length === 0)
                     return this.elideEmpty ? '' : `<${this.name} ${attrs}></${this.name}>`;
                 else
