@@ -360,6 +360,7 @@
                     cell.width = cellW;
                 }
             }
+            clas.compartments = clas.compartments.filter((e) => !isRowBreak(e));
         },
         transceiver: box,
     };
@@ -2110,6 +2111,9 @@
                 current.attr['text-align'] = a;
             },
             translate: function (dx, dy) {
+                if (Number.isNaN(dx) || Number.isNaN(dy)) {
+                    throw new Error('dx and dy must be real numbers');
+                }
                 current.attr.transform = `translate(${dx}, ${dy})`;
             },
             serialize: function (size, desc, title) {

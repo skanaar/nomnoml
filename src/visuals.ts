@@ -289,6 +289,7 @@ export var layouters: { [key in Visual]: NodeLayouter } = {
         cell.width = cellW
       }
     }
+    clas.compartments = clas.compartments.filter((e) => !isRowBreak(e))
   },
   transceiver: box,
 }

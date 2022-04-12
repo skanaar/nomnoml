@@ -311,6 +311,9 @@ export function GraphicsSvg(document?: HTMLDocument): ISvgGraphics {
       current.attr['text-align'] = a
     },
     translate: function (dx, dy) {
+      if (Number.isNaN(dx) || Number.isNaN(dy)) {
+        throw new Error('dx and dy must be real numbers')
+      }
       current.attr.transform = `translate(${dx}, ${dy})`
     },
     serialize: function (
