@@ -93,7 +93,9 @@ export function drawTerminators(g: Graphics, config: Config, r: Relation) {
     const x = (s: number) => add(end, mult(nv, s * size))
     const y = (s: number) => mult(rot(nv), s * size)
     var arrow = [add(x(7), y(4)), x(14), add(x(7), y(-4)), end]
+    g.save()
     g.fillStyle(isOpen ? config.stroke : config.fill[0])
     g.circuit(arrow).fillAndStroke()
+		g.restore()
   }
 }
