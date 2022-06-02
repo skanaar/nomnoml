@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.5.2] - 2022-06-02
+
+- Fix a bug in SVG rendering of association diamonds
+
 ## [1.5.1] - 2022-04-13
 
 - Fix a bug where SVGs did not include their source in the desc tag
