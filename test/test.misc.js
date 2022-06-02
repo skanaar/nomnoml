@@ -14,11 +14,15 @@ suite.node_test('assert library version', function () {
   var fs = require('fs')
   var library = require('../dist/nomnoml.js')
   var package = require('../package.json')
+  var lockfile = require('../package-lock.json')
   var changelog = fs.readFileSync('changelog.md', { encoding: 'utf-8' })
   var versionMatch = changelog.match(/\d+\.\d+\.\d+/)
   var logVersion = versionMatch && versionMatch[0]
   if (library.version != package.version) {
     throw new Error('version of distribution bundle and npm package must match')
+  }
+  if (lockfile.version != package.version) {
+    throw new Error('version of package-lock and npm package must match')
   }
   var isProductionVersion = !library.version.includes('-')
   if (isProductionVersion && library.version != logVersion) {
