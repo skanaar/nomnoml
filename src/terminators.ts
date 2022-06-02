@@ -96,6 +96,6 @@ export function drawTerminators(g: Graphics, config: Config, r: Relation) {
     g.save()
     g.fillStyle(isOpen ? config.stroke : config.fill[0])
     g.circuit(arrow).fillAndStroke()
-		g.restore()
+    g.restore()
   }
 }
