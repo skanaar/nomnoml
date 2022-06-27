@@ -1,7 +1,5 @@
 {
-  "routes": [
-    { "src": "/image.svg", "dest": "api/image.js" }
-  ],
+  "rewrites": [{ "source": "/image.svg", "destination": "/api/image" }],
   "github": {
     "silent": true
   }
