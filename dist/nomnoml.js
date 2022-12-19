@@ -1470,12 +1470,12 @@
         var endDir = normalize(diff(path[path.length - 2], last(path)));
         var startDir = normalize(diff(path[1], path[0]));
         var size = (config.spacing * config.arrowSize) / 30;
-        var A = 0;
-        var Ω = path.length - 1;
+        var head = 0;
+        var end = path.length - 1;
         var copy = path.map((p) => ({ x: p.x, y: p.y }));
         var tokens = r.assoc.split(/[-_]/);
-        copy[A] = add(copy[A], mult(startDir, size * terminatorSize(tokens[0])));
-        copy[Ω] = add(copy[Ω], mult(endDir, size * terminatorSize(last(tokens))));
+        copy[head] = add(copy[head], mult(startDir, size * terminatorSize(tokens[0])));
+        copy[end] = add(copy[end], mult(endDir, size * terminatorSize(last(tokens))));
         return copy;
     }
     function terminatorSize(id) {
