@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.5.3] - 2022-12-19
+
+- Fix a bug with unsupported variables names in some runtimes
+- upgrade dependencies
+
 ## [1.5.2] - 2022-06-02
 
 - Fix a bug in SVG rendering of association diamonds
