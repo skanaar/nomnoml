@@ -4,7 +4,7 @@ var nomnoml = require('./nomnoml.js')
 
 var [_, _, filename, outfile] = process.argv
 
-if (filename == '--help' || process.argv.length == 2){
+if (filename == '--help' || process.argv.length == 2) {
   console.log(`
   Nomnoml command line utility for generating SVG diagrams.
 
@@ -18,10 +18,10 @@ if (filename == '--help' || process.argv.length == 2){
   return
 }
 
-var svg = nomnoml.renderSvg(nomnoml.compileFile(filename))
-if (outfile){
+const source = nomnoml.compileFile(filename)
+var svg = nomnoml.renderSvg(source)
+if (outfile) {
   fs.writeFileSync(outfile, svg)
-}
-else {
+} else {
   console.log(svg)
 }
