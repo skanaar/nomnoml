@@ -1,5 +1,6 @@
 import { Ranker } from 'graphre/decl/types'
 import { Graphics } from './Graphics'
+import { LayoutedNode } from './layouter'
 
 export interface Config {
   padding: number
@@ -33,11 +34,11 @@ export interface Measurer {
 }
 
 export interface Visualizer {
-  (node: Classifier, x: number, y: number, config: Config, g: Graphics): void
+  (node: LayoutedNode, x: number, y: number, config: Config, g: Graphics): void
 }
 
 export interface NodeLayouter {
-  (config: Config, node: Classifier): void
+  (config: Config, node: LayoutedNode): void
 }
 
 export type Visual =
@@ -80,42 +81,10 @@ export interface Style {
   direction: 'TB' | 'LR' | undefined
 }
 
-export class Compartment {
-  x: number
-  y: number
-  width: number
-  height: number
-  offset: { x: number; y: number }
-  constructor(public lines: string[], public nodes: Classifier[], public relations: Relation[]) {}
-}
-
 export interface RelationLabel {
   x?: number
   y?: number
   width?: number
   height?: number
   text: string
-}
-
-export class Relation {
-  id: number
-  path?: { x: number; y: number }[]
-  start: string
-  end: string
-  startLabel: RelationLabel
-  endLabel: RelationLabel
-  assoc: string
-}
-
-export class Classifier {
-  x: number
-  y: number
-  width: number
-  height: number
-  layoutWidth: number
-  layoutHeight: number
-  dividers: { x: number; y: number }[][]
-  constructor(public type: string, public name: string, public compartments: Compartment[]) {
-    this.dividers = []
-  }
 }

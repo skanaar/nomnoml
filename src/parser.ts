@@ -1,68 +1,43 @@
 import { Ranker } from 'graphre/decl/types'
-import { Classifier, Compartment, Config, Relation, Style, Visual } from './domain'
-import { hasSubstring, last, uniqueBy } from './util'
+import { Config, Style, Visual } from './domain'
+import { hasSubstring, last } from './util'
 import { styles } from './visuals'
 // @ts-ignore
-import nomnomlCoreParser from '../dist/nomnoml-core-parser'
+import coreParser from '../dist/core-parser'
 
-interface ParsedDiagram {
-  root: Compartment
+export interface ParsedDiagram {
+  root: Part
   config: Config
 }
-export type AstRoot = AstCompartment
-type AstCompartment = AstSlot[]
-type AstSlot = string | AstClassifier | AstRelation
-interface AstRelation {
-  assoc: string
-  start: AstClassifier
-  end: AstClassifier
-  startLabel: string
-  endLabel: string
+export interface Part {
+  nodes: Node[]
+  assocs: Association[]
+  lines: string[]
+  directives: Directive[]
 }
-interface AstClassifier {
-  type: string
+export interface Directive {
+  key: string
+  value: string
+}
+export interface Node {
   id: string
-  parts: AstCompartment[]
+  type: string
+  attr: Record<string, string>
+  parts: Part[]
 }
-
-class Line {
-  index: number
-  text: string
+export interface Association {
+  id: number
+  type: string
+  start: string
+  end: string
+  startLabel: { text: string }
+  endLabel: { text: string }
 }
 
 export function parse(source: string): ParsedDiagram {
-  function onlyCompilables(line: string) {
-    var ok = line[0] !== '#' && line.trim().substring(0, 2) !== '//'
-    return ok ? line.trim() : ''
-  }
-  function isDirective(line: Line): boolean {
-    return line.text[0] === '#'
-  }
-  var lines: Line[] = source.split('\n').map((s, i) => ({ text: s, index: i }))
-  var pureDirectives = lines.filter(isDirective)
-  var directives: { [key: string]: string } = {}
-  pureDirectives.forEach((line) => {
-    try {
-      var tokens = line.text.substring(1).split(':')
-      directives[tokens[0].trim()] = tokens[1].trim()
-    } catch (e) {
-      throw new Error('line ' + (line.index + 1) + ': Malformed directive')
-    }
-  })
-  var pureDiagramCode = lines.map((e) => onlyCompilables(e.text)).join('\n')
-
-  if (pureDiagramCode == '') {
-    return {
-      root: new Compartment([], [], []),
-      config: getConfig(directives),
-    }
-  }
-
-  var parseTree = intermediateParse(pureDiagramCode)
-  return {
-    root: transformParseIntoSyntaxTree(parseTree),
-    config: getConfig(directives),
-  }
+  const withoutComments = source.replace(/\/\/[^\n]*/g, '')
+  const graph = coreParser.parse(withoutComments)
+  return { root: graph, config: getConfig(graph.directives) }
 
   function directionToDagre(word: string): 'TB' | 'LR' {
     if (word == 'down') return 'TB'
@@ -103,12 +78,13 @@ export function parse(source: string): ParsedDiagram {
     }
   }
 
-  function getConfig(d: { [index: string]: string }): Config {
+  function getConfig(directives: Directive[]): Config {
+    var d = Object.fromEntries(directives.map((e) => [e.key, e.value]))
     var userStyles: { [index: string]: Style } = {}
     for (var key in d) {
       if (key[0] != '.') continue
       var styleDef = d[key]
-      userStyles[key.substring(1).toUpperCase()] = parseCustomStyle(styleDef)
+      userStyles[key.substring(1)] = parseCustomStyle(styleDef)
     }
     return {
       arrowSize: +d.arrowSize || 1,
@@ -135,64 +111,4 @@ export function parse(source: string): ParsedDiagram {
       styles: { ...styles, ...userStyles },
     }
   }
-}
-
-export function intermediateParse(source: string): AstRoot {
-  return nomnomlCoreParser.parse(source)
-}
-
-export function transformParseIntoSyntaxTree(entity: AstRoot): Compartment {
-  function isAstClassifier(obj: AstSlot): obj is AstClassifier {
-    return (<AstClassifier>obj).parts !== undefined
-  }
-
-  function isAstRelation(obj: AstSlot): obj is AstRelation {
-    return (<AstRelation>obj).assoc !== undefined
-  }
-
-  var relationId: number = 0
-
-  function transformCompartment(slots: AstCompartment): Compartment {
-    var lines: string[] = []
-    var rawClassifiers: AstClassifier[] = []
-    var relations: Relation[] = []
-    slots.forEach((p: AstSlot) => {
-      if (typeof p === 'string') lines.push(p)
-      if (isAstRelation(p)) {
-        // is a relation
-        rawClassifiers.push(p.start)
-        rawClassifiers.push(p.end)
-        relations.push({
-          id: relationId++,
-          assoc: p.assoc,
-          start: p.start.parts[0][0] as string,
-          end: p.end.parts[0][0] as string,
-          startLabel: { text: p.startLabel },
-          endLabel: { text: p.endLabel },
-        })
-      }
-      if (isAstClassifier(p)) {
-        rawClassifiers.push(p)
-      }
-    })
-    var allClassifiers: Classifier[] = rawClassifiers
-      .map(transformClassifier)
-      .sort((a: Classifier, b: Classifier): number => b.compartments.length - a.compartments.length)
-    var uniqClassifiers = uniqueBy(allClassifiers, 'name')
-    var uniqRelations = relations.filter((a) => {
-      for (var b of relations) {
-        if (a === b) return true
-        if (b.start == a.start && b.end == a.end) return false
-      }
-      return true
-    })
-    return new Compartment(lines, uniqClassifiers, uniqRelations)
-  }
-
-  function transformClassifier(entity: AstClassifier): Classifier {
-    var compartments = entity.parts.map(transformCompartment)
-    return new Classifier(entity.type, entity.id, compartments)
-  }
-
-  return transformCompartment(entity)
 }

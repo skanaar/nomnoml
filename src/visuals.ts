@@ -1,13 +1,5 @@
-import {
-  Classifier,
-  Compartment,
-  Config,
-  NodeLayouter,
-  Style,
-  TextStyle,
-  Visual,
-  Visualizer,
-} from './domain'
+import { Config, NodeLayouter, Style, TextStyle, Visual, Visualizer } from './domain'
+import { LayoutedNode, LayoutedPart } from './layouter'
 import { sum, last, range } from './util'
 
 export function buildStyle(
@@ -38,43 +30,43 @@ export function buildStyle(
 
 // prettier-ignore
 export var styles: { [key: string]: Style } = {
-  ABSTRACT:    buildStyle({ visual:'class' }, { center:true, italic:true }),
-  ACTOR:       buildStyle({ visual:'actor' }, { center:true }, { center: true }),
-  CHOICE:      buildStyle({ visual:'rhomb' }, { center:true }, { center: true }),
-  CLASS:       buildStyle({ visual:'class' }, { center:true, bold:true }),
-  DATABASE:    buildStyle({ visual:'database' }, { center:true, bold:true }, { center: true }),
-  END:         buildStyle({ visual:'end' }, {}),
-  FRAME:       buildStyle({ visual:'frame' }, {}),
-  HIDDEN:      buildStyle({ visual:'hidden' }, {}),
-  INPUT:       buildStyle({ visual:'input' }, { center:true }),
-  INSTANCE:    buildStyle({ visual:'class' }, { center:true, underline:true }),
-  LABEL:       buildStyle({ visual:'none' }, { center:true }),
-  LOLLIPOP:    buildStyle({ visual:'lollipop' }, { center:true }),
-  NOTE:        buildStyle({ visual:'note' }, {}),
-  PACKAGE:     buildStyle({ visual:'package' }, {}),
-  RECEIVER:    buildStyle({ visual:'receiver' }, {}),
-  REFERENCE:   buildStyle({ visual:'class', dashed:true }, { center:true }),
-  SENDER:      buildStyle({ visual:'sender' }, {}),
-  SOCKET:      buildStyle({ visual:'socket' }, {}),
-  START:       buildStyle({ visual:'start' }, {}),
-  STATE:       buildStyle({ visual:'roundrect' }, { center:true }),
-  SYNC:        buildStyle({ visual:'sync' }, { center:true }),
-  TABLE:       buildStyle({ visual:'table' }, { center:true, bold:true }),
-  TRANSCEIVER: buildStyle({ visual:'transceiver' }, {}),
-  USECASE:     buildStyle({ visual:'ellipse' }, { center:true }, { center: true }),
+  abstract:    buildStyle({ visual:'class' }, { center:true, italic:true }),
+  actor:       buildStyle({ visual:'actor' }, { center:true }, { center: true }),
+  choice:      buildStyle({ visual:'rhomb' }, { center:true }, { center: true }),
+  class:       buildStyle({ visual:'class' }, { center:true, bold:true }),
+  database:    buildStyle({ visual:'database' }, { center:true, bold:true }, { center: true }),
+  end:         buildStyle({ visual:'end' }, {}),
+  frame:       buildStyle({ visual:'frame' }, {}),
+  hidden:      buildStyle({ visual:'hidden' }, {}),
+  input:       buildStyle({ visual:'input' }, { center:true }),
+  instance:    buildStyle({ visual:'class' }, { center:true, underline:true }),
+  label:       buildStyle({ visual:'none' }, { center:true }),
+  lollipop:    buildStyle({ visual:'lollipop' }, { center:true }),
+  note:        buildStyle({ visual:'note' }, {}),
+  package:     buildStyle({ visual:'package' }, {}),
+  receiver:    buildStyle({ visual:'receiver' }, {}),
+  reference:   buildStyle({ visual:'class', dashed:true }, { center:true }),
+  sender:      buildStyle({ visual:'sender' }, {}),
+  socket:      buildStyle({ visual:'socket' }, {}),
+  start:       buildStyle({ visual:'start' }, {}),
+  state:       buildStyle({ visual:'roundrect' }, { center:true }),
+  sync:        buildStyle({ visual:'sync' }, { center:true }),
+  table:       buildStyle({ visual:'table' }, { center:true, bold:true }),
+  transceiver: buildStyle({ visual:'transceiver' }, {}),
+  usecase:     buildStyle({ visual:'ellipse' }, { center:true }, { center: true }),
 }
 
-function box(config: Config, clas: Classifier) {
-  clas.width = Math.max(...clas.compartments.map((e) => e.width))
-  clas.height = sum(clas.compartments, (e) => e.height)
+function box(config: Config, clas: LayoutedNode) {
+  clas.width = Math.max(...clas.parts.map((e) => e.width ?? 0))
+  clas.height = sum(clas.parts, (e) => e.height ?? 0 ?? 0)
   clas.dividers = []
   var y = 0
-  for (var comp of clas.compartments) {
+  for (var comp of clas.parts) {
     comp.x = 0
     comp.y = y
     comp.width = clas.width
-    y += comp.height
-    if (comp != last(clas.compartments))
+    y += comp.height ?? 0 ?? 0
+    if (comp != last(clas.parts))
       clas.dividers.push([
         { x: 0, y: y },
         { x: clas.width, y: y },
@@ -82,42 +74,42 @@ function box(config: Config, clas: Classifier) {
   }
 }
 
-function icon(config: Config, clas: Classifier) {
+function icon(config: Config, clas: LayoutedNode) {
   clas.dividers = []
-  clas.compartments = []
+  clas.parts = []
   clas.width = config.fontSize * 2.5
   clas.height = config.fontSize * 2.5
 }
 
-function labelledIcon(config: Config, clas: Classifier) {
+function labelledIcon(config: Config, clas: LayoutedNode) {
   clas.width = config.fontSize * 1.5
   clas.height = config.fontSize * 1.5
   clas.dividers = []
   var y = config.direction == 'LR' ? clas.height - config.padding : -clas.height / 2
-  for (var comp of clas.compartments) {
+  for (var comp of clas.parts) {
     if (config.direction == 'LR') {
-      comp.x = clas.width / 2 - comp.width / 2
+      comp.x = clas.width / 2 - (comp.width ?? 0) / 2
       comp.y = y
     } else {
       comp.x = clas.width / 2 + config.padding / 2
       comp.y = y
     }
-    y += comp.height
+    y += comp.height ?? 0 ?? 0
   }
 }
 
 export var layouters: { [key in Visual]: NodeLayouter } = {
-  actor: function (config: Config, clas: Classifier) {
-    clas.width = Math.max(config.padding * 2, ...clas.compartments.map((e) => e.width))
-    clas.height = config.padding * 3 + sum(clas.compartments, (e) => e.height)
+  actor: function (config: Config, clas: LayoutedNode) {
+    clas.width = Math.max(config.padding * 2, ...clas.parts.map((e) => e.width ?? 0))
+    clas.height = config.padding * 3 + sum(clas.parts, (e) => e.height ?? 0)
     clas.dividers = []
     var y = config.padding * 3
-    for (var comp of clas.compartments) {
+    for (var comp of clas.parts) {
       comp.x = 0
       comp.y = y
       comp.width = clas.width
-      y += comp.height
-      if (comp != last(clas.compartments))
+      y += comp.height ?? 0
+      if (comp != last(clas.parts))
         clas.dividers.push([
           { x: config.padding, y: y },
           { x: clas.width - config.padding, y: y },
@@ -125,17 +117,17 @@ export var layouters: { [key in Visual]: NodeLayouter } = {
     }
   },
   class: box,
-  database: function (config: Config, clas: Classifier) {
-    clas.width = Math.max(...clas.compartments.map((e) => e.width))
-    clas.height = sum(clas.compartments, (e) => e.height) + config.padding * 2
+  database: function (config: Config, clas: LayoutedNode) {
+    clas.width = Math.max(...clas.parts.map((e) => e.width ?? 0))
+    clas.height = sum(clas.parts, (e) => e.height ?? 0) + config.padding * 2
     clas.dividers = []
     var y = config.padding * 1.5
-    for (var comp of clas.compartments) {
+    for (var comp of clas.parts) {
       comp.x = 0
       comp.y = y
       comp.width = clas.width
-      y += comp.height
-      if (comp != last(clas.compartments)) {
+      y += comp.height ?? 0
+      if (comp != last(clas.parts)) {
         var path = range([0, Math.PI], 16).map((a) => ({
           x: clas.width * 0.5 * (1 - Math.cos(a)),
           y: y + config.padding * (0.75 * Math.sin(a) - 0.5),
@@ -144,21 +136,21 @@ export var layouters: { [key in Visual]: NodeLayouter } = {
       }
     }
   },
-  ellipse: function (config: Config, clas: Classifier) {
-    var width = Math.max(...clas.compartments.map((e) => e.width))
-    var height = sum(clas.compartments, (e) => e.height)
+  ellipse: function (config: Config, clas: LayoutedNode) {
+    var width = Math.max(...clas.parts.map((e) => e.width ?? 0))
+    var height = sum(clas.parts, (e) => e.height ?? 0)
     clas.width = width * 1.25
     clas.height = height * 1.25
     clas.dividers = []
     var y = height * 0.125
     var sq = (x: number) => x * x
     var rimPos = (y: number) => Math.sqrt(sq(0.5) - sq(y / clas.height - 0.5)) * clas.width
-    for (var comp of clas.compartments) {
+    for (var comp of clas.parts) {
       comp.x = width * 0.125
       comp.y = y
       comp.width = width
-      y += comp.height
-      if (comp != last(clas.compartments))
+      y += comp.height ?? 0
+      if (comp != last(clas.parts))
         clas.dividers.push([
           { x: clas.width / 2 + rimPos(y) - 1, y: y },
           { x: clas.width / 2 - rimPos(y) + 1, y: y },
@@ -166,22 +158,22 @@ export var layouters: { [key in Visual]: NodeLayouter } = {
     }
   },
   end: icon,
-  frame: function (config: Config, clas: Classifier) {
-    var w = clas.compartments[0].width
-    var h = clas.compartments[0].height
-    clas.compartments[0].width += h / 2
+  frame: function (config: Config, clas: LayoutedNode) {
+    var w = clas.parts[0].width ?? 0
+    var h = clas.parts[0].height ?? 0
+    clas.parts[0].width = h / 2 + (clas.parts[0].width ?? 0)
     box(config, clas)
-    if (clas.dividers.length) clas.dividers.shift()
-    clas.dividers.unshift([
+    if (clas.dividers?.length) clas.dividers.shift()
+    clas.dividers?.unshift([
       { x: 0, y: h },
       { x: w - h / 4, y: h },
       { x: w + h / 4, y: h / 2 },
       { x: w + h / 4, y: 0 },
     ])
   },
-  hidden: function (config: Config, clas: Classifier) {
+  hidden: function (config: Config, clas: LayoutedNode) {
     clas.dividers = []
-    clas.compartments = []
+    clas.parts = []
     clas.width = 1
     clas.height = 1
   },
@@ -191,20 +183,20 @@ export var layouters: { [key in Visual]: NodeLayouter } = {
   note: box,
   package: box,
   receiver: box,
-  rhomb: function (config: Config, clas: Classifier) {
-    var width = Math.max(...clas.compartments.map((e) => e.width))
-    var height = sum(clas.compartments, (e) => e.height)
+  rhomb: function (config: Config, clas: LayoutedNode) {
+    var width = Math.max(...clas.parts.map((e) => e.width ?? 0))
+    var height = sum(clas.parts, (e) => e.height ?? 0)
     clas.width = width * 1.5
     clas.height = height * 1.5
     clas.dividers = []
     var y = height * 0.25
-    for (var comp of clas.compartments) {
+    for (var comp of clas.parts) {
       comp.x = width * 0.25
       comp.y = y
       comp.width = width
-      y += comp.height
+      y += comp.height ?? 0
       var slope = clas.width / clas.height
-      if (comp != last(clas.compartments))
+      if (comp != last(clas.parts))
         clas.dividers.push([
           {
             x: clas.width / 2 + (y < clas.height / 2 ? y * slope : (clas.height - y) * slope),
@@ -221,9 +213,9 @@ export var layouters: { [key in Visual]: NodeLayouter } = {
   sender: box,
   socket: labelledIcon,
   start: icon,
-  sync: function (config: Config, clas: Classifier) {
+  sync: function (config: Config, clas: LayoutedNode) {
     clas.dividers = []
-    clas.compartments = []
+    clas.parts = []
     if (config.direction == 'LR') {
       clas.width = config.lineWidth * 3
       clas.height = config.fontSize * 5
@@ -232,21 +224,21 @@ export var layouters: { [key in Visual]: NodeLayouter } = {
       clas.height = config.lineWidth * 3
     }
   },
-  table: function (config: Config, clas: Classifier) {
-    if (clas.compartments.length == 1) {
+  table: function (config: Config, clas: LayoutedNode) {
+    if (clas.parts.length == 1) {
       box(config, clas)
       return
     }
-    var gridcells = clas.compartments.slice(1)
-    var rows: Compartment[][] = [[]]
-    function isRowBreak(e: Compartment): boolean {
-      return !e.lines.length && !e.nodes.length && !e.relations.length
+    var gridcells = clas.parts.slice(1)
+    var rows: LayoutedPart[][] = [[]]
+    function isRowBreak(e: LayoutedPart): boolean {
+      return !e.lines.length && !e.nodes.length && !e.assocs.length
     }
-    function isRowFull(e: Compartment): boolean {
+    function isRowFull(e: LayoutedPart): boolean {
       var current = last(rows)
       return rows[0] != current && rows[0].length == current.length
     }
-    function isEnd(e: Compartment): boolean {
+    function isEnd(e: LayoutedPart): boolean {
       return comp == last(gridcells)
     }
     for (var comp of gridcells) {
@@ -258,20 +250,23 @@ export var layouters: { [key in Visual]: NodeLayouter } = {
         last(rows).push(comp)
       }
     }
-    var header = clas.compartments[0]
-    var cellW = Math.max(header.width / rows[0].length, ...gridcells.map((e) => e.width))
-    var cellH = Math.max(...gridcells.map((e) => e.height))
+    var header = clas.parts[0]
+    var cellW = Math.max(
+      (header.width ?? 0) / rows[0].length,
+      ...gridcells.map((e) => e.width ?? 0)
+    )
+    var cellH = Math.max(...gridcells.map((e) => e.height ?? 0))
     clas.width = cellW * rows[0].length
-    clas.height = header.height + cellH * rows.length
-    var hh = header.height
+    clas.height = (header.height ?? 0) + cellH * rows.length
+    var hh = header.height ?? 0
     clas.dividers = [
       [
-        { x: 0, y: header.height },
-        { x: 0, y: header.height },
+        { x: 0, y: header.height ?? 0 },
+        { x: 0, y: header.height ?? 0 },
       ],
       ...rows.map((e, i) => [
         { x: 0, y: hh + i * cellH },
-        { x: clas.width, y: hh + i * cellH },
+        { x: clas.width ?? 0, y: hh + i * cellH },
       ]),
       ...rows[0].map((e, i) => [
         { x: (i + 1) * cellW, y: hh },
@@ -289,7 +284,7 @@ export var layouters: { [key in Visual]: NodeLayouter } = {
         cell.width = cellW
       }
     }
-    clas.compartments = clas.compartments.filter((e) => !isRowBreak(e))
+    clas.parts = clas.parts.filter((e) => !isRowBreak(e))
   },
   transceiver: box,
 }
@@ -379,9 +374,9 @@ export var visualizers: { [key in Visual]: Visualizer } = {
     ]).stroke()
   },
   package: function (node, x, y, config, g) {
-    var headHeight = node.compartments[0].height
+    var headHeight = node.parts[0].height ?? 0
     g.rect(x, y + headHeight, node.width, node.height - headHeight).fillAndStroke()
-    var w = g.measureText(node.name).width + 2 * config.padding
+    var w = g.measureText(node.parts[0].lines[0]).width + 2 * config.padding
     g.circuit([
       { x: x, y: y + headHeight },
       { x: x, y: y },

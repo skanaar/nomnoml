@@ -107,7 +107,7 @@ export class App {
           nomnoml.draw(canvasElement, lastValidSource, this.panner.zoom())
         }
         this.panner.positionCanvas(canvasElement)
-        devenv.setError(e)
+        if (e.location?.start) devenv.setError(e.location.start)
       }
     }
 

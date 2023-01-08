@@ -25,7 +25,8 @@
   ],
   "types": "index.d.ts",
   "dependencies": {
-    "graphre": "^0.1.3"
+    "graphre": "^0.1.3",
+    "peggy": "^2.0.1"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^22.0.1",
@@ -45,7 +46,7 @@
     "prepare": "npm run webapp",
     "build": "npm run lib && npm run webapp && npm run test",
     "webapp": "rollup -c webapp/rollup.config.js",
-    "lib": "node build/build-parser.js && rollup -c src/rollup.config.js && npm test",
+    "lib": "peggy -o dist/core-parser.js src/grammar.pegjs && rollup -c src/rollup.config.js && npm test",
     "test": "node test/index.js && npm run test_cli",
     "test_cli": "rm -f test/output.svg && node dist/nomnoml-cli.js test/import-test.nomnoml test/output.svg"
   },

@@ -181,7 +181,7 @@ suite.node_test('processAsyncImports via file system', async function () {
 })
 
 suite.test('escape [data-name] attribute value in SVG', function () {
-  var output = renderSvg('[&]-[<]')
+  var output = renderSvg('[&]-[a]')
   assert(output, 'includes', 'data-name="&amp;"')
 })
 

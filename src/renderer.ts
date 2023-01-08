@@ -1,25 +1,26 @@
-import { Classifier, Compartment, Config, Relation, RelationLabel, TextStyle } from './domain'
+import { Config, RelationLabel, TextStyle } from './domain'
 import { Graphics } from './Graphics'
+import { LayoutedAssoc, LayoutedNode, LayoutedPart } from './layouter'
 import { drawTerminators, getPath } from './terminators'
 import { hasSubstring, last } from './util'
 import { add, Vec } from './vector'
 import { buildStyle, styles, visualizers } from './visuals'
 
-export function render(graphics: Graphics, config: Config, compartment: Compartment) {
+export function render(graphics: Graphics, config: Config, compartment: LayoutedPart) {
   var g = graphics
 
   function renderCompartment(
-    compartment: Compartment,
+    compartment: LayoutedPart,
     color: string | undefined,
     style: TextStyle,
     level: number
   ) {
     g.save()
-    g.translate(compartment.offset.x, compartment.offset.y)
+    g.translate(compartment.offset!.x, compartment.offset!.y)
     g.fillStyle(color || config.stroke)
     compartment.lines.forEach((text, i) => {
       g.textAlign(style.center ? 'center' : 'left')
-      var x = style.center ? compartment.width / 2 - config.padding : 0
+      var x = style.center ? compartment.width! / 2 - config.padding : 0
       var y = (0.5 + (i + 0.5) * config.leading) * config.fontSize
       if (text) {
         g.fillText(text, x, y)
@@ -43,19 +44,19 @@ export function render(graphics: Graphics, config: Config, compartment: Compartm
     })
     g.save()
     g.translate(config.gutter, config.gutter)
-    compartment.relations.forEach((r) => renderRelation(r))
+    compartment.assocs.forEach((r) => renderRelation(r))
     compartment.nodes.forEach((n) => renderNode(n, level))
     g.restore()
     g.restore()
   }
 
-  function renderNode(node: Classifier, level: number) {
+  function renderNode(node: LayoutedNode, level: number) {
     var x = Math.round(node.x - node.width / 2)
     var y = Math.round(node.y - node.height / 2)
-    var style = config.styles[node.type] || styles.CLASS
+    var style = config.styles[node.type] || styles.class
 
     g.save()
-    g.setData('name', node.name)
+    g.setData('name', node.id)
 
     g.save()
     g.fillStyle(style.fill || config.fill[level] || last(config.fill))
@@ -66,15 +67,15 @@ export function render(graphics: Graphics, config: Config, compartment: Compartm
     }
     var drawNode = visualizers[style.visual] || visualizers.class
     drawNode(node, x, y, config, g)
-    for (var divider of node.dividers) {
+    for (var divider of node.dividers!) {
       g.path(divider.map((e) => add(e, { x, y }))).stroke()
     }
     g.restore()
 
-    node.compartments.forEach((part: Compartment, i: number) => {
+    node.parts.forEach((part: LayoutedPart, i: number) => {
       var textStyle = i == 0 ? style.title : style.body
       g.save()
-      g.translate(x + part.x, y + part.y)
+      g.translate(x + part.x!, y + part.y!)
       g.setFont(
         config.font,
         config.fontSize,
@@ -109,7 +110,7 @@ export function render(graphics: Graphics, config: Config, compartment: Compartm
     lines.forEach((l, i) => g.fillText(l, label.x!, label.y! + fontSize * (i + 1)))
   }
 
-  function renderRelation(r: Relation) {
+  function renderRelation(r: LayoutedAssoc) {
     var path = getPath(config, r)
 
     g.fillStyle(config.stroke)
@@ -118,8 +119,8 @@ export function render(graphics: Graphics, config: Config, compartment: Compartm
     renderLabel(r.startLabel)
     renderLabel(r.endLabel)
 
-    if (r.assoc !== '-/-' && r.assoc !== '_/_') {
-      if (hasSubstring(r.assoc, '--') || hasSubstring(r.assoc, '__')) {
+    if (r.type !== '-/-' && r.type !== '_/_') {
+      if (hasSubstring(r.type, '--') || hasSubstring(r.type, '__')) {
         var dash = Math.max(4, 2 * config.lineWidth)
         g.save()
         g.setLineDash([dash, dash])
@@ -140,7 +141,7 @@ export function render(graphics: Graphics, config: Config, compartment: Compartm
     g.save()
     g.strokeStyle('transparent')
     g.fillStyle(config.background)
-    g.rect(0, 0, compartment.width, compartment.height).fill()
+    g.rect(0, 0, compartment.width!, compartment.height!).fill()
     g.restore()
   }
 

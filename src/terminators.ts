@@ -1,12 +1,13 @@
-import { Config, Relation } from './domain'
+import { Config } from './domain'
 import { Graphics } from './Graphics'
+import { LayoutedAssoc } from './layouter'
 import { last, range } from './util'
 import { Vec, diff, normalize, add, mult, rot } from './vector'
 
 const empty = false
 const filled = true
 
-export function getPath(config: Config, r: Relation): Vec[] {
+export function getPath(config: Config, r: LayoutedAssoc): Vec[] {
   var path = r.path!.slice(1, -1)
   var endDir = normalize(diff(path[path.length - 2], last(path)))
   var startDir = normalize(diff(path[1], path[0]))
@@ -14,7 +15,7 @@ export function getPath(config: Config, r: Relation): Vec[] {
   var head = 0
   var end = path.length - 1
   var copy = path.map((p) => ({ x: p.x, y: p.y }))
-  var tokens = r.assoc.split(/[-_]/)
+  var tokens = r.type.split(/[-_]/)
   copy[head] = add(copy[head], mult(startDir, size * terminatorSize(tokens[0])))
   copy[end] = add(copy[end], mult(endDir, size * terminatorSize(last(tokens))))
   return copy
@@ -31,12 +32,12 @@ function terminatorSize(id: string): number {
   return 0
 }
 
-export function drawTerminators(g: Graphics, config: Config, r: Relation) {
+export function drawTerminators(g: Graphics, config: Config, r: LayoutedAssoc) {
   var start = r.path![1]
   var end = r.path![r.path!.length - 2]
   var path = r.path!.slice(1, -1)
 
-  var tokens = r.assoc.split(/[-_]/)
+  var tokens = r.type.split(/[-_]/)
   drawArrowEnd(last(tokens), path, end)
   drawArrowEnd(tokens[0], path.reverse(), start)
 

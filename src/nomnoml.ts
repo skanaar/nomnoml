@@ -11,9 +11,9 @@ interface Rect {
   height: number
 }
 
-function fitCanvasSize(canvas: HTMLCanvasElement, rect: Rect, zoom: number) {
-  canvas.width = rect.width * zoom
-  canvas.height = rect.height * zoom
+function fitCanvasSize(canvas: HTMLCanvasElement, rect: Partial<Rect>, zoom: number) {
+  canvas.width = rect.width! * zoom
+  canvas.height = rect.height! * zoom
 }
 
 function createMeasurer(config: Config, graphics: Graphics): Measurer {
@@ -62,8 +62,8 @@ export function renderSvg(code: string, document?: HTMLDocument): string {
   var { config, layout } = parseAndRender(code, skCanvas, null, 1)
   return skCanvas.serialize(
     {
-      width: layout.width,
-      height: layout.height,
+      width: layout.width!,
+      height: layout.height!,
     },
     code,
     config.title
