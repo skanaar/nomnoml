@@ -263,28 +263,23 @@ Text with serifs
 	
 	<!--div class=alert-list daily-tip></div-->
 
-	<script type="text/vnd.nomnoml.class" id="defaultGraph">[Pirate|eyeCount: Int|raid();pillage()|
+	<script type="text/vnd.nomnoml.class" id="defaultGraph">[<start>start] -> [<state>plunder] -> [<choice>more loot] -> [start]
+[more loot] no ->[<end>e]
+
+[Pirate|
   [beard]--[parrot]
   [beard]-:>[foul mouth]
 ]
 
-[<table>mischief | bawl | sing || yell | drink]
+[<table>mischief| bawl | sing || yell | drink ]
 
 [<abstract>Marauder]<:--[Pirate]
-[Pirate]- 0..7[mischief]
-[jollyness]->[Pirate]
-[jollyness]->[rum]
-[jollyness]->[singing]
+[Pirate] - 0..7[mischief]
+[<actor id=sailor>Jolly;Sailor]
+[sailor]->[Pirate]
+[sailor]->[rum]
 [Pirate]-> *[rum|tastiness: Int|swig()]
-[Pirate]->[singing]
-[singing]<->[rum]
-
-[<start>st]->[<state>plunder]
-[plunder]->[<choice>more loot]
-[more loot]->[st]
-[more loot] no ->[<end>e]
-
-[<actor>Sailor] - [<usecase>shiver me;timbers]</script>
+</script>
 
 	<script src="codemirror/codemirror-compressed.js"></script>
 	<script src="codemirror/nomnoml.codemirror-mode.js"></script>
