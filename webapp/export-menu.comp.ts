@@ -10,9 +10,9 @@ import {
   link_outline
 } from "./typicons"
 
-export function ExportMenu(props: { app: App }) {
-  var downloader = props.app.downloader
-  var sourceCode = props.app.downloader.source
+export function ExportMenu({ app }: { app: App }) {
+  var downloader = app.downloader
+  var sourceCode = app.downloader.source
   return div({ className: "file-menu" },
     h2({}, 'Share diagram'),
     a({ className: 'btn', href: '#view/' + Route.urlEncode(sourceCode), target: '_blank' },
@@ -26,7 +26,7 @@ export function ExportMenu(props: { app: App }) {
       el(Icon, { shape: camera_outline }), 'PNG image'
     ),
     el('p', {}, 'Downloaded image files will be given the filename in the ', el('tt', {}, '#title'), ' directive'),
-    a({ className: 'btn', href: '/', onClick: prevent(() => downloader.svgDownload()) },
+    a({ className: 'btn', href: '/', onClick: prevent(() => downloader.svgDownload(app.nomnoml.renderSvg)) },
       el(Icon, { shape: image_outline }), 'SVG with source'
     ),
     el('p', {}, "Downloaded SVG files will have the source code embedded. Open an exported SVG file to load it's nomnoml source."),

@@ -6,9 +6,14 @@ import { HoverMarker } from "./HoverMarker"
 import { Observable } from "./Observable"
 import { throttle, debounce, unescapeHtml } from "./util"
 // @ts-ignore
-import * as nomnoml from "../dist/nomnoml.js"
+import * as nomnomlNext from "../dist/nomnoml.js"
+import * as nomnomlLegacy from "nomnoml"
 
 export class App {
+  nomnoml: { 
+    draw(canvas: HTMLCanvasElement, code: string, scale?: number): any
+    renderSvg(code: string, document?: Document): string
+  }
   panner: CanvasPanner
   filesystem: FileSystem
   defaultSource: string
@@ -21,6 +26,7 @@ export class App {
   off = this.signals.off
 
   constructor(codeMirror: CodeMirror) {
+    this.nomnoml = nomnomlNext
     var body = document.querySelector('body')
     var lineNumbers = document.getElementById('linenumbers')
     var lineMarker = document.getElementById('linemarker')
@@ -77,9 +83,9 @@ export class App {
     
     function safelyProcessSource(source: string) {
       try {
-        return nomnoml.processAsyncImports(source, lenientLoadFile)
+        return nomnomlNext.processAsyncImports(source, lenientLoadFile)
       } catch(e) {
-        if (e instanceof nomnoml.ImportDepthError) {
+        if (e instanceof nomnomlNext.ImportDepthError) {
           return 'Error: too many imports'
         } else {
           throw e
@@ -93,7 +99,7 @@ export class App {
         devenv.clearState()
         var source = this.editor.getValue()
         var processedSource = await safelyProcessSource(source)
-        var model = nomnoml.draw(canvasElement, processedSource, this.panner.zoom())
+        var model = this.nomnoml.draw(canvasElement, processedSource, this.panner.zoom())
         lastValidSource = source
         this.panner.positionCanvas(canvasElement)
         this.filesystem.storage.save(source)
@@ -104,7 +110,7 @@ export class App {
         this.signals.trigger('compile-error', e)
         // Rerender canvas with last successfully rendered text.
         if (lastValidSource) {
-          nomnoml.draw(canvasElement, lastValidSource, this.panner.zoom())
+          this.nomnoml.draw(canvasElement, lastValidSource, this.panner.zoom())
         }
         this.panner.positionCanvas(canvasElement)
         if (e.location?.start) devenv.setError(e.location.start)
@@ -112,6 +118,15 @@ export class App {
     }
 
     reloadStorage()
+  }
+  
+  isUsingLegacyParser() {
+    return this.nomnoml === nomnomlLegacy
+  }
+  
+  setLegacyParser(useLegacy: boolean) {
+    this.nomnoml = useLegacy ? nomnomlLegacy : nomnomlNext
+    this.sourceChanged()
   }
 
   loadSvg(svg: string) {

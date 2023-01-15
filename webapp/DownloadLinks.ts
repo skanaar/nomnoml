@@ -1,7 +1,5 @@
 // @ts-ignore
 import saveAs from "file-saver"
-// @ts-ignore
-import * as nomnoml from "../dist/nomnoml.js"
 
 export class DownloadLinks {
 
@@ -20,8 +18,8 @@ export class DownloadLinks {
     }
   }
 
-  svgDownload(){
-    var svg = nomnoml.renderSvg(this.source, document)
+  svgDownload(renderSvg: (src: string, document?: Document) => string){
+    var svg = renderSvg(this.source, document)
     saveAs(new Blob([svg], {type: 'image/svg+xml'}), this.filename + '.svg')
   }
 

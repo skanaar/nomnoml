@@ -337,12 +337,19 @@ a:hover img {
 	width: 300px;
 	z-index: 2;
 }
+.alert-list.persistent {
+	z-index: 5;
+	right: 10px;
+}
 .alert {
 	position: relative;
 	padding: 10px 30px 10px 20px;
 	margin: 0 0 20px 0;
 	font-family: sans-serif;
 	color: #444;
+}
+.alert > p {
+	margin-top: 0;
 }
 .alert.alert-hidden { display: none; }
 .alert-close {
