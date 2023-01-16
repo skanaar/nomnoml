@@ -18,3 +18,24 @@ new Image().src='https://nullitics.com/null.gif'+
 
 // -- daily tip ---------------------
 
+var { DailyTip } = WebApp
+
+{
+  const el = React.createElement
+  const root = document.querySelector('[daily-tip]')
+  const tip = el(
+    DailyTip,
+    { id: 'parser-v2', sticky: true },
+    el(
+      'p',
+      {},
+      'I am developing a new parser with more features. Would you like to contribute to this project? Test the new version and give me feedback!'
+    ),
+    el(
+      'a',
+      { href: 'https://stage.nomnoml.com/' },
+      'Take me to the new version!'
+    )
+  )
+  ReactDOM.render(tip, root)
+}
