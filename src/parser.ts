@@ -26,7 +26,7 @@ export interface Node {
   parts: Part[]
 }
 export interface Association {
-  id: number
+  id: string
   type: string
   start: string
   end: string

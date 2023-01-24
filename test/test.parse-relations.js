@@ -56,6 +56,10 @@ suite.test('multiple self reference', () => {
   assertEqual(nomnoml.parse(input).root, expected)
 })
 
+suite.test('render multiple relations', () => {
+  nomnoml.renderSvg('[a]-[b]\n[a]-[b]')
+})
+
 suite.test('multiple relations', () => {
   const input = '[a]-[b]\n[b]-[c]'
   const expected = part({

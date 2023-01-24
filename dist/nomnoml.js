@@ -569,10 +569,12 @@
             const layoutedNodes = c.nodes;
             const layoutedAssoc = c.assocs;
             for (let i = 0; i < layoutedAssoc.length; i++)
-                layoutedAssoc[i].id = i;
+                layoutedAssoc[i].id = `${i}`;
             for (const e of layoutedNodes)
                 layoutNode(e, styledConfig);
-            var g = new graphre.graphlib.Graph();
+            var g = new graphre.graphlib.Graph({
+                multigraph: true,
+            });
             g.setGraph({
                 rankdir: style.direction || config.direction,
                 nodesep: config.spacing,
@@ -586,13 +588,13 @@
             }
             for (var r of layoutedAssoc) {
                 if (r.type.indexOf('_') > -1) {
-                    g.setEdge(r.start, r.end, { id: r.id, minlen: 0 });
+                    g.setEdge(r.start, r.end, { minlen: 0 }, r.id);
                 }
                 else if (((_b = config.gravity) !== null && _b !== void 0 ? _b : 1) != 1) {
-                    g.setEdge(r.start, r.end, { id: r.id, minlen: config.gravity });
+                    g.setEdge(r.start, r.end, { minlen: config.gravity }, r.id);
                 }
                 else {
-                    g.setEdge(r.start, r.end, { id: r.id });
+                    g.setEdge(r.start, r.end, {}, r.id);
                 }
             }
             graphre.layout(g);
@@ -611,7 +613,7 @@
                 var edge = g.edge(edgeObj);
                 var start = nodes[edgeObj.v];
                 var end = nodes[edgeObj.w];
-                var rel = rels[edge.id];
+                var rel = rels[edgeObj.name];
                 rel.path = [start, ...edge.points, end].map(toPoint);
                 var startP = rel.path[1];
                 var endP = rel.path[rel.path.length - 2];

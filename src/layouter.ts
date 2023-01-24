@@ -66,10 +66,12 @@ export function layout(measurer: Measurer, config: Config, ast: Part): LayoutedP
     }
     const layoutedNodes = c.nodes as LayoutedNode[]
     const layoutedAssoc = c.assocs as LayoutedAssoc[]
-    for (let i = 0; i < layoutedAssoc.length; i++) layoutedAssoc[i].id = i
+    for (let i = 0; i < layoutedAssoc.length; i++) layoutedAssoc[i].id = `${i}`
     for (const e of layoutedNodes) layoutNode(e, styledConfig)
 
-    var g = new graphlib.Graph<GraphLabel, GraphNode, EdgeLabel & { id: number }>()
+    var g = new graphlib.Graph<GraphLabel, GraphNode, EdgeLabel>({
+      multigraph: true,
+    })
     g.setGraph({
       rankdir: style.direction || config.direction,
       //align: //undefined [UL, UR, DL, DR]
@@ -86,11 +88,11 @@ export function layout(measurer: Measurer, config: Config, ast: Part): LayoutedP
     }
     for (var r of layoutedAssoc) {
       if (r.type.indexOf('_') > -1) {
-        g.setEdge(r.start, r.end, { id: r.id, minlen: 0 })
+        g.setEdge(r.start, r.end, { minlen: 0 }, r.id)
       } else if ((config.gravity ?? 1) != 1) {
-        g.setEdge(r.start, r.end, { id: r.id, minlen: config.gravity })
+        g.setEdge(r.start, r.end, { minlen: config.gravity }, r.id)
       } else {
-        g.setEdge(r.start, r.end, { id: r.id })
+        g.setEdge(r.start, r.end, {}, r.id)
       }
     }
     grapheLayout(g)
@@ -106,11 +108,12 @@ export function layout(measurer: Measurer, config: Config, ast: Part): LayoutedP
     var right = 0
     var top = 0
     var bottom = 0
+
     for (const edgeObj of g.edges()) {
       var edge = g.edge(edgeObj)
       var start = nodes[edgeObj.v]
       var end = nodes[edgeObj.w]
-      var rel = rels[edge.id]
+      var rel = rels[edgeObj.name!]
       rel.path = [start, ...edge.points!, end].map(toPoint)
 
       var startP = rel.path[1]
