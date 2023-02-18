@@ -121,6 +121,20 @@ This is how the Decorator pattern can look in nomnoml syntax:
     [<hidden> name]
     [<table> name| a | 5 || b | 7]
 
+### Add new types
+```javascript
+const component = {
+    name: 'newTypeComponentName',
+    layout: function (config, clas) {
+    },
+    visualizer: function (node, x, y, config, g) {
+    }
+}
+nomnoml.registerComponent(component);
+```
+#### Example how to use new type
+    [<actor>Actor] --> [<newTypeComponentName>Component]
+
 ### Directives
 
     #import: my-common-styles.nomnoml
