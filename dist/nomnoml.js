@@ -121,6 +121,7 @@
         label: buildStyle({ visual: 'none' }, { center: true }),
         lollipop: buildStyle({ visual: 'lollipop' }, { center: true }),
         note: buildStyle({ visual: 'note' }, {}),
+        pipe: buildStyle({ visual: 'pipe' }, { center: true, bold: true }),
         package: buildStyle({ visual: 'package' }, {}),
         receiver: buildStyle({ visual: 'receiver' }, {}),
         reference: buildStyle({ visual: 'class', dashed: true }, { center: true }),
@@ -133,15 +134,15 @@
         transceiver: buildStyle({ visual: 'transceiver' }, {}),
         usecase: buildStyle({ visual: 'ellipse' }, { center: true }, { center: true }),
     };
-    function box(config, clas) {
+    function offsetBox(config, clas, offset) {
         var _a, _b;
         clas.width = Math.max(...clas.parts.map((e) => { var _a; return (_a = e.width) !== null && _a !== void 0 ? _a : 0; }));
         clas.height = sum(clas.parts, (e) => { var _a, _b; return (_b = (_a = e.height) !== null && _a !== void 0 ? _a : 0) !== null && _b !== void 0 ? _b : 0; });
         clas.dividers = [];
         var y = 0;
         for (var comp of clas.parts) {
-            comp.x = 0;
-            comp.y = y;
+            comp.x = 0 + offset.x;
+            comp.y = y + offset.y;
             comp.width = clas.width;
             y += (_b = (_a = comp.height) !== null && _a !== void 0 ? _a : 0) !== null && _b !== void 0 ? _b : 0;
             if (comp != last(clas.parts))
@@ -150,6 +151,9 @@
                     { x: clas.width, y: y },
                 ]);
         }
+    }
+    function box(config, clas) {
+        offsetBox(config, clas, { x: 0, y: 0 });
     }
     function icon(config, clas) {
         clas.dividers = [];
@@ -264,6 +268,9 @@
         none: box,
         note: box,
         package: box,
+        pipe: function box(config, clas) {
+            offsetBox(config, clas, { x: -config.padding / 2, y: 0 });
+        },
         receiver: box,
         rhomb: function (config, clas) {
             var _a;
@@ -402,7 +409,7 @@
             var pad = config.padding;
             var cy = y - pad / 2;
             var pi = 3.1416;
-            g.rect(x, y + pad, node.width, node.height - pad * 1.5).fill();
+            g.rect(x, y + pad, node.width, node.height - pad * 2).fill();
             g.path([
                 { x: x, y: cy + pad * 1.5 },
                 { x: x, y: cy - pad * 0.5 + node.height },
@@ -464,6 +471,21 @@
                 { x: x + w, y: y },
                 { x: x + w, y: y + headHeight },
             ]).fillAndStroke();
+        },
+        pipe: function (node, x, y, config, g) {
+            var pad = config.padding;
+            var pi = 3.1416;
+            g.rect(x, y, node.width, node.height).fill();
+            g.path([
+                { x: x, y: y },
+                { x: x + node.width, y: y },
+            ]).stroke();
+            g.path([
+                { x: x, y: y + node.height },
+                { x: x + node.width, y: y + node.height },
+            ]).stroke();
+            g.ellipse({ x: x + node.width, y: node.y }, pad * 1.5, node.height).fillAndStroke();
+            g.ellipse({ x: x, y: node.y }, pad * 1.5, node.height, pi / 2, (pi * 3) / 2).fillAndStroke();
         },
         receiver: function (node, x, y, config, g) {
             g.circuit([

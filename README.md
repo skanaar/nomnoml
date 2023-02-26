@@ -104,6 +104,7 @@ This is how the Decorator pattern can look in nomnoml syntax:
     [<package> name]
     [<frame> name]
     [<database> name]
+    [<pipe> name]
     [<start> name]
     [<end> name]
     [<state> name]

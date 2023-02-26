@@ -54,6 +54,7 @@ export type Visual =
   | 'none'
   | 'note'
   | 'package'
+  | 'pipe'
   | 'receiver'
   | 'rhomb'
   | 'roundrect'

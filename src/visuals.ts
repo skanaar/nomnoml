@@ -1,6 +1,7 @@
 import { Config, NodeLayouter, Style, TextStyle, Visual, Visualizer } from './domain'
 import { LayoutedNode, LayoutedPart } from './layouter'
 import { sum, last, range } from './util'
+import { Vec } from './vector'
 
 export function buildStyle(
   conf: Partial<Style>,
@@ -43,6 +44,7 @@ export var styles: { [key: string]: Style } = {
   label:       buildStyle({ visual:'none' }, { center:true }),
   lollipop:    buildStyle({ visual:'lollipop' }, { center:true }),
   note:        buildStyle({ visual:'note' }, {}),
+  pipe:        buildStyle({ visual:'pipe' }, { center:true, bold: true }),
   package:     buildStyle({ visual:'package' }, {}),
   receiver:    buildStyle({ visual:'receiver' }, {}),
   reference:   buildStyle({ visual:'class', dashed:true }, { center:true }),
@@ -56,14 +58,14 @@ export var styles: { [key: string]: Style } = {
   usecase:     buildStyle({ visual:'ellipse' }, { center:true }, { center: true }),
 }
 
-function box(config: Config, clas: LayoutedNode) {
+function offsetBox(config: Config, clas: LayoutedNode, offset: Vec) {
   clas.width = Math.max(...clas.parts.map((e) => e.width ?? 0))
   clas.height = sum(clas.parts, (e) => e.height ?? 0 ?? 0)
   clas.dividers = []
   var y = 0
   for (var comp of clas.parts) {
-    comp.x = 0
-    comp.y = y
+    comp.x = 0 + offset.x
+    comp.y = y + offset.y
     comp.width = clas.width
     y += comp.height ?? 0 ?? 0
     if (comp != last(clas.parts))
@@ -72,6 +74,9 @@ function box(config: Config, clas: LayoutedNode) {
         { x: clas.width, y: y },
       ])
   }
+}
+function box(config: Config, clas: LayoutedNode) {
+  offsetBox(config, clas, { x: 0, y: 0 })
 }
 
 function icon(config: Config, clas: LayoutedNode) {
@@ -182,6 +187,9 @@ export var layouters: { [key in Visual]: NodeLayouter } = {
   none: box,
   note: box,
   package: box,
+  pipe: function box(config: Config, clas: LayoutedNode) {
+    offsetBox(config, clas, { x: -config.padding / 2, y: 0 })
+  },
   receiver: box,
   rhomb: function (config: Config, clas: LayoutedNode) {
     var width = Math.max(...clas.parts.map((e) => e.width ?? 0))
@@ -316,7 +324,7 @@ export var visualizers: { [key in Visual]: Visualizer } = {
     var pad = config.padding
     var cy = y - pad / 2
     var pi = 3.1416
-    g.rect(x, y + pad, node.width, node.height - pad * 1.5).fill()
+    g.rect(x, y + pad, node.width, node.height - pad * 2).fill()
     g.path([
       { x: x, y: cy + pad * 1.5 },
       { x: x, y: cy - pad * 0.5 + node.height },
@@ -383,6 +391,21 @@ export var visualizers: { [key in Visual]: Visualizer } = {
       { x: x + w, y: y },
       { x: x + w, y: y + headHeight },
     ]).fillAndStroke()
+  },
+  pipe: function (node, x, y, config, g) {
+    var pad = config.padding
+    var pi = 3.1416
+    g.rect(x, y, node.width, node.height).fill()
+    g.path([
+      { x: x, y: y },
+      { x: x + node.width, y: y },
+    ]).stroke()
+    g.path([
+      { x: x, y: y + node.height },
+      { x: x + node.width, y: y + node.height },
+    ]).stroke()
+    g.ellipse({ x: x + node.width, y: node.y }, pad * 1.5, node.height).fillAndStroke()
+    g.ellipse({ x: x, y: node.y }, pad * 1.5, node.height, pi / 2, (pi * 3) / 2).fillAndStroke()
   },
   receiver: function (node, x, y, config, g) {
     g.circuit([
