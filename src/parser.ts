@@ -97,7 +97,7 @@ export function parse(source: string): ParsedDiagram {
       direction: directionToDagre(d.direction),
       gutter: +d.gutter || 20,
       edgeMargin: +d.edgeMargin || 0,
-      gravity: +(d.gravity ?? 1),
+      gravity: Math.round(+(d.gravity ?? 1)),
       edges: d.edges == 'hard' ? 'hard' : 'rounded',
       fill: (d.fill || '#eee8d5;#fdf6e3;#eee8d5;#fdf6e3').split(';'),
       background: d.background || 'transparent',

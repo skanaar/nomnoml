@@ -3222,7 +3222,7 @@
                 direction: directionToDagre(d.direction),
                 gutter: +d.gutter || 20,
                 edgeMargin: +d.edgeMargin || 0,
-                gravity: +((_a = d.gravity) !== null && _a !== void 0 ? _a : 1),
+                gravity: Math.round(+((_a = d.gravity) !== null && _a !== void 0 ? _a : 1)),
                 edges: d.edges == 'hard' ? 'hard' : 'rounded',
                 fill: (d.fill || '#eee8d5;#fdf6e3;#eee8d5;#fdf6e3').split(';'),
                 background: d.background || 'transparent',
