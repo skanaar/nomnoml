@@ -681,12 +681,13 @@
             return quadrant;
         }
         function layoutNode(node, config) {
-            var _a, _b;
+            var _a, _b, _c;
             var style = config.styles[node.type] || styles.class;
             node.parts.forEach((co, i) => layoutCompartment(co, i, style));
-            layouters[style.visual](config, node);
-            node.layoutWidth = ((_a = node.width) !== null && _a !== void 0 ? _a : 0) + 2 * config.edgeMargin;
-            node.layoutHeight = ((_b = node.height) !== null && _b !== void 0 ? _b : 0) + 2 * config.edgeMargin;
+            var visual = (_a = layouters[style.visual]) !== null && _a !== void 0 ? _a : layouters.class;
+            visual(config, node);
+            node.layoutWidth = ((_b = node.width) !== null && _b !== void 0 ? _b : 0) + 2 * config.edgeMargin;
+            node.layoutHeight = ((_c = node.height) !== null && _c !== void 0 ? _c : 0) + 2 * config.edgeMargin;
         }
         const root = ast;
         layoutCompartment(root, 0, styles.class);

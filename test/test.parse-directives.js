@@ -65,6 +65,14 @@ suite.test('multiple comments code', () => {
   assertEqual(nomnoml.parse(input).root, expected)
 })
 
+suite.test('known visual in custom style', () => {
+  nomnoml.renderSvg('#.box: visual=class\n[<box>box]')
+})
+
+suite.test('unknown visual in custom style', () => {
+  nomnoml.renderSvg('#.box: visual=finnsinte\n[<box>box]')
+})
+
 suite.report()
 
 function dir(key, value = '') {
