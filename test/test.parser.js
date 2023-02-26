@@ -12,8 +12,9 @@ suite.test('choose longest definition of nodes defined twice', () => {
   assertEqual(parse(input).root, expected)
 })
 
-suite.test('gracefully handle equivalent relations', function () {
-  // TODO
+suite.test('empty source code', function () {
+  const expected = part({})
+  assertEqual(parse(' \n\t ').root, expected)
 })
 
 suite.test('leading whitespace', function () {

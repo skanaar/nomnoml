@@ -36,6 +36,11 @@ export interface Association {
 
 export function parse(source: string): ParsedDiagram {
   const withoutComments = source.replace(/\/\/[^\n]*/g, '')
+  if (withoutComments.trim() === '')
+    return {
+      root: { nodes: [], assocs: [], lines: [], directives: [] },
+      config: getConfig([]),
+    }
   const graph = coreParser.parse(withoutComments)
   return { root: graph, config: getConfig(graph.directives) }
 
