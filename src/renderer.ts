@@ -51,8 +51,8 @@ export function render(graphics: Graphics, config: Config, compartment: Layouted
   }
 
   function renderNode(node: LayoutedNode, level: number) {
-    var x = Math.round(node.x - node.width / 2)
-    var y = Math.round(node.y - node.height / 2)
+    var x = node.x - node.width / 2
+    var y = node.y - node.height / 2
     var style = config.styles[node.type] || styles.class
 
     g.save()
@@ -132,10 +132,6 @@ export function render(graphics: Graphics, config: Config, compartment: Layouted
     drawTerminators(g, config, r)
   }
 
-  function snapToPixels() {
-    if (config.lineWidth % 2 === 1) g.translate(0.5, 0.5) // TODO remove, Hi Res displays are common
-  }
-
   function setBackground() {
     g.clear()
     g.save()
@@ -147,7 +143,6 @@ export function render(graphics: Graphics, config: Config, compartment: Layouted
 
   g.save()
   g.scale(config.zoom, config.zoom)
-  snapToPixels()
   setBackground()
   g.setFont(config.font, config.fontSize, 'bold', 'normal')
   g.lineWidth(config.lineWidth)
