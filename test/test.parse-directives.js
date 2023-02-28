@@ -65,6 +65,13 @@ suite.test('multiple comments code', () => {
   assertEqual(nomnoml.parse(input).root, expected)
 })
 
+suite.test('trailing comments', () => {
+  const input = `[a]
+[b] // [foo]`
+  const expected = part({ nodes: [node('a'), node('b')] })
+  assertEqual(nomnoml.parse(input).root, expected)
+})
+
 suite.test('known visual in custom style', () => {
   nomnoml.renderSvg('#.box: visual=class\n[<box>box]')
 })

@@ -15,6 +15,11 @@ suite.test('use any character in nodes', () => {
   const expected = part({ nodes: [node('|a')] })
   assertEqual(nomnoml.parse(input).root, expected)
 })
+suite.test('use backslash in nodes', () => {
+  const input = '[\\\\a]'
+  const expected = part({ nodes: [node('\\a')] })
+  assertEqual(nomnoml.parse(input).root, expected)
+})
 
 suite.test('escaped character in node name', () => {
   const input = '[&ü🐵漢]'

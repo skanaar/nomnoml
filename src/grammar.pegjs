@@ -55,7 +55,7 @@ NodeStart =
   "[" { return { type: 'class', attr: {} } }
 
 Node =
-  meta:NodeStart text:Text lines:(Linebreak @Text)* parts:NodeParts {
+  meta:NodeStart Padding text:Text lines:(Linebreak @Text)* parts:NodeParts {
     const id = text.trim()
     return {
       id: meta.attr.id ?? id,
@@ -66,7 +66,7 @@ Node =
   }
 
 NodeParts = 
-  "]" { return [] } /
+  Padding "]" { return [] } /
   Padding "|" Padding parts:NodeParts { return [Part({}), ...parts] } /
   Padding "|" graph:PaddedGraph parts:NodeParts { return [graph, ...parts] }
 
@@ -132,7 +132,8 @@ Escaped "escaped" =
   "\\" char:")" { return char } /
   "\\" char:"-" { return char } /
   "\\" char:":" { return char } /
-  "\\" char:"/" { return char }
+  "\\" char:"/" { return char } /
+  "\\" char:"\\" { return char }
 
 TextChar "text character" =
   char:Escaped { return char } /

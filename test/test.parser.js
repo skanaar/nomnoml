@@ -26,6 +26,15 @@ suite.test('trailing whitespace', function () {
 suite.test('leading and trailing whitespace', function () {
   assertEqual(parse(' \n [a] \n ').root, part({ nodes: [node('a')] }))
 })
+suite.test('node trailing whitespace', function () {
+  assertEqual(parse('[a \n]').root, part({ nodes: [node('a')] }))
+})
+suite.test('node leading whitespace', function () {
+  assertEqual(parse('[\n a]').root, part({ nodes: [node('a')] }))
+})
+suite.test('node leading and trailing whitespace', function () {
+  assertEqual(parse('[\n a \n]').root, part({ nodes: [node('a')] }))
+})
 
 suite.test('parse errors are reported on correct line', function () {
   try {
