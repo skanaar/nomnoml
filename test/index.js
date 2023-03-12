@@ -1,6 +1,0 @@
-require('./test.parser.js')
-require('./test.layout.js')
-require('./test.misc.js')
-require('./test.parse-nodes.js')
-require('./test.parse-relations.js')
-require('./test.parse-directives.js')

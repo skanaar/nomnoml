@@ -1,19 +1,17 @@
 var nomnoml = require('../dist/nomnoml.js')
-var TestSuite = require('./TestSuite.js')
+var { test } = require('node:test')
+var { deepEqual } = require('./assert.js')
 
-var suite = TestSuite('Parse relations')
-var assertEqual = TestSuite.assertEqual
-
-suite.test('plain node relation', () => {
+test('plain node relation', () => {
   const input = '[a]-[b]'
   const expected = part({
     nodes: [node('a'), node('b')],
     assocs: [assoc('a', '-', 'b')],
   })
-  assertEqual(nomnoml.parse(input).root, expected)
+  deepEqual(nomnoml.parse(input).root, expected)
 })
 
-suite.test('explicit id node relation', () => {
+test('explicit id node relation', () => {
   const input = '[<class id=foo>a]\n[foo]-[b]'
   const expected = part({
     nodes: [
@@ -26,50 +24,50 @@ suite.test('explicit id node relation', () => {
     ],
     assocs: [assoc('foo', '-', 'b')],
   })
-  assertEqual(nomnoml.parse(input).root, expected)
+  deepEqual(nomnoml.parse(input).root, expected)
 })
 
-suite.test('3 node chain', () => {
+test('3 node chain', () => {
   const input = '[a]-[b]-[c]'
   const expected = part({
     nodes: [node('a'), node('b'), node('c')],
     assocs: [assoc('a', '-', 'b'), assoc('b', '-', 'c')],
   })
-  assertEqual(nomnoml.parse(input).root, expected)
+  deepEqual(nomnoml.parse(input).root, expected)
 })
 
-suite.test('self reference', () => {
+test('self reference', () => {
   const input = '[a]-[a]'
   const expected = part({
     nodes: [node('a')],
     assocs: [assoc('a', '-', 'a')],
   })
-  assertEqual(nomnoml.parse(input).root, expected)
+  deepEqual(nomnoml.parse(input).root, expected)
 })
 
-suite.test('multiple self reference', () => {
+test('multiple self reference', () => {
   const input = '[a]-[a]\n[a]-[a]'
   const expected = part({
     nodes: [node('a')],
     assocs: [assoc('a', '-', 'a'), assoc('a', '-', 'a')],
   })
-  assertEqual(nomnoml.parse(input).root, expected)
+  deepEqual(nomnoml.parse(input).root, expected)
 })
 
-suite.test('render multiple relations', () => {
+test('render multiple relations', () => {
   nomnoml.renderSvg('[a]-[b]\n[a]-[b]')
 })
 
-suite.test('multiple relations', () => {
+test('multiple relations', () => {
   const input = '[a]-[b]\n[b]-[c]'
   const expected = part({
     nodes: [node('a'), node('b'), node('c')],
     assocs: [assoc('a', '-', 'b'), assoc('b', '-', 'c')],
   })
-  assertEqual(nomnoml.parse(input).root, expected)
+  deepEqual(nomnoml.parse(input).root, expected)
 })
 
-suite.test('independent relations when nested', () => {
+test('independent relations when nested', () => {
   const input = '[a|[a]-[b]]-[b]'
   const expected = part({
     nodes: [
@@ -86,7 +84,7 @@ suite.test('independent relations when nested', () => {
     ],
     assocs: [assoc('a', '-', 'b')],
   })
-  assertEqual(nomnoml.parse(input).root, expected)
+  deepEqual(nomnoml.parse(input).root, expected)
 })
 
 const relations = [
@@ -108,16 +106,16 @@ const relations = [
 ]
 
 for (const rel of relations) {
-  suite.test(`relation [a]${rel}[b]`, () => {
+  test(`relation [a]${rel}[b]`, () => {
     const input = `[a]${rel}[b]`
     const expected = part({
       nodes: [node('a'), node('b')],
       assocs: [assoc('a', rel, 'b')],
     })
-    assertEqual(nomnoml.parse(input).root, expected)
+    deepEqual(nomnoml.parse(input).root, expected)
   })
 
-  suite.test(`relation [a] x ${rel} y [b]`, () => {
+  test(`relation [a] x ${rel} y [b]`, () => {
     const input = `[a] x ${rel} y [b]`
     const expected = part({
       nodes: [node('a'), node('b')],
@@ -128,65 +126,65 @@ for (const rel of relations) {
         }),
       ],
     })
-    assertEqual(nomnoml.parse(input).root, expected)
+    deepEqual(nomnoml.parse(input).root, expected)
   })
 }
 
-suite.test('start-labelled relation', () => {
+test('start-labelled relation', () => {
   const input = '[a]xyz-[b]'
   const expected = part({
     nodes: [node('a'), node('b')],
     assocs: [assoc('a', '-', 'b', { startLabel: { text: 'xyz' } })],
   })
-  assertEqual(nomnoml.parse(input).root, expected)
+  deepEqual(nomnoml.parse(input).root, expected)
 })
 
-suite.test('start-labelled relation with the letter o', () => {
+test('start-labelled relation with the letter o', () => {
   const input = '[a]no -[b]'
   const expected = part({
     nodes: [node('a'), node('b')],
     assocs: [assoc('a', '-', 'b', { startLabel: { text: 'no' } })],
   })
-  assertEqual(nomnoml.parse(input).root, expected)
+  deepEqual(nomnoml.parse(input).root, expected)
 })
 
-suite.test('end-labelled relation', () => {
+test('end-labelled relation', () => {
   const input = '[a]-xyz[b]'
   const expected = part({
     nodes: [node('a'), node('b')],
     assocs: [assoc('a', '-', 'b', { endLabel: { text: 'xyz' } })],
   })
-  assertEqual(nomnoml.parse(input).root, expected)
+  deepEqual(nomnoml.parse(input).root, expected)
 })
 
-suite.test('to labelled separated relation', () => {
+test('to labelled separated relation', () => {
   const input = '[a]f -[b]'
   const expected = part({
     nodes: [node('a'), node('b')],
     assocs: [assoc('a', '-', 'b', { startLabel: { text: 'f' } })],
   })
-  assertEqual(nomnoml.parse(input).root, expected)
+  deepEqual(nomnoml.parse(input).root, expected)
 })
 
-suite.test('to labelled relation with escaped chars', () => {
+test('to labelled relation with escaped chars', () => {
   const input = '[a]a\\-a\\[a -[b]'
   const expected = part({
     nodes: [node('a'), node('b')],
     assocs: [assoc('a', '-', 'b', { startLabel: { text: 'a-a[a' } })],
   })
-  assertEqual(nomnoml.parse(input).root, expected)
+  deepEqual(nomnoml.parse(input).root, expected)
 })
 
-suite.test('labelled relation and 0..* label', () => {
+test('labelled relation and 0..* label', () => {
   const input = '[a] -o 0..*[b]'
   const expected = part({
     nodes: [node('a'), node('b')],
     assocs: [assoc('a', '-o', 'b', { endLabel: { text: '0..*' } })],
   })
-  assertEqual(nomnoml.parse(input).root, expected)
+  deepEqual(nomnoml.parse(input).root, expected)
 })
 
-{
+test(`end labelled relation`, () => {
   const inputs = [
     '[a]-no[b]',
     '[a] -no[b]',
@@ -201,13 +199,10 @@ suite.test('labelled relation and 0..* label', () => {
     nodes: [node('a'), node('b')],
     assocs: [assoc('a', '-', 'b', { endLabel: { text: 'no' } })],
   })
-  for (const input of inputs)
-    suite.test(`end labelled relation ${input}`, () => {
-      assertEqual(nomnoml.parse(input).root, expected)
-    })
-}
+  for (const input of inputs) deepEqual(nomnoml.parse(input).root, expected)
+})
 
-{
+test(`start labelled relation`, () => {
   const inputs = [
     '[a]on-[b]',
     '[a]on -[b]',
@@ -222,47 +217,44 @@ suite.test('labelled relation and 0..* label', () => {
     nodes: [node('a'), node('b')],
     assocs: [assoc('a', '-', 'b', { startLabel: { text: 'on' } })],
   })
-  for (const input of inputs)
-    suite.test(`start labelled relation ${input}`, () => {
-      assertEqual(nomnoml.parse(input).root, expected)
-    })
-}
+  for (const input of inputs) deepEqual(nomnoml.parse(input).root, expected)
+})
 
-suite.test('cycle [a]->[b]->[a]', () => {
+test('cycle [a]->[b]->[a]', () => {
   const input = '[a]->[b]->[a]'
   const expected = part({
     nodes: [node('a'), node('b')],
     assocs: [assoc('a', '->', 'b', {}), assoc('b', '->', 'a', {})],
   })
-  assertEqual(nomnoml.parse(input).root, expected)
+  deepEqual(nomnoml.parse(input).root, expected)
 })
 
-suite.test('line break in node name [foo;bar]', () => {
+test('line break in node name [foo;bar]', () => {
   const input = '[foo;bar]'
   const expected = part({
     nodes: [node('foo', { parts: [part({ lines: ['foo', 'bar'] })] })],
   })
-  assertEqual(nomnoml.parse(input).root, expected)
+  deepEqual(nomnoml.parse(input).root, expected)
 })
 
-suite.test('multiple equivalent associations [a]->[b];[a]->[b]', () => {
+test('multiple equivalent associations [a]->[b];[a]->[b]', () => {
   const input = '[a]->[b];[a]->[b]'
   const expected = part({
     nodes: [node('a'), node('b')],
     assocs: [assoc('a', '->', 'b', {}), assoc('a', '->', 'b', {})],
   })
-  assertEqual(nomnoml.parse(input).root, expected)
+  deepEqual(nomnoml.parse(input).root, expected)
 })
 
-suite.test('empty partition [foo|]', () => {
+test('empty partition [foo|]', () => {
   const input = '[foo|]'
   const expected = part({
     nodes: [node('foo', { parts: [part({ lines: ['foo'] }), part({})] })],
   })
-  assertEqual(nomnoml.parse(input).root, expected)
+  deepEqual(nomnoml.parse(input).root, expected)
 })
 
-suite.test('table [<table>table|foo|bar||x|y]', () => {
+test('table [<table>table|foo|bar||x|y]', () => {
   const input = '[<table>table|foo|bar||x|y]'
   const expected = part({
     nodes: [
@@ -279,10 +271,8 @@ suite.test('table [<table>table|foo|bar||x|y]', () => {
       }),
     ],
   })
-  assertEqual(nomnoml.parse(input).root, expected)
+  deepEqual(nomnoml.parse(input).root, expected)
 })
-
-suite.report()
 
 function node(id, template = {}) {
   return {

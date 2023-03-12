@@ -1,47 +1,45 @@
 var nomnoml = require('../dist/nomnoml.js')
-var TestSuite = require('./TestSuite.js')
+var { test } = require('node:test')
+var { deepEqual } = require('./assert.js')
 
-var suite = TestSuite('Parse nodes')
-var assertEqual = TestSuite.assertEqual
-
-suite.test('single plain node', () => {
+test('single plain node', () => {
   const input = '[a]'
   const expected = part({ nodes: [node('a')] })
-  assertEqual(nomnoml.parse(input).root, expected)
+  deepEqual(nomnoml.parse(input).root, expected)
 })
 
-suite.test('use any character in nodes', () => {
+test('use any character in nodes', () => {
   const input = '[\\|a]'
   const expected = part({ nodes: [node('|a')] })
-  assertEqual(nomnoml.parse(input).root, expected)
+  deepEqual(nomnoml.parse(input).root, expected)
 })
-suite.test('use backslash in nodes', () => {
+test('use backslash in nodes', () => {
   const input = '[\\\\a]'
   const expected = part({ nodes: [node('\\a')] })
-  assertEqual(nomnoml.parse(input).root, expected)
+  deepEqual(nomnoml.parse(input).root, expected)
 })
 
-suite.test('escaped character in node name', () => {
+test('escaped character in node name', () => {
   const input = '[&ü🐵漢]'
   const expected = part({ nodes: [node('&ü🐵漢')] })
-  assertEqual(nomnoml.parse(input).root, expected)
+  deepEqual(nomnoml.parse(input).root, expected)
 })
 
-suite.test('typed node', () => {
+test('typed node', () => {
   const input = '[<x>a]'
   const expected = part({ nodes: [node('a', { type: 'x' })] })
-  assertEqual(nomnoml.parse(input).root, expected)
+  deepEqual(nomnoml.parse(input).root, expected)
 })
 
-suite.test('attributed node', () => {
+test('attributed node', () => {
   const input = '[<class meta=x>a]'
   const expected = part({
     nodes: [node('a', { type: 'class', attr: { meta: 'x' } })],
   })
-  assertEqual(nomnoml.parse(input).root, expected)
+  deepEqual(nomnoml.parse(input).root, expected)
 })
 
-suite.test('id attributed node', () => {
+test('id attributed node', () => {
   const input = '[<class id=foo>a]'
   const expected = part({
     nodes: [
@@ -52,10 +50,10 @@ suite.test('id attributed node', () => {
       }),
     ],
   })
-  assertEqual(nomnoml.parse(input).root, expected)
+  deepEqual(nomnoml.parse(input).root, expected)
 })
 
-suite.test('node with compartments', () => {
+test('node with compartments', () => {
   const input = '[a|foo|bar]'
   const expected = part({
     nodes: [
@@ -64,10 +62,10 @@ suite.test('node with compartments', () => {
       }),
     ],
   })
-  assertEqual(nomnoml.parse(input).root, expected)
+  deepEqual(nomnoml.parse(input).root, expected)
 })
 
-suite.test('node with compartments trim text', () => {
+test('node with compartments trim text', () => {
   const input = '[a| foo | bar ]'
   const expected = part({
     nodes: [
@@ -76,10 +74,10 @@ suite.test('node with compartments trim text', () => {
       }),
     ],
   })
-  assertEqual(nomnoml.parse(input).root, expected)
+  deepEqual(nomnoml.parse(input).root, expected)
 })
 
-suite.test('node with compartments with escaped chars', () => {
+test('node with compartments with escaped chars', () => {
   const input = '[a|f\\[\\]\\|]'
   const expected = part({
     nodes: [
@@ -88,10 +86,10 @@ suite.test('node with compartments with escaped chars', () => {
       }),
     ],
   })
-  assertEqual(nomnoml.parse(input).root, expected)
+  deepEqual(nomnoml.parse(input).root, expected)
 })
 
-suite.test('line breaks in compartement', () => {
+test('line breaks in compartement', () => {
   const input = '[a|foo;bar|baz\nqux]'
   const expected = part({
     nodes: [
@@ -104,25 +102,23 @@ suite.test('line breaks in compartement', () => {
       }),
     ],
   })
-  assertEqual(nomnoml.parse(input).root, expected)
+  deepEqual(nomnoml.parse(input).root, expected)
 })
 
-{
-  const expected = part({
-    nodes: [node('a', { parts: [part({ lines: ['a', 'b'] })] })],
-  })
-  suite.test('line break in node name', () => {
-    assertEqual(nomnoml.parse('[a\nb]').root, expected)
-  })
-  suite.test('line separator in node name', () => {
-    assertEqual(nomnoml.parse('[a;b]').root, expected)
-  })
-  suite.test('line separator and break in node name', () => {
-    assertEqual(nomnoml.parse('[a\n; b]').root, expected)
-  })
-}
+const expected = part({
+  nodes: [node('a', { parts: [part({ lines: ['a', 'b'] })] })],
+})
+test('line break in node name', () => {
+  deepEqual(nomnoml.parse('[a\nb]').root, expected)
+})
+test('line separator in node name', () => {
+  deepEqual(nomnoml.parse('[a;b]').root, expected)
+})
+test('line separator and break in node name', () => {
+  deepEqual(nomnoml.parse('[a\n; b]').root, expected)
+})
 
-suite.test('indented compartements', () => {
+test('indented compartements', () => {
   const input = `[a
   |
   foo;bar
@@ -143,10 +139,10 @@ suite.test('indented compartements', () => {
       }),
     ],
   })
-  assertEqual(nomnoml.parse(input).root, expected)
+  deepEqual(nomnoml.parse(input).root, expected)
 })
 
-suite.test('omit trailing newlines', () => {
+test('omit trailing newlines', () => {
   const input = '[a\n\n|b]'
   const expected = part({
     nodes: [
@@ -155,10 +151,10 @@ suite.test('omit trailing newlines', () => {
       }),
     ],
   })
-  assertEqual(nomnoml.parse(input).root, expected)
+  deepEqual(nomnoml.parse(input).root, expected)
 })
 
-suite.test('include trailing newlines that have whitespace', () => {
+test('include trailing newlines that have whitespace', () => {
   const input = '[a\n  |b]'
   const expected = part({
     nodes: [
@@ -167,10 +163,10 @@ suite.test('include trailing newlines that have whitespace', () => {
       }),
     ],
   })
-  assertEqual(nomnoml.parse(input).root, expected)
+  deepEqual(nomnoml.parse(input).root, expected)
 })
 
-suite.test('nested nodes', () => {
+test('nested nodes', () => {
   const input = `[a|[foo]]`
   const expected = part({
     nodes: [
@@ -179,10 +175,10 @@ suite.test('nested nodes', () => {
       }),
     ],
   })
-  assertEqual(nomnoml.parse(input).root, expected)
+  deepEqual(nomnoml.parse(input).root, expected)
 })
 
-suite.test('nested nodes with relations', () => {
+test('nested nodes with relations', () => {
   const input = `#background:blue
 
   [Pirate|
@@ -203,10 +199,8 @@ suite.test('nested nodes with relations', () => {
       }),
     ],
   })
-  assertEqual(nomnoml.parse(input).root, expected)
+  deepEqual(nomnoml.parse(input).root, expected)
 })
-
-suite.report()
 
 function node(id, template = {}) {
   return {

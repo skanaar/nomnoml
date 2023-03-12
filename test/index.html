@@ -384,22 +384,6 @@
 
   <script src="../node_modules/graphre/dist/graphre.js"></script>
   <script src="../dist/nomnoml.js"></script>
-  <script>
-    function require(id) {
-      return {
-        './TestSuite.js': TestSuite,
-        '../dist/nomnoml.js': nomnoml
-      }[id]
-    }
-    var module = {}
-  </script>
-  <script src="TestSuite.js"></script>
-  <script src="test.misc.js"></script>
-  <script src="test.parser.js"></script>
-  <script src="test.layout.js"></script>
-  <script src="test.parse-nodes.js"></script>
-  <script src="test.parse-relations.js"></script>
-  <script src="test.parse-directives.js"></script>
 
   <script>
     function mountNomnoml() {

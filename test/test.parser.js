@@ -1,52 +1,58 @@
 var { parse } = require('../dist/nomnoml.js')
-var TestSuite = require('./TestSuite.js')
+var { test } = require('node:test')
+var { deepEqual } = require('./assert.js')
 
-var suite = TestSuite('Parser')
-var assertEqual = TestSuite.assertEqual
-
-suite.test('choose longest definition of nodes defined twice', () => {
+test('choose longest definition of nodes defined twice', () => {
   const input = '[a]\n[a|foo]'
   const expected = part({
     nodes: [node('a', { parts: [part({ lines: ['a'] }), part({ lines: ['foo'] })] })],
   })
-  assertEqual(parse(input).root, expected)
+  deepEqual(parse(input).root, expected)
 })
 
-suite.test('empty source code', function () {
+test('empty source code', function () {
   const expected = part({})
-  assertEqual(parse(' \n\t ').root, expected)
+  deepEqual(parse(' \n\t ').root, expected)
 })
 
-suite.test('leading whitespace', function () {
-  assertEqual(parse('\n[a]').root, part({ nodes: [node('a')] }))
+test('leading whitespace', function () {
+  deepEqual(parse('\n[a]').root, part({ nodes: [node('a')] }))
 })
-suite.test('trailing whitespace', function () {
-  assertEqual(parse('[a]\n').root, part({ nodes: [node('a')] }))
+test('trailing whitespace', function () {
+  deepEqual(parse('[a]\n').root, part({ nodes: [node('a')] }))
 })
-suite.test('leading and trailing whitespace', function () {
-  assertEqual(parse(' \n [a] \n ').root, part({ nodes: [node('a')] }))
+test('leading and trailing whitespace', function () {
+  deepEqual(parse(' \n [a] \n ').root, part({ nodes: [node('a')] }))
 })
-suite.test('node trailing whitespace', function () {
-  assertEqual(parse('[a \n]').root, part({ nodes: [node('a')] }))
+test('node trailing whitespace', function () {
+  deepEqual(parse('[a \n]').root, part({ nodes: [node('a')] }))
 })
-suite.test('node leading whitespace', function () {
-  assertEqual(parse('[\n a]').root, part({ nodes: [node('a')] }))
+test('node leading whitespace', function () {
+  deepEqual(parse('[\n a]').root, part({ nodes: [node('a')] }))
 })
-suite.test('node leading and trailing whitespace', function () {
-  assertEqual(parse('[\n a \n]').root, part({ nodes: [node('a')] }))
+test('node leading and trailing whitespace', function () {
+  deepEqual(parse('[\n a \n]').root, part({ nodes: [node('a')] }))
 })
 
-suite.test('parse errors are reported on correct line', function () {
+test('parse errors are reported on correct line', function () {
   try {
     parse('\n\n[a][b]')
   } catch (e) {
-    assertEqual(e.location.start.line, 3)
+    deepEqual(e.location.start.line, 3)
     return
   }
   throw new Error('parse() must throw error')
 })
 
-suite.report()
+function perfTest(n) {
+  const start = performance.now()
+  parse('[a|'.repeat(n) + ']'.repeat(n))
+  return performance.now() - start
+}
+
+test('performance', () => {
+  for (let n = 1; n < 4; n++) console.log(n, perfTest(n).toFixed(1), 'ms')
+})
 
 function node(id, template = {}) {
   return {
