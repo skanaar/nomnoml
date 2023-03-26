@@ -1,9 +1,11 @@
-function isEqual(a, b) {
+function assertEqual(a, b, path = []) {
+  function fatal(lhs, rhs) {
+    throw new Error(`${path.join('.')}: ${JSON.stringify(lhs)} ≠ ${JSON.stringify(rhs)}`)
+  }
   function compare(a, b) {
     for (var k in a) {
-      if (a.hasOwnProperty(k) && !isEqual(a[k], b[k])) return false
+      if (a.hasOwnProperty(k)) assertEqual(a[k], b[k], [...path, k])
     }
-    return true
   }
   switch (typeof a) {
     case 'undefined':
@@ -11,68 +13,37 @@ function isEqual(a, b) {
     case 'number':
     case 'string':
     case 'symbol':
-      return a === b
+      if (a !== b) fatal(a, b)
+      else return
     case 'function':
-      return typeof a === typeof b
+      if (typeof a !== typeof b) fatal(a, b)
+      else return
     case 'object':
     default:
-      if (a === null || b === null || b === undefined) return a === b
-      return compare(a, b) && compare(b, a)
-  }
-}
-
-function highlightDiff(a, b) {
-  let start = 0
-  let end = 0
-  for (let i = 0; i < Math.min(a.length, b.length); i++)
-    if (a[i] === b[i]) start++
-    else break
-  for (let i = 1; i < Math.min(a.length, b.length); i++)
-    if (a[a.length - i] === b[b.length - i]) end++
-    else break
-
-  if (typeof process === 'undefined')
-    return {
-      a: `...${a.substring(start, a.length - end)}...`,
-      b: `...${b.substring(start, b.length - end)}...`,
-    }
-
-  return {
-    a: `${a.substring(0, start)}\x1b[41m${a.substring(start, a.length - end)}\x1b[0m${a.substring(
-      a.length - end
-    )}`,
-    b: `${b.substring(0, start)}\x1b[41m${b.substring(start, b.length - end)}\x1b[0m${b.substring(
-      b.length - end
-    )}`,
+      if (a == null && b != null) fatal(a, b)
+      if (a != null && b == null) fatal(a, b)
+      compare(a, b)
+      compare(b, a)
   }
 }
 
 function assert(a, operator, b) {
-  function json(obj) {
-    return JSON.stringify(sortProperties(obj))
-  }
-  function fatal(sym) {
-    var ajson = json(a)
-    var bjson = json(b)
-    var diff = highlightDiff(ajson, bjson)
-    throw new Error('\n' + diff.a + '\n' + sym + '\n' + diff.b)
+  function fatal(msg) {
+    console.log(msg)
+    throw new Error(msg)
   }
   switch (operator) {
     case '=':
-      if (!isEqual(a, b)) fatal('≠')
-      break
-    case '≠':
-    case '!=':
-      if (isEqual(a, b)) fatal('=')
+      assertEqual(a, b)
       break
     case '>':
-      if (a <= b) fatal('≯')
+      if (a <= b) fatal(`${a} ≤ ${b}`)
       break
     case '<':
-      if (a >= b) fatal('≮')
+      if (a >= b) fatal(`${a} ≥ ${b}`)
       break
     case 'includes':
-      if (!a.includes(b)) fatal('does not include')
+      if (!a.includes(b)) fatal(`array does not include ${b}`)
       break
     case 'throws':
       var didThrow = false
@@ -81,15 +52,15 @@ function assert(a, operator, b) {
       } catch (e) {
         didThrow = e instanceof b
       }
-      if (!didThrow) throw new Error('Function did not throw an ' + b)
+      if (!didThrow) fatal('Function did not throw an ' + b)
       break
     default:
-      throw new Error('bad assert operator ', operator)
+      fatal('bad assert operator ', operator)
   }
 }
 
 function deepEqual(a, b) {
-  assert(a, '=', b)
+  assertEqual(a, b)
 }
 
 module.exports = { assert, deepEqual }

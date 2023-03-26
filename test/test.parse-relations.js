@@ -1,6 +1,7 @@
 var nomnoml = require('../dist/nomnoml.js')
 var { test } = require('node:test')
 var { deepEqual } = require('./assert.js')
+var { part, node, assoc } = require('./utils.js')
 
 test('plain node relation', () => {
   const input = '[a]-[b]'
@@ -24,7 +25,8 @@ test('explicit id node relation', () => {
     ],
     assocs: [assoc('foo', '-', 'b')],
   })
-  deepEqual(nomnoml.parse(input).root, expected)
+  const output = nomnoml.parse(input).root
+  deepEqual(output, expected)
 })
 
 test('3 node chain', () => {
@@ -273,34 +275,3 @@ test('table [<table>table|foo|bar||x|y]', () => {
   })
   deepEqual(nomnoml.parse(input).root, expected)
 })
-
-function node(id, template = {}) {
-  return {
-    id,
-    type: 'class',
-    parts: [part({ lines: [id] })],
-    attr: {},
-    ...template,
-  }
-}
-
-function part(template) {
-  return {
-    nodes: [],
-    assocs: [],
-    lines: [],
-    directives: [],
-    ...template,
-  }
-}
-
-function assoc(start, type, end, template = {}) {
-  return {
-    start,
-    end,
-    type,
-    startLabel: { text: '' },
-    endLabel: { text: '' },
-    ...template,
-  }
-}

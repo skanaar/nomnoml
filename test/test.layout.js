@@ -1,15 +1,7 @@
 var nomnoml = require('../dist/nomnoml.js')
 var { test } = require('node:test')
 var { assert, deepEqual } = require('./assert.js')
-
-function node(id, template = {}) {
-  const parts = [part({ lines: [id] })]
-  return { id, type: 'class', parts, attr: {}, ...template }
-}
-
-function part(template) {
-  return { nodes: [], assocs: [], lines: [], directives: [], ...template }
-}
+var { part, node } = require('./utils.js')
 
 function rooted(node) {
   return part({ nodes: [node] })

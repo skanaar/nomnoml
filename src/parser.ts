@@ -1,19 +1,22 @@
 import { Ranker } from 'graphre/decl/types'
 import { Config, Style, Visual } from './domain'
+import { linearParse } from './linearParse'
 import { hasSubstring, last } from './util'
 import { styles } from './visuals'
-// @ts-ignore
-import coreParser from '../dist/core-parser'
 
 export interface ParsedDiagram {
   root: Part
+  directives: Directive[]
   config: Config
+}
+export interface Ast {
+  root: Part
+  directives: Directive[]
 }
 export interface Part {
   nodes: Node[]
   assocs: Association[]
   lines: string[]
-  directives: Directive[]
 }
 export interface Directive {
   key: string
@@ -26,7 +29,7 @@ export interface Node {
   parts: Part[]
 }
 export interface Association {
-  id: string
+  id?: string
   type: string
   start: string
   end: string
@@ -35,14 +38,9 @@ export interface Association {
 }
 
 export function parse(source: string): ParsedDiagram {
-  const withoutComments = source.replace(/\/\/[^\n]*/g, '')
-  if (withoutComments.trim() === '')
-    return {
-      root: { nodes: [], assocs: [], lines: [], directives: [] },
-      config: getConfig([]),
-    }
-  const graph = coreParser.parse(withoutComments)
-  return { root: graph, config: getConfig(graph.directives) }
+  const { root, directives } = linearParse(source)
+
+  return { root, directives, config: getConfig(directives) }
 
   function directionToDagre(word: string): 'TB' | 'LR' {
     if (word == 'down') return 'TB'

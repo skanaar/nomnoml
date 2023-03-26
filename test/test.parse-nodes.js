@@ -1,10 +1,17 @@
 var nomnoml = require('../dist/nomnoml.js')
 var { test } = require('node:test')
 var { deepEqual } = require('./assert.js')
+var { part, node, assoc } = require('./utils.js')
 
 test('single plain node', () => {
   const input = '[a]'
   const expected = part({ nodes: [node('a')] })
+  deepEqual(nomnoml.parse(input).root, expected)
+})
+
+test('two plain nodes', () => {
+  const input = '[a]\n[b]'
+  const expected = part({ nodes: [node('a'), node('b')] })
   deepEqual(nomnoml.parse(input).root, expected)
 })
 
@@ -31,10 +38,30 @@ test('typed node', () => {
   deepEqual(nomnoml.parse(input).root, expected)
 })
 
+test('typed node allowed chars', () => {
+  const input = '[<a0X_a>a]'
+  const expected = part({ nodes: [node('a', { type: 'a0X_a' })] })
+  deepEqual(nomnoml.parse(input).root, expected)
+})
+
+test('angle brackets allowed in text position', () => {
+  const input = '[a<b]'
+  const expected = part({ nodes: [node('a<b', {})] })
+  deepEqual(nomnoml.parse(input).root, expected)
+})
+
 test('attributed node', () => {
   const input = '[<class meta=x>a]'
   const expected = part({
     nodes: [node('a', { type: 'class', attr: { meta: 'x' } })],
+  })
+  deepEqual(nomnoml.parse(input).root, expected)
+})
+
+test('attributed node allowed chars', () => {
+  const input = '[<class a0A_x=x>a]'
+  const expected = part({
+    nodes: [node('a', { type: 'class', attr: { a0A_x: 'x' } })],
   })
   deepEqual(nomnoml.parse(input).root, expected)
 })
@@ -131,7 +158,7 @@ test('indented compartements', () => {
     nodes: [
       node('a', {
         parts: [
-          part({ lines: ['a', ''] }),
+          part({ lines: ['a'] }),
           part({ lines: ['foo', 'bar'] }),
           part({ lines: ['baz', 'qux'] }),
           part({ lines: ['zuz'] }),
@@ -154,12 +181,12 @@ test('omit trailing newlines', () => {
   deepEqual(nomnoml.parse(input).root, expected)
 })
 
-test('include trailing newlines that have whitespace', () => {
+test('omit trailing newlines even if they have whitespace', () => {
   const input = '[a\n  |b]'
   const expected = part({
     nodes: [
       node('a', {
-        parts: [part({ lines: ['a', ''] }), part({ lines: ['b'] })],
+        parts: [part({ lines: ['a'] }), part({ lines: ['b'] })],
       }),
     ],
   })
@@ -186,7 +213,6 @@ test('nested nodes with relations', () => {
     [a]-:>[c]
   ]`
   const expected = part({
-    directives: [{ key: 'background', value: 'blue' }],
     nodes: [
       node('Pirate', {
         parts: [
@@ -199,36 +225,7 @@ test('nested nodes with relations', () => {
       }),
     ],
   })
-  deepEqual(nomnoml.parse(input).root, expected)
+  const { root, directives } = nomnoml.parse(input)
+  deepEqual(root, expected)
+  deepEqual(directives, [{ key: 'background', value: 'blue' }])
 })
-
-function node(id, template = {}) {
-  return {
-    id,
-    type: 'class',
-    parts: [part({ lines: [id] })],
-    attr: {},
-    ...template,
-  }
-}
-
-function part(template) {
-  return {
-    nodes: [],
-    assocs: [],
-    lines: [],
-    directives: [],
-    ...template,
-  }
-}
-
-function assoc(start, type, end, template = {}) {
-  return {
-    start,
-    end,
-    type,
-    startLabel: { text: '' },
-    endLabel: { text: '' },
-    ...template,
-  }
-}

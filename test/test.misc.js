@@ -31,10 +31,7 @@ test('assert library version', function () {
 
 test('skanaar.testsuite.isEqual', function () {
   assert([1, 2], '=', [1, 2])
-  assert([2, 1], '≠', [1, 2])
   assert({ b: 4, a: 'asdf' }, '=', { a: 'asdf', b: 4 })
-  assert({ b: 4, a: 'asdf' }, '≠', { a: 'asdf' })
-  assert({ a: 'asdf' }, '≠', { a: 'asdf', b: 4 })
 })
 
 test('skanaar.testsuite.assert', function () {

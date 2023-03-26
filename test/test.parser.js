@@ -1,6 +1,7 @@
 var { parse } = require('../dist/nomnoml.js')
 var { test } = require('node:test')
 var { deepEqual } = require('./assert.js')
+var { part, node } = require('./utils.js')
 
 test('choose longest definition of nodes defined twice', () => {
   const input = '[a]\n[a|foo]'
@@ -38,7 +39,7 @@ test('parse errors are reported on correct line', function () {
   try {
     parse('\n\n[a][b]')
   } catch (e) {
-    deepEqual(e.location.start.line, 3)
+    deepEqual(e.line, 3)
     return
   }
   throw new Error('parse() must throw error')
@@ -53,23 +54,3 @@ function perfTest(n) {
 test('performance', () => {
   for (let n = 1; n < 4; n++) console.log(n, perfTest(n).toFixed(1), 'ms')
 })
-
-function node(id, template = {}) {
-  return {
-    id,
-    type: 'class',
-    parts: [part({ lines: [id] })],
-    attr: {},
-    ...template,
-  }
-}
-
-function part(template) {
-  return {
-    nodes: [],
-    assocs: [],
-    lines: [],
-    directives: [],
-    ...template,
-  }
-}
