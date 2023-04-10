@@ -47,7 +47,7 @@
     "build": "npm run lib && npm run webapp && npm run test",
     "webapp": "rollup -c webapp/rollup.config.js",
     "lib": "rollup -c src/rollup.config.js && npm test",
-    "test": "node --test --test-reporter=spec && npm run test_cli",
+    "test": "node --test && npm run test_cli",
     "test_cli": "rm -f test/output.svg && node dist/nomnoml-cli.js test/import-test.nomnoml test/output.svg"
   },
   "repository": {
