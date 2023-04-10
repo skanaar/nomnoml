@@ -37,10 +37,10 @@ function assert(a, operator, b) {
       assertEqual(a, b)
       break
     case '>':
-      if (a <= b) fatal(`${a} ≤ ${b}`)
+      if (a <= b) fatal(`${a} !< ${b}`)
       break
     case '<':
-      if (a >= b) fatal(`${a} ≥ ${b}`)
+      if (a >= b) fatal(`${a} !> ${b}`)
       break
     case 'includes':
       if (!a.includes(b)) fatal(`array does not include ${b}`)
