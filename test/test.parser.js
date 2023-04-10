@@ -1,6 +1,6 @@
-var { parse } = require('../dist/nomnoml.js')
+var { parse, ParseError } = require('../dist/nomnoml.js')
 var { test } = require('node:test')
-var { deepEqual } = require('./assert.js')
+var { deepEqual, assert } = require('./assert.js')
 var { part, node } = require('./utils.js')
 
 test('choose longest definition of nodes defined twice', () => {
@@ -53,4 +53,8 @@ function perfTest(n) {
 
 test('performance', () => {
   for (let n = 1; n < 4; n++) console.log(n, perfTest(n).toFixed(1), 'ms')
+})
+
+test('require closed nodes', () => {
+  assert(() => parse('[a'), 'throws', ParseError)
 })

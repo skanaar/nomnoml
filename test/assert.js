@@ -52,7 +52,7 @@ function assert(a, operator, b) {
       } catch (e) {
         didThrow = e instanceof b
       }
-      if (!didThrow) fatal('Function did not throw an ' + b)
+      if (!didThrow) fatal('Function did not throw ' + b.name)
       break
     default:
       fatal('bad assert operator ', operator)

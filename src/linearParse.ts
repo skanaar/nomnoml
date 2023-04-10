@@ -62,9 +62,6 @@ export function linearParse(source: string): Ast {
       if (source[index] == '|' || source[index] == ']') {
         index++
         return { nodes, assocs, lines }
-      }
-      if (source[index] == '/' && source[index + 1] == '/') {
-        parseComment() // discard
       } else if (source[index] == '[') {
         const extracted = parseNodesAndAssocs()
         for (const node of extracted.nodes) addNode(nodes, node)
@@ -130,14 +127,6 @@ export function linearParse(source: string): Ast {
     }
   }
 
-  function parseComment() {
-    discard(/[^\n]/)
-    if (source[index] == '\n') {
-      index++
-      advanceLineCounter()
-    }
-  }
-
   function parseDirective() {
     index++
     const key = consume(/[.a-zA-Z0-9_-]/)
@@ -158,8 +147,8 @@ export function linearParse(source: string): Ast {
     }
     const parts = [parsePart()]
     while (source[index - 1] == '|') parts.push(parsePart())
+    if (source[index - 1] != ']') error(']', 'end of file')
     discard(/ /)
-    if (source[index] === '/' && source[index + 1] === '/') parseComment()
     return { parts: parts, attr, id: attr.id ?? parts[0].lines[0], type }
   }
 
@@ -246,7 +235,7 @@ export function linearParse(source: string): Ast {
   }
 }
 
-class ParseError extends Error {
+export class ParseError extends Error {
   expected: string
   actual: string
   line: number

@@ -4,6 +4,8 @@ import { linearParse } from './linearParse'
 import { hasSubstring, last } from './util'
 import { styles } from './visuals'
 
+export { ParseError } from './linearParse'
+
 export interface ParsedDiagram {
   root: Part
   directives: Directive[]

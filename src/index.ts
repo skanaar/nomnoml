@@ -9,6 +9,6 @@ export {
 export var version = '1.5.3'
 
 export * as skanaar from './util'
-export { parse } from './parser'
+export { parse, ParseError } from './parser'
 export { layout } from './layouter'
 export { styles, visualizers } from './visuals'

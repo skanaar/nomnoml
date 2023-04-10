@@ -711,9 +711,6 @@
                     index++;
                     return { nodes, assocs, lines };
                 }
-                if (source[index] == '/' && source[index + 1] == '/') {
-                    parseComment();
-                }
                 else if (source[index] == '[') {
                     const extracted = parseNodesAndAssocs();
                     for (const node of extracted.nodes)
@@ -784,13 +781,6 @@
                 target: target,
             };
         }
-        function parseComment() {
-            discard(/[^\n]/);
-            if (source[index] == '\n') {
-                index++;
-                advanceLineCounter();
-            }
-        }
         function parseDirective() {
             index++;
             const key = consume(/[.a-zA-Z0-9_-]/);
@@ -811,9 +801,9 @@
             const parts = [parsePart()];
             while (source[index - 1] == '|')
                 parts.push(parsePart());
+            if (source[index - 1] != ']')
+                error(']', 'end of file');
             discard(/ /);
-            if (source[index] === '/' && source[index + 1] === '/')
-                parseComment();
             return { parts: parts, attr, id: attr.id ?? parts[0].lines[0], type };
         }
         function parseLine() {
@@ -1771,6 +1761,7 @@
     var version = '1.5.3';
 
     exports.ImportDepthError = ImportDepthError;
+    exports.ParseError = ParseError;
     exports.compileFile = compileFile;
     exports.draw = draw;
     exports.layout = layout;
