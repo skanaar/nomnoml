@@ -49,18 +49,14 @@ export function linearParse(source: string): Ast {
     const lines: string[] = []
 
     while (index < source.length) {
+      let lastIndex = index
       discard(/ /)
       if (source[index] === '\n') {
         pop()
         advanceLineCounter()
-        continue
-      }
-      if (source[index] === ';') {
+      } else if (source[index] === ';') {
         pop()
-        continue
-      }
-      if (source[index] == '|' || source[index] == ']') {
-        index++
+      } else if (source[index] == '|' || source[index] == ']') {
         return { nodes, assocs, lines }
       } else if (source[index] == '[') {
         const extracted = parseNodesAndAssocs()
@@ -72,6 +68,7 @@ export function linearParse(source: string): Ast {
         const text = parseLine().trim()
         if (text) lines.push(text)
       }
+      if (index === lastIndex) throw new Error('Infinite loop')
     }
     return { nodes, assocs, lines }
   }
@@ -82,6 +79,7 @@ export function linearParse(source: string): Ast {
     let node = parseNode()
     addNode(nodes, node)
     while (index < source.length) {
+      let lastIndex = index
       discard(/ /)
       if (isOneOf('\n', ']', '|', ';')) {
         return { nodes, assocs }
@@ -91,6 +89,7 @@ export function linearParse(source: string): Ast {
         addNode(nodes, target)
         node = target
       }
+      if (index === lastIndex) throw new Error('Infinite loop')
     }
     return { nodes, assocs }
   }
@@ -103,12 +102,14 @@ export function linearParse(source: string): Ast {
   function parseAssociation(fromNode: Node): { association: Association; target: Node } {
     let startLabel = ''
     while (index < source.length) {
+      let lastIndex = index
       if (isOneOf('\\')) {
         pop()
         startLabel += transformEscapes(pop())
       }
       if (isOneOf('(o-', '(-', 'o<-', 'o-', '+-', '<:-', '<-', '-')) break
       else startLabel += pop()
+      if (index === lastIndex) throw new Error('Infinite loop')
     }
     const assoc1 = consumeOneOf('(o', '(', 'o<', 'o', '+', '<:', '<', '')
     const assoc2 = consumeOneOf('--', '-/-', '-')
@@ -146,15 +147,24 @@ export function linearParse(source: string): Ast {
       type = meta.type ?? 'class'
     }
     const parts = [parsePart()]
-    while (source[index - 1] == '|') parts.push(parsePart())
-    if (source[index - 1] != ']') error(']', 'end of file')
-    discard(/ /)
-    return { parts: parts, attr, id: attr.id ?? parts[0].lines[0], type }
+    while (source[index] == '|') {
+      let lastIndex = index
+      pop()
+      parts.push(parsePart())
+      if (lastIndex === index) throw new Error('Infinite loop')
+    }
+    if (source[index] == ']') {
+      pop()
+      discard(/ /)
+      return { parts: parts, attr, id: attr.id ?? parts[0].lines[0], type }
+    }
+    error(']', source[index] ?? 'end of file')
   }
 
   function parseLine(): string {
     const chars: string[] = []
     while (index < source.length) {
+      let lastIndex = index
       if (source[index] === '\\') {
         pop()
         chars.push(transformEscapes(pop()))
@@ -163,6 +173,7 @@ export function linearParse(source: string): Ast {
       } else {
         chars.push(pop())
       }
+      if (lastIndex === index) throw new Error('Infinite loop')
     }
     return chars.join('')
   }

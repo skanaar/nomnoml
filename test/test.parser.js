@@ -55,6 +55,14 @@ test('performance', () => {
   for (let n = 1; n < 4; n++) console.log(n, perfTest(n).toFixed(1), 'ms')
 })
 
-test('require closed nodes', () => {
+test('require single node to be closed', () => {
   assert(() => parse('[a'), 'throws', ParseError)
+})
+
+test('require closed nodes', () => {
+  assert(() => parse('[a\n[b]'), 'throws', ParseError)
+})
+
+test('incomplete diagram', () => {
+  assert(() => parse('[a|[b]'), 'throws', ParseError)
 })

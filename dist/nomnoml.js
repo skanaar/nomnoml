@@ -697,18 +697,16 @@
             const assocs = [];
             const lines = [];
             while (index < source.length) {
+                let lastIndex = index;
                 discard(/ /);
                 if (source[index] === '\n') {
                     pop();
                     advanceLineCounter();
-                    continue;
                 }
-                if (source[index] === ';') {
+                else if (source[index] === ';') {
                     pop();
-                    continue;
                 }
-                if (source[index] == '|' || source[index] == ']') {
-                    index++;
+                else if (source[index] == '|' || source[index] == ']') {
                     return { nodes, assocs, lines };
                 }
                 else if (source[index] == '[') {
@@ -726,6 +724,8 @@
                     if (text)
                         lines.push(text);
                 }
+                if (index === lastIndex)
+                    throw new Error('Infinite loop');
             }
             return { nodes, assocs, lines };
         }
@@ -735,6 +735,7 @@
             let node = parseNode();
             addNode(nodes, node);
             while (index < source.length) {
+                let lastIndex = index;
                 discard(/ /);
                 if (isOneOf('\n', ']', '|', ';')) {
                     return { nodes, assocs };
@@ -745,6 +746,8 @@
                     addNode(nodes, target);
                     node = target;
                 }
+                if (index === lastIndex)
+                    throw new Error('Infinite loop');
             }
             return { nodes, assocs };
         }
@@ -756,6 +759,7 @@
         function parseAssociation(fromNode) {
             let startLabel = '';
             while (index < source.length) {
+                let lastIndex = index;
                 if (isOneOf('\\')) {
                     pop();
                     startLabel += transformEscapes(pop());
@@ -764,6 +768,8 @@
                     break;
                 else
                     startLabel += pop();
+                if (index === lastIndex)
+                    throw new Error('Infinite loop');
             }
             const assoc1 = consumeOneOf('(o', '(', 'o<', 'o', '+', '<:', '<', '');
             const assoc2 = consumeOneOf('--', '-/-', '-');
@@ -799,16 +805,24 @@
                 type = meta.type ?? 'class';
             }
             const parts = [parsePart()];
-            while (source[index - 1] == '|')
+            while (source[index] == '|') {
+                let lastIndex = index;
+                pop();
                 parts.push(parsePart());
-            if (source[index - 1] != ']')
-                error(']', 'end of file');
-            discard(/ /);
-            return { parts: parts, attr, id: attr.id ?? parts[0].lines[0], type };
+                if (lastIndex === index)
+                    throw new Error('Infinite loop');
+            }
+            if (source[index] == ']') {
+                pop();
+                discard(/ /);
+                return { parts: parts, attr, id: attr.id ?? parts[0].lines[0], type };
+            }
+            error(']', source[index] ?? 'end of file');
         }
         function parseLine() {
             const chars = [];
             while (index < source.length) {
+                let lastIndex = index;
                 if (source[index] === '\\') {
                     pop();
                     chars.push(transformEscapes(pop()));
@@ -819,6 +833,8 @@
                 else {
                     chars.push(pop());
                 }
+                if (lastIndex === index)
+                    throw new Error('Infinite loop');
             }
             return chars.join('');
         }
