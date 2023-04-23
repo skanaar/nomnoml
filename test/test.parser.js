@@ -66,3 +66,7 @@ test('require closed nodes', () => {
 test('incomplete diagram', () => {
   assert(() => parse('[a|[b]'), 'throws', ParseError)
 })
+
+test('extra closing brackets', () => {
+  assert(() => parse('[a]]'), 'throws', ParseError)
+})

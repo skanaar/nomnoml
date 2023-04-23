@@ -29,7 +29,6 @@ export class App {
     this.nomnoml = nomnomlNext
     var body = document.querySelector('body')
     var lineNumbers = document.getElementById('linenumbers')
-    var lineMarker = document.getElementById('linemarker')
     var textarea = document.getElementById('textarea') as HTMLTextAreaElement
     var canvasElement = document.getElementById('canvas') as HTMLCanvasElement
     var canvasPanner = document.getElementById('canvas-panner')
@@ -50,10 +49,8 @@ export class App {
       }
     })
 
-    var editorElement = this.editor.getWrapperElement()
-
     this.filesystem = new FileSystem()
-    var devenv = new DevEnv(editorElement, lineMarker!, lineNumbers!)
+    var devenv = new DevEnv(this.editor, lineNumbers!)
     this.panner = new CanvasPanner(canvasPanner!, () => this.sourceChanged())
     this.downloader = new DownloadLinks(canvasElement)
     new HoverMarker('canvas-mode', body!, [canvasPanner!])
@@ -113,7 +110,9 @@ export class App {
           this.nomnoml.draw(canvasElement, lastValidSource, this.panner.zoom())
         }
         this.panner.positionCanvas(canvasElement)
-        if (e.location?.start) devenv.setError(e.location.start)
+        if (e instanceof nomnomlNext.ParseError) {
+          devenv.setError(e)
+        }
       }
     }
 

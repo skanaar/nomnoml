@@ -1,17 +1,27 @@
 export class DevEnv {
+  mark: void | { clear(): void }
+  lineMark: void | { clear(): void }
+
   constructor(
-    private editor: HTMLElement,
-    private marker: HTMLElement,
+    private editor: CodeMirrorEditor,
     private lineNumbers: HTMLElement
   ) {}
+
   clearState() {
-    this.marker.style.top = '-30px'
+    this.mark?.clear()
+    this.lineMark?.clear()
     this.lineNumbers.classList.remove('error')
   }
-  setError(start: { column: number; line: number }) {
+
+  setError(location: { column: number; line: number }) {
+    this.mark?.clear()
+    this.lineMark?.clear()
     this.lineNumbers.classList.add('error')
-    var lineHeightValue = window.getComputedStyle(this.editor).lineHeight
-    var lineHeight = parseFloat(lineHeightValue) || 12
-    this.marker.style.top = 3 + lineHeight * start.line + 'px'
+    console.log({ line: location.line, column: location.column })
+    this.mark = this.editor.markText(
+      {line: location.line - 1, ch: 0 },
+      {line: location.line - 1, ch: location.column  },
+      { css: 'background: #f888' }
+    )
   }
 }

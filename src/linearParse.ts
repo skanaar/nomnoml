@@ -29,6 +29,7 @@ export function linearParse(source: string): Ast {
     }
 
   const part = parsePart()
+  if (index < source.length) error('end of file', source[index])
 
   return { root: part, directives }
 
@@ -212,7 +213,7 @@ export function linearParse(source: string): Ast {
     const start = index
     while (source[index]?.match(regex)) index++
     const end = index
-    if (!optional && start == end) error(regex.toString(), source[index])
+    if (!optional && start == end) error(regex, source[index])
     return source.slice(start, end)
   }
 
@@ -241,20 +242,29 @@ export function linearParse(source: string): Ast {
     error(patterns.join(' or '), source[index])
   }
 
-  function error(expected: string, actual: string): never {
+  function error(expected: string | undefined | RegExp, actual: string): never {
     throw new ParseError(expected, actual, line, index - lineStartIndex)
   }
 }
 
+function serializeValue(value: string | undefined | RegExp): string {
+  if (value == null) return 'null'
+  if (value == undefined) return 'undefined'
+  if (value instanceof RegExp) return value.toString().slice(1, -1)
+  return JSON.stringify(value)
+}
+
 export class ParseError extends Error {
-  expected: string
+  expected: string | undefined | RegExp
   actual: string
   line: number
   column: number
-  constructor(expected: string, actual: string, line: number, column: number) {
-    super(`Parse error at ${line}:${column}, expected ${expected} but got ${actual}`)
-    this.expected = expected
-    this.actual = actual
+  constructor(expected: string | undefined | RegExp, actual: string, line: number, column: number) {
+    const exp = serializeValue(expected)
+    const act = serializeValue(actual)
+    super(`Parse error at ${line}:${column}, expected ${exp} but got ${act}`)
+    this.expected = exp
+    this.actual = act
     this.line = line
     this.column = column
   }

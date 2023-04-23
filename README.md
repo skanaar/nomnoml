@@ -184,6 +184,7 @@ Key/value pairs
     visual=none
     visual=note
     visual=package
+    visual=pipe
     visual=receiver
     visual=rhomb
     visual=roundrect

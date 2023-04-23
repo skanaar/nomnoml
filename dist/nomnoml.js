@@ -680,6 +680,8 @@
                 directives,
             };
         const part = parsePart();
+        if (index < source.length)
+            error('end of file', source[index]);
         return { root: part, directives };
         function advanceLineCounter() {
             line++;
@@ -876,7 +878,7 @@
                 index++;
             const end = index;
             if (!optional && start == end)
-                error(regex.toString(), source[index]);
+                error(regex, source[index]);
             return source.slice(start, end);
         }
         function consumeOptional(regex) {
@@ -905,11 +907,22 @@
             throw new ParseError(expected, actual, line, index - lineStartIndex);
         }
     }
+    function serializeValue(value) {
+        if (value == null)
+            return 'null';
+        if (value == undefined)
+            return 'undefined';
+        if (value instanceof RegExp)
+            return value.toString().slice(1, -1);
+        return JSON.stringify(value);
+    }
     class ParseError extends Error {
         constructor(expected, actual, line, column) {
-            super(`Parse error at ${line}:${column}, expected ${expected} but got ${actual}`);
-            this.expected = expected;
-            this.actual = actual;
+            const exp = serializeValue(expected);
+            const act = serializeValue(actual);
+            super(`Parse error at ${line}:${column}, expected ${exp} but got ${act}`);
+            this.expected = exp;
+            this.actual = act;
             this.line = line;
             this.column = column;
         }
