@@ -768,6 +768,8 @@
                 }
                 if (isOneOf('(o-', '(-', 'o<-', 'o-', '+-', '<:-', '<-', '-'))
                     break;
+                else if (isOneOf('[', ']', '|', '<', '>', ';'))
+                    error('label', source[index]);
                 else
                     startLabel += pop();
                 if (index === lastIndex)
@@ -819,7 +821,7 @@
                 discard(/ /);
                 return { parts: parts, attr, id: attr.id ?? parts[0].lines[0], type };
             }
-            error(']', source[index] ?? 'end of file');
+            error(']', source[index]);
         }
         function parseLine() {
             const chars = [];
@@ -847,7 +849,7 @@
             if (char == '>')
                 return { type, attr: {} };
             if (char != ' ')
-                error(' >', char);
+                error([' ', '>'], char);
             return { type, attr: parseAttrs() };
         }
         function parseAttrs() {
@@ -861,7 +863,7 @@
                 return { [key]: value };
             if (char == ' ')
                 return { [key]: value, ...parseAttrs() };
-            error(' >', char);
+            error([' ', '>'], char);
         }
         function pop() {
             const char = source[index];
@@ -901,7 +903,11 @@
                     return pattern;
                 }
             }
-            error(patterns.join(' or '), source[index]);
+            const maxPatternLength = Math.max(...patterns.map((e) => e.length));
+            if (index + 1 >= source.length)
+                error(patterns, undefined);
+            else
+                error(patterns, source.slice(index + 1, maxPatternLength));
         }
         function error(expected, actual) {
             throw new ParseError(expected, actual, line, index - lineStartIndex);
@@ -909,18 +915,18 @@
     }
     function serializeValue(value) {
         if (value == null)
-            return 'null';
-        if (value == undefined)
-            return 'undefined';
+            return 'end of file';
         if (value instanceof RegExp)
             return value.toString().slice(1, -1);
+        if (Array.isArray(value))
+            return value.map(serializeValue).join(' or ');
         return JSON.stringify(value);
     }
     class ParseError extends Error {
         constructor(expected, actual, line, column) {
             const exp = serializeValue(expected);
             const act = serializeValue(actual);
-            super(`Parse error at ${line}:${column}, expected ${exp} but got ${act}`);
+            super(`Parse error at line ${line} column ${column}, expected ${exp} but got ${act}`);
             this.expected = exp;
             this.actual = act;
             this.line = line;
@@ -1217,8 +1223,8 @@
             g.setFont(config.font, config.fontSize, 'normal', 'normal');
             renderLabel(r.startLabel);
             renderLabel(r.endLabel);
-            if (r.type !== '-/-' && r.type !== '_/_') {
-                if (hasSubstring(r.type, '--') || hasSubstring(r.type, '__')) {
+            if (r.type !== '-/-') {
+                if (hasSubstring(r.type, '--')) {
                     var dash = Math.max(4, 2 * config.lineWidth);
                     g.save();
                     g.setLineDash([dash, dash]);
@@ -1787,7 +1793,7 @@
         return processImports(loadFile(rootFileName), loadFile, maxImportDepth);
     }
 
-    var version = '1.5.3';
+    var version = '1.6.0';
 
     exports.ImportDepthError = ImportDepthError;
     exports.ParseError = ParseError;

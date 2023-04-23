@@ -119,8 +119,8 @@ export function render(graphics: Graphics, config: Config, compartment: Layouted
     renderLabel(r.startLabel)
     renderLabel(r.endLabel)
 
-    if (r.type !== '-/-' && r.type !== '_/_') {
-      if (hasSubstring(r.type, '--') || hasSubstring(r.type, '__')) {
+    if (r.type !== '-/-') {
+      if (hasSubstring(r.type, '--')) {
         var dash = Math.max(4, 2 * config.lineWidth)
         g.save()
         g.setLineDash([dash, dash])

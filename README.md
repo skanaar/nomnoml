@@ -91,8 +91,6 @@ This is how the Decorator pattern can look in nomnoml syntax:
     ->o  ball and socket
     --   note
     -/-  hidden
-    _>   weightless edge
-    __   weightless dashed edge
 
 ### Classifier types
 

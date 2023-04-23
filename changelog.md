@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.6.0] - ?
+
+- Rewritten parser
+- Chain multiple associations on a single line
+- Supply id separately from node display name
+- Removed "Weightless Edge" feature
+
 ## [1.5.3] - 2022-12-19
 
 - Fix a bug with unsupported variables names in some runtimes

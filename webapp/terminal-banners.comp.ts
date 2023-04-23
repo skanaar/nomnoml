@@ -6,7 +6,7 @@ export function TerminalBanners(props: { app: App }) {
 
   var [error, setError] = useState<{ title: string, details: string}|null>(null)
   function onError(err: Error) {
-      setError(err ? { title: 'Compile error', details: err.message } : null)
+      setError(err ? { title: 'Parse error', details: err.message } : null)
   }
   useEffect(() => {
       props.app.signals.on('compile-error', onError)

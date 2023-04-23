@@ -109,6 +109,7 @@ export function linearParse(source: string): Ast {
         startLabel += transformEscapes(pop())
       }
       if (isOneOf('(o-', '(-', 'o<-', 'o-', '+-', '<:-', '<-', '-')) break
+      else if (isOneOf('[', ']', '|', '<', '>', ';')) error('label', source[index])
       else startLabel += pop()
       if (index === lastIndex) throw new Error('Infinite loop')
     }
@@ -159,7 +160,7 @@ export function linearParse(source: string): Ast {
       discard(/ /)
       return { parts: parts, attr, id: attr.id ?? parts[0].lines[0], type }
     }
-    error(']', source[index] ?? 'end of file')
+    error(']', source[index])
   }
 
   function parseLine(): string {
@@ -184,7 +185,7 @@ export function linearParse(source: string): Ast {
     const type = consume(/[a-zA-Z0-9_]/)
     const char = pop()
     if (char == '>') return { type, attr: {} }
-    if (char != ' ') error(' >', char)
+    if (char != ' ') error([' ', '>'], char)
     return { type, attr: parseAttrs() }
   }
 
@@ -196,7 +197,7 @@ export function linearParse(source: string): Ast {
     const char = pop()
     if (char == '>') return { [key]: value }
     if (char == ' ') return { [key]: value, ...parseAttrs() }
-    error(' >', char)
+    error([' ', '>'], char)
   }
 
   function pop() {
@@ -239,18 +240,22 @@ export function linearParse(source: string): Ast {
         return pattern
       }
     }
-    error(patterns.join(' or '), source[index])
+    const maxPatternLength = Math.max(...patterns.map((e) => e.length))
+    if (index + 1 >= source.length) error(patterns, undefined)
+    else error(patterns, source.slice(index + 1, maxPatternLength))
   }
 
-  function error(expected: string | undefined | RegExp, actual: string): never {
+  function error(expected: Pattern, actual: string | undefined): never {
     throw new ParseError(expected, actual, line, index - lineStartIndex)
   }
 }
 
-function serializeValue(value: string | undefined | RegExp): string {
-  if (value == null) return 'null'
-  if (value == undefined) return 'undefined'
+type Pattern = string | undefined | RegExp | string[]
+
+function serializeValue(value: Pattern): string {
+  if (value == null) return 'end of file'
   if (value instanceof RegExp) return value.toString().slice(1, -1)
+  if (Array.isArray(value)) return value.map(serializeValue).join(' or ')
   return JSON.stringify(value)
 }
 
@@ -259,10 +264,11 @@ export class ParseError extends Error {
   actual: string
   line: number
   column: number
-  constructor(expected: string | undefined | RegExp, actual: string, line: number, column: number) {
+
+  constructor(expected: Pattern, actual: string | undefined, line: number, column: number) {
     const exp = serializeValue(expected)
     const act = serializeValue(actual)
-    super(`Parse error at ${line}:${column}, expected ${exp} but got ${act}`)
+    super(`Parse error at line ${line} column ${column}, expected ${exp} but got ${act}`)
     this.expected = exp
     this.actual = act
     this.line = line

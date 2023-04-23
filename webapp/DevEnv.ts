@@ -18,10 +18,15 @@ export class DevEnv {
     this.lineMark?.clear()
     this.lineNumbers.classList.add('error')
     console.log({ line: location.line, column: location.column })
-    this.mark = this.editor.markText(
+    this.lineMark = this.editor.markText(
       {line: location.line - 1, ch: 0 },
-      {line: location.line - 1, ch: location.column  },
-      { css: 'background: #f888' }
+      {line: location.line - 1, ch: 100 },
+      { css: 'background: #f884' }
+    )
+    this.mark = this.editor.markText(
+      {line: location.line - 1, ch: location.column - 2 },
+      {line: location.line - 1, ch: location.column + 1 },
+      { css: 'background: #f88a' }
     )
   }
 }
