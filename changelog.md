@@ -1,11 +1,11 @@
 # Changelog
 
-## [1.6.0] - ?
+## [1.6.0] - 2022-05-16
 
 - Rewritten parser
 - Chain multiple associations on a single line
 - Supply id separately from node display name
-- Removed "Weightless Edge" feature
+- Removed Weightless Edge feature "[a] \_ [b]"
 
 ## [1.5.3] - 2022-12-19
 
