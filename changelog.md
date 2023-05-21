@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.6.1] - 2022-05-21
+
+- Restore parser behavior where comments are only supported at the start of a line
+
 ## [1.6.0] - 2022-05-16
 
 - Rewritten parser
