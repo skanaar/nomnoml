@@ -20,7 +20,7 @@ export function linearParse(source: string): Ast {
 
   const directives = extractDirectives(source)
 
-  source = source.replace(/\/\/[^\n]*/g, '').replace(/^#[^\n]*/g, '')
+  source = source.replace(/^[ \t]*\/\/[^\n]*/gm, '').replace(/^#[^\n]*/gm, '')
 
   if (source.trim() === '')
     return {

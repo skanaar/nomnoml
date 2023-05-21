@@ -673,7 +673,7 @@
         let lineStartIndex = 0;
         let index = 0;
         const directives = extractDirectives(source);
-        source = source.replace(/\/\/[^\n]*/g, '').replace(/^#[^\n]*/g, '');
+        source = source.replace(/^[ \t]*\/\/[^\n]*/gm, '').replace(/^#[^\n]*/gm, '');
         if (source.trim() === '')
             return {
                 root: { nodes: [], assocs: [], lines: [] },

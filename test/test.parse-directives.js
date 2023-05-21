@@ -1,6 +1,6 @@
 var nomnoml = require('../dist/nomnoml.js')
 var { test } = require('node:test')
-var { assert, deepEqual } = require('./assert.js')
+var { deepEqual } = require('./assert.js')
 var { part, node, dir } = require('./utils.js')
 
 test('single directive', () => {
