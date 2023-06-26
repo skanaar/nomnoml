@@ -1,10 +1,14 @@
 # Changelog
 
-## [1.6.1] - 2022-05-21
+## [1.6.2] - 2023-06-26
+
+- Fix bug where hash character was interpreted as a directive in the middle of a line
+
+## [1.6.1] - 2023-05-21
 
 - Restore parser behavior where comments are only supported at the start of a line
 
-## [1.6.0] - 2022-05-16
+## [1.6.0] - 2023-05-16
 
 - Rewritten parser
 - Chain multiple associations on a single line

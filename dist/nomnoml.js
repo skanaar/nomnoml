@@ -1782,7 +1782,7 @@
         return processImports(loadFile(rootFileName), loadFile, maxImportDepth);
     }
 
-    var version = '1.6.1';
+    var version = '1.6.2';
 
     exports.ImportDepthError = ImportDepthError;
     exports.ParseError = ParseError;
