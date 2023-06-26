@@ -65,6 +65,12 @@ test('trim whitespace of key-value directive', () => {
   deepEqual(nomnoml.parse(input).directives, expected)
 })
 
+test('directive must start a line', () => {
+  const input = '[#foo]'
+  const expected = part({ nodes: [node('#foo')] })
+  deepEqual(nomnoml.parse(input).root, expected)
+})
+
 test('known visual in custom style', () => {
   nomnoml.renderSvg('#.box: visual=class\n[<box>box]')
 })

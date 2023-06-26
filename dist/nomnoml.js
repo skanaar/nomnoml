@@ -718,9 +718,6 @@
                     for (const assoc of extracted.assocs)
                         assocs.push(assoc);
                 }
-                else if (source[index] == '#') {
-                    parseDirective();
-                }
                 else {
                     const text = parseLine().trim();
                     if (text)
@@ -790,14 +787,6 @@
                 },
                 target: target,
             };
-        }
-        function parseDirective() {
-            index++;
-            const key = consume(/[.a-zA-Z0-9_-]/);
-            discard(/:/);
-            discard(/ /);
-            const value = consumeOptional(/[^\n]/);
-            return { key, value };
         }
         function parseNode() {
             index++;

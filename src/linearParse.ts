@@ -63,8 +63,6 @@ export function linearParse(source: string): Ast {
         const extracted = parseNodesAndAssocs()
         for (const node of extracted.nodes) addNode(nodes, node)
         for (const assoc of extracted.assocs) assocs.push(assoc)
-      } else if (source[index] == '#') {
-        parseDirective() // discard
       } else {
         const text = parseLine().trim()
         if (text) lines.push(text)
@@ -128,15 +126,6 @@ export function linearParse(source: string): Ast {
       },
       target: target,
     }
-  }
-
-  function parseDirective() {
-    index++
-    const key = consume(/[.a-zA-Z0-9_-]/)
-    discard(/:/)
-    discard(/ /)
-    const value = consumeOptional(/[^\n]/)
-    return { key, value }
   }
 
   function parseNode(): Node {
