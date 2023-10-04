@@ -1,10 +1,10 @@
 export {
-  draw,
-  renderSvg,
-  compileFile,
-  processImports,
-  processAsyncImports,
-  ImportDepthError,
+    draw,
+    renderSvg,
+    compileFile,
+    processImports,
+    processAsyncImports,
+    ImportDepthError,
 } from './nomnoml'
 export var version = '1.6.2'
 

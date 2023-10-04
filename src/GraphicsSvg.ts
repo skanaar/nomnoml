@@ -10,6 +10,7 @@ interface SvgAttr {
   'stroke-linejoin'?: string
   'stroke-linecap'?: string
   fill?: string
+  'fill-opacity'?: string
   'text-align'?: string
   font?: string
   'font-size'?: string
@@ -164,6 +165,27 @@ export function GraphicsSvg(document?: HTMLDocument): ISvgGraphics {
     return element
   }
 
+  function prepareColor(colorSrc: string): { color: string, opacity: string } {
+    let color = colorSrc;
+    let opacity = "1";
+    if (!colorSrc.match(/^#/)) {
+      return {
+        color,
+        opacity
+      };
+    }
+    const charsQty = colorSrc.slice(1).length;
+    if (charsQty === 4 || charsQty === 8) {
+      color = charsQty === 4 ? colorSrc.slice(0,4) : colorSrc.slice(0,7);
+      opacity = charsQty === 4 ? colorSrc.slice(4, 5).repeat(2) : colorSrc.slice(7, 9);
+      opacity = String((parseInt(opacity, 16))/255);
+    }
+    return {
+      color,
+      opacity
+    }
+  }
+
   return {
     width: function () {
       return 0
@@ -215,7 +237,9 @@ export function GraphicsSvg(document?: HTMLDocument): ISvgGraphics {
       current.attr.stroke = stroke
     },
     fillStyle: function (fill) {
-      current.attr.fill = fill
+      const color = prepareColor(fill);
+      current.attr.fill = color.color
+      current.attr["fill-opacity"] = color.opacity
     },
     arcTo: function (x1, y1, x2, y2) {
       if (inPathBuilderMode)
@@ -227,11 +251,14 @@ export function GraphicsSvg(document?: HTMLDocument): ISvgGraphics {
       return el('path', { d: '' })
     },
     fillText: function (text, x, y) {
+      const color = prepareColor(current.attr.fill!);
       return el(
         'text',
         {
           x,
           y,
+          fill: color.color,
+          'fill-opacity': color.opacity,
           stroke: 'none',
           font: undefined as undefined | string,
           style: undefined as undefined | string,
