@@ -232,6 +232,7 @@ export function GraphicsSvg(document?: HTMLDocument): ISvgGraphics {
         {
           x,
           y,
+          fill: current.attr.fill,
           stroke: 'none',
           font: undefined as undefined | string,
           style: undefined as undefined | string,
