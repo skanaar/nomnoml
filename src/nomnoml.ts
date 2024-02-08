@@ -142,7 +142,7 @@ export function compileFile(filepath: string, maxImportDepth?: number): string {
   var path = require('path')
 
   var directory = path.dirname(filepath)
-  var rootFileName = filepath.substr(directory.length)
+  var rootFileName = filepath.substr(directory.length - 1)
 
   function loadFile(filename: string): string {
     return fs.readFileSync(path.join(directory, filename), { encoding: 'utf8' })
