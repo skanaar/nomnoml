@@ -120,6 +120,21 @@ This is how the Decorator pattern can look in nomnoml syntax:
     [<hidden> name]
     [<table> name| a | 5 || b | 7]
 
+### Comments
+
+Comments are supported at the start of a line.
+
+    //[commented]
+    [not //commented]
+
+### Id attribute
+
+Two distinct nodes can have the same display name with the id attribute.
+
+    [<actor id=a>User]
+    [<actor id=b>User]
+    [a] -- [b]
+
 ### Directives
 
     #import: my-common-styles.nomnoml

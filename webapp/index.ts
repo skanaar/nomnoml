@@ -8,7 +8,6 @@ import { el } from "./react-util"
 import { unescapeHtml } from "./util"
 // @ts-ignore
 import * as nomnoml from "../dist/nomnoml.js"
-import { ParserConfig } from './ParserConfig'
 
 // @ts-ignore
 export * as nomnoml from "../dist/nomnoml.js"
@@ -27,7 +26,6 @@ export function bootstrap(CodeMirror: CodeMirror) {
   renderFileMenu()
 
   function render() {
-    ReactDOM.render(el(ParserConfig, { app }), elem('[parser-config]'))
     ReactDOM.render(el(ExportMenu, { app }), elem('[export-menu]'))
     ReactDOM.render(el(Menu, { app }), elem('[menu]'))
     ReactDOM.render(el(CanvasTools, { app }), elem('[canvas-tools]'))

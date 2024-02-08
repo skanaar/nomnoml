@@ -6,8 +6,7 @@ import { HoverMarker } from "./HoverMarker"
 import { Observable } from "./Observable"
 import { throttle, debounce, unescapeHtml } from "./util"
 // @ts-ignore
-import * as nomnomlNext from "../dist/nomnoml.js"
-import * as nomnomlLegacy from "nomnoml"
+import * as nomnoml from "../dist/nomnoml.js"
 
 export class App {
   nomnoml: { 
@@ -26,7 +25,7 @@ export class App {
   off = this.signals.off
 
   constructor(codeMirror: CodeMirror) {
-    this.nomnoml = nomnomlNext
+    this.nomnoml = nomnoml
     var body = document.querySelector('body')
     var lineNumbers = document.getElementById('linenumbers')
     var textarea = document.getElementById('textarea') as HTMLTextAreaElement
@@ -80,9 +79,9 @@ export class App {
     
     function safelyProcessSource(source: string) {
       try {
-        return nomnomlNext.processAsyncImports(source, lenientLoadFile)
+        return nomnoml.processAsyncImports(source, lenientLoadFile)
       } catch(e) {
-        if (e instanceof nomnomlNext.ImportDepthError) {
+        if (e instanceof nomnoml.ImportDepthError) {
           return 'Error: too many imports'
         } else {
           throw e
@@ -110,22 +109,13 @@ export class App {
           this.nomnoml.draw(canvasElement, lastValidSource, this.panner.zoom())
         }
         this.panner.positionCanvas(canvasElement)
-        if (e instanceof nomnomlNext.ParseError) {
+        if (e instanceof nomnoml.ParseError) {
           devenv.setError(e)
         }
       }
     }
 
     reloadStorage()
-  }
-  
-  isUsingLegacyParser() {
-    return this.nomnoml === nomnomlLegacy
-  }
-  
-  setLegacyParser(useLegacy: boolean) {
-    this.nomnoml = useLegacy ? nomnomlLegacy : nomnomlNext
-    this.sourceChanged()
   }
 
   loadSvg(svg: string) {
