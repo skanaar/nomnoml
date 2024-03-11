@@ -647,7 +647,9 @@
         }
         function layoutNode(node, config) {
             var style = config.styles[node.type] || styles.class;
-            node.parts.forEach((co, i) => layoutCompartment(co, i, style));
+            for (let i = 0; i < node.parts.length; i++) {
+                layoutCompartment(node.parts[i], i, style);
+            }
             var visual = layouters[style.visual] ?? layouters.class;
             visual(config, node);
             node.layoutWidth = (node.width ?? 0) + 2 * config.edgeMargin;
@@ -1124,7 +1126,8 @@
             g.save();
             g.translate(compartment.offset.x, compartment.offset.y);
             g.fillStyle(color || config.stroke);
-            compartment.lines.forEach((text, i) => {
+            for (let i = 0; i < compartment.lines.length; i++) {
+                var text = compartment.lines[i];
                 g.textAlign(style.center ? 'center' : 'left');
                 var x = style.center ? compartment.width / 2 - config.padding : 0;
                 var y = (0.5 + (i + 0.5) * config.leading) * config.fontSize;
@@ -1148,11 +1151,13 @@
                     }
                     g.lineWidth(config.lineWidth);
                 }
-            });
+            }
             g.save();
             g.translate(config.gutter, config.gutter);
-            compartment.assocs.forEach((r) => renderRelation(r));
-            compartment.nodes.forEach((n) => renderNode(n, level));
+            for (const r of compartment.assocs)
+                renderRelation(r);
+            for (const n of compartment.nodes)
+                renderNode(n, level);
             g.restore();
             g.restore();
         }
@@ -1175,14 +1180,14 @@
                 g.path(divider.map((e) => add(e, { x, y }))).stroke();
             }
             g.restore();
-            node.parts.forEach((part, i) => {
-                var textStyle = i == 0 ? style.title : style.body;
+            for (let part of node.parts) {
+                var textStyle = part === node.parts[0] ? style.title : style.body;
                 g.save();
                 g.translate(x + part.x, y + part.y);
                 g.setFont(config.font, config.fontSize, textStyle.bold ? 'bold' : 'normal', textStyle.italic ? 'italic' : 'normal');
                 renderCompartment(part, style.stroke, textStyle, level + 1);
                 g.restore();
-            });
+            }
             g.restore();
         }
         function strokePath(p) {
@@ -1204,7 +1209,9 @@
                 return;
             var fontSize = config.fontSize;
             var lines = label.text.split('`');
-            lines.forEach((l, i) => g.fillText(l, label.x, label.y + fontSize * (i + 1)));
+            for (let i = 0; i < lines.length; i++) {
+                g.fillText(lines[i], label.x, label.y + fontSize * (i + 1));
+            }
         }
         function renderRelation(r) {
             var path = getPath(config, r);

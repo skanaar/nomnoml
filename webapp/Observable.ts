@@ -19,7 +19,7 @@ export class Observable {
   }
 
   trigger(event: string, ...args: any[]): void {
-    var fns: Function[] = this.callbacks[event]
-    if (fns) fns.forEach((fn: Function) => fn.apply(null, args))
+    var fns = this.callbacks[event]
+    if (fns) for (let fn of fns) fn.apply(null, args)
   }
 }

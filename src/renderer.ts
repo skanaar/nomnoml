@@ -18,7 +18,8 @@ export function render(graphics: Graphics, config: Config, compartment: Layouted
     g.save()
     g.translate(compartment.offset!.x, compartment.offset!.y)
     g.fillStyle(color || config.stroke)
-    compartment.lines.forEach((text, i) => {
+    for (let i = 0; i < compartment.lines.length; i++) {
+      var text = compartment.lines[i]
       g.textAlign(style.center ? 'center' : 'left')
       var x = style.center ? compartment.width! / 2 - config.padding : 0
       var y = (0.5 + (i + 0.5) * config.leading) * config.fontSize
@@ -41,11 +42,11 @@ export function render(graphics: Graphics, config: Config, compartment: Layouted
         }
         g.lineWidth(config.lineWidth)
       }
-    })
+    }
     g.save()
     g.translate(config.gutter, config.gutter)
-    compartment.assocs.forEach((r) => renderRelation(r))
-    compartment.nodes.forEach((n) => renderNode(n, level))
+    for (const r of compartment.assocs) renderRelation(r)
+    for (const n of compartment.nodes) renderNode(n, level)
     g.restore()
     g.restore()
   }
@@ -72,8 +73,8 @@ export function render(graphics: Graphics, config: Config, compartment: Layouted
     }
     g.restore()
 
-    node.parts.forEach((part: LayoutedPart, i: number) => {
-      var textStyle = i == 0 ? style.title : style.body
+    for (let part of node.parts) {
+      var textStyle = part === node.parts[0] ? style.title : style.body
       g.save()
       g.translate(x + part.x!, y + part.y!)
       g.setFont(
@@ -84,7 +85,7 @@ export function render(graphics: Graphics, config: Config, compartment: Layouted
       )
       renderCompartment(part, style.stroke, textStyle, level + 1)
       g.restore()
-    })
+    }
 
     g.restore()
   }
@@ -107,7 +108,9 @@ export function render(graphics: Graphics, config: Config, compartment: Layouted
     if (!label || !label.text) return
     var fontSize = config.fontSize
     var lines = label.text.split('`')
-    lines.forEach((l, i) => g.fillText(l, label.x!, label.y! + fontSize * (i + 1)))
+    for (let i = 0; i < lines.length; i++) {
+      g.fillText(lines[i], label.x!, label.y! + fontSize * (i + 1))
+    }
   }
 
   function renderRelation(r: LayoutedAssoc) {

@@ -201,7 +201,9 @@ export function layout(measurer: Measurer, config: Config, ast: Part): LayoutedP
 
   function layoutNode(node: LayoutedNode, config: Config): void {
     var style = config.styles[node.type] || styles.class
-    node.parts.forEach((co, i) => layoutCompartment(co, i, style))
+    for (let i = 0; i < node.parts.length; i++) {
+      layoutCompartment(node.parts[i], i, style)
+    }
     var visual = layouters[style.visual] ?? layouters.class
     visual(config, node)
     node.layoutWidth = (node.width ?? 0) + 2 * config.edgeMargin
