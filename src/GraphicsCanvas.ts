@@ -11,12 +11,12 @@ type Callbacks = {
   mousemove(p: Vec): void
 }
 export function GraphicsCanvas(canvas: HTMLCanvasElement, callbacks?: Callbacks): ICanvasGraphics {
-  var ctx = canvas.getContext('2d')!
-  var mousePos = { x: 0, y: 0 }
-  var twopi = 2 * 3.1416
+  const ctx = canvas.getContext('2d')!
+  const twopi = 2 * 3.1416
+  let mousePos = { x: 0, y: 0 }
 
   function mouseEventToPos(event: MouseEvent) {
-    var e = canvas
+    const e = canvas
     return {
       x: event.clientX - e.getBoundingClientRect().left - e.clientLeft + e.scrollLeft,
       y: event.clientY - e.getBoundingClientRect().top - e.clientTop + e.scrollTop,
@@ -38,7 +38,7 @@ export function GraphicsCanvas(canvas: HTMLCanvasElement, callbacks?: Callbacks)
     })
   }
 
-  var chainable = {
+  const chainable = {
     stroke: function () {
       ctx.stroke()
       return chainable
@@ -59,7 +59,7 @@ export function GraphicsCanvas(canvas: HTMLCanvasElement, callbacks?: Callbacks)
     offset = offset || { x: 0, y: 0 }
     ctx.beginPath()
     ctx.moveTo(offset.x + s * path[0].x, offset.y + s * path[0].y)
-    for (var i = 1, len = path.length; i < len; i++)
+    for (let i = 1, len = path.length; i < len; i++)
       ctx.lineTo(offset.x + s * path[i].x, offset.y + s * path[i].y)
     return chainable
   }

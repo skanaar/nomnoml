@@ -58,10 +58,10 @@ export function parse(source: string): ParsedDiagram {
   }
 
   function parseCustomStyle(styleDef: string): Style {
-    var contains = hasSubstring
-    var floatingKeywords = styleDef.replace(/[a-z]*=[^ ]+/g, '')
-    var titleDef = last(styleDef.match('title=([^ ]*)') || [''])
-    var bodyDef = last(styleDef.match('body=([^ ]*)') || [''])
+    const contains = hasSubstring
+    const floatingKeywords = styleDef.replace(/[a-z]*=[^ ]+/g, '')
+    const titleDef = last(styleDef.match('title=([^ ]*)') || [''])
+    const bodyDef = last(styleDef.match('body=([^ ]*)') || [''])
     return {
       title: {
         bold: contains(titleDef, 'bold') || contains(floatingKeywords, 'bold'),
@@ -84,11 +84,11 @@ export function parse(source: string): ParsedDiagram {
   }
 
   function getConfig(directives: Directive[]): Config {
-    var d = Object.fromEntries(directives.map((e) => [e.key, e.value]))
-    var userStyles: { [index: string]: Style } = {}
-    for (var key in d) {
+    const d = Object.fromEntries(directives.map((e) => [e.key, e.value]))
+    const userStyles: { [index: string]: Style } = {}
+    for (const key in d) {
       if (key[0] != '.') continue
-      var styleDef = d[key]
+      const styleDef = d[key]
       userStyles[key.substring(1)] = parseCustomStyle(styleDef)
     }
     return {

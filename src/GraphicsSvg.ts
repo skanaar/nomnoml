@@ -41,10 +41,10 @@ function xmlEncode(str: string | undefined | number) {
 }
 
 // prettier-ignore
-export var charWidths: { [key: string]: number } = {"0":10,"1":10,"2":10,"3":10,"4":10,"5":10,"6":10,"7":10,"8":10,"9":10," ":5,"!":5,"\"":6,"#":10,"$":10,"%":15,"&":11,"'":4,"(":6,")":6,"*":7,"+":10,",":5,"-":6,".":5,"/":5,":":5,";":5,"<":10,"=":10,">":10,"?":10,"@":17,"A":11,"B":11,"C":12,"D":12,"E":11,"F":10,"G":13,"H":12,"I":5,"J":9,"K":11,"L":10,"M":14,"N":12,"O":13,"P":11,"Q":13,"R":12,"S":11,"T":10,"U":12,"V":11,"W":16,"X":11,"Y":11,"Z":10,"[":5,"\\":5,"]":5,"^":8,"_":10,"`":6,"a":10,"b":10,"c":9,"d":10,"e":10,"f":5,"g":10,"h":10,"i":4,"j":4,"k":9,"l":4,"m":14,"n":10,"o":10,"p":10,"q":10,"r":6,"s":9,"t":5,"u":10,"v":9,"w":12,"x":9,"y":9,"z":9,"{":6,"|":5,"}":6,"~":10}
+export const charWidths: { [key: string]: number } = {"0":10,"1":10,"2":10,"3":10,"4":10,"5":10,"6":10,"7":10,"8":10,"9":10," ":5,"!":5,"\"":6,"#":10,"$":10,"%":15,"&":11,"'":4,"(":6,")":6,"*":7,"+":10,",":5,"-":6,".":5,"/":5,":":5,";":5,"<":10,"=":10,">":10,"?":10,"@":17,"A":11,"B":11,"C":12,"D":12,"E":11,"F":10,"G":13,"H":12,"I":5,"J":9,"K":11,"L":10,"M":14,"N":12,"O":13,"P":11,"Q":13,"R":12,"S":11,"T":10,"U":12,"V":11,"W":16,"X":11,"Y":11,"Z":10,"[":5,"\\":5,"]":5,"^":8,"_":10,"`":6,"a":10,"b":10,"c":9,"d":10,"e":10,"f":5,"g":10,"h":10,"i":4,"j":4,"k":9,"l":4,"m":14,"n":10,"o":10,"p":10,"q":10,"r":6,"s":9,"t":5,"u":10,"v":9,"w":12,"x":9,"y":9,"z":9,"{":6,"|":5,"}":6,"~":10}
 
 export function GraphicsSvg(document?: HTMLDocument): ISvgGraphics {
-  var initialState: SvgAttr = {
+  const initialState: SvgAttr = {
     stroke: undefined,
     'stroke-width': 1,
     'stroke-dasharray': undefined,
@@ -55,10 +55,10 @@ export function GraphicsSvg(document?: HTMLDocument): ISvgGraphics {
     'font-size': '12pt',
   }
 
-  var measurementCanvas: HTMLCanvasElement | null = document
+  const measurementCanvas: HTMLCanvasElement | null = document
     ? document.createElement('canvas')
     : null
-  var ctx = measurementCanvas ? measurementCanvas.getContext('2d') : null
+  const ctx = measurementCanvas ? measurementCanvas.getContext('2d') : null
 
   type SvgElement = 'svg' | 'g' | 'path' | 'ellipse' | 'circle' | 'rect' | 'text' | 'desc' | 'title'
   class Element {
@@ -132,7 +132,7 @@ export function GraphicsSvg(document?: HTMLDocument): ISvgGraphics {
   const syntheticRoot = new GroupElement({} as GroupElement)
   syntheticRoot.attr = initialState
 
-  var root: Element = new Element(
+  const root: Element = new Element(
     'svg',
     {
       version: '1.1',
@@ -143,13 +143,13 @@ export function GraphicsSvg(document?: HTMLDocument): ISvgGraphics {
     },
     undefined
   )
-  var current: GroupElement = new GroupElement(root as GroupElement)
+  let current: GroupElement = new GroupElement(root as GroupElement)
   current.attr = initialState
   root.children.push(current)
-  var inPathBuilderMode = false
+  let inPathBuilderMode = false
 
   function tracePath(path: Vector[], offset: Vector = { x: 0, y: 0 }, s: number = 1): Element {
-    var d = path
+    const d = path
       .map(
         (e, i) =>
           (i ? 'L' : 'M') + (offset.x + s * e.x).toFixed(1) + ' ' + (offset.y + s * e.y).toFixed(1)
@@ -159,7 +159,7 @@ export function GraphicsSvg(document?: HTMLDocument): ISvgGraphics {
   }
 
   function el(type: SvgElement, attr: any, text?: string) {
-    var element = new Element(type, attr, current, text)
+    const element = new Element(type, attr, current, text)
     current.children.push(element)
     return element
   }
@@ -177,7 +177,7 @@ export function GraphicsSvg(document?: HTMLDocument): ISvgGraphics {
     },
     ellipse: function (center, w, h, start = 0, stop = 0) {
       if (start || stop) {
-        var path = range([start, stop], 64).map((a) =>
+        const path = range([start, stop], 64).map((a) =>
           add(center, { x: (Math.cos(a) * w) / 2, y: (Math.sin(a) * h) / 2 })
         )
         return tracePath(path)
@@ -196,7 +196,7 @@ export function GraphicsSvg(document?: HTMLDocument): ISvgGraphics {
     },
     path: tracePath,
     circuit: function (path, offset, s) {
-      var element = tracePath(path, offset, s)
+      const element = tracePath(path, offset, s)
       element.attr.d += ' Z'
       return element
     },
@@ -275,7 +275,7 @@ export function GraphicsSvg(document?: HTMLDocument): ISvgGraphics {
         return {
           width: sum(s, function (c: string) {
             const size = getDefined(current, (e) => e.attr['font-size']) ?? 12
-            var scale = parseInt(size.toString()) / 12
+            const scale = parseInt(size.toString()) / 12
             // non-ascii characters all treated as wide
             return (charWidths[c] ?? 16) * scale
           }),
@@ -291,7 +291,7 @@ export function GraphicsSvg(document?: HTMLDocument): ISvgGraphics {
       if (current.parent) current = current.parent
     },
     save: function () {
-      var node = new GroupElement(current)
+      const node = new GroupElement(current)
       current.children.push(node)
       current = node
     },

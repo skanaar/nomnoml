@@ -21,7 +21,7 @@ function ensureType(template: any, obj: any): any {
   }
   if ('object' == typeof template) {
     if ('object' == typeof obj) {
-      for (var key in template) {
+      for (const key in template) {
         if (ensureType(template[key], obj[key]) === undefined)
           return undefined
       }

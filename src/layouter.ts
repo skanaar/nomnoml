@@ -50,7 +50,7 @@ export function layout(measurer: Measurer, config: Config, ast: Part): LayoutedP
   }
 
   function layoutCompartment(c: Part, compartmentIndex: number, style: Style) {
-    var textSize = measureLines(c.lines, compartmentIndex ? 'normal' : 'bold')
+    const textSize = measureLines(c.lines, compartmentIndex ? 'normal' : 'bold')
 
     if (!c.nodes.length && !c.assocs.length) {
       const layoutedPart = c as LayoutedPart
@@ -60,7 +60,7 @@ export function layout(measurer: Measurer, config: Config, ast: Part): LayoutedP
       return
     }
 
-    var styledConfig = {
+    const styledConfig = {
       ...config,
       direction: style.direction ?? config.direction,
     }
@@ -69,7 +69,7 @@ export function layout(measurer: Measurer, config: Config, ast: Part): LayoutedP
     for (let i = 0; i < layoutedAssoc.length; i++) layoutedAssoc[i].id = `${i}`
     for (const e of layoutedNodes) layoutNode(e, styledConfig)
 
-    var g = new graphlib.Graph<GraphLabel, GraphNode, EdgeLabel>({
+    const g = new graphlib.Graph<GraphLabel, GraphNode, EdgeLabel>({
       multigraph: true,
     })
     g.setGraph({
@@ -83,10 +83,10 @@ export function layout(measurer: Measurer, config: Config, ast: Part): LayoutedP
       acyclicer: config.acyclicer,
       ranker: config.ranker,
     })
-    for (var e of layoutedNodes) {
+    for (const e of layoutedNodes) {
       g.setNode(e.id, { width: e.layoutWidth, height: e.layoutHeight })
     }
-    for (var r of layoutedAssoc) {
+    for (const r of layoutedAssoc) {
       if (r.type.indexOf('_') > -1) {
         g.setEdge(r.start, r.end, { minlen: 0 }, r.id)
       } else if ((config.gravity ?? 1) != 1) {
@@ -97,27 +97,27 @@ export function layout(measurer: Measurer, config: Config, ast: Part): LayoutedP
     }
     grapheLayout(g)
 
-    var rels = indexBy(c.assocs as LayoutedAssoc[], 'id')
-    var nodes = indexBy(c.nodes as LayoutedNode[], 'id')
+    const rels = indexBy(c.assocs as LayoutedAssoc[], 'id')
+    const nodes = indexBy(c.nodes as LayoutedNode[], 'id')
     for (const name of g.nodes()) {
-      var node = g.node(name)
+      const node = g.node(name)
       nodes[name].x = node.x!
       nodes[name].y = node.y!
     }
-    var left = 0
-    var right = 0
-    var top = 0
-    var bottom = 0
+    let left = 0
+    let right = 0
+    let top = 0
+    let bottom = 0
 
     for (const edgeObj of g.edges()) {
-      var edge = g.edge(edgeObj)
-      var start = nodes[edgeObj.v]
-      var end = nodes[edgeObj.w]
-      var rel = rels[edgeObj.name!]
+      const edge = g.edge(edgeObj)
+      const start = nodes[edgeObj.v]
+      const end = nodes[edgeObj.w]
+      const rel = rels[edgeObj.name!]
       rel.path = [start, ...edge.points!, end].map(toPoint)
 
-      var startP = rel.path[1]
-      var endP = rel.path[rel.path.length - 2]
+      const startP = rel.path[1]
+      const endP = rel.path[rel.path.length - 2]
       layoutLabel(rel.startLabel, startP, adjustQuadrant(quadrant(startP, start) ?? 4, start, end))
       layoutLabel(rel.endLabel, endP, adjustQuadrant(quadrant(endP, end) ?? 2, end, start))
       left = Math.min(
@@ -141,13 +141,13 @@ export function layout(measurer: Measurer, config: Config, ast: Part): LayoutedP
         ...edge.points!.map((e) => e.y)
       )
     }
-    var graph = g.graph()
-    var width = Math.max(graph.width!, right - left)
-    var height = Math.max(graph.height!, bottom - top)
-    var graphHeight = height ? height + 2 * config.gutter : 0
-    var graphWidth = width ? width + 2 * config.gutter : 0
+    const graph = g.graph()
+    const width = Math.max(graph.width!, right - left)
+    const height = Math.max(graph.height!, bottom - top)
+    const graphHeight = height ? height + 2 * config.gutter : 0
+    const graphWidth = width ? width + 2 * config.gutter : 0
 
-    var part = c as LayoutedPart
+    const part = c as LayoutedPart
     part.width = Math.max(textSize.width, graphWidth) + 2 * config.padding
     part.height = textSize.height + graphHeight + config.padding
     part.offset = { x: config.padding - left, y: config.padding - top }
@@ -164,8 +164,8 @@ export function layout(measurer: Measurer, config: Config, ast: Part): LayoutedP
       label.x = point.x
       label.y = point.y
     } else {
-      var fontSize = config.fontSize
-      var lines = label.text.split('`')
+      const fontSize = config.fontSize
+      const lines = label.text.split('`')
       label.width = Math.max(...lines.map((l) => measurer.textWidth(l)))
       label.height = fontSize * lines.length
       label.x =
@@ -187,9 +187,9 @@ export function layout(measurer: Measurer, config: Config, ast: Part): LayoutedP
   // Flip basic label quadrant if needed, to avoid crossing a bent relationship line
   function adjustQuadrant(quadrant: Quadrant, point: Vec, opposite: Vec): Quadrant {
     if (opposite.x == point.x || opposite.y == point.y) return quadrant
-    var flipHorizontally: Quadrant[] = [4, 3, 2, 1]
-    var flipVertically: Quadrant[] = [2, 1, 4, 3]
-    var oppositeQuadrant =
+    const flipHorizontally: Quadrant[] = [4, 3, 2, 1]
+    const flipVertically: Quadrant[] = [2, 1, 4, 3]
+    const oppositeQuadrant =
       opposite.y < point.y ? (opposite.x < point.x ? 2 : 1) : opposite.x < point.x ? 3 : 4
     // if an opposite relation end is in the same quadrant as a label, we need to flip the label
     if (oppositeQuadrant === quadrant) {
@@ -200,11 +200,11 @@ export function layout(measurer: Measurer, config: Config, ast: Part): LayoutedP
   }
 
   function layoutNode(node: LayoutedNode, config: Config): void {
-    var style = config.styles[node.type] || styles.class
+    const style = config.styles[node.type] || styles.class
     for (let i = 0; i < node.parts.length; i++) {
       layoutCompartment(node.parts[i], i, style)
     }
-    var visual = layouters[style.visual] ?? layouters.class
+    const visual = layouters[style.visual] ?? layouters.class
     visual(config, node)
     node.layoutWidth = (node.width ?? 0) + 2 * config.edgeMargin
     node.layoutHeight = (node.height ?? 0) + 2 * config.edgeMargin

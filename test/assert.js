@@ -3,7 +3,7 @@ function assertEqual(a, b, path = []) {
     throw new Error(`${path.join('.')}: ${JSON.stringify(lhs)} ≠ ${JSON.stringify(rhs)}`)
   }
   function compare(a, b) {
-    for (var k in a) {
+    for (const k in a) {
       if (a.hasOwnProperty(k)) assertEqual(a[k], b[k], [...path, k])
     }
   }

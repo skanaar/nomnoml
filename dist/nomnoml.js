@@ -5,18 +5,19 @@
 })(this, (function (exports, graphre) { 'use strict';
 
     function range([min, max], count) {
-        var output = [];
-        for (var i = 0; i < count; i++)
+        const output = [];
+        for (let i = 0; i < count; i++)
             output.push(min + ((max - min) * i) / (count - 1));
         return output;
     }
     function sum(list, transform) {
-        for (var i = 0, sum = 0, len = list.length; i < len; i++)
-            sum += transform(list[i]);
-        return sum;
+        let summa = 0;
+        for (let i = 0, len = list.length; i < len; i++)
+            summa += transform(list[i]);
+        return summa;
     }
     function find(list, predicate) {
-        for (var i = 0; i < list.length; i++)
+        for (let i = 0; i < list.length; i++)
             if (predicate(list[i]))
                 return list[i];
         return undefined;
@@ -32,16 +33,16 @@
         return haystack.indexOf(needle) !== -1;
     }
     function indexBy(list, key) {
-        var obj = {};
-        for (var i = 0; i < list.length; i++)
+        const obj = {};
+        for (let i = 0; i < list.length; i++)
             obj[list[i][key]] = list[i];
         return obj;
     }
     function uniqueBy(list, property) {
-        var seen = {};
-        var out = [];
-        for (var i = 0; i < list.length; i++) {
-            var key = list[i][property];
+        const seen = {};
+        const out = [];
+        for (let i = 0; i < list.length; i++) {
+            const key = list[i][property];
             if (!seen[key]) {
                 seen[key] = true;
                 out.push(list[i]);
@@ -82,7 +83,7 @@
             direction: conf.direction || undefined,
         };
     }
-    var styles = {
+    const styles = {
         abstract: buildStyle({ visual: 'class' }, { center: true, italic: true }),
         actor: buildStyle({ visual: 'actor' }, { center: true }, { center: true }),
         choice: buildStyle({ visual: 'rhomb' }, { center: true }, { center: true }),
@@ -113,8 +114,8 @@
         clas.width = Math.max(...clas.parts.map((e) => e.width ?? 0));
         clas.height = sum(clas.parts, (e) => e.height ?? 0 ?? 0);
         clas.dividers = [];
-        var y = 0;
-        for (var comp of clas.parts) {
+        let y = 0;
+        for (const comp of clas.parts) {
             comp.x = 0 + offset.x;
             comp.y = y + offset.y;
             comp.width = clas.width;
@@ -139,8 +140,8 @@
         clas.width = config.fontSize * 1.5;
         clas.height = config.fontSize * 1.5;
         clas.dividers = [];
-        var y = config.direction == 'LR' ? clas.height - config.padding : -clas.height / 2;
-        for (var comp of clas.parts) {
+        let y = config.direction == 'LR' ? clas.height - config.padding : -clas.height / 2;
+        for (const comp of clas.parts) {
             if (config.direction == 'LR') {
                 comp.x = clas.width / 2 - (comp.width ?? 0) / 2;
                 comp.y = y;
@@ -152,13 +153,13 @@
             y += comp.height ?? 0 ?? 0;
         }
     }
-    var layouters = {
+    const layouters = {
         actor: function (config, clas) {
             clas.width = Math.max(config.padding * 2, ...clas.parts.map((e) => e.width ?? 0));
             clas.height = config.padding * 3 + sum(clas.parts, (e) => e.height ?? 0);
             clas.dividers = [];
-            var y = config.padding * 3;
-            for (var comp of clas.parts) {
+            let y = config.padding * 3;
+            for (const comp of clas.parts) {
                 comp.x = 0;
                 comp.y = y;
                 comp.width = clas.width;
@@ -175,14 +176,14 @@
             clas.width = Math.max(...clas.parts.map((e) => e.width ?? 0));
             clas.height = sum(clas.parts, (e) => e.height ?? 0) + config.padding * 2;
             clas.dividers = [];
-            var y = config.padding * 1.5;
-            for (var comp of clas.parts) {
+            let y = config.padding * 1.5;
+            for (const comp of clas.parts) {
                 comp.x = 0;
                 comp.y = y;
                 comp.width = clas.width;
                 y += comp.height ?? 0;
                 if (comp != last(clas.parts)) {
-                    var path = range([0, Math.PI], 16).map((a) => ({
+                    const path = range([0, Math.PI], 16).map((a) => ({
                         x: clas.width * 0.5 * (1 - Math.cos(a)),
                         y: y + config.padding * (0.75 * Math.sin(a) - 0.5),
                     }));
@@ -191,15 +192,15 @@
             }
         },
         ellipse: function (config, clas) {
-            var width = Math.max(...clas.parts.map((e) => e.width ?? 0));
-            var height = sum(clas.parts, (e) => e.height ?? 0);
+            const width = Math.max(...clas.parts.map((e) => e.width ?? 0));
+            const height = sum(clas.parts, (e) => e.height ?? 0);
             clas.width = width * 1.25;
             clas.height = height * 1.25;
             clas.dividers = [];
-            var y = height * 0.125;
-            var sq = (x) => x * x;
-            var rimPos = (y) => Math.sqrt(sq(0.5) - sq(y / clas.height - 0.5)) * clas.width;
-            for (var comp of clas.parts) {
+            let y = height * 0.125;
+            const sq = (x) => x * x;
+            const rimPos = (y) => Math.sqrt(sq(0.5) - sq(y / clas.height - 0.5)) * clas.width;
+            for (const comp of clas.parts) {
                 comp.x = width * 0.125;
                 comp.y = y;
                 comp.width = width;
@@ -213,8 +214,8 @@
         },
         end: icon,
         frame: function (config, clas) {
-            var w = clas.parts[0].width ?? 0;
-            var h = clas.parts[0].height ?? 0;
+            const w = clas.parts[0].width ?? 0;
+            const h = clas.parts[0].height ?? 0;
             clas.parts[0].width = h / 2 + (clas.parts[0].width ?? 0);
             box(config, clas);
             if (clas.dividers?.length)
@@ -242,18 +243,18 @@
         },
         receiver: box,
         rhomb: function (config, clas) {
-            var width = Math.max(...clas.parts.map((e) => e.width ?? 0));
-            var height = sum(clas.parts, (e) => e.height ?? 0);
+            const width = Math.max(...clas.parts.map((e) => e.width ?? 0));
+            const height = sum(clas.parts, (e) => e.height ?? 0);
             clas.width = width * 1.5;
             clas.height = height * 1.5;
             clas.dividers = [];
-            var y = height * 0.25;
-            for (var comp of clas.parts) {
+            let y = height * 0.25;
+            for (const comp of clas.parts) {
                 comp.x = width * 0.25;
                 comp.y = y;
                 comp.width = width;
                 y += comp.height ?? 0;
-                var slope = clas.width / clas.height;
+                const slope = clas.width / clas.height;
                 if (comp != last(clas.parts))
                     clas.dividers.push([
                         {
@@ -288,20 +289,20 @@
                 box(config, clas);
                 return;
             }
-            var gridcells = clas.parts.slice(1);
-            var rows = [[]];
+            const gridcells = clas.parts.slice(1);
+            const rows = [[]];
             function isRowBreak(e) {
                 return !e.lines.length && !e.nodes.length && !e.assocs.length;
             }
             function isRowFull(e) {
-                var current = last(rows);
+                const current = last(rows);
                 return rows[0] != current && rows[0].length == current.length;
             }
             function isEnd(e) {
-                return comp == last(gridcells);
+                return e == last(gridcells);
             }
-            for (var comp of gridcells) {
-                if (!isEnd() && isRowBreak(comp) && last(rows).length) {
+            for (const comp of gridcells) {
+                if (!isEnd(comp) && isRowBreak(comp) && last(rows).length) {
                     rows.push([]);
                 }
                 else if (isRowFull()) {
@@ -311,12 +312,12 @@
                     last(rows).push(comp);
                 }
             }
-            var header = clas.parts[0];
-            var cellW = Math.max((header.width ?? 0) / rows[0].length, ...gridcells.map((e) => e.width ?? 0));
-            var cellH = Math.max(...gridcells.map((e) => e.height ?? 0));
+            const header = clas.parts[0];
+            const cellW = Math.max((header.width ?? 0) / rows[0].length, ...gridcells.map((e) => e.width ?? 0));
+            const cellH = Math.max(...gridcells.map((e) => e.height ?? 0));
             clas.width = cellW * rows[0].length;
             clas.height = (header.height ?? 0) + cellH * rows.length;
-            var hh = header.height ?? 0;
+            const hh = header.height ?? 0;
             clas.dividers = [
                 [
                     { x: 0, y: header.height ?? 0 },
@@ -334,9 +335,9 @@
             header.x = 0;
             header.y = 0;
             header.width = clas.width;
-            for (var i = 0; i < rows.length; i++) {
-                for (var j = 0; j < rows[i].length; j++) {
-                    var cell = rows[i][j];
+            for (let i = 0; i < rows.length; i++) {
+                for (let j = 0; j < rows[i].length; j++) {
+                    const cell = rows[i][j];
                     cell.x = j * cellW;
                     cell.y = hh + i * cellH;
                     cell.width = cellW;
@@ -346,11 +347,11 @@
         },
         transceiver: box,
     };
-    var visualizers = {
+    const visualizers = {
         actor: function (node, x, y, config, g) {
-            var a = config.padding / 2;
-            var yp = y + a * 4;
-            var faceCenter = { x: node.x, y: yp - a };
+            const a = config.padding / 2;
+            const yp = y + a * 4;
+            const faceCenter = { x: node.x, y: yp - a };
             g.circle(faceCenter, a).fillAndStroke();
             g.path([
                 { x: node.x, y: yp },
@@ -370,9 +371,9 @@
             g.rect(x, y, node.width, node.height).fillAndStroke();
         },
         database: function (node, x, y, config, g) {
-            var pad = config.padding;
-            var cy = y - pad / 2;
-            var pi = 3.1416;
+            const pad = config.padding;
+            const cy = y - pad / 2;
+            const pi = 3.1416;
             g.rect(x, y + pad, node.width, node.height - pad * 2).fill();
             g.path([
                 { x: x, y: cy + pad * 1.5 },
@@ -425,9 +426,9 @@
             ]).stroke();
         },
         package: function (node, x, y, config, g) {
-            var headHeight = node.parts[0].height ?? 0;
+            const headHeight = node.parts[0].height ?? 0;
             g.rect(x, y + headHeight, node.width, node.height - headHeight).fillAndStroke();
-            var w = g.measureText(node.parts[0].lines[0]).width + 2 * config.padding;
+            const w = g.measureText(node.parts[0].lines[0]).width + 2 * config.padding;
             g.circuit([
                 { x: x, y: y + headHeight },
                 { x: x, y: y },
@@ -436,8 +437,8 @@
             ]).fillAndStroke();
         },
         pipe: function (node, x, y, config, g) {
-            var pad = config.padding;
-            var pi = 3.1416;
+            const pad = config.padding;
+            const pi = 3.1416;
             g.rect(x, y, node.width, node.height).fill();
             g.path([
                 { x: x, y: y },
@@ -468,7 +469,7 @@
             ]).fillAndStroke();
         },
         roundrect: function (node, x, y, config, g) {
-            var r = Math.min(config.padding * 2 * config.leading, node.height / 2);
+            const r = Math.min(config.padding * 2 * config.leading, node.height / 2);
             g.roundRect(x, y, node.width, node.height, r).fillAndStroke();
         },
         sender: function (node, x, y, config, g) {
@@ -481,8 +482,8 @@
             ]).fillAndStroke();
         },
         socket: function (node, x, y, config, g) {
-            var from = config.direction === 'TB' ? Math.PI : Math.PI / 2;
-            var to = config.direction === 'TB' ? 2 * Math.PI : -Math.PI / 2;
+            const from = config.direction === 'TB' ? Math.PI : Math.PI / 2;
+            const to = config.direction === 'TB' ? 2 * Math.PI : -Math.PI / 2;
             g.ellipse({ x: node.x, y: node.y }, node.width, node.height, from, to).stroke();
         },
         start: function (node, x, y, config, g) {
@@ -519,7 +520,7 @@
             };
         }
         function layoutCompartment(c, compartmentIndex, style) {
-            var textSize = measureLines(c.lines, compartmentIndex ? 'normal' : 'bold');
+            const textSize = measureLines(c.lines, compartmentIndex ? 'normal' : 'bold');
             if (!c.nodes.length && !c.assocs.length) {
                 const layoutedPart = c;
                 layoutedPart.width = textSize.width;
@@ -527,7 +528,7 @@
                 layoutedPart.offset = { x: config.padding, y: config.padding };
                 return;
             }
-            var styledConfig = {
+            const styledConfig = {
                 ...config,
                 direction: style.direction ?? config.direction,
             };
@@ -537,7 +538,7 @@
                 layoutedAssoc[i].id = `${i}`;
             for (const e of layoutedNodes)
                 layoutNode(e, styledConfig);
-            var g = new graphre.graphlib.Graph({
+            const g = new graphre.graphlib.Graph({
                 multigraph: true,
             });
             g.setGraph({
@@ -548,10 +549,10 @@
                 acyclicer: config.acyclicer,
                 ranker: config.ranker,
             });
-            for (var e of layoutedNodes) {
+            for (const e of layoutedNodes) {
                 g.setNode(e.id, { width: e.layoutWidth, height: e.layoutHeight });
             }
-            for (var r of layoutedAssoc) {
+            for (const r of layoutedAssoc) {
                 if (r.type.indexOf('_') > -1) {
                     g.setEdge(r.start, r.end, { minlen: 0 }, r.id);
                 }
@@ -563,25 +564,25 @@
                 }
             }
             graphre.layout(g);
-            var rels = indexBy(c.assocs, 'id');
-            var nodes = indexBy(c.nodes, 'id');
+            const rels = indexBy(c.assocs, 'id');
+            const nodes = indexBy(c.nodes, 'id');
             for (const name of g.nodes()) {
-                var node = g.node(name);
+                const node = g.node(name);
                 nodes[name].x = node.x;
                 nodes[name].y = node.y;
             }
-            var left = 0;
-            var right = 0;
-            var top = 0;
-            var bottom = 0;
+            let left = 0;
+            let right = 0;
+            let top = 0;
+            let bottom = 0;
             for (const edgeObj of g.edges()) {
-                var edge = g.edge(edgeObj);
-                var start = nodes[edgeObj.v];
-                var end = nodes[edgeObj.w];
-                var rel = rels[edgeObj.name];
+                const edge = g.edge(edgeObj);
+                const start = nodes[edgeObj.v];
+                const end = nodes[edgeObj.w];
+                const rel = rels[edgeObj.name];
                 rel.path = [start, ...edge.points, end].map(toPoint);
-                var startP = rel.path[1];
-                var endP = rel.path[rel.path.length - 2];
+                const startP = rel.path[1];
+                const endP = rel.path[rel.path.length - 2];
                 layoutLabel(rel.startLabel, startP, adjustQuadrant(quadrant(startP, start) ?? 4, start, end));
                 layoutLabel(rel.endLabel, endP, adjustQuadrant(quadrant(endP, end) ?? 2, end, start));
                 left = Math.min(left, rel.startLabel.x, rel.endLabel.x, ...edge.points.map((e) => e.x), ...edge.points.map((e) => e.x));
@@ -589,12 +590,12 @@
                 top = Math.min(top, rel.startLabel.y, rel.endLabel.y, ...edge.points.map((e) => e.y));
                 bottom = Math.max(bottom, rel.startLabel.y + rel.startLabel.height, rel.endLabel.y + rel.endLabel.height, ...edge.points.map((e) => e.y));
             }
-            var graph = g.graph();
-            var width = Math.max(graph.width, right - left);
-            var height = Math.max(graph.height, bottom - top);
-            var graphHeight = height ? height + 2 * config.gutter : 0;
-            var graphWidth = width ? width + 2 * config.gutter : 0;
-            var part = c;
+            const graph = g.graph();
+            const width = Math.max(graph.width, right - left);
+            const height = Math.max(graph.height, bottom - top);
+            const graphHeight = height ? height + 2 * config.gutter : 0;
+            const graphWidth = width ? width + 2 * config.gutter : 0;
+            const part = c;
             part.width = Math.max(textSize.width, graphWidth) + 2 * config.padding;
             part.height = textSize.height + graphHeight + config.padding;
             part.offset = { x: config.padding - left, y: config.padding - top };
@@ -610,8 +611,8 @@
                 label.y = point.y;
             }
             else {
-                var fontSize = config.fontSize;
-                var lines = label.text.split('`');
+                const fontSize = config.fontSize;
+                const lines = label.text.split('`');
                 label.width = Math.max(...lines.map((l) => measurer.textWidth(l)));
                 label.height = fontSize * lines.length;
                 label.x =
@@ -634,9 +635,9 @@
         function adjustQuadrant(quadrant, point, opposite) {
             if (opposite.x == point.x || opposite.y == point.y)
                 return quadrant;
-            var flipHorizontally = [4, 3, 2, 1];
-            var flipVertically = [2, 1, 4, 3];
-            var oppositeQuadrant = opposite.y < point.y ? (opposite.x < point.x ? 2 : 1) : opposite.x < point.x ? 3 : 4;
+            const flipHorizontally = [4, 3, 2, 1];
+            const flipVertically = [2, 1, 4, 3];
+            const oppositeQuadrant = opposite.y < point.y ? (opposite.x < point.x ? 2 : 1) : opposite.x < point.x ? 3 : 4;
             if (oppositeQuadrant === quadrant) {
                 if (config.direction === 'LR')
                     return flipHorizontally[quadrant - 1];
@@ -646,11 +647,11 @@
             return quadrant;
         }
         function layoutNode(node, config) {
-            var style = config.styles[node.type] || styles.class;
+            const style = config.styles[node.type] || styles.class;
             for (let i = 0; i < node.parts.length; i++) {
                 layoutCompartment(node.parts[i], i, style);
             }
-            var visual = layouters[style.visual] ?? layouters.class;
+            const visual = layouters[style.visual] ?? layouters.class;
             visual(config, node);
             node.layoutWidth = (node.width ?? 0) + 2 * config.edgeMargin;
             node.layoutHeight = (node.height ?? 0) + 2 * config.edgeMargin;
@@ -943,10 +944,10 @@
             return 'network-simplex';
         }
         function parseCustomStyle(styleDef) {
-            var contains = hasSubstring;
-            var floatingKeywords = styleDef.replace(/[a-z]*=[^ ]+/g, '');
-            var titleDef = last(styleDef.match('title=([^ ]*)') || ['']);
-            var bodyDef = last(styleDef.match('body=([^ ]*)') || ['']);
+            const contains = hasSubstring;
+            const floatingKeywords = styleDef.replace(/[a-z]*=[^ ]+/g, '');
+            const titleDef = last(styleDef.match('title=([^ ]*)') || ['']);
+            const bodyDef = last(styleDef.match('body=([^ ]*)') || ['']);
             return {
                 title: {
                     bold: contains(titleDef, 'bold') || contains(floatingKeywords, 'bold'),
@@ -968,12 +969,12 @@
             };
         }
         function getConfig(directives) {
-            var d = Object.fromEntries(directives.map((e) => [e.key, e.value]));
-            var userStyles = {};
-            for (var key in d) {
+            const d = Object.fromEntries(directives.map((e) => [e.key, e.value]));
+            const userStyles = {};
+            for (const key in d) {
                 if (key[0] != '.')
                     continue;
-                var styleDef = d[key];
+                const styleDef = d[key];
                 userStyles[key.substring(1)] = parseCustomStyle(styleDef);
             }
             return {
@@ -1025,14 +1026,14 @@
     const empty = false;
     const filled = true;
     function getPath(config, r) {
-        var path = r.path.slice(1, -1);
-        var endDir = normalize(diff(path[path.length - 2], last(path)));
-        var startDir = normalize(diff(path[1], path[0]));
-        var size = (config.spacing * config.arrowSize) / 30;
-        var head = 0;
-        var end = path.length - 1;
-        var copy = path.map((p) => ({ x: p.x, y: p.y }));
-        var tokens = r.type.split(/[-_]/);
+        const path = r.path.slice(1, -1);
+        const endDir = normalize(diff(path[path.length - 2], last(path)));
+        const startDir = normalize(diff(path[1], path[0]));
+        const size = (config.spacing * config.arrowSize) / 30;
+        const head = 0;
+        const end = path.length - 1;
+        const copy = path.map((p) => ({ x: p.x, y: p.y }));
+        const tokens = r.type.split(/[-_]/);
         copy[head] = add(copy[head], mult(startDir, size * terminatorSize(tokens[0])));
         copy[end] = add(copy[end], mult(endDir, size * terminatorSize(last(tokens))));
         return copy;
@@ -1055,15 +1056,15 @@
         return 0;
     }
     function drawTerminators(g, config, r) {
-        var start = r.path[1];
-        var end = r.path[r.path.length - 2];
-        var path = r.path.slice(1, -1);
-        var tokens = r.type.split(/[-_]/);
+        const start = r.path[1];
+        const end = r.path[r.path.length - 2];
+        const path = r.path.slice(1, -1);
+        const tokens = r.type.split(/[-_]/);
         drawArrowEnd(last(tokens), path, end);
         drawArrowEnd(tokens[0], path.reverse(), start);
         function drawArrowEnd(id, path, end) {
-            var dir = normalize(diff(path[path.length - 2], last(path)));
-            var size = (config.spacing * config.arrowSize) / 30;
+            const dir = normalize(diff(path[path.length - 2], last(path)));
+            const size = (config.spacing * config.arrowSize) / 30;
             if (id === '>' || id === '<')
                 drawArrow(dir, size, filled, end);
             else if (id === ':>' || id === '<:')
@@ -1088,31 +1089,36 @@
             }
         }
         function drawBall(nv, size, stem, end) {
-            var center = add(end, mult(nv, size * stem));
+            const center = add(end, mult(nv, size * stem));
             g.fillStyle(config.fill[0]);
             g.ellipse(center, size * 6, size * 6).fillAndStroke();
         }
         function drawStem(nv, size, stem, end) {
-            var center = add(end, mult(nv, size * stem));
+            const center = add(end, mult(nv, size * stem));
             g.path([center, end]).stroke();
         }
         function drawSocket(nv, size, stem, end) {
-            var base = add(end, mult(nv, size * stem));
-            var t = rot(nv);
-            var socket = range([-Math.PI / 2, Math.PI / 2], 12).map((a) => add(base, add(mult(nv, -6 * size * Math.cos(a)), mult(t, 6 * size * Math.sin(a)))));
+            const base = add(end, mult(nv, size * stem));
+            const t = rot(nv);
+            const socket = range([-Math.PI / 2, Math.PI / 2], 12).map((a) => add(base, add(mult(nv, -6 * size * Math.cos(a)), mult(t, 6 * size * Math.sin(a)))));
             g.path(socket).stroke();
         }
         function drawArrow(nv, size, isOpen, end) {
             const x = (s) => add(end, mult(nv, s * size));
             const y = (s) => mult(rot(nv), s * size);
-            var arrow = [add(x(10), y(4)), x(isOpen && !config.fillArrows ? 5 : 10), add(x(10), y(-4)), end];
+            const arrow = [
+                add(x(10), y(4)),
+                x(isOpen && !config.fillArrows ? 5 : 10),
+                add(x(10), y(-4)),
+                end,
+            ];
             g.fillStyle(isOpen ? config.stroke : config.fill[0]);
             g.circuit(arrow).fillAndStroke();
         }
         function drawDiamond(nv, size, isOpen, end) {
             const x = (s) => add(end, mult(nv, s * size));
             const y = (s) => mult(rot(nv), s * size);
-            var arrow = [add(x(7), y(4)), x(14), add(x(7), y(-4)), end];
+            const arrow = [add(x(7), y(4)), x(14), add(x(7), y(-4)), end];
             g.save();
             g.fillStyle(isOpen ? config.stroke : config.fill[0]);
             g.circuit(arrow).fillAndStroke();
@@ -1121,21 +1127,21 @@
     }
 
     function render(graphics, config, compartment) {
-        var g = graphics;
+        const g = graphics;
         function renderCompartment(compartment, color, style, level) {
             g.save();
             g.translate(compartment.offset.x, compartment.offset.y);
             g.fillStyle(color || config.stroke);
             for (let i = 0; i < compartment.lines.length; i++) {
-                var text = compartment.lines[i];
+                const text = compartment.lines[i];
                 g.textAlign(style.center ? 'center' : 'left');
-                var x = style.center ? compartment.width / 2 - config.padding : 0;
-                var y = (0.5 + (i + 0.5) * config.leading) * config.fontSize;
+                const x = style.center ? compartment.width / 2 - config.padding : 0;
+                let y = (0.5 + (i + 0.5) * config.leading) * config.fontSize;
                 if (text) {
                     g.fillText(text, x, y);
                 }
                 if (style.underline) {
-                    var w = g.measureText(text).width;
+                    const w = g.measureText(text).width;
                     y += Math.round(config.fontSize * 0.2) + 0.5;
                     if (style.center) {
                         g.path([
@@ -1162,26 +1168,26 @@
             g.restore();
         }
         function renderNode(node, level) {
-            var x = node.x - node.width / 2;
-            var y = node.y - node.height / 2;
-            var style = config.styles[node.type] || styles.class;
+            const x = node.x - node.width / 2;
+            const y = node.y - node.height / 2;
+            const style = config.styles[node.type] || styles.class;
             g.save();
             g.setData('name', node.id);
             g.save();
             g.fillStyle(style.fill || config.fill[level] || last(config.fill));
             g.strokeStyle(style.stroke || config.stroke);
             if (style.dashed) {
-                var dash = Math.max(4, 2 * config.lineWidth);
+                const dash = Math.max(4, 2 * config.lineWidth);
                 g.setLineDash([dash, dash]);
             }
-            var drawNode = visualizers[style.visual] || visualizers.class;
+            const drawNode = visualizers[style.visual] || visualizers.class;
             drawNode(node, x, y, config, g);
-            for (var divider of node.dividers) {
+            for (const divider of node.dividers) {
                 g.path(divider.map((e) => add(e, { x, y }))).stroke();
             }
             g.restore();
             for (let part of node.parts) {
-                var textStyle = part === node.parts[0] ? style.title : style.body;
+                const textStyle = part === node.parts[0] ? style.title : style.body;
                 g.save();
                 g.translate(x + part.x, y + part.y);
                 g.setFont(config.font, config.fontSize, textStyle.bold ? 'bold' : 'normal', textStyle.italic ? 'italic' : 'normal');
@@ -1192,10 +1198,10 @@
         }
         function strokePath(p) {
             if (config.edges === 'rounded') {
-                var radius = config.spacing * config.bendSize;
+                const radius = config.spacing * config.bendSize;
                 g.beginPath();
                 g.moveTo(p[0].x, p[0].y);
-                for (var i = 1; i < p.length - 1; i++) {
+                for (let i = 1; i < p.length - 1; i++) {
                     g.arcTo(p[i].x, p[i].y, p[i + 1].x, p[i + 1].y, radius);
                 }
                 g.lineTo(last(p).x, last(p).y);
@@ -1207,21 +1213,21 @@
         function renderLabel(label) {
             if (!label || !label.text)
                 return;
-            var fontSize = config.fontSize;
-            var lines = label.text.split('`');
+            const fontSize = config.fontSize;
+            const lines = label.text.split('`');
             for (let i = 0; i < lines.length; i++) {
                 g.fillText(lines[i], label.x, label.y + fontSize * (i + 1));
             }
         }
         function renderRelation(r) {
-            var path = getPath(config, r);
+            const path = getPath(config, r);
             g.fillStyle(config.stroke);
             g.setFont(config.font, config.fontSize, 'normal', 'normal');
             renderLabel(r.startLabel);
             renderLabel(r.endLabel);
             if (r.type !== '-/-') {
                 if (hasSubstring(r.type, '--')) {
-                    var dash = Math.max(4, 2 * config.lineWidth);
+                    const dash = Math.max(4, 2 * config.lineWidth);
                     g.save();
                     g.setLineDash([dash, dash]);
                     strokePath(path);
@@ -1253,11 +1259,11 @@
     }
 
     function GraphicsCanvas(canvas, callbacks) {
-        var ctx = canvas.getContext('2d');
-        var mousePos = { x: 0, y: 0 };
-        var twopi = 2 * 3.1416;
+        const ctx = canvas.getContext('2d');
+        const twopi = 2 * 3.1416;
+        let mousePos = { x: 0, y: 0 };
         function mouseEventToPos(event) {
-            var e = canvas;
+            const e = canvas;
             return {
                 x: event.clientX - e.getBoundingClientRect().left - e.clientLeft + e.scrollLeft,
                 y: event.clientY - e.getBoundingClientRect().top - e.clientTop + e.scrollTop,
@@ -1278,7 +1284,7 @@
                     callbacks.mousemove(mouseEventToPos(event));
             });
         }
-        var chainable = {
+        const chainable = {
             stroke: function () {
                 ctx.stroke();
                 return chainable;
@@ -1298,7 +1304,7 @@
             offset = offset || { x: 0, y: 0 };
             ctx.beginPath();
             ctx.moveTo(offset.x + s * path[0].x, offset.y + s * path[0].y);
-            for (var i = 1, len = path.length; i < len; i++)
+            for (let i = 1, len = path.length; i < len; i++)
                 ctx.lineTo(offset.x + s * path[i].x, offset.y + s * path[i].y);
             return chainable;
         }
@@ -1445,9 +1451,9 @@
             .replace(/"/g, '&quot;')
             .replace(/'/g, '&apos;');
     }
-    var charWidths = { "0": 10, "1": 10, "2": 10, "3": 10, "4": 10, "5": 10, "6": 10, "7": 10, "8": 10, "9": 10, " ": 5, "!": 5, "\"": 6, "#": 10, "$": 10, "%": 15, "&": 11, "'": 4, "(": 6, ")": 6, "*": 7, "+": 10, ",": 5, "-": 6, ".": 5, "/": 5, ":": 5, ";": 5, "<": 10, "=": 10, ">": 10, "?": 10, "@": 17, "A": 11, "B": 11, "C": 12, "D": 12, "E": 11, "F": 10, "G": 13, "H": 12, "I": 5, "J": 9, "K": 11, "L": 10, "M": 14, "N": 12, "O": 13, "P": 11, "Q": 13, "R": 12, "S": 11, "T": 10, "U": 12, "V": 11, "W": 16, "X": 11, "Y": 11, "Z": 10, "[": 5, "\\": 5, "]": 5, "^": 8, "_": 10, "`": 6, "a": 10, "b": 10, "c": 9, "d": 10, "e": 10, "f": 5, "g": 10, "h": 10, "i": 4, "j": 4, "k": 9, "l": 4, "m": 14, "n": 10, "o": 10, "p": 10, "q": 10, "r": 6, "s": 9, "t": 5, "u": 10, "v": 9, "w": 12, "x": 9, "y": 9, "z": 9, "{": 6, "|": 5, "}": 6, "~": 10 };
+    const charWidths = { "0": 10, "1": 10, "2": 10, "3": 10, "4": 10, "5": 10, "6": 10, "7": 10, "8": 10, "9": 10, " ": 5, "!": 5, "\"": 6, "#": 10, "$": 10, "%": 15, "&": 11, "'": 4, "(": 6, ")": 6, "*": 7, "+": 10, ",": 5, "-": 6, ".": 5, "/": 5, ":": 5, ";": 5, "<": 10, "=": 10, ">": 10, "?": 10, "@": 17, "A": 11, "B": 11, "C": 12, "D": 12, "E": 11, "F": 10, "G": 13, "H": 12, "I": 5, "J": 9, "K": 11, "L": 10, "M": 14, "N": 12, "O": 13, "P": 11, "Q": 13, "R": 12, "S": 11, "T": 10, "U": 12, "V": 11, "W": 16, "X": 11, "Y": 11, "Z": 10, "[": 5, "\\": 5, "]": 5, "^": 8, "_": 10, "`": 6, "a": 10, "b": 10, "c": 9, "d": 10, "e": 10, "f": 5, "g": 10, "h": 10, "i": 4, "j": 4, "k": 9, "l": 4, "m": 14, "n": 10, "o": 10, "p": 10, "q": 10, "r": 6, "s": 9, "t": 5, "u": 10, "v": 9, "w": 12, "x": 9, "y": 9, "z": 9, "{": 6, "|": 5, "}": 6, "~": 10 };
     function GraphicsSvg(document) {
-        var initialState = {
+        const initialState = {
             stroke: undefined,
             'stroke-width': 1,
             'stroke-dasharray': undefined,
@@ -1457,10 +1463,10 @@
             font: '12pt Helvetica, Arial, sans-serif',
             'font-size': '12pt',
         };
-        var measurementCanvas = document
+        const measurementCanvas = document
             ? document.createElement('canvas')
             : null;
-        var ctx = measurementCanvas ? measurementCanvas.getContext('2d') : null;
+        const ctx = measurementCanvas ? measurementCanvas.getContext('2d') : null;
         class Element {
             constructor(name, attr, parent, text) {
                 this.elideEmpty = false;
@@ -1514,25 +1520,25 @@
         }
         const syntheticRoot = new GroupElement({});
         syntheticRoot.attr = initialState;
-        var root = new Element('svg', {
+        const root = new Element('svg', {
             version: '1.1',
             baseProfile: 'full',
             xmlns: 'http://www.w3.org/2000/svg',
             'xmlns:xlink': 'http://www.w3.org/1999/xlink',
             'xmlns:ev': 'http://www.w3.org/2001/xml-events',
         }, undefined);
-        var current = new GroupElement(root);
+        let current = new GroupElement(root);
         current.attr = initialState;
         root.children.push(current);
-        var inPathBuilderMode = false;
+        let inPathBuilderMode = false;
         function tracePath(path, offset = { x: 0, y: 0 }, s = 1) {
-            var d = path
+            const d = path
                 .map((e, i) => (i ? 'L' : 'M') + (offset.x + s * e.x).toFixed(1) + ' ' + (offset.y + s * e.y).toFixed(1))
                 .join(' ');
             return el('path', { d: d });
         }
         function el(type, attr, text) {
-            var element = new Element(type, attr, current, text);
+            const element = new Element(type, attr, current, text);
             current.children.push(element);
             return element;
         }
@@ -1549,7 +1555,7 @@
             },
             ellipse: function (center, w, h, start = 0, stop = 0) {
                 if (start || stop) {
-                    var path = range([start, stop], 64).map((a) => add(center, { x: (Math.cos(a) * w) / 2, y: (Math.sin(a) * h) / 2 }));
+                    const path = range([start, stop], 64).map((a) => add(center, { x: (Math.cos(a) * w) / 2, y: (Math.sin(a) * h) / 2 }));
                     return tracePath(path);
                 }
                 else {
@@ -1567,7 +1573,7 @@
             },
             path: tracePath,
             circuit: function (path, offset, s) {
-                var element = tracePath(path, offset, s);
+                const element = tracePath(path, offset, s);
                 element.attr.d += ' Z';
                 return element;
             },
@@ -1631,7 +1637,7 @@
                     return {
                         width: sum(s, function (c) {
                             const size = getDefined(current, (e) => e.attr['font-size']) ?? 12;
-                            var scale = parseInt(size.toString()) / 12;
+                            const scale = parseInt(size.toString()) / 12;
                             return (charWidths[c] ?? 16) * scale;
                         }),
                     };
@@ -1648,7 +1654,7 @@
                     current = current.parent;
             },
             save: function () {
-                var node = new GroupElement(current);
+                const node = new GroupElement(current);
                 current.children.push(node);
                 current = node;
             },
@@ -1713,10 +1719,10 @@
         };
     }
     function parseAndRender(code, graphics, canvas, scale) {
-        var parsedDiagram = parse(code);
-        var config = parsedDiagram.config;
-        var measurer = createMeasurer(config, graphics);
-        var graphLayout = layout(measurer, config, parsedDiagram.root);
+        const parsedDiagram = parse(code);
+        const config = parsedDiagram.config;
+        const measurer = createMeasurer(config, graphics);
+        const graphLayout = layout(measurer, config, parsedDiagram.root);
         if (canvas) {
             fitCanvasSize(canvas, graphLayout, config.zoom * scale);
         }
@@ -1728,8 +1734,8 @@
         return parseAndRender(code, GraphicsCanvas(canvas), canvas, scale || 1);
     }
     function renderSvg(code, document) {
-        var skCanvas = GraphicsSvg(document);
-        var { config, layout } = parseAndRender(code, skCanvas, null, 1);
+        const skCanvas = GraphicsSvg(document);
+        const { config, layout } = parseAndRender(code, skCanvas, null, 1);
         return skCanvas.serialize({
             width: layout.width,
             height: layout.height,
@@ -1752,14 +1758,14 @@
                 return '';
             }
         }
-        var imports = [];
+        const imports = [];
         source.replace(/#import: *(.*)/g, (a, file) => {
-            var promise = lenientLoadFile(file).then((contents) => processAsyncImports(contents, loadFile, maxImportDepth - 1));
+            const promise = lenientLoadFile(file).then((contents) => processAsyncImports(contents, loadFile, maxImportDepth - 1));
             imports.push({ file, promise });
             return '';
         });
-        var imported = {};
-        for (var imp of imports) {
+        const imported = {};
+        for (const imp of imports) {
             imported[imp.file] = await imp.promise;
         }
         return source.replace(/#import: *(.*)/g, (a, file) => imported[file]);
@@ -1779,17 +1785,17 @@
         return source.replace(/#import: *(.*)/g, (a, file) => processImports(lenientLoadFile(file), loadFile, maxImportDepth - 1));
     }
     function compileFile(filepath, maxImportDepth) {
-        var fs = require('fs');
-        var path = require('path');
-        var directory = path.dirname(filepath);
-        var rootFileName = filepath.substr(directory.length);
+        const fs = require('fs');
+        const path = require('path');
+        const directory = path.dirname(filepath);
+        const rootFileName = filepath.substr(directory.length);
         function loadFile(filename) {
             return fs.readFileSync(path.join(directory, filename), { encoding: 'utf8' });
         }
         return processImports(loadFile(rootFileName), loadFile, maxImportDepth);
     }
 
-    var version = '1.6.2';
+    const version = '1.6.2';
 
     exports.ImportDepthError = ImportDepthError;
     exports.ParseError = ParseError;

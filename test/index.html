@@ -385,10 +385,10 @@
 
   <script>
     function mountNomnoml() {
-      for (var el of document.querySelectorAll('[nomnoml=canvas]>script[type="text/vnd.nomnoml"]'))
+      for (const el of document.querySelectorAll('[nomnoml=canvas]>script[type="text/vnd.nomnoml"]'))
         mountCanvas(el.parentElement, el.innerText)
 
-      for (var el of document.querySelectorAll('[nomnoml=svg]>script[type="text/vnd.nomnoml"]'))
+      for (const el of document.querySelectorAll('[nomnoml=svg]>script[type="text/vnd.nomnoml"]'))
         mountSvg(el.parentElement, el.innerText)
 
       function mountCanvas(host, source){

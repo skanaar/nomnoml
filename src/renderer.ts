@@ -7,7 +7,7 @@ import { add, Vec } from './vector'
 import { buildStyle, styles, visualizers } from './visuals'
 
 export function render(graphics: Graphics, config: Config, compartment: LayoutedPart) {
-  var g = graphics
+  const g = graphics
 
   function renderCompartment(
     compartment: LayoutedPart,
@@ -19,15 +19,15 @@ export function render(graphics: Graphics, config: Config, compartment: Layouted
     g.translate(compartment.offset!.x, compartment.offset!.y)
     g.fillStyle(color || config.stroke)
     for (let i = 0; i < compartment.lines.length; i++) {
-      var text = compartment.lines[i]
+      const text = compartment.lines[i]
       g.textAlign(style.center ? 'center' : 'left')
-      var x = style.center ? compartment.width! / 2 - config.padding : 0
-      var y = (0.5 + (i + 0.5) * config.leading) * config.fontSize
+      const x = style.center ? compartment.width! / 2 - config.padding : 0
+      let y = (0.5 + (i + 0.5) * config.leading) * config.fontSize
       if (text) {
         g.fillText(text, x, y)
       }
       if (style.underline) {
-        var w = g.measureText(text).width
+        const w = g.measureText(text).width
         y += Math.round(config.fontSize * 0.2) + 0.5
         if (style.center) {
           g.path([
@@ -52,9 +52,9 @@ export function render(graphics: Graphics, config: Config, compartment: Layouted
   }
 
   function renderNode(node: LayoutedNode, level: number) {
-    var x = node.x - node.width / 2
-    var y = node.y - node.height / 2
-    var style = config.styles[node.type] || styles.class
+    const x = node.x - node.width / 2
+    const y = node.y - node.height / 2
+    const style = config.styles[node.type] || styles.class
 
     g.save()
     g.setData('name', node.id)
@@ -63,18 +63,18 @@ export function render(graphics: Graphics, config: Config, compartment: Layouted
     g.fillStyle(style.fill || config.fill[level] || last(config.fill))
     g.strokeStyle(style.stroke || config.stroke)
     if (style.dashed) {
-      var dash = Math.max(4, 2 * config.lineWidth)
+      const dash = Math.max(4, 2 * config.lineWidth)
       g.setLineDash([dash, dash])
     }
-    var drawNode = visualizers[style.visual] || visualizers.class
+    const drawNode = visualizers[style.visual] || visualizers.class
     drawNode(node, x, y, config, g)
-    for (var divider of node.dividers!) {
+    for (const divider of node.dividers!) {
       g.path(divider.map((e) => add(e, { x, y }))).stroke()
     }
     g.restore()
 
     for (let part of node.parts) {
-      var textStyle = part === node.parts[0] ? style.title : style.body
+      const textStyle = part === node.parts[0] ? style.title : style.body
       g.save()
       g.translate(x + part.x!, y + part.y!)
       g.setFont(
@@ -92,11 +92,11 @@ export function render(graphics: Graphics, config: Config, compartment: Layouted
 
   function strokePath(p: Vec[]) {
     if (config.edges === 'rounded') {
-      var radius = config.spacing * config.bendSize
+      const radius = config.spacing * config.bendSize
       g.beginPath()
       g.moveTo(p[0].x, p[0].y)
 
-      for (var i = 1; i < p.length - 1; i++) {
+      for (let i = 1; i < p.length - 1; i++) {
         g.arcTo(p[i].x, p[i].y, p[i + 1].x, p[i + 1].y, radius)
       }
       g.lineTo(last(p).x, last(p).y)
@@ -106,15 +106,15 @@ export function render(graphics: Graphics, config: Config, compartment: Layouted
 
   function renderLabel(label: RelationLabel) {
     if (!label || !label.text) return
-    var fontSize = config.fontSize
-    var lines = label.text.split('`')
+    const fontSize = config.fontSize
+    const lines = label.text.split('`')
     for (let i = 0; i < lines.length; i++) {
       g.fillText(lines[i], label.x!, label.y! + fontSize * (i + 1))
     }
   }
 
   function renderRelation(r: LayoutedAssoc) {
-    var path = getPath(config, r)
+    const path = getPath(config, r)
 
     g.fillStyle(config.stroke)
     g.setFont(config.font, config.fontSize, 'normal', 'normal')
@@ -124,7 +124,7 @@ export function render(graphics: Graphics, config: Config, compartment: Layouted
 
     if (r.type !== '-/-') {
       if (hasSubstring(r.type, '--')) {
-        var dash = Math.max(4, 2 * config.lineWidth)
+        const dash = Math.max(4, 2 * config.lineWidth)
         g.save()
         g.setLineDash([dash, dash])
         strokePath(path)

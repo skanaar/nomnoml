@@ -41,10 +41,10 @@ function parseAndRender(
   canvas: HTMLCanvasElement | null,
   scale: number
 ) {
-  var parsedDiagram = parse(code)
-  var config = parsedDiagram.config
-  var measurer = createMeasurer(config, graphics)
-  var graphLayout = layout(measurer, config, parsedDiagram.root)
+  const parsedDiagram = parse(code)
+  const config = parsedDiagram.config
+  const measurer = createMeasurer(config, graphics)
+  const graphLayout = layout(measurer, config, parsedDiagram.root)
   if (canvas) {
     fitCanvasSize(canvas, graphLayout, config.zoom * scale)
   }
@@ -58,8 +58,8 @@ export function draw(canvas: HTMLCanvasElement, code: string, scale?: number): {
 }
 
 export function renderSvg(code: string, document?: HTMLDocument): string {
-  var skCanvas = GraphicsSvg(document)
-  var { config, layout } = parseAndRender(code, skCanvas, null, 1)
+  const skCanvas = GraphicsSvg(document)
+  const { config, layout } = parseAndRender(code, skCanvas, null, 1)
   return skCanvas.serialize(
     {
       width: layout.width!,
@@ -95,18 +95,18 @@ export async function processAsyncImports(
     }
   }
 
-  var imports: { file: string; promise: Promise<string> }[] = []
+  const imports: { file: string; promise: Promise<string> }[] = []
 
   source.replace(/#import: *(.*)/g, (a: unknown, file: string) => {
-    var promise = lenientLoadFile(file).then((contents) =>
+    const promise = lenientLoadFile(file).then((contents) =>
       processAsyncImports(contents, loadFile, maxImportDepth - 1)
     )
     imports.push({ file, promise })
     return ''
   })
 
-  var imported: Record<string, string> = {}
-  for (var imp of imports) {
+  const imported: Record<string, string> = {}
+  for (const imp of imports) {
     imported[imp.file] = await imp.promise
   }
 
@@ -138,11 +138,11 @@ export function processImports(
 }
 
 export function compileFile(filepath: string, maxImportDepth?: number): string {
-  var fs = require('fs')
-  var path = require('path')
+  const fs = require('fs')
+  const path = require('path')
 
-  var directory = path.dirname(filepath)
-  var rootFileName = filepath.substr(directory.length)
+  const directory = path.dirname(filepath)
+  const rootFileName = filepath.substr(directory.length)
 
   function loadFile(filename: string): string {
     return fs.readFileSync(path.join(directory, filename), { encoding: 'utf8' })

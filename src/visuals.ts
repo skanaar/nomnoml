@@ -30,7 +30,7 @@ export function buildStyle(
 }
 
 // prettier-ignore
-export var styles: { [key: string]: Style } = {
+export const styles: { [key: string]: Style } = {
   abstract:    buildStyle({ visual:'class' }, { center:true, italic:true }),
   actor:       buildStyle({ visual:'actor' }, { center:true }, { center: true }),
   choice:      buildStyle({ visual:'rhomb' }, { center:true }, { center: true }),
@@ -62,8 +62,8 @@ function offsetBox(config: Config, clas: LayoutedNode, offset: Vec) {
   clas.width = Math.max(...clas.parts.map((e) => e.width ?? 0))
   clas.height = sum(clas.parts, (e) => e.height ?? 0 ?? 0)
   clas.dividers = []
-  var y = 0
-  for (var comp of clas.parts) {
+  let y = 0
+  for (const comp of clas.parts) {
     comp.x = 0 + offset.x
     comp.y = y + offset.y
     comp.width = clas.width
@@ -90,8 +90,8 @@ function labelledIcon(config: Config, clas: LayoutedNode) {
   clas.width = config.fontSize * 1.5
   clas.height = config.fontSize * 1.5
   clas.dividers = []
-  var y = config.direction == 'LR' ? clas.height - config.padding : -clas.height / 2
-  for (var comp of clas.parts) {
+  let y = config.direction == 'LR' ? clas.height - config.padding : -clas.height / 2
+  for (const comp of clas.parts) {
     if (config.direction == 'LR') {
       comp.x = clas.width / 2 - (comp.width ?? 0) / 2
       comp.y = y
@@ -103,13 +103,13 @@ function labelledIcon(config: Config, clas: LayoutedNode) {
   }
 }
 
-export var layouters: { [key in Visual]: NodeLayouter } = {
+export const layouters: { [key in Visual]: NodeLayouter } = {
   actor: function (config: Config, clas: LayoutedNode) {
     clas.width = Math.max(config.padding * 2, ...clas.parts.map((e) => e.width ?? 0))
     clas.height = config.padding * 3 + sum(clas.parts, (e) => e.height ?? 0)
     clas.dividers = []
-    var y = config.padding * 3
-    for (var comp of clas.parts) {
+    let y = config.padding * 3
+    for (const comp of clas.parts) {
       comp.x = 0
       comp.y = y
       comp.width = clas.width
@@ -126,14 +126,14 @@ export var layouters: { [key in Visual]: NodeLayouter } = {
     clas.width = Math.max(...clas.parts.map((e) => e.width ?? 0))
     clas.height = sum(clas.parts, (e) => e.height ?? 0) + config.padding * 2
     clas.dividers = []
-    var y = config.padding * 1.5
-    for (var comp of clas.parts) {
+    let y = config.padding * 1.5
+    for (const comp of clas.parts) {
       comp.x = 0
       comp.y = y
       comp.width = clas.width
       y += comp.height ?? 0
       if (comp != last(clas.parts)) {
-        var path = range([0, Math.PI], 16).map((a) => ({
+        const path = range([0, Math.PI], 16).map((a) => ({
           x: clas.width * 0.5 * (1 - Math.cos(a)),
           y: y + config.padding * (0.75 * Math.sin(a) - 0.5),
         }))
@@ -142,15 +142,15 @@ export var layouters: { [key in Visual]: NodeLayouter } = {
     }
   },
   ellipse: function (config: Config, clas: LayoutedNode) {
-    var width = Math.max(...clas.parts.map((e) => e.width ?? 0))
-    var height = sum(clas.parts, (e) => e.height ?? 0)
+    const width = Math.max(...clas.parts.map((e) => e.width ?? 0))
+    const height = sum(clas.parts, (e) => e.height ?? 0)
     clas.width = width * 1.25
     clas.height = height * 1.25
     clas.dividers = []
-    var y = height * 0.125
-    var sq = (x: number) => x * x
-    var rimPos = (y: number) => Math.sqrt(sq(0.5) - sq(y / clas.height - 0.5)) * clas.width
-    for (var comp of clas.parts) {
+    let y = height * 0.125
+    const sq = (x: number) => x * x
+    const rimPos = (y: number) => Math.sqrt(sq(0.5) - sq(y / clas.height - 0.5)) * clas.width
+    for (const comp of clas.parts) {
       comp.x = width * 0.125
       comp.y = y
       comp.width = width
@@ -164,8 +164,8 @@ export var layouters: { [key in Visual]: NodeLayouter } = {
   },
   end: icon,
   frame: function (config: Config, clas: LayoutedNode) {
-    var w = clas.parts[0].width ?? 0
-    var h = clas.parts[0].height ?? 0
+    const w = clas.parts[0].width ?? 0
+    const h = clas.parts[0].height ?? 0
     clas.parts[0].width = h / 2 + (clas.parts[0].width ?? 0)
     box(config, clas)
     if (clas.dividers?.length) clas.dividers.shift()
@@ -192,18 +192,18 @@ export var layouters: { [key in Visual]: NodeLayouter } = {
   },
   receiver: box,
   rhomb: function (config: Config, clas: LayoutedNode) {
-    var width = Math.max(...clas.parts.map((e) => e.width ?? 0))
-    var height = sum(clas.parts, (e) => e.height ?? 0)
+    const width = Math.max(...clas.parts.map((e) => e.width ?? 0))
+    const height = sum(clas.parts, (e) => e.height ?? 0)
     clas.width = width * 1.5
     clas.height = height * 1.5
     clas.dividers = []
-    var y = height * 0.25
-    for (var comp of clas.parts) {
+    let y = height * 0.25
+    for (const comp of clas.parts) {
       comp.x = width * 0.25
       comp.y = y
       comp.width = width
       y += comp.height ?? 0
-      var slope = clas.width / clas.height
+      const slope = clas.width / clas.height
       if (comp != last(clas.parts))
         clas.dividers.push([
           {
@@ -237,19 +237,19 @@ export var layouters: { [key in Visual]: NodeLayouter } = {
       box(config, clas)
       return
     }
-    var gridcells = clas.parts.slice(1)
-    var rows: LayoutedPart[][] = [[]]
+    const gridcells = clas.parts.slice(1)
+    const rows: LayoutedPart[][] = [[]]
     function isRowBreak(e: LayoutedPart): boolean {
       return !e.lines.length && !e.nodes.length && !e.assocs.length
     }
     function isRowFull(e: LayoutedPart): boolean {
-      var current = last(rows)
+      const current = last(rows)
       return rows[0] != current && rows[0].length == current.length
     }
     function isEnd(e: LayoutedPart): boolean {
-      return comp == last(gridcells)
+      return e == last(gridcells)
     }
-    for (var comp of gridcells) {
+    for (const comp of gridcells) {
       if (!isEnd(comp) && isRowBreak(comp) && last(rows).length) {
         rows.push([])
       } else if (isRowFull(comp)) {
@@ -258,15 +258,15 @@ export var layouters: { [key in Visual]: NodeLayouter } = {
         last(rows).push(comp)
       }
     }
-    var header = clas.parts[0]
-    var cellW = Math.max(
+    const header = clas.parts[0]
+    const cellW = Math.max(
       (header.width ?? 0) / rows[0].length,
       ...gridcells.map((e) => e.width ?? 0)
     )
-    var cellH = Math.max(...gridcells.map((e) => e.height ?? 0))
+    const cellH = Math.max(...gridcells.map((e) => e.height ?? 0))
     clas.width = cellW * rows[0].length
     clas.height = (header.height ?? 0) + cellH * rows.length
-    var hh = header.height ?? 0
+    const hh = header.height ?? 0
     clas.dividers = [
       [
         { x: 0, y: header.height ?? 0 },
@@ -284,9 +284,9 @@ export var layouters: { [key in Visual]: NodeLayouter } = {
     header.x = 0
     header.y = 0
     header.width = clas.width
-    for (var i = 0; i < rows.length; i++) {
-      for (var j = 0; j < rows[i].length; j++) {
-        var cell = rows[i][j]
+    for (let i = 0; i < rows.length; i++) {
+      for (let j = 0; j < rows[i].length; j++) {
+        const cell = rows[i][j]
         cell.x = j * cellW
         cell.y = hh + i * cellH
         cell.width = cellW
@@ -297,11 +297,11 @@ export var layouters: { [key in Visual]: NodeLayouter } = {
   transceiver: box,
 }
 
-export var visualizers: { [key in Visual]: Visualizer } = {
+export const visualizers: { [key in Visual]: Visualizer } = {
   actor: function (node, x, y, config, g) {
-    var a = config.padding / 2
-    var yp = y + a * 4
-    var faceCenter = { x: node.x, y: yp - a }
+    const a = config.padding / 2
+    const yp = y + a * 4
+    const faceCenter = { x: node.x, y: yp - a }
     g.circle(faceCenter, a).fillAndStroke()
     g.path([
       { x: node.x, y: yp },
@@ -321,9 +321,9 @@ export var visualizers: { [key in Visual]: Visualizer } = {
     g.rect(x, y, node.width, node.height).fillAndStroke()
   },
   database: function (node, x, y, config, g) {
-    var pad = config.padding
-    var cy = y - pad / 2
-    var pi = 3.1416
+    const pad = config.padding
+    const cy = y - pad / 2
+    const pi = 3.1416
     g.rect(x, y + pad, node.width, node.height - pad * 2).fill()
     g.path([
       { x: x, y: cy + pad * 1.5 },
@@ -382,9 +382,9 @@ export var visualizers: { [key in Visual]: Visualizer } = {
     ]).stroke()
   },
   package: function (node, x, y, config, g) {
-    var headHeight = node.parts[0].height ?? 0
+    const headHeight = node.parts[0].height ?? 0
     g.rect(x, y + headHeight, node.width, node.height - headHeight).fillAndStroke()
-    var w = g.measureText(node.parts[0].lines[0]).width + 2 * config.padding
+    const w = g.measureText(node.parts[0].lines[0]).width + 2 * config.padding
     g.circuit([
       { x: x, y: y + headHeight },
       { x: x, y: y },
@@ -393,8 +393,8 @@ export var visualizers: { [key in Visual]: Visualizer } = {
     ]).fillAndStroke()
   },
   pipe: function (node, x, y, config, g) {
-    var pad = config.padding
-    var pi = 3.1416
+    const pad = config.padding
+    const pi = 3.1416
     g.rect(x, y, node.width, node.height).fill()
     g.path([
       { x: x, y: y },
@@ -425,7 +425,7 @@ export var visualizers: { [key in Visual]: Visualizer } = {
     ]).fillAndStroke()
   },
   roundrect: function (node, x, y, config, g) {
-    var r = Math.min(config.padding * 2 * config.leading, node.height / 2)
+    const r = Math.min(config.padding * 2 * config.leading, node.height / 2)
     g.roundRect(x, y, node.width, node.height, r).fillAndStroke()
   },
   sender: function (node, x, y, config, g) {
@@ -438,8 +438,8 @@ export var visualizers: { [key in Visual]: Visualizer } = {
     ]).fillAndStroke()
   },
   socket: function (node, x, y, config, g) {
-    var from = config.direction === 'TB' ? Math.PI : Math.PI / 2
-    var to = config.direction === 'TB' ? 2 * Math.PI : -Math.PI / 2
+    const from = config.direction === 'TB' ? Math.PI : Math.PI / 2
+    const to = config.direction === 'TB' ? 2 * Math.PI : -Math.PI / 2
     g.ellipse({ x: node.x, y: node.y }, node.width, node.height, from, to).stroke()
   },
   start: function (node, x, y, config, g) {
