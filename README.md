@@ -150,7 +150,7 @@ Two distinct nodes can have the same display name with the id attribute.
     #fillArrows: false
     #font: Calibri
     #fontSize: 12
-    #leading: 1.25
+    #leading: 1.35
     #lineWidth: 3
     #padding: 8
     #spacing: 40

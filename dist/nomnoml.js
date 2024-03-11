@@ -990,7 +990,7 @@
                 fillArrows: d.fillArrows === 'true',
                 font: d.font || 'Helvetica',
                 fontSize: +d.fontSize || 12,
-                leading: +d.leading || 1.25,
+                leading: +d.leading || 1.35,
                 lineWidth: +d.lineWidth || 3,
                 padding: +d.padding || 8,
                 spacing: +d.spacing || 40,
