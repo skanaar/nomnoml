@@ -16,6 +16,18 @@ interface SvgAttr {
   'font-weight'?: 'bold' | 'normal'
   'font-family'?: string
   'font-style'?: 'italic' | 'normal'
+  d?: string
+}
+
+type SvgRootAttr = SvgAttr & {
+  version?: string
+  baseProfile?: string
+  width?: number
+  height?: number
+  viewBox?: string
+  xmlns?: string
+  'xmlns:xlink'?: string
+  'xmlns:ev'?: string
 }
 
 interface ISvgGraphics extends Graphics {
@@ -61,13 +73,8 @@ export function GraphicsSvg(document?: HTMLDocument): ISvgGraphics {
   const ctx = measurementCanvas ? measurementCanvas.getContext('2d') : null
 
   type SvgElement = 'svg' | 'g' | 'path' | 'ellipse' | 'circle' | 'rect' | 'text' | 'desc' | 'title'
-  class Element {
-    constructor(
-      name: SvgElement,
-      attr: Record<string, string | number>,
-      parent: GroupElement | undefined,
-      text?: string
-    ) {
+  class Element<TAttr extends SvgAttr = SvgAttr> {
+    constructor(name: SvgElement, attr: TAttr, parent: GroupElement | undefined, text?: string) {
       this.name = name
       this.attr = attr
       this.parent = parent
@@ -75,9 +82,9 @@ export function GraphicsSvg(document?: HTMLDocument): ISvgGraphics {
       this.text = text || undefined
     }
     name: string
-    attr: any
+    attr: TAttr
     parent: GroupElement | undefined
-    children: Element[]
+    children: Element<SvgAttr>[]
     text: string | undefined
     elideEmpty = false
     stroke() {
@@ -122,7 +129,6 @@ export function GraphicsSvg(document?: HTMLDocument): ISvgGraphics {
       super('g', {}, parent)
     }
     elideEmpty = true
-    attr: SvgAttr
     data: Record<string, string>
     group() {
       return this
@@ -132,7 +138,7 @@ export function GraphicsSvg(document?: HTMLDocument): ISvgGraphics {
   const syntheticRoot = new GroupElement({} as GroupElement)
   syntheticRoot.attr = initialState
 
-  const root: Element = new Element(
+  const root: Element<SvgRootAttr> = new Element<SvgRootAttr>(
     'svg',
     {
       version: '1.1',
@@ -333,7 +339,7 @@ export function GraphicsSvg(document?: HTMLDocument): ISvgGraphics {
         baseProfile: 'full',
         width: size.width,
         height: size.height,
-        viewbox: '0 0 ' + size.width + ' ' + size.height,
+        viewBox: '0 0 ' + size.width + ' ' + size.height,
         xmlns: 'http://www.w3.org/2000/svg',
         'xmlns:xlink': 'http://www.w3.org/1999/xlink',
         'xmlns:ev': 'http://www.w3.org/2001/xml-events',

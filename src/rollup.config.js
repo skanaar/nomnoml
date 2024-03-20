@@ -22,6 +22,7 @@ export default {
       strictNullChecks: true,
       moduleResolution: 'node',
       sourceMap: true,
+      include: ['src/*.ts'],
     }),
     nodeResolve(),
     commonjs({ include: ['dist/**'] }),

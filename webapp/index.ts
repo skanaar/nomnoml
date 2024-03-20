@@ -1,23 +1,23 @@
-import * as ReactDOM from "react-dom"
-import { App } from "./App"
-import { CanvasTools } from "./canvas-tools.comp"
-import { ExportMenu } from "./export-menu.comp"
-import { FileMenu } from "./file-menu.comp"
-import { Menu } from "./Menu"
-import { el } from "./react-util"
-import { unescapeHtml } from "./util"
+import { createElement as el } from 'react'
+import * as ReactDOM from 'react-dom'
+import { App } from './App'
+import { CanvasTools } from './CanvasTools'
+import { ExportMenu } from './ExportMenu'
+import { FileMenu } from './FileMenu'
+import { Menu } from './Menu'
+import { unescapeHtml } from './util'
 // @ts-ignore
-import * as nomnoml from "../dist/nomnoml.js"
+import * as nomnoml from '../dist/nomnoml.js'
 
 // @ts-ignore
-export * as nomnoml from "../dist/nomnoml.js"
-export { DailyTip, NomnomlGraph } from './daily-tip.comp'
-export { App } from "./App"
+export * as nomnoml from '../dist/nomnoml.js'
+export { DailyTip, NomnomlGraph } from './DailyTip'
+export { App } from './App'
 
-export var app: App;
+export var app: App
 
 // @ts-ignore
-export { version } from "../package.json";
+export { version } from '../package.json'
 
 export function bootstrap(CodeMirror: CodeMirror) {
   app = new App(CodeMirror)
@@ -30,10 +30,10 @@ export function bootstrap(CodeMirror: CodeMirror) {
     ReactDOM.render(el(Menu, { app }), elem('[menu]'))
     ReactDOM.render(el(CanvasTools, { app }), elem('[canvas-tools]'))
   }
-  
+
   function renderFileMenu() {
     ReactDOM.render(el(FileMenu, { app, files: [], isLoaded: false }), elem('[file-menu]'))
-    app.filesystem.storage.files().then(files => {
+    app.filesystem.storage.files().then((files) => {
       ReactDOM.render(el(FileMenu, { app, files, isLoaded: true }), elem('[file-menu]'))
     })
   }
@@ -45,13 +45,13 @@ export function bootstrap(CodeMirror: CodeMirror) {
   function renderPreviews() {
     var files: Record<string, string> = {}
     var includes = document.querySelectorAll('[publish-as-file]')
-    for(var i=0; i<includes.length; i++) {
+    for (var i = 0; i < includes.length; i++) {
       var name = includes[i].attributes.getNamedItem('publish-as-file')?.value!
       files[name] = unescapeHtml(includes[i].innerHTML)
     }
 
     var sources = document.querySelectorAll('[append-nomnoml-preview]')
-    for(var i=0; i<sources.length; i++) {
+    for (var i = 0; i < sources.length; i++) {
       try {
         var srcEl = sources[i]
         var src = nomnoml.processImports(unescapeHtml(srcEl.innerHTML), (key: string) => files[key])
@@ -59,7 +59,7 @@ export function bootstrap(CodeMirror: CodeMirror) {
         var div = document.createElement('div')
         div.innerHTML = svg
         srcEl.append(div)
-      } catch(e) {}
+      } catch (e) {}
     }
   }
 

@@ -1691,7 +1691,7 @@
                     baseProfile: 'full',
                     width: size.width,
                     height: size.height,
-                    viewbox: '0 0 ' + size.width + ' ' + size.height,
+                    viewBox: '0 0 ' + size.width + ' ' + size.height,
                     xmlns: 'http://www.w3.org/2000/svg',
                     'xmlns:xlink': 'http://www.w3.org/1999/xlink',
                     'xmlns:ev': 'http://www.w3.org/2001/xml-events',

@@ -17,7 +17,6 @@ img, svg {
     border: 0;
 }
 
-
 .wrap {
 	height: 100%;
 }
@@ -119,7 +118,7 @@ a:hover img {
 	border-radius: 5px;
 	user-select: none;
 }
-.canvas-tools {
+canvas-tools {
 	display: block;
 	position: absolute;
 	top: 60px;
@@ -129,7 +128,9 @@ a:hover img {
 	transition: opacity 1s;
 	user-select: none;
 }
-.canvas-tools .canvas-button {
+canvas-tools a {
+	display: block;
+	cursor: pointer;
 	box-sizing: border-box;
 	width: 34px;
 	height: 34px;
@@ -138,24 +139,19 @@ a:hover img {
 	padding: 5px;
 	margin-bottom: 5px;
 }
-.canvas-tools .canvas-button a {
-	display: block;
-	cursor: pointer;
-}
-.canvas-mode .canvas-tools {
+.canvas-mode canvas-tools {
 	opacity: 1;
 	transition: opacity 0.3s;
 }
-.tools img, .tools svg {
-	width: 24px;
-	height: 24px;
-	margin-bottom: 5px;
+.tools i.icon {
+	display: inline-block;
 }
 .tools>a {
 	margin-left: 5px;
 }
 .tools>.logo {
 	font-size: 150%;
+	margin-right: 5px;
 }
 .tools>#tooltip {
 	font-size: 90%;
