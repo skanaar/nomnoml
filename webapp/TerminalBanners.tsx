@@ -12,15 +12,15 @@ export function TerminalBanners(props: { app: App }) {
     return () => props.app.signals.off('compile-error', onError)
   })
 
-  if (!error) return <div className="terminal-banners" />
+  if (!error) return <terminal-banners />
 
   return (
-    <div className="terminal-banners">
-      <span className="banner card card-warning visible">
+    <terminal-banners>
+      <banner-card data-warning>
         {error.title}
         <br />
         <code>{error.details}</code>
-      </span>
-    </div>
+      </banner-card>
+    </terminal-banners>
   )
 }

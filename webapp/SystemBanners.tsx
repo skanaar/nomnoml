@@ -8,8 +8,8 @@ export function SystemBanners(props: { app: App }) {
 
   if (isUrlStorage) {
     return (
-      <div className="system-banners">
-        <span className="banner card visible">
+      <system-banners>
+        <banner-card>
           View mode, changes are not saved.
           <a
             onClick={prevent(() => props.app.saveAs())}
@@ -21,22 +21,22 @@ export function SystemBanners(props: { app: App }) {
           <a href="#" title="Discard this diagram">
             close
           </a>
-        </span>
-      </div>
+        </banner-card>
+      </system-banners>
     )
   }
   if (isLocalFileStorage) {
     return (
-      <div className="system-banners">
-        <span className="banner card visible">
+      <system-banners>
+        <banner-card>
           Editing "{props.app.filesystem.activeFile.name}"
           <a href="#" title="Exit from this file">
             close
           </a>
-        </span>
-      </div>
+        </banner-card>
+      </system-banners>
     )
   }
 
-  return <div className="system-banners" />
+  return <system-banners />
 }

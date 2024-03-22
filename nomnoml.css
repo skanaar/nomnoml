@@ -1,8 +1,7 @@
-
 html, body {
 	height: 100%;
-    padding: 0;
-    margin: 0;
+	padding: 0;
+	margin: 0;
 	overflow-x: hidden;
 	overflow-y: hidden;
 	background: #fdf6e3;
@@ -13,8 +12,8 @@ h1 {
 	margin: 0;
 }
 img, svg {
-    vertical-align: bottom;
-    border: 0;
+	vertical-align: bottom;
+	border: 0;
 }
 
 .wrap {
@@ -165,24 +164,7 @@ canvas-tools a {
 	padding: 0 5px;
 }
 
-.card {
-	background: #fffcf4;
-  border-radius: 5px;
-  box-shadow: 0 5px 10px #0004;
-	color: #000C;
-}
-.card-warning {
-	text-align: left;
-}
-.card-warning tt {
-	white-space: pre-wrap;
-	font-family: Menlo, Consolas, monospace;
-	font-size: 70%;
-	margin-top: 10px;
-	color: #0008;
-}
-
-.system-banners {
+system-banners {
 	position: fixed;
 	top: 7px;
 	right: 0;
@@ -191,23 +173,33 @@ canvas-tools a {
 	text-align: center;
 }
 
-.terminal-banners {
+terminal-banners {
   position: fixed;
   left: 50px;
   bottom: 10px;
 	text-align: left;
 }
 
-.banner {
-	display: none;
-	border-radius: 8px;
-	padding: 10px 15px;
-	margin-top: 10px;
-}
-.banner.visible {
+banner-card {
+	background: #fffcf4;
+	color: #000C;
 	display: inline-block;
+	margin-top: 10px;
+	padding: 10px 15px;
+  border-radius: 5px;
+  box-shadow: 0 5px 10px #0004;
 }
-.banner a {
+banner-card[data-warning] {
+	text-align: left;
+}
+banner-card[data-warning] code {
+	white-space: pre-wrap;
+	font-family: Menlo, Consolas, monospace;
+	font-size: 70%;
+	margin-top: 10px;
+	color: #0008;
+}
+banner-card a {
 	border: 2px solid #0008;
 	color: #0008;
 	padding: 0 5px;
@@ -216,7 +208,7 @@ canvas-tools a {
 	font-style: normal;
 	opacity: 1;
 }
-.banner a:hover {
+banner-card a:hover {
 	background: #3332;
 }
 
@@ -333,7 +325,10 @@ canvas-tools a {
 	padding: 10px 30px 10px 20px;
 	margin: 0 0 20px 0;
 	font-family: sans-serif;
-	color: #444;
+	background: #fffcf4;
+  border-radius: 5px;
+  box-shadow: 0 5px 10px #0004;
+	color: #000C;
 }
 .alert > p {
 	margin-top: 0;

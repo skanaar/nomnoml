@@ -1,15 +1,15 @@
-import { CanvasPanner } from "./CanvasPanner"
-import { DevEnv } from "./DevEnv"
-import { DownloadLinks } from "./DownloadLinks"
-import { FileEntry, FileSystem, StoreLocal } from "./FileSystem"
-import { HoverMarker } from "./HoverMarker"
-import { Observable } from "./Observable"
-import { throttle, debounce, unescapeHtml } from "./util"
+import { CanvasPanner } from './CanvasPanner'
+import { DevEnv } from './DevEnv'
+import { DownloadLinks } from './DownloadLinks'
+import { FileEntry, FileSystem, StoreLocal } from './FileSystem'
+import { HoverMarker } from './HoverMarker'
+import { Observable } from './Observable'
+import { throttle, debounce, unescapeHtml } from './util'
 // @ts-ignore
-import * as nomnoml from "../dist/nomnoml.js"
+import * as nomnoml from '../dist/nomnoml.js'
 
 export class App {
-  nomnoml: { 
+  nomnoml: {
     draw(canvas: HTMLCanvasElement, code: string, scale?: number): any
     renderSvg(code: string, document?: Document): string
   }
@@ -37,7 +37,7 @@ export class App {
       mode: 'nomnoml',
       matchBrackets: true,
       theme: 'solarized light',
-      keyMap: 'sublime'
+      keyMap: 'sublime',
     })
 
     this.editor.on('drop', (cm: any, dragEvent: DragEvent) => {
@@ -56,7 +56,7 @@ export class App {
 
     this.defaultSource = (document.getElementById('defaultGraph') || { innerHTML: '' }).innerHTML
 
-    var lastValidSource: string|null = null
+    var lastValidSource: string | null = null
 
     var reloadStorage = async () => {
       lastValidSource = null
@@ -65,22 +65,30 @@ export class App {
         var source = await this.filesystem.storage.read()
         this.editor.setValue(source || this.defaultSource)
         this.sourceChanged()
-      } catch(e) { console.log(e) }
+      } catch (e) {
+        console.log(e)
+      }
     }
 
-    window.addEventListener('hashchange', () => reloadStorage());
-    window.addEventListener('resize', throttle(() => this.sourceChanged(), 750, {leading: true}))
-    this.editor.on('changes', debounce(() => this.sourceChanged(), 300))
-    
+    window.addEventListener('hashchange', () => reloadStorage())
+    window.addEventListener(
+      'resize',
+      throttle(() => this.sourceChanged(), 750, { leading: true })
+    )
+    this.editor.on(
+      'changes',
+      debounce(() => this.sourceChanged(), 300)
+    )
+
     async function lenientLoadFile(key: string): Promise<string> {
       var storage = new StoreLocal(key)
       return (await storage.read()) ?? ''
     }
-    
+
     function safelyProcessSource(source: string) {
       try {
         return nomnoml.processAsyncImports(source, lenientLoadFile)
-      } catch(e) {
+      } catch (e) {
         if (e instanceof nomnoml.ImportDepthError) {
           return 'Error: too many imports'
         } else {
@@ -102,7 +110,7 @@ export class App {
         this.downloader.source = source
         this.downloader.setFilename(model.config.title || this.filesystem.activeFile.name)
         this.signals.trigger('source-changed', source)
-      } catch (e){
+      } catch (e) {
         this.signals.trigger('compile-error', e)
         // Rerender canvas with last successfully rendered text.
         if (lastValidSource) {
@@ -119,9 +127,9 @@ export class App {
   }
 
   loadSvg(svg: string) {
-    var svgNodes = (new DOMParser()).parseFromString(svg,'text/xml')
-    if(svgNodes.getElementsByTagName('desc').length !== 1) {
-      alert("SVG did not have nomnoml code embedded within it.")
+    var svgNodes = new DOMParser().parseFromString(svg, 'text/xml')
+    if (svgNodes.getElementsByTagName('desc').length !== 1) {
+      alert('SVG did not have nomnoml code embedded within it.')
       return
     }
     var code = svgNodes.getElementsByTagName('desc')[0].childNodes[0].nodeValue
@@ -133,37 +141,36 @@ export class App {
     return this.editor.getValue()
   }
 
-  magnifyViewport(diff: number){
+  magnifyViewport(diff: number) {
     this.panner.magnify(diff)
   }
 
-  resetViewport(){
+  resetViewport() {
     this.panner.reset()
   }
 
-  toggleSidebar(id: string){
+  toggleSidebar(id: string) {
     var sidebars = ['about', 'reference', 'export', 'files']
-    for(var key of sidebars){
-      if (id !== key)
-        document.getElementById(key)?.classList.remove('visible')
+    for (var key of sidebars) {
+      if (id !== key) document.getElementById(key)?.classList.remove('visible')
     }
     document.getElementById(id)?.classList.toggle('visible')
   }
 
-  discardCurrentGraph(){
-    if (confirm('Do you want to discard current diagram and load the default example?')){
+  discardCurrentGraph() {
+    if (confirm('Do you want to discard current diagram and load the default example?')) {
       this.editor.setValue(this.defaultSource)
       this.sourceChanged()
     }
   }
 
-  async saveAs(defaultName: string = ''): Promise<'success'|'failure'> {
+  async saveAs(defaultName: string = ''): Promise<'success' | 'failure'> {
     var name = prompt('Name your diagram', defaultName) ?? defaultName
     var source = this.currentSource()
     if (name) {
-      return this.filesystem.storage.files().then(files => {
+      return this.filesystem.storage.files().then((files) => {
         if (files.some((e: FileEntry) => e.name === name)) {
-          alert('A file named '+name+' already exists.')
+          alert('A file named ' + name + ' already exists.')
           return 'failure'
         } else {
           this.filesystem.moveToFileStorage(name, source)
@@ -175,12 +182,12 @@ export class App {
     return 'failure'
   }
 
-  exitViewMode(){
+  exitViewMode() {
     window.location.href = './'
   }
 
   handleOpeningFiles(files: FileList) {
-    if(files.length !== 1) {
+    if (files.length !== 1) {
       alert('You can only upload one file at a time.')
       return
     }

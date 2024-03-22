@@ -14,7 +14,7 @@ export function DailyTip({ id, sticky, children }: DailyTipProps) {
     setVisible(false)
   }
   return (
-    <div className={'alert card ' + (visible ? '' : 'alert-hidden')}>
+    <div className={'alert ' + (visible ? '' : 'alert-hidden')}>
       {children}
       {sticky || (
         <a className="alert-close" onClick={prevent(closeAlert)}>
