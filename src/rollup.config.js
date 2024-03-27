@@ -21,7 +21,6 @@ export default {
       noImplicitAny: true,
       strictNullChecks: true,
       moduleResolution: 'node',
-      sourceMap: true,
       include: ['src/*.ts'],
     }),
     nodeResolve(),

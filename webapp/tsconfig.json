@@ -1,14 +1,12 @@
 {
   "compilerOptions": {
-    "jsx": "react",
     "module": "es6",
-    "target": "es6",
-    "lib": ["dom"],
-    "noEmit": true,
+    "target": "es2020",
+    "noUnusedLocals": true,
     "noImplicitAny": true,
     "strictNullChecks": true,
-    "removeComments": true,
-    "moduleResolution": "node"
+    "noEmit": true,
+    "jsx": "react"
   },
   "include": ["*"]
 }

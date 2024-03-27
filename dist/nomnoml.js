@@ -53,12 +53,12 @@
 
     var util = /*#__PURE__*/Object.freeze({
         __proto__: null,
-        range: range,
-        sum: sum,
         find: find,
-        last: last,
         hasSubstring: hasSubstring,
         indexBy: indexBy,
+        last: last,
+        range: range,
+        sum: sum,
         uniqueBy: uniqueBy
     });
 
@@ -1810,7 +1810,5 @@
     exports.styles = styles;
     exports.version = version;
     exports.visualizers = visualizers;
-
-    Object.defineProperty(exports, '__esModule', { value: true });
 
 }));
