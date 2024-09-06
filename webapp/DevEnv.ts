@@ -2,10 +2,7 @@ export class DevEnv {
   mark: void | { clear(): void }
   lineMark: void | { clear(): void }
 
-  constructor(
-    private editor: CodeMirrorEditor,
-    private lineNumbers: HTMLElement
-  ) {}
+  constructor(private editor: CodeMirrorEditor, private lineNumbers: HTMLElement) {}
 
   clearState() {
     this.mark?.clear()
@@ -17,15 +14,14 @@ export class DevEnv {
     this.mark?.clear()
     this.lineMark?.clear()
     this.lineNumbers.classList.add('error')
-    console.log({ line: location.line, column: location.column })
     this.lineMark = this.editor.markText(
-      {line: location.line - 1, ch: 0 },
-      {line: location.line - 1, ch: 100 },
+      { line: location.line - 1, ch: 0 },
+      { line: location.line - 1, ch: 100 },
       { css: 'background: #f884' }
     )
     this.mark = this.editor.markText(
-      {line: location.line - 1, ch: location.column - 2 },
-      {line: location.line - 1, ch: location.column + 1 },
+      { line: location.line - 1, ch: location.column - 2 },
+      { line: location.line - 1, ch: location.column + 1 },
       { css: 'background: #f88a' }
     )
   }
