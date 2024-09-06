@@ -591,8 +591,8 @@
                 bottom = Math.max(bottom, rel.startLabel.y + rel.startLabel.height, rel.endLabel.y + rel.endLabel.height, ...edge.points.map((e) => e.y));
             }
             const graph = g.graph();
-            const width = Math.max(graph.width, right - left);
-            const height = Math.max(graph.height, bottom - top);
+            const width = Math.max(graph.width + (left < 0 ? -left : 0), right - left);
+            const height = Math.max(graph.height + (top < 0 ? -top : 0), bottom - top);
             const graphHeight = height ? height + 2 * config.gutter : 0;
             const graphWidth = width ? width + 2 * config.gutter : 0;
             const part = c;
