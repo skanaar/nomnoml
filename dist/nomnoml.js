@@ -1788,7 +1788,7 @@
         const fs = require('fs');
         const path = require('path');
         const directory = path.dirname(filepath);
-        const rootFileName = filepath.substr(directory.length);
+        const rootFileName = path.basename(filepath);
         function loadFile(filename) {
             return fs.readFileSync(path.join(directory, filename), { encoding: 'utf8' });
         }
