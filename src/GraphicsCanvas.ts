@@ -5,38 +5,10 @@ interface ICanvasGraphics extends Graphics {
   mousePos(): Vec
 }
 
-type Callbacks = {
-  mousedown(p: Vec): void
-  mouseup(p: Vec): void
-  mousemove(p: Vec): void
-}
-export function GraphicsCanvas(canvas: HTMLCanvasElement, callbacks?: Callbacks): ICanvasGraphics {
+export function GraphicsCanvas(canvas: HTMLCanvasElement): ICanvasGraphics {
   const ctx = canvas.getContext('2d')!
   const twopi = 2 * 3.1416
   let mousePos = { x: 0, y: 0 }
-
-  function mouseEventToPos(event: MouseEvent) {
-    const e = canvas
-    return {
-      x: event.clientX - e.getBoundingClientRect().left - e.clientLeft + e.scrollLeft,
-      y: event.clientY - e.getBoundingClientRect().top - e.clientTop + e.scrollTop,
-    }
-  }
-
-  if (callbacks) {
-    canvas.addEventListener('mousedown', function (event) {
-      if (callbacks.mousedown) callbacks.mousedown(mouseEventToPos(event))
-    })
-
-    canvas.addEventListener('mouseup', function (event) {
-      if (callbacks.mouseup) callbacks.mouseup(mouseEventToPos(event))
-    })
-
-    canvas.addEventListener('mousemove', function (event) {
-      mousePos = mouseEventToPos(event)
-      if (callbacks.mousemove) callbacks.mousemove(mouseEventToPos(event))
-    })
-  }
 
   const chainable = {
     stroke: function () {
