@@ -16,21 +16,8 @@
             summa += transform(list[i]);
         return summa;
     }
-    function find(list, predicate) {
-        for (let i = 0; i < list.length; i++)
-            if (predicate(list[i]))
-                return list[i];
-        return undefined;
-    }
     function last(list) {
         return list[list.length - 1];
-    }
-    function hasSubstring(haystack, needle) {
-        if (needle === '')
-            return true;
-        if (!haystack)
-            return false;
-        return haystack.indexOf(needle) !== -1;
     }
     function indexBy(list, key) {
         const obj = {};
@@ -38,28 +25,13 @@
             obj[list[i][key]] = list[i];
         return obj;
     }
-    function uniqueBy(list, property) {
-        const seen = {};
-        const out = [];
-        for (let i = 0; i < list.length; i++) {
-            const key = list[i][property];
-            if (!seen[key]) {
-                seen[key] = true;
-                out.push(list[i]);
-            }
-        }
-        return out;
-    }
 
     var util = /*#__PURE__*/Object.freeze({
         __proto__: null,
-        find: find,
-        hasSubstring: hasSubstring,
         indexBy: indexBy,
         last: last,
         range: range,
-        sum: sum,
-        uniqueBy: uniqueBy
+        sum: sum
     });
 
     function buildStyle(conf, title, body = {}) {
@@ -944,24 +916,23 @@
             return 'network-simplex';
         }
         function parseCustomStyle(styleDef) {
-            const contains = hasSubstring;
             const floatingKeywords = styleDef.replace(/[a-z]*=[^ ]+/g, '');
             const titleDef = last(styleDef.match('title=([^ ]*)') || ['']);
             const bodyDef = last(styleDef.match('body=([^ ]*)') || ['']);
             return {
                 title: {
-                    bold: contains(titleDef, 'bold') || contains(floatingKeywords, 'bold'),
-                    underline: contains(titleDef, 'underline') || contains(floatingKeywords, 'underline'),
-                    italic: contains(titleDef, 'italic') || contains(floatingKeywords, 'italic'),
-                    center: !(contains(titleDef, 'left') || contains(styleDef, 'align=left')),
+                    bold: titleDef.includes('bold') || floatingKeywords.includes('bold'),
+                    underline: titleDef.includes('underline') || floatingKeywords.includes('underline'),
+                    italic: titleDef.includes('italic') || floatingKeywords.includes('italic'),
+                    center: !(titleDef.includes('left') || styleDef.includes('align=left')),
                 },
                 body: {
-                    bold: contains(bodyDef, 'bold'),
-                    underline: contains(bodyDef, 'underline'),
-                    italic: contains(bodyDef, 'italic'),
-                    center: contains(bodyDef, 'center'),
+                    bold: bodyDef.includes('bold'),
+                    underline: bodyDef.includes('underline'),
+                    italic: bodyDef.includes('italic'),
+                    center: bodyDef.includes('center'),
                 },
-                dashed: contains(styleDef, 'dashed'),
+                dashed: styleDef.includes('dashed'),
                 fill: last(styleDef.match('fill=([^ ]*)') || []),
                 stroke: last(styleDef.match('stroke=([^ ]*)') || []),
                 visual: (last(styleDef.match('visual=([^ ]*)') || []) || 'class'),
@@ -1226,7 +1197,7 @@
             renderLabel(r.startLabel);
             renderLabel(r.endLabel);
             if (r.type !== '-/-') {
-                if (hasSubstring(r.type, '--')) {
+                if (r.type.includes('--')) {
                     const dash = Math.max(4, 2 * config.lineWidth);
                     g.save();
                     g.setLineDash([dash, dash]);

@@ -1,7 +1,7 @@
 import { Ranker } from 'graphre/decl/types'
 import { Config, Style, Visual } from './domain'
 import { linearParse } from './linearParse'
-import { hasSubstring, last } from './util'
+import { last } from './util'
 import { styles } from './visuals'
 
 export { ParseError } from './linearParse'
@@ -58,24 +58,23 @@ export function parse(source: string): ParsedDiagram {
   }
 
   function parseCustomStyle(styleDef: string): Style {
-    const contains = hasSubstring
     const floatingKeywords = styleDef.replace(/[a-z]*=[^ ]+/g, '')
     const titleDef = last(styleDef.match('title=([^ ]*)') || [''])
     const bodyDef = last(styleDef.match('body=([^ ]*)') || [''])
     return {
       title: {
-        bold: contains(titleDef, 'bold') || contains(floatingKeywords, 'bold'),
-        underline: contains(titleDef, 'underline') || contains(floatingKeywords, 'underline'),
-        italic: contains(titleDef, 'italic') || contains(floatingKeywords, 'italic'),
-        center: !(contains(titleDef, 'left') || contains(styleDef, 'align=left')),
+        bold: titleDef.includes('bold') || floatingKeywords.includes('bold'),
+        underline: titleDef.includes('underline') || floatingKeywords.includes('underline'),
+        italic: titleDef.includes('italic') || floatingKeywords.includes('italic'),
+        center: !(titleDef.includes('left') || styleDef.includes('align=left')),
       },
       body: {
-        bold: contains(bodyDef, 'bold'),
-        underline: contains(bodyDef, 'underline'),
-        italic: contains(bodyDef, 'italic'),
-        center: contains(bodyDef, 'center'),
+        bold: bodyDef.includes('bold'),
+        underline: bodyDef.includes('underline'),
+        italic: bodyDef.includes('italic'),
+        center: bodyDef.includes('center'),
       },
-      dashed: contains(styleDef, 'dashed'),
+      dashed: styleDef.includes('dashed'),
       fill: last(styleDef.match('fill=([^ ]*)') || []),
       stroke: last(styleDef.match('stroke=([^ ]*)') || []),
       visual: (last(styleDef.match('visual=([^ ]*)') || []) || 'class') as Visual,

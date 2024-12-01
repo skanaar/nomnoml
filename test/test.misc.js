@@ -59,41 +59,12 @@ test('util sum', function () {
     21
   )
 })
-test('util find', function () {
-  assert(
-    skanaar.find([{ a: 0 }, { a: 4, needle: true }, { a: 17 }], (e) => e.a == 4),
-    '=',
-    { a: 4, needle: true }
-  )
-})
 test('util last', function () {
   assert(skanaar.last([{ a: 0 }, { a: 4 }, { a: 17, needle: true }]), '=', { a: 17, needle: true })
-})
-test('util hasSubstring', function () {
-  assert(skanaar.hasSubstring('xyz abc', 'xyz'), '=', true)
-  assert(skanaar.hasSubstring('1 xyz 0', 'xyz'), '=', true)
-  assert(skanaar.hasSubstring('abc xyz', 'xyz'), '=', true)
 })
 test('util indexBy', function () {
   assert(skanaar.indexBy([], 'name'), '=', {})
   assert(skanaar.indexBy([{ name: 'apa' }], 'name'), '=', { apa: { name: 'apa' } })
-})
-test('util uniqueBy', function () {
-  assert(
-    skanaar.uniqueBy(
-      [
-        { a: 4, b: 'x' },
-        { a: 17, c: 'y' },
-        { a: 4, d: 'z' },
-      ],
-      'a'
-    ),
-    '=',
-    [
-      { a: 4, b: 'x' },
-      { a: 17, c: 'y' },
-    ]
-  )
 })
 
 test('processImports resolves shallow imports', function () {

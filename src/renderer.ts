@@ -2,7 +2,7 @@ import { Config, RelationLabel, TextStyle } from './domain'
 import { Graphics } from './Graphics'
 import { LayoutedAssoc, LayoutedNode, LayoutedPart } from './layouter'
 import { drawTerminators, getPath } from './terminators'
-import { hasSubstring, last } from './util'
+import { last } from './util'
 import { add, Vec } from './vector'
 import { buildStyle, styles, visualizers } from './visuals'
 
@@ -123,7 +123,7 @@ export function render(graphics: Graphics, config: Config, compartment: Layouted
     renderLabel(r.endLabel)
 
     if (r.type !== '-/-') {
-      if (hasSubstring(r.type, '--')) {
+      if (r.type.includes('--')) {
         const dash = Math.max(4, 2 * config.lineWidth)
         g.save()
         g.setLineDash([dash, dash])
