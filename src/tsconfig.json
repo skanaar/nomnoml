@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "module": "es6",
-    "target": "es2021",
+    "target": "es2022",
     "noImplicitAny": true,
     "noUnusedLocals": true,
     "strictNullChecks": true,

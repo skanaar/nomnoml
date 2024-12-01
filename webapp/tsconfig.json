@@ -1,7 +1,8 @@
 {
   "compilerOptions": {
-    "module": "es6",
-    "target": "es2020",
+    "moduleResolution": "NodeNext",
+    "module": "NodeNext",
+    "target": "es2022",
     "noUnusedLocals": true,
     "noImplicitAny": true,
     "strictNullChecks": true,
