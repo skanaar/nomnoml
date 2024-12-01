@@ -1,8 +1,13 @@
+import { CodeMirrorEditor } from './declarations'
+
 export class DevEnv {
   mark: void | { clear(): void }
   lineMark: void | { clear(): void }
 
-  constructor(private editor: CodeMirrorEditor, private lineNumbers: HTMLElement) {}
+  constructor(
+    private editor: CodeMirrorEditor,
+    private lineNumbers: HTMLElement,
+  ) {}
 
   clearState() {
     this.mark?.clear()

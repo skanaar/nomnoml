@@ -1,3 +1,4 @@
+import type { CodeMirror, CodeMirrorEditor } from './declarations'
 import { CanvasPanner } from './CanvasPanner'
 import { DevEnv } from './DevEnv'
 import { DownloadLinks } from './DownloadLinks'

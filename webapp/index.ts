@@ -1,3 +1,4 @@
+import type { CodeMirror } from './declarations'
 import { createElement as el } from 'react'
 import * as ReactDOM from 'react-dom'
 import { App } from './App'

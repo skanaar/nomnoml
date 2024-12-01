@@ -47,6 +47,7 @@
   "scripts": {
     "prepare": "npm run webapp",
     "build": "npm run lib && npm run webapp && npm run test",
+    "checktypes": "tsc --noEmit -p src && tsc --noEmit -p webapp",
     "webapp": "rollup --bundleConfigAsCjs -c webapp/rollup.config.js",
     "lib": "rollup --bundleConfigAsCjs -c src/rollup.config.js && npm test",
     "test": "node --test && npm run test_cli",
