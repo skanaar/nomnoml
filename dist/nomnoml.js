@@ -1744,7 +1744,7 @@
         return processImports(loadFile(rootFileName), loadFile, maxImportDepth);
     }
 
-    const version = '1.6.2';
+    const version = '1.6.3';
 
     exports.ImportDepthError = ImportDepthError;
     exports.ParseError = ParseError;

@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.6.3] - 2024-12-01
+
+- Fix bug when running `nomnoml-cli` with input files in the same directory.
+
 ## [1.6.2] - 2023-06-26
 
 - Fix bug where hash character was interpreted as a directive in the middle of a line

@@ -6,7 +6,7 @@ export {
   processAsyncImports,
   ImportDepthError,
 } from './nomnoml'
-export const version = '1.6.2'
+export const version = '1.6.3'
 
 export * as skanaar from './util'
 export { parse, ParseError } from './parser'
