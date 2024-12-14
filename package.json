@@ -1,6 +1,6 @@
 {
   "name": "nomnoml",
-  "version": "1.6.3",
+  "version": "1.7.0",
   "description": "The sassy UML renderer that generates diagrams from text",
   "homepage": "http://www.nomnoml.com",
   "author": "Daniel Kallin <daniel.kallin@gmail.com>",

@@ -1144,6 +1144,7 @@
             const style = config.styles[node.type] || styles.class;
             g.save();
             g.setData('name', node.id);
+            g.setData('compartment', undefined);
             g.save();
             g.fillStyle(style.fill || config.fill[level] || last(config.fill));
             g.strokeStyle(style.stroke || config.stroke);
@@ -1157,12 +1158,15 @@
                 g.path(divider.map((e) => add(e, { x, y }))).stroke();
             }
             g.restore();
+            let partIndex = 0;
             for (let part of node.parts) {
                 const textStyle = part === node.parts[0] ? style.title : style.body;
                 g.save();
+                g.setData('compartment', String(partIndex));
                 g.translate(x + part.x, y + part.y);
                 g.setFont(config.font, config.fontSize, textStyle.bold ? 'bold' : 'normal', textStyle.italic ? 'italic' : 'normal');
                 renderCompartment(part, style.stroke, textStyle, level + 1);
+                partIndex++;
                 g.restore();
             }
             g.restore();
@@ -1440,7 +1444,7 @@
                 return this.parent;
             }
             serialize() {
-                const data = getDefined(this.group(), (e) => e.data) ?? {};
+                const data = getAncestorData(this.group()) ?? {};
                 const attrs = toAttrString({ ...this.attr, ...data });
                 const content = this.children.map((o) => o.serialize()).join('\n');
                 if (this.text && this.children.length === 0)
@@ -1452,6 +1456,11 @@
 	${content.replace(/\n/g, '\n\t')}
 </${this.name}>`;
             }
+        }
+        function getAncestorData(group) {
+            if (!group)
+                return syntheticRoot.data;
+            return { ...getAncestorData(group.parent), ...group.data };
         }
         function getDefined(group, getter) {
             if (!group)
@@ -1744,7 +1753,7 @@
         return processImports(loadFile(rootFileName), loadFile, maxImportDepth);
     }
 
-    const version = '1.6.3';
+    const version = '1.7.0';
 
     exports.ImportDepthError = ImportDepthError;
     exports.ParseError = ParseError;

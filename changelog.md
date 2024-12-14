@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.7.0] - 2024-12-14
+
+- Add `data-compartment` attribute to SVG output for identifying the compartment index when building interactivity.
+
 ## [1.6.3] - 2024-12-01
 
 - Fix bug when running `nomnoml-cli` with input files in the same directory.
