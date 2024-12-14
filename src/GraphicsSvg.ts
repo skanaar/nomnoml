@@ -102,7 +102,7 @@ export function GraphicsSvg(document?: HTMLDocument): ISvgGraphics {
       return this.parent
     }
     serialize(): string {
-      const data = getDefined(this.group(), (e) => e.data) ?? {}
+      const data = getAncestorData(this.group()) ?? {}
       const attrs = toAttrString({ ...this.attr, ...data })
       const content = this.children.map((o) => o.serialize()).join('\n')
       if (this.text && this.children.length === 0)
@@ -114,6 +114,11 @@ export function GraphicsSvg(document?: HTMLDocument): ISvgGraphics {
 	${content.replace(/\n/g, '\n\t')}
 </${this.name}>`
     }
+  }
+
+  function getAncestorData(group: GroupElement | undefined): Record<string, string> | undefined {
+    if (!group) return syntheticRoot.data
+    return { ...getAncestorData(group.parent), ...group.data }
   }
 
   function getDefined<T>(
@@ -129,7 +134,7 @@ export function GraphicsSvg(document?: HTMLDocument): ISvgGraphics {
       super('g', {}, parent)
     }
     elideEmpty = true
-    data: Record<string, string>
+    data: Record<string, string> | undefined
     group() {
       return this
     }

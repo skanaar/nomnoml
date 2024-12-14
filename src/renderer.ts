@@ -58,6 +58,7 @@ export function render(graphics: Graphics, config: Config, compartment: Layouted
 
     g.save()
     g.setData('name', node.id)
+    g.setData('compartment', undefined)
 
     g.save()
     g.fillStyle(style.fill || config.fill[level] || last(config.fill))
@@ -73,9 +74,11 @@ export function render(graphics: Graphics, config: Config, compartment: Layouted
     }
     g.restore()
 
+    let partIndex = 0
     for (let part of node.parts) {
       const textStyle = part === node.parts[0] ? style.title : style.body
       g.save()
+      g.setData('compartment', String(partIndex))
       g.translate(x + part.x!, y + part.y!)
       g.setFont(
         config.font,
@@ -84,6 +87,7 @@ export function render(graphics: Graphics, config: Config, compartment: Layouted
         textStyle.italic ? 'italic' : 'normal'
       )
       renderCompartment(part, style.stroke, textStyle, level + 1)
+      partIndex++
       g.restore()
     }
 
