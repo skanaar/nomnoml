@@ -47,9 +47,9 @@ export function FileMenu(props: { app: App; files: FileEntry[]; isLoaded: boolea
     if (confirm('Permanently delete "' + item.name + '"')) filesystem.discard(item)
   }
 
-  function loadSvg(e: Event) {
-    var files = (e.target as HTMLInputElement).files!
-    props.app.handleOpeningFiles(files)
+  function loadSvg(e: { target: HTMLInputElement }) {
+    var files = e.target.files
+    props.app.handleOpeningFiles(files!)
   }
 
   async function rename(entry: FileEntry) {
@@ -73,8 +73,8 @@ export function FileMenu(props: { app: App; files: FileEntry[]; isLoaded: boolea
     saveAs(blob, folder ?? `nomnoml-${date}.zip`)
   }
 
-  async function importArchive(e: Event) {
-    var fileInputElement = (e.target as HTMLInputElement)!
+  async function importArchive(e: { target: HTMLInputElement }) {
+    var fileInputElement = e.target
     var file = fileInputElement.files![0]
     var archiveName = file.name.replace(/\.zip$/, '')
     var folder = prompt(
@@ -148,7 +148,7 @@ export function FileMenu(props: { app: App; files: FileEntry[]; isLoaded: boolea
       <label className="btn">
         <Icon shape={image_outline} />
         Open SVG with source...
-        <input type="file" accept="image/svg+xml" onChange={prevent(() => loadSvg)} />
+        <input type="file" accept="image/svg+xml" onChange={prevent((e) => loadSvg(e))} />
       </label>
 
       <a className="btn" href="/" onClick={prevent(() => exportArchive())}>
@@ -159,7 +159,7 @@ export function FileMenu(props: { app: App; files: FileEntry[]; isLoaded: boolea
       <label className="btn">
         <Icon shape={import_arrow} />
         Import .zip archive...
-        <input type="file" accept="application/zip" onChange={prevent(() => importArchive)} />
+        <input type="file" accept="application/zip" onChange={prevent((e) => importArchive(e))} />
       </label>
 
       <a className="btn" href="/" onClick={prevent(() => props.app.saveAs())}>
