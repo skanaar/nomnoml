@@ -1489,6 +1489,7 @@
         current.attr = initialState;
         root.children.push(current);
         let inPathBuilderMode = false;
+        let penPos = { x: 0, y: 0 };
         function tracePath(path, offset = { x: 0, y: 0 }, s = 1) {
             const d = path
                 .map((e, i) => (i ? 'L' : 'M') + (offset.x + s * e.x).toFixed(1) + ' ' + (offset.y + s * e.y).toFixed(1))
@@ -1547,11 +1548,30 @@
             fillStyle: function (fill) {
                 current.attr.fill = fill;
             },
-            arcTo: function (x1, y1, x2, y2) {
-                if (inPathBuilderMode)
-                    last(current.children).attr.d += 'L' + x1 + ' ' + y1 + ' L' + x2 + ' ' + y2 + ' ';
-                else
+            arcTo: function (x1, y1, x2, y2, radius) {
+                if (!inPathBuilderMode)
                     throw new Error('can only be called after .beginPath()');
+                const pathEl = last(current.children);
+                const dx0 = penPos.x - x1;
+                const dy0 = penPos.y - y1;
+                const dx1 = x2 - x1;
+                const dy1 = y2 - y1;
+                const l0 = Math.hypot(dx0, dy0);
+                const l1 = Math.hypot(dx1, dy1);
+                if (!l0 || !l1 || !radius) {
+                    pathEl.attr.d += `L${x1.toFixed(1)} ${y1.toFixed(1)} `;
+                    penPos = { x: x1, y: y1 };
+                    return;
+                }
+                const dot = (dx0 * dx1 + dy0 * dy1) / (l0 * l1);
+                const d = Math.min(radius / Math.sqrt((1 - dot) / (1 + dot)), l0, l1);
+                const r = d * Math.sqrt((1 - dot) / (1 + dot));
+                const sweep = dx0 * dy1 - dy0 * dx1 < 0 ? 1 : 0;
+                const ex = x1 + (dx1 / l1) * d;
+                const ey = y1 + (dy1 / l1) * d;
+                pathEl.attr.d += `L${(x1 + (dx0 / l0) * d).toFixed(1)} ${(y1 + (dy0 / l0) * d).toFixed(1)} `;
+                pathEl.attr.d += `A${r.toFixed(1)} ${r.toFixed(1)} 0 0 ${sweep} ${ex.toFixed(1)} ${ey.toFixed(1)} `;
+                penPos = { x: ex, y: ey };
             },
             beginPath: function () {
                 inPathBuilderMode = true;
@@ -1578,6 +1598,7 @@
                     last(current.children).attr.d += 'L' + x.toFixed(1) + ' ' + y.toFixed(1) + ' ';
                 else
                     throw new Error('can only be called after .beginPath()');
+                penPos = { x, y };
                 return current;
             },
             lineWidth: function (w) {
@@ -1606,6 +1627,7 @@
                     last(current.children).attr.d += 'M' + x.toFixed(1) + ' ' + y.toFixed(1) + ' ';
                 else
                     throw new Error('can only be called after .beginPath()');
+                penPos = { x, y };
             },
             restore: function () {
                 if (current.parent)
